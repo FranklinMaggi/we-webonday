@@ -1,0 +1,12 @@
+{
+    "name": "we-webonday-backend",
+    "version": "1.0.0",
+    "description": "Backend Workers for WebOnDay",
+    "scripts": {
+        "deploy": "wrangler deploy"
+    },
+    "devDependencies": {
+        "@cloudflare/workers-types": "^4.20251205.0",
+        "wrangler": "4.50.0"
+    }
+}

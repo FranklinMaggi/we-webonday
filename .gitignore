@@ -1,0 +1,27 @@
+# Node
+node_modules
+npm-debug.log*
+pnpm-lock.yaml
+yarn.lock
+
+# Build Vite
+frontend/dist
+frontend/.vite
+
+# Backend build / wrangler
+backend/.wrangler
+backend/dist
+
+# Env locali (NON devono andare su Git)
+.env
+.env.local
+frontend/.env
+frontend/.env.local
+backend/.env
+backend/.env.local
+
+# Dump versioning / appunti locali (possono contenere segreti)
+versions/
+v*.txt
+*.secrets.txt
+*.backup.txt

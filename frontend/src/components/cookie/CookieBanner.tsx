@@ -1,0 +1,134 @@
+// src/components/cookie/CookieBanner.tsx
+import { useEffect, useState } from "react";
+import {
+  getLocalConsent,
+  getOrCreateVisitorId,
+  saveLocalConsent,
+} from "../../utils/cookieConsent";
+import type { LocalConsent } from "../../utils/cookieConsent";
+
+const API_BASE = import.meta.env.VITE_API_URL;
+console.log("[CookieBanner] API_BASE =", API_BASE);
+
+export function CookieBanner() {
+  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const consent = getLocalConsent();
+    if (!consent) {
+      setVisible(true);
+    }
+  }, []);
+
+  async function sendConsentToBackend(consent: LocalConsent) {
+    const visitorId = getOrCreateVisitorId();
+
+    if (!API_BASE) {
+      console.warn("API BASE URL non impostato. Salvataggio cookie non avverrà.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await fetch(`${API_BASE}/api/cookies/accept`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          visitorId,
+          analytics: consent.analytics,
+          marketing: consent.marketing,
+        }),
+      });
+    } catch (err) {
+      console.error("Errore salvataggio consenso cookie:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleAcceptAll() {
+    const consent: LocalConsent = {
+      necessary: true,
+      analytics: true,
+      marketing: true,
+    };
+
+    saveLocalConsent(consent);
+    await sendConsentToBackend(consent);
+    setVisible(false);
+  }
+
+  async function handleRejectAll() {
+    const consent: LocalConsent = {
+      necessary: true,
+      analytics: false,
+      marketing: false,
+    };
+
+    saveLocalConsent(consent);
+    await sendConsentToBackend(consent);
+    setVisible(false);
+  }
+
+  if (!visible) return null;
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: "1rem",
+        background: "#111",
+        color: "#fff",
+        display: "flex",
+        justifyContent: "space-between",
+        gap: "1rem",
+        zIndex: 9999,
+      }}
+    >
+      <div style={{ maxWidth: "70%" }}>
+        <strong>Cookie WebOnDay</strong>
+        <p style={{ fontSize: "0.9rem", marginTop: "0.5rem" }}>
+          Usiamo cookie tecnici e, previo tuo consenso, cookie di analisi e marketing per
+          migliorare la tua esperienza. Puoi modificare le tue preferenze in qualsiasi momento.
+        </p>
+      </div>
+
+      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+        <button
+          disabled={loading}
+          onClick={handleRejectAll}
+          style={{
+            padding: "0.5rem 1rem",
+            borderRadius: "999px",
+            border: "1px solid #555",
+            background: "#222",
+            color: "#fff",
+            cursor: "pointer",
+          }}
+        >
+          Solo necessari
+        </button>
+
+        <button
+          disabled={loading}
+          onClick={handleAcceptAll}
+          style={{
+            padding: "0.5rem 1rem",
+            borderRadius: "999px",
+            border: "none",
+            background: "#0f0",
+            color: "#000",
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
+        >
+          Accetta tutti
+        </button>
+      </div>
+    </div>
+  );
+}

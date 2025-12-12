@@ -1,0 +1,200 @@
+/* -----------------------------------------------------------
+   NAVBAR STRUCTURE ONLY
+   Il design è delegato al legacy-style.css
+----------------------------------------------------------- */
+
+.navbar,
+.wd-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* LEFT AREA */
+.nav-left,
+.wd-navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ICONA MOKA */
+.moka-icon {
+  width: 28px;
+}
+
+/* LOGO TEXT */
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.logo-text .we {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.logo-text .webonday {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* RIGHT MENU (DESKTOP) */
+.nav-right {
+  display: flex;
+  gap: 20px;
+}
+
+/* MOBILE BUTTON */
+.menu-btn {
+  display: none;
+  font-size: 22px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+/* -----------------------------------------------------------
+   MOBILE RESPONSIVE MENU
+----------------------------------------------------------- */
+@media (max-width: 700px) {
+  .menu-btn {
+    display: block;
+  }
+
+  .nav-right {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 60px;
+    flex-direction: column;
+    background: #111;
+    padding: 12px;
+    border-radius: 8px;
+
+    /* Ombra neon minima */
+    box-shadow: 0 0 20px rgba(34,211,238,0.15);
+  }
+
+  .nav-right.open {
+    display: flex;
+  }
+}
+/* =======================================================================
+   NAVBAR NEON GLOW – WebOnDay
+   Variante neon compatibile con wd-navbar
+======================================================================= */
+
+.wd-navbar-neon {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+
+  box-shadow: 
+    0 4px 25px rgba(34,211,238,0.25),
+    0 2px 12px rgba(244,114,182,0.25);
+}
+
+/* Glow statico di sfondo */
+.wd-navbar-neon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at bottom center,
+    rgba(34,211,238,0.12),
+    rgba(244,114,182,0.08),
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glow animato sotto la navbar */
+.wd-navbar-neon::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200%;
+  height: 80px;
+
+  background: radial-gradient(
+    ellipse,
+    rgba(34,211,238,0.25),
+    rgba(244,114,182,0.18),
+    transparent 80%
+  );
+
+  filter: blur(25px);
+  animation: wdNavNeonPulse 6s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes wdNavNeonPulse {
+  0% { opacity: .30; transform: translateX(-50%) scale(1); }
+  50% { opacity: .55; transform: translateX(-50%) scale(1.2); }
+  100% { opacity: .30; transform: translateX(-50%) scale(1); }
+}
+
+
+/* -----------------------------------------------------------------------
+   LINK NEON (escluso il logo)
+----------------------------------------------------------------------- */
+
+.wd-navbar-link {
+  position: relative;
+  z-index: 2;
+  margin-left: 24px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color .25s ease, text-shadow .25s ease;
+
+  /* Glow di base come wd-footer-title */
+  text-shadow:
+    0 0 6px rgba(255,255,255,0.6),
+    0 0 14px rgba(34,211,238,0.4);
+}
+
+.wd-navbar-link:hover {
+  color: var(--wd-cyan-300);
+  text-shadow:
+      0 0 8px rgba(34,211,238,0.8),
+      0 0 14px rgba(34,211,238,0.6);
+}
+
+/* Linea neon sotto link */
+.wd-navbar-link::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--wd-cyan-300);
+  box-shadow: 0 0 6px rgba(34,211,238,0.8);
+  transition: width .25s ease;
+}
+
+.wd-navbar-link:hover::after {
+  width: 100%;
+}
+
+
+/* -----------------------------------------------------------------------
+   LOGO CLEAN (no neon)
+----------------------------------------------------------------------- */
+
+.wd-navbar-logo {
+  position: relative;
+  z-index: 3;
+}
+
+.wd-navbar-logo * {
+  text-shadow: none !important;
+}

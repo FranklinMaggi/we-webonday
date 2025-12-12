@@ -1,0 +1,36 @@
+.admin-dashboard {
+    padding: 20px;
+    font-family: sans-serif;
+  }
+  
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .kpi-card {
+    padding: 20px;
+    background: #1a1a1a;
+    color: #0ff0fc;
+    border-radius: 12px;
+    border: 1px solid #0ff0fc55;
+    text-align: center;
+  }
+  
+  .filters button {
+    margin-right: 8px;
+  }
+  
+  .orders-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .orders-table th,
+  .orders-table td {
+    border-bottom: 1px solid #ddd;
+    padding: 12px;
+  }
+  

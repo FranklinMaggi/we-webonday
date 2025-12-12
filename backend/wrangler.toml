@@ -1,0 +1,56 @@
+name = "we-webonday-backend"
+main = "src/index.ts"
+compatibility_date = "2025-12-08"
+
+# ============================
+# VARIABILI DI AMBIENTE
+# ============================
+[vars]
+ADMIN_TOKEN = "x8F9s0Dk22_A!nd92LkkF0293jf8FN33ss8ffW0"
+FRONTEND_URL = "https://webonday.it"
+GOOGLE_CLIENT_ID = "779755703612-3b1vcbkbvekjq80k4q1508h4efev7jac.apps.googleusercontent.com"
+GOOGLE_REDIRECT_URI = "https://we-webonday-backend.franklin19.workers.dev/api/user/google/callback"
+
+# PayPal (SANDBOX o LIVE, a seconda di cosa usi)
+PAYPAL_CLIENT_ID = "AflIiDW49-yYddybFt68Vr95D6XaUhPpVWE1VdhebTfoyDgHWd6tMCacWd9wkJg9a6iDYiG2HiPNoTJm"
+PAYPAL_API_BASE = "https://api-m.paypal.com" # per test
+
+
+# ============================
+# KV NAMESPACE BINDINGS
+# ============================
+
+# Policy (versioni policy e accettazioni)
+[[kv_namespaces]]
+binding = "POLICY_KV"
+id = "1b31979b27c047afb5a2663433cefab1"
+
+# Cookie consent tracking
+[[kv_namespaces]]
+binding = "COOKIES_KV"
+id = "dd5b41e5fdfa4b84bc341353046a2fba"
+
+# Catalogo prodotti
+[[kv_namespaces]]
+binding = "PRODUCTS_KV"
+id = "da0e82640e0a46ebbfd54cdb5df6c7cd"
+
+# Carrelli anonimi / user-cart
+[[kv_namespaces]]
+binding = "CART_KV"
+id = "71b3b959e7a7444da82cfd5c31d79d21"
+
+# Archivio utenti WebOnDay
+[[kv_namespaces]]
+binding = "ON_USERS_KV"
+id = "9c574ad4e44b49ad9944dc424fb56346"
+
+# Log attività utenti
+[[kv_namespaces]]
+binding = "ON_ACTIVITY_USER_KV"
+id = "ebfebc35a65748ab9f24534643029618"
+
+# Ordini WebOnDay
+[[kv_namespaces]]
+binding = "ORDER_KV"
+id = "61b8542d46fe4c809b3dfe5ebb9d852a"
