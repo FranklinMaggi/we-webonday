@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { cartStore } from "../../lib/cartStore";
-import "./Navbar.css"; // manterrà solo responsive/mobile, lo puliamo dopo
+import "./navbar.css"; // manterrà solo responsive/mobile, lo puliamo dopo
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
