@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 import WhatsAppButton from "../whatsapp/WhatsAppButton";
-import { PolicyModal } from "../policy/policyModal";
 import { CookieBanner } from "../cookie/CookieBanner";
 
 import { setDocumentTitle } from "../../utils/seo";
@@ -34,7 +33,7 @@ export function MainLayout({
       <WhatsAppButton />
       <Footer />
       <CookieBanner />
-      <PolicyModal />
+     
     </div>
   );
 }

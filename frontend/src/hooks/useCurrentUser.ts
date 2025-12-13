@@ -1,14 +1,15 @@
+// frontend/src/hooks/useCurrentUser.ts
 import { useEffect, useState } from "react";
 
-export interface WebondayUser {
+export interface CurrentUser {
   id: string;
-  email: string;
+  email?: string;
   googleId?: string;
-  createdAt: string;
+  createdAt?: string;
 }
 
 export function useCurrentUser() {
-  const [user, setUser] = useState<WebondayUser | null>(null);
+  const [user, setUser] = useState<CurrentUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,14 +25,12 @@ export function useCurrentUser() {
         );
 
         const out = await res.json();
+
         if (!cancelled) {
-          if (out.ok && out.user) {
-            setUser(out.user);
-          } else {
-            setUser(null);
-          }
+          setUser(out.user ?? null);
         }
-      } catch {
+      } catch (err) {
+        console.error("Errore /api/user/me", err);
         if (!cancelled) setUser(null);
       } finally {
         if (!cancelled) setLoading(false);

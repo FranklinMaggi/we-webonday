@@ -129,13 +129,15 @@ export default {
         return registerProduct(request, env);
           
       // PAYPAL STATS OF PAYMENTS
-      if (pathname === "/api/payment/paypal/create-order" && method === "POST") {
-        return withCors(await createPaypalOrder(request, env));
-      }
-      
-      if (pathname === "/api/payment/paypal/capture-order" && method === "POST") {
-        return withCors(await capturePaypalOrder(request, env));
-      }
+      // PAYPAL PAYMENTS
+        if (pathname === "/api/payment/paypal/create-order" && method === "POST") {
+          return createPaypalOrder(request, env);
+        }
+
+        if (pathname === "/api/payment/paypal/capture-order" && method === "POST") {
+          return capturePaypalOrder(request, env);
+        }
+
       
       // Admin orders list
 if (pathname === "/api/admin/orders/list") {
