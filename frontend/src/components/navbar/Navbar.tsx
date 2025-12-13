@@ -1,17 +1,27 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { cartStore } from "../../lib/cartStore";
-import "./navbar.css"; // manterrà solo responsive/mobile, lo puliamo dopo
+import "./navbar.css";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const cartCount = cartStore((s) => s.items.length);
+  const location = useLocation();
+
+  // Se cartStore è uno store Zustand classico:
+  // const cartCount = cartStore((s) => s.items.length);
+  // Se invece in altri punti usi getState(), manteniamo lo stesso approccio:
+  const cartCount = cartStore.getState().items.length;
+
+  const toggleMenu = () => setOpen((v) => !v);
+  const closeMenu = () => setOpen(false);
+
+  const isActive = (path: string) =>
+    location.pathname.startsWith(path) ? "wd-link-active" : "";
 
   return (
     <nav className="wd-navbar">
-      
       {/* LOGO */}
-      <div className="wd-navbar-logo">
+      <Link to="/" className="wd-navbar-logo" onClick={closeMenu}>
         <img
           src="/icon/favicon.ico"
           alt="Moka Icon"
@@ -22,24 +32,52 @@ export default function Navbar() {
           <span className="we">We</span>
           <span className="webonday">WebOnDay</span>
         </div>
-      </div>
+      </Link>
 
       {/* MOBILE MENU BUTTON */}
-      <button className="menu-btn" onClick={() => setOpen(!open)}>
+      <button
+        className="menu-btn"
+        onClick={toggleMenu}
+        aria-label="Apri/chiudi menu"
+        aria-expanded={open}
+      >
         ☰
       </button>
 
       {/* RIGHT LINKS */}
       <div className={`nav-right ${open ? "open" : ""}`}>
-        <Link to="/vision" className="wd-navbar-link">Vision</Link>
-        <Link to="/mission" className="wd-navbar-link">Mission</Link>
-        <Link to="/user/login" className="wd-navbar-link">Accedi</Link>
+        <Link
+          to="/vision"
+          className={`wd-navbar-link ${isActive("/vision")}`}
+          onClick={closeMenu}
+        >
+          Vision
+        </Link>
 
-        <Link to="/cart" className="wd-navbar-link wd-link-accent">
+        <Link
+          to="/mission"
+          className={`wd-navbar-link ${isActive("/mission")}`}
+          onClick={closeMenu}
+        >
+          Mission
+        </Link>
+
+        <Link
+          to="/user/login"
+          className={`wd-navbar-link ${isActive("/user")}`}
+          onClick={closeMenu}
+        >
+          Accedi
+        </Link>
+
+        <Link
+          to="/cart"
+          className={`wd-navbar-link wd-link-accent ${isActive("/cart")}`}
+          onClick={closeMenu}
+        >
           Carrello ({cartCount})
         </Link>
       </div>
-
     </nav>
   );
 }
