@@ -2,138 +2,162 @@ import { useState, useEffect, useRef } from "react";
 import { getOrCreateVisitorId } from "../../../utils/cookieConsent";
 import { cartStore } from "../../../lib/cartStore";
 
-// ===========================
-// PAYPAL LIVE CLIENT ID
-// ===========================
-const PAYPAL_CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID;
-
-// ===========================
-// UTILS
-// ===========================
-const isValidEmail = (v: string) =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+// Client ID PayPal (NON è segreto, può stare qui)
+const PAYPAL_CLIENT_ID =
+  import.meta.env.VITE_PAYPAL_CLIENT_ID ??
+  "AflIiDW49-yYddybFt68Vr95D6XaUhPpVWE1VdhebTfoyDgHWd6tMCacWd9wkJg9a6iDYiG2HiPNoTJm";
 
 export default function CheckoutPage() {
-  // ===========================
-  // CART
-  // ===========================
   const items = cartStore.getState().items;
   const total = items.reduce((s, i) => s + i.total, 0);
+
   const visitorId = getOrCreateVisitorId();
 
   // ===========================
-  // USER
+  // STATE
   // ===========================
   const [userId, setUserId] = useState<string | null | undefined>(undefined);
+  const [email, setEmail] = useState("");
+  const [piva, setPiva] = useState("");
+  const [businessName, setBusinessName] = useState("");
 
+  // Serve per collegare PayPal → ordine interno
+  const lastOrderIdRef = useRef<string | null>(null);
+  const paypalMountedRef = useRef(false);
+
+  // ===========================
+  // INIZIALIZZAZIONE userId + email da URL / localStorage
+  // ===========================
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
-      const fromUrl = params.get("userId");
-      const stored = localStorage.getItem("webonday_user_v1");
+      const userIdFromUrl = params.get("userId");
+      const emailFromUrl = params.get("email");
 
-      const finalId = fromUrl || stored;
+      const storedUserId = localStorage.getItem("webonday_user_v1");
+      let finalUserId = storedUserId;
 
-      if (fromUrl) {
-        localStorage.setItem("webonday_user_v1", fromUrl);
-        window.history.replaceState({}, "", window.location.pathname);
+      // userId passato da backend dopo login Google → SORGENTE AUTORITARIA
+      if (userIdFromUrl) {
+        finalUserId = userIdFromUrl;
+        localStorage.setItem("webonday_user_v1", userIdFromUrl);
       }
 
-      setUserId(finalId);
+      if (emailFromUrl) {
+        setEmail(emailFromUrl);
+      }
+
+      // pulizia URL (tolgo query param dalla barra)
+      const { origin, pathname } = window.location;
+      window.history.replaceState({}, "", origin + pathname);
+
+      setUserId(finalUserId); // può essere string o null
     } catch {
       setUserId(null);
     }
   }, []);
 
-  // Redirect login
+  // ===========================
+  // PREFILL EMAIL DA /api/user/me (FALLBACK)
+  // ===========================
+  useEffect(() => {
+    // se non ho userId → niente
+    if (!userId) return;
+    // se l'email è già stata settata da query → non chiamo l'API
+    if (email) return;
+
+    async function fetchUserEmail() {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/user/me`,
+          {
+            credentials: "include",
+          }
+        );
+
+        const out = await res.json();
+
+        if (out.ok && out.user?.email) {
+          setEmail(out.user.email);
+        }
+      } catch (err) {
+        console.error("Errore recupero utente", err);
+      }
+    }
+
+    fetchUserEmail();
+  }, [userId, email]);
+
+  // ===========================
+  // REDIRECT AL LOGIN SE NON AUTENTICATO
+  // ===========================
   useEffect(() => {
     if (userId === undefined) return;
+
     if (!userId) {
       window.location.href =
-        "/user/login?redirect=" +
-        encodeURIComponent("/user/checkout");
+        "/user/login?redirect=" + encodeURIComponent("/user/checkout");
     }
   }, [userId]);
 
   // ===========================
-  // PREFILL EMAIL DA GOOGLE
-  // ===========================
-  const [email, setEmail] = useState("");
-
-  useEffect(() => {
-    if (!userId) return;
-
-    fetch(`${import.meta.env.VITE_API_URL}/api/user/me`, {
-      credentials: "include",
-    })
-      .then((r) => r.json())
-      .then((out) => {
-        if (out.ok && out.user?.email) {
-          setEmail(out.user.email);
-        }
-      })
-      .catch(console.error);
-  }, [userId]);
-
-  // ===========================
-  // POLICY
+  // POLICY CHECK
   // ===========================
   useEffect(() => {
     if (!userId) return;
 
-    fetch(
-      `${import.meta.env.VITE_API_URL}/api/policy/status?userId=${userId}`
-    )
-      .then((r) => r.json())
-      .then((out) => {
-        if (!out.accepted) {
-          window.location.href =
-            "/policy?redirect=" +
-            encodeURIComponent("/user/checkout");
-        }
-      });
-  }, [userId]);
+    async function checkPolicy() {
+      const res = await fetch(
+        import.meta.env.VITE_API_URL +
+          "/api/policy/status?userId=" +
+          userId
+      );
+      const out = await res.json();
 
-  // ===========================
-  // FORM
-  // ===========================
-  const [piva, setPiva] = useState("");
-  const [businessName, setBusinessName] = useState("");
-
-  // ===========================
-  // PAYPAL REFS
-  // ===========================
-  const lastOrderIdRef = useRef<string | null>(null);
-  const paypalMountedRef = useRef(false);
-
-  // ===========================
-  // ORDINE MANUALE
-  // ===========================
-  const submitManualOrder = async () => {
-    if (!userId) return alert("Devi essere loggato.");
-    if (!isValidEmail(email)) return alert("Email non valida.");
-
-    const res = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/order`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          visitorId,
-          userId,
-          email,
-          piva,
-          businessName,
-          items,
-          total,
-        }),
+      if (!out.accepted) {
+        window.location.href =
+          "/policy?redirect=" +
+          encodeURIComponent("/user/checkout");
       }
-    );
+    }
+
+    checkPolicy();
+  }, [userId]);
+
+  // ===========================
+  // ORDINE CLASSICO (BONIFICO / MANUALE)
+  // ===========================
+  const submitOrder = async () => {
+    if (!userId) {
+      alert("Devi essere loggato.");
+      return;
+    }
+
+    if (!email) {
+      alert("Inserisci un'email valida.");
+      return;
+    }
+
+    const res = await fetch(import.meta.env.VITE_API_URL + "/api/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        visitorId,
+        userId,
+        email,
+        piva,
+        businessName,
+        items,
+        total,
+      }),
+    });
 
     const out = await res.json();
+
     if (!out.ok) {
-      console.error(out);
-      return alert("Errore creazione ordine.");
+      console.error("Ordine fallito", out);
+      alert("Errore nella creazione dell'ordine.");
+      return;
     }
 
     cartStore.getState().clear();
@@ -141,23 +165,18 @@ export default function CheckoutPage() {
   };
 
   // ===========================
-  // PAYPAL CHECKOUT (LIVE)
+  // PAYPAL CHECKOUT (pagamento diretto)
   // ===========================
   useEffect(() => {
-    if (
-      !userId ||
-      items.length === 0 ||
-      total <= 0 ||
-      !isValidEmail(email) ||
-      paypalMountedRef.current
-    ) {
-      return;
-    }
+    if (!userId || items.length === 0 || total <= 0) return;
+    if (!email) return; // PayPal richiede email
+    if (paypalMountedRef.current) return;
 
-    const config = {
+    const paypalButtonsConfig = {
       createOrder: async () => {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/payment/paypal/create-order`,
+          import.meta.env.VITE_API_URL +
+            "/api/payment/paypal/create-order",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -173,8 +192,9 @@ export default function CheckoutPage() {
         );
 
         const out = await res.json();
+
         if (!out.ok) {
-          console.error(out);
+          console.error("PayPal create-order error", out);
           throw new Error("Create order failed");
         }
 
@@ -184,7 +204,8 @@ export default function CheckoutPage() {
 
       onApprove: async (data: any) => {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/payment/paypal/capture-order`,
+          import.meta.env.VITE_API_URL +
+            "/api/payment/paypal/capture-order",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -196,9 +217,11 @@ export default function CheckoutPage() {
         );
 
         const out = await res.json();
+
         if (!out.ok) {
-          console.error(out);
-          return alert("Errore conferma pagamento.");
+          console.error("PayPal capture error", out);
+          alert("Errore durante la conferma del pagamento.");
+          return;
         }
 
         cartStore.getState().clear();
@@ -208,24 +231,32 @@ export default function CheckoutPage() {
       },
 
       onError: (err: any) => {
-        console.error("PayPal error", err);
+        console.error("PayPal Buttons error", err);
         alert("Errore PayPal.");
       },
     };
 
-    const mount = () => {
+    function mountPaypal() {
       // @ts-ignore
-      window.paypal.Buttons(config).render("#paypal-button-container");
+      window.paypal.Buttons(paypalButtonsConfig).render(
+        "#paypal-button-container"
+      );
       paypalMountedRef.current = true;
-    };
+    }
 
+    // script già in pagina
     // @ts-ignore
-    if (window.paypal) return mount();
+    if (window.paypal) {
+      mountPaypal();
+      return;
+    }
 
+    // carica SDK PayPal
     const script = document.createElement("script");
-    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR`;
+    script.src =
+      `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR`;
     script.async = true;
-    script.onload = mount;
+    script.onload = mountPaypal;
     document.body.appendChild(script);
   }, [userId, email, total, items.length]);
 
@@ -233,12 +264,18 @@ export default function CheckoutPage() {
   // RENDER
   // ===========================
   if (userId === undefined) {
-    return <p>Verifica accesso in corso…</p>;
+    return (
+      <div className="checkout-page">
+        <h1>Checkout</h1>
+        <p>Verifica accesso in corso…</p>
+      </div>
+    );
   }
 
   return (
     <div className="checkout-page">
       <h1>Checkout</h1>
+
       <h3>Totale: € {total.toFixed(2)}</h3>
 
       <input
@@ -259,25 +296,16 @@ export default function CheckoutPage() {
         onChange={(e) => setBusinessName(e.target.value)}
       />
 
-      <button onClick={submitManualOrder} style={{ marginTop: 20 }}>
-        Conferma ordine (manuale)
+      <button onClick={submitOrder} style={{ marginTop: 20 }}>
+        Conferma ordine (bonifico / manuale)
       </button>
 
       <div style={{ marginTop: 32 }}>
         <h3>Paga con PayPal</h3>
-
-        <div
-          style={{
-            opacity: isValidEmail(email) ? 1 : 0.4,
-            pointerEvents: isValidEmail(email) ? "auto" : "none",
-          }}
-        >
-          <div id="paypal-button-container" />
-        </div>
-
-        {!isValidEmail(email) && (
+        <div id="paypal-button-container" />
+        {!email && (
           <p style={{ color: "red" }}>
-            Inserisci un’email valida per procedere con PayPal
+            Inserisci l’email per abilitare PayPal
           </p>
         )}
       </div>

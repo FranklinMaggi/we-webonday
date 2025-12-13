@@ -141,6 +141,7 @@ export async function googleCallback(request: Request, env: Env): Promise<Respon
   // Aggiungo userId nella query string, così il frontend può salvarlo in localStorage
   const redirectUrl = new URL(finalRedirect);
   redirectUrl.searchParams.set("userId", userId);
+  redirectUrl.searchParams.set("email", email);
 
   // ===========================
   // COOKIE SESSIONE
