@@ -11,7 +11,8 @@ export async function googleAuth(request: Request, env: Env): Promise<Response> 
     scope: "openid email profile",
     access_type: "offline",
     prompt: "select_account",
-    state: redirect, // qui può essere path o URL assoluta (localhost, webonday, ecc.)
+    // Può essere path (/user/checkout) o URL assoluta (https://www.webonday.it/user/checkout)
+    state: redirect,
   });
 
   return Response.redirect(
@@ -21,14 +22,25 @@ export async function googleAuth(request: Request, env: Env): Promise<Response> 
 }
 
 export async function googleCallback(request: Request, env: Env): Promise<Response> {
+  // Log di debug (non stampano segreti, solo presenza)
+  console.log("Google callback: CLIENT_ID presente?", !!env.GOOGLE_CLIENT_ID);
+  console.log("Google callback: SECRET presente?", !!env.GOOGLE_CLIENT_SECRET);
+  console.log("Google callback: REDIRECT_URI =", env.GOOGLE_REDIRECT_URI);
+
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const redirectState = url.searchParams.get("state") ?? "/user/checkout";
 
   if (!code) {
-    return new Response("Missing code", { status: 400 });
+    return new Response(
+      JSON.stringify({ ok: false, error: "Missing code" }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
+    );
   }
 
+  // ===========================
+  // SCAMBIO CODE -> TOKEN GOOGLE
+  // ===========================
   const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -41,13 +53,45 @@ export async function googleCallback(request: Request, env: Env): Promise<Respon
     }),
   });
 
-  const tokenJson = (await tokenRes.json()) as { id_token: string };
-  const payload = JSON.parse(atob(tokenJson.id_token.split(".")[1]));
+  if (!tokenRes.ok) {
+    const errText = await tokenRes.text();
+    console.error("Google token error:", tokenRes.status, errText);
 
-  const email = payload.email as string;
-  const googleId = payload.sub as string;
+    return new Response(
+      JSON.stringify({
+        ok: false,
+        error: "Google token error",
+        details: errText,
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
 
-  // Cerca utente esistente nei tuoi archivi ON_USERS_KV
+  const tokenJson = (await tokenRes.json()) as { id_token?: string };
+
+  if (!tokenJson.id_token) {
+    console.error("Google token response senza id_token:", tokenJson);
+    return new Response(
+      JSON.stringify({
+        ok: false,
+        error: "Missing id_token in Google response",
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
+  // ===========================
+  // DECODE ID_TOKEN (JWT)
+  // ===========================
+  const payloadStr = tokenJson.id_token.split(".")[1];
+  const payloadJson = JSON.parse(atob(payloadStr));
+
+  const email = payloadJson.email as string;
+  const googleId = payloadJson.sub as string;
+
+  // ===========================
+  // LOOKUP / CREAZIONE UTENTE
+  // ===========================
   let userId = await env.ON_USERS_KV.get(`google_${googleId}`);
 
   if (!userId) {
@@ -67,10 +111,8 @@ export async function googleCallback(request: Request, env: Env): Promise<Respon
   // ===========================
   // COSTRUZIONE REDIRECT FINALE
   // ===========================
-
-  // Origin consentite (adatta queste stringhe alla tua config reale)
   const allowedOrigins = [
-    env.FRONTEND_URL,              // es. https://webonday.it
+    env.FRONTEND_URL,              // es. https://www.webonday.it
     "http://localhost:5173",       // dev locale
     "https://payment.webonday.it", // futuro sottodominio pagamenti
   ];
@@ -78,7 +120,7 @@ export async function googleCallback(request: Request, env: Env): Promise<Respon
   let finalRedirect: string;
 
   try {
-    // Se redirectState è una URL assoluta, new URL funziona.
+    // Se redirectState è una URL assoluta (es. https://www.webonday.it/user/checkout)
     const maybeUrl = new URL(redirectState);
 
     const originAllowed = allowedOrigins.some(
@@ -86,10 +128,9 @@ export async function googleCallback(request: Request, env: Env): Promise<Respon
     );
 
     if (originAllowed) {
-      // OK: redirect completo come richiesto (es. http://localhost:5173/user/checkout)
       finalRedirect = maybeUrl.toString();
     } else {
-      // Origin non ammessa: fall back a checkout sul FRONTEND_URL
+      // Origin NON ammessa → fallback
       finalRedirect = env.FRONTEND_URL + "/user/checkout";
     }
   } catch {
@@ -97,30 +138,42 @@ export async function googleCallback(request: Request, env: Env): Promise<Respon
     finalRedirect = env.FRONTEND_URL + redirectState;
   }
 
-  // Aggiungo userId alla query string, così il frontend può sincronizzarsi
+  // Aggiungo userId nella query string, così il frontend può salvarlo in localStorage
   const redirectUrl = new URL(finalRedirect);
   redirectUrl.searchParams.set("userId", userId);
+
+  // ===========================
+  // COOKIE SESSIONE
+  // ===========================
   const isLocal = env.FRONTEND_URL.startsWith("http://localhost");
 
-  const cookie = [
+  const cookieParts = [
     `webonday_session=${userId}`,
-    "HttpOnly",
     "Path=/",
-    "Max-Age=2592000",
-    !isLocal && "Secure",
+    "HttpOnly",
+    "Max-Age=2592000", // 30 giorni circa
     "SameSite=None",
-  ].filter(Boolean).join("; ");
-  
+  ];
+
+  if (!isLocal) {
+    cookieParts.push("Secure");
+  }
+
+  const cookieHeader = cookieParts.join("; ");
+
   return new Response(null, {
     status: 302,
     headers: {
-      "Set-Cookie": cookie,
+      "Set-Cookie": cookieHeader,
       "Location": redirectUrl.toString(),
     },
   });
 }
 
-export async function getCurrentUser(request: Request, env: Env): Promise<Response> {
+export async function getCurrentUser(
+  request: Request,
+  env: Env
+): Promise<Response> {
   const cookie = request.headers.get("Cookie") ?? "";
   const match = cookie.match(/webonday_session=([^;]+)/);
 

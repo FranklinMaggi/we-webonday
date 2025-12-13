@@ -7,7 +7,7 @@ compatibility_date = "2025-12-08"
 # ============================
 [vars]
 ADMIN_TOKEN = "x8F9s0Dk22_A!nd92LkkF0293jf8FN33ss8ffW0"
-FRONTEND_URL = "https://webonday.it"
+FRONTEND_URL = "https://www.webonday.it"
 GOOGLE_CLIENT_ID = "779755703612-3b1vcbkbvekjq80k4q1508h4efev7jac.apps.googleusercontent.com"
 GOOGLE_REDIRECT_URI = "https://we-webonday-backend.franklin19.workers.dev/api/user/google/callback"
 
