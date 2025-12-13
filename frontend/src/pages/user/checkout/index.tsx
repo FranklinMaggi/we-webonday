@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { getOrCreateVisitorId } from "../../../utils/cookieConsent";
 import { cartStore } from "../../../lib/cartStore";
+import { useCurrentUser } from "../../../hooks/useCurrentUser";
 
 // Client ID PayPal (NON è segreto, può stare qui)
 const PAYPAL_CLIENT_ID =
@@ -8,15 +9,19 @@ const PAYPAL_CLIENT_ID =
   "AflIiDW49-yYddybFt68Vr95D6XaUhPpVWE1VdhebTfoyDgHWd6tMCacWd9wkJg9a6iDYiG2HiPNoTJm";
 
 export default function CheckoutPage() {
+  // ===========================
+  // CARRELLO
+  // ===========================
   const items = cartStore.getState().items;
   const total = items.reduce((s, i) => s + i.total, 0);
-
   const visitorId = getOrCreateVisitorId();
 
   // ===========================
-  // STATE
+  // UTENTE CORRENTE (sessione Google)
   // ===========================
-  const [userId, setUserId] = useState<string | null | undefined>(undefined);
+  const { user, loading } = useCurrentUser();
+
+  const [userId, setUserId] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [piva, setPiva] = useState("");
   const [businessName, setBusinessName] = useState("");
@@ -26,98 +31,54 @@ export default function CheckoutPage() {
   const paypalMountedRef = useRef(false);
 
   // ===========================
-  // INIZIALIZZAZIONE userId + email da URL / localStorage
+  // STEP 1: forza login con Google e pre‐compila email
   // ===========================
   useEffect(() => {
+    if (loading) return;
+
+    // Non loggato → reindirizza verso Google OAuth
+    if (!user) {
+      const redirectUrl = window.location.origin + "/user/checkout";
+      const loginUrl =
+        `${import.meta.env.VITE_API_URL}/api/user/google/auth?redirect=` +
+        encodeURIComponent(redirectUrl);
+
+      window.location.href = loginUrl;
+      return;
+    }
+
+    // Loggato → abbiamo user.id + email
+    setUserId(user.id);
     try {
-      const params = new URLSearchParams(window.location.search);
-      const userIdFromUrl = params.get("userId");
-      const emailFromUrl = params.get("email");
-
-      const storedUserId = localStorage.getItem("webonday_user_v1");
-      let finalUserId = storedUserId;
-
-      // userId passato da backend dopo login Google → SORGENTE AUTORITARIA
-      if (userIdFromUrl) {
-        finalUserId = userIdFromUrl;
-        localStorage.setItem("webonday_user_v1", userIdFromUrl);
-      }
-
-      if (emailFromUrl) {
-        setEmail(emailFromUrl);
-      }
-
-      // pulizia URL (tolgo query param dalla barra)
-      const { origin, pathname } = window.location;
-      window.history.replaceState({}, "", origin + pathname);
-
-      setUserId(finalUserId); // può essere string o null
+      localStorage.setItem("webonday_user_v1", user.id);
     } catch {
-      setUserId(null);
-    }
-  }, []);
-
-  // ===========================
-  // PREFILL EMAIL DA /api/user/me (FALLBACK)
-  // ===========================
-  useEffect(() => {
-    // se non ho userId → niente
-    if (!userId) return;
-    // se l'email è già stata settata da query → non chiamo l'API
-    if (email) return;
-
-    async function fetchUserEmail() {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/user/me`,
-          {
-            credentials: "include",
-          }
-        );
-
-        const out = await res.json();
-
-        if (out.ok && out.user?.email) {
-          setEmail(out.user.email);
-        }
-      } catch (err) {
-        console.error("Errore recupero utente", err);
-      }
+      // se localStorage non è disponibile, pazienza
     }
 
-    fetchUserEmail();
-  }, [userId, email]);
-
-  // ===========================
-  // REDIRECT AL LOGIN SE NON AUTENTICATO
-  // ===========================
-  useEffect(() => {
-    if (userId === undefined) return;
-
-    if (!userId) {
-      window.location.href =
-        "/user/login?redirect=" + encodeURIComponent("/user/checkout");
+    if (user.email) {
+      setEmail(user.email);
     }
-  }, [userId]);
+  }, [user, loading]);
 
   // ===========================
-  // POLICY CHECK
+  // STEP 2: controllo policy dopo login
   // ===========================
   useEffect(() => {
     if (!userId) return;
 
     async function checkPolicy() {
-      const res = await fetch(
-        import.meta.env.VITE_API_URL +
-          "/api/policy/status?userId=" +
-          userId
-      );
-      const out = await res.json();
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/policy/status?userId=${userId}`
+        );
+        const out = await res.json();
 
-      if (!out.accepted) {
-        window.location.href =
-          "/policy?redirect=" +
-          encodeURIComponent("/user/checkout");
+        if (!out.accepted) {
+          window.location.href =
+            "/policy?redirect=" + encodeURIComponent("/user/checkout");
+        }
+      } catch (err) {
+        console.error("Errore policy check", err);
       }
     }
 
@@ -125,7 +86,7 @@ export default function CheckoutPage() {
   }, [userId]);
 
   // ===========================
-  // ORDINE CLASSICO (BONIFICO / MANUALE)
+  // ORDINE CLASSICO (bonifico / manuale)
   // ===========================
   const submitOrder = async () => {
     if (!userId) {
@@ -138,36 +99,42 @@ export default function CheckoutPage() {
       return;
     }
 
-    const res = await fetch(import.meta.env.VITE_API_URL + "/api/order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        visitorId,
-        userId,
-        email,
-        piva,
-        businessName,
-        items,
-        total,
-      }),
-    });
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          visitorId,
+          userId,
+          email,
+          piva,
+          businessName,
+          items,
+          total,
+        }),
+      });
 
-    const out = await res.json();
+      const out = await res.json();
 
-    if (!out.ok) {
-      console.error("Ordine fallito", out);
-      alert("Errore nella creazione dell'ordine.");
-      return;
+      if (!out.ok) {
+        console.error("Ordine fallito", out);
+        alert("Errore nella creazione dell'ordine.");
+        return;
+      }
+
+      cartStore.getState().clear();
+      window.location.href = "/thankyou";
+    } catch (err) {
+      console.error("Errore submitOrder", err);
+      alert("Errore imprevisto nella creazione dell'ordine.");
     }
-
-    cartStore.getState().clear();
-    window.location.href = "/thankyou";
   };
 
   // ===========================
   // PAYPAL CHECKOUT (pagamento diretto)
   // ===========================
   useEffect(() => {
+    // condizioni minime per montare PayPal
     if (!userId || items.length === 0 || total <= 0) return;
     if (!email) return; // PayPal richiede email
     if (paypalMountedRef.current) return;
@@ -175,8 +142,7 @@ export default function CheckoutPage() {
     const paypalButtonsConfig = {
       createOrder: async () => {
         const res = await fetch(
-          import.meta.env.VITE_API_URL +
-            "/api/payment/paypal/create-order",
+          `${import.meta.env.VITE_API_URL}/api/payment/paypal/create-order`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -203,31 +169,35 @@ export default function CheckoutPage() {
       },
 
       onApprove: async (data: any) => {
-        const res = await fetch(
-          import.meta.env.VITE_API_URL +
-            "/api/payment/paypal/capture-order",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              paypalOrderId: data.orderID,
-              orderId: lastOrderIdRef.current,
-            }),
+        try {
+          const res = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/payment/paypal/capture-order`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                paypalOrderId: data.orderID,
+                orderId: lastOrderIdRef.current,
+              }),
+            }
+          );
+
+          const out = await res.json();
+
+          if (!out.ok) {
+            console.error("PayPal capture error", out);
+            alert("Errore durante la conferma del pagamento.");
+            return;
           }
-        );
 
-        const out = await res.json();
-
-        if (!out.ok) {
-          console.error("PayPal capture error", out);
-          alert("Errore durante la conferma del pagamento.");
-          return;
+          cartStore.getState().clear();
+          window.location.href =
+            "/thankyou?orderId=" +
+            encodeURIComponent(lastOrderIdRef.current ?? "");
+        } catch (err) {
+          console.error("Errore onApprove PayPal", err);
+          alert("Errore imprevisto durante la conferma del pagamento.");
         }
-
-        cartStore.getState().clear();
-        window.location.href =
-          "/thankyou?orderId=" +
-          encodeURIComponent(lastOrderIdRef.current!);
       },
 
       onError: (err: any) => {
@@ -244,34 +214,45 @@ export default function CheckoutPage() {
       paypalMountedRef.current = true;
     }
 
-    // script già in pagina
+    // Script già caricato
     // @ts-ignore
     if (window.paypal) {
       mountPaypal();
       return;
     }
 
-    // carica SDK PayPal
+    // Carico SDK PayPal
     const script = document.createElement("script");
-    script.src =
-      `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR`;
+    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR`;
     script.async = true;
     script.onload = mountPaypal;
     document.body.appendChild(script);
   }, [userId, email, total, items.length]);
 
   // ===========================
-  // RENDER
+  // SCHERMATE DI CARICAMENTO
   // ===========================
-  if (userId === undefined) {
+  if (loading || !userId) {
     return (
       <div className="checkout-page">
         <h1>Checkout</h1>
-        <p>Verifica accesso in corso…</p>
+        <p>Prepariamo il tuo account…</p>
       </div>
     );
   }
 
+  if (items.length === 0) {
+    return (
+      <div className="checkout-page">
+        <h1>Checkout</h1>
+        <p>Il carrello è vuoto.</p>
+      </div>
+    );
+  }
+
+  // ===========================
+  // RENDER NORMALE
+  // ===========================
   return (
     <div className="checkout-page">
       <h1>Checkout</h1>
