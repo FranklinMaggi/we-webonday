@@ -6,7 +6,7 @@ export default function WhatsAppButton() {
       target="_blank"
       rel="noreferrer"
     >
-      <img src="../../public/icon/WhatsApp.png" alt="WhatsApp" />
+      <img src="../../../public/icon/WhatsApp.png" alt="WhatsApp" />
     </a>
   );
 }
