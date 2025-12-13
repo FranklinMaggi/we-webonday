@@ -6,6 +6,23 @@ import type { CartItemDTO } from "../schemas/cartSchema";
 // Helper: PayPal Access Token
 // ==========================
 async function getPaypalAccessToken(env: Env): Promise<string> {
+  // Log diagnostico (non stampa mai valori segreti)
+  console.log("PayPal env check", {
+    clientIdPresent: !!env.PAYPAL_CLIENT_ID,
+    secretPresent: !!env.PAYPAL_SECRET,
+    apiBase: env.PAYPAL_API_BASE,
+  });
+
+  // Controllo preliminare env
+  if (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_SECRET || !env.PAYPAL_API_BASE) {
+    console.error("Missing PayPal configuration", {
+      clientIdPresent: !!env.PAYPAL_CLIENT_ID,
+      secretPresent: !!env.PAYPAL_SECRET,
+      apiBase: env.PAYPAL_API_BASE,
+    });
+    throw new Error("Missing PayPal configuration");
+  }
+
   const creds = btoa(`${env.PAYPAL_CLIENT_ID}:${env.PAYPAL_SECRET}`);
 
   const res = await fetch(`${env.PAYPAL_API_BASE}/v1/oauth2/token`, {
@@ -71,7 +88,7 @@ export async function createPaypalOrder(
     createdAt: new Date().toISOString(),
   };
 
-  // 👉 QUI eviti per SEMPRE "Order validation failed"
+  // Validazione con Zod
   const order = OrderSchema.parse(orderRaw);
 
   await env.ORDER_KV.put(`ORDER:${orderId}`, JSON.stringify(order));
@@ -103,7 +120,7 @@ export async function createPaypalOrder(
     const txt = await paypalRes.text();
     console.error("PayPal create order error:", txt);
     return new Response(
-      JSON.stringify({ ok: false, error: "PayPal create error" }),
+      JSON.stringify({ ok: false, error: "PayPal create error", details: txt }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
@@ -170,7 +187,7 @@ export async function capturePaypalOrder(
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: "{}",
+      body: "{}", // body vuoto, come da API PayPal
     }
   );
 
@@ -178,7 +195,7 @@ export async function capturePaypalOrder(
     const txt = await capRes.text();
     console.error("PayPal capture error:", txt);
     return new Response(
-      JSON.stringify({ ok: false, error: "PayPal capture error" }),
+      JSON.stringify({ ok: false, error: "PayPal capture error", details: txt }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
