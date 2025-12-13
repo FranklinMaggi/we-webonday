@@ -49,35 +49,51 @@ import {
 import { requireAdmin } from "./lib/adminAuth";
 
 /* ============================
-   CORS (UNICO PUNTO)
+   CORS — UNICO PUNTO
 ============================ */
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Content-Type, Authorization, x-admin-token",
-};
+export function getCorsHeaders(request: Request, env: Env): Record<string, string> {
+  const origin = request.headers.get("Origin");
 
-function withCors(res: Response): Response {
-  const headers = new Headers(res.headers);
-  for (const [k, v] of Object.entries(CORS_HEADERS)) {
+  const allowedOrigins = [
+    env.FRONTEND_URL,
+    "http://localhost:5173",
+  ];
+
+  if (origin && allowedOrigins.includes(origin)) {
+    return {
+      "Access-Control-Allow-Origin": origin,
+      "Access-Control-Allow-Credentials": "true",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
+      "Access-Control-Allow-Headers":
+        "Content-Type, Authorization, x-admin-token",
+    };
+  }
+
+  return {
+    "Access-Control-Allow-Origin": env.FRONTEND_URL,
+    "Access-Control-Allow-Credentials": "true",
+  };
+}
+
+function json(
+  body: unknown,
+  request: Request,
+  env: Env,
+  status = 200
+): Response {
+  const headers = new Headers({
+    "Content-Type": "application/json",
+  });
+
+  const cors = getCorsHeaders(request, env);
+  for (const [k, v] of Object.entries(cors)) {
     headers.set(k, v);
   }
 
-  return new Response(res.body, {
-    status: res.status,
-    statusText: res.statusText,
+  return new Response(JSON.stringify(body), {
+    status,
     headers,
   });
-}
-
-function json(body: unknown, status = 200): Response {
-  return withCors(
-    new Response(JSON.stringify(body), {
-      status,
-      headers: { "Content-Type": "application/json" },
-    })
-  );
 }
 
 /* ============================
@@ -92,139 +108,114 @@ export default {
     if (method === "OPTIONS") {
       return new Response(null, {
         status: 204,
-        headers: CORS_HEADERS,
+        headers: new Headers(getCorsHeaders(request, env)),
       });
     }
 
     try {
       /* ===== AUTH ===== */
       if (pathname === "/api/user/google/auth" && method === "GET") {
-        return withCors(await googleAuth(request, env));
+        const res = await googleAuth(request, env);
+        const headers = new Headers(res.headers);
+
+        const cors = getCorsHeaders(request, env);
+        for (const [k, v] of Object.entries(cors)) {
+          headers.set(k, v);
+        }
+
+        return new Response(res.body, {
+          status: res.status,
+          headers,
+        });
       }
 
       if (pathname === "/api/user/google/callback" && method === "GET") {
-        return withCors(await googleCallback(request, env));
+        const res = await googleCallback(request, env);
+        const headers = new Headers(res.headers);
+
+        const cors = getCorsHeaders(request, env);
+        for (const [k, v] of Object.entries(cors)) {
+          headers.set(k, v);
+        }
+
+        return new Response(res.body, {
+          status: res.status,
+          headers,
+        });
       }
 
       if (pathname === "/api/user/me" && method === "GET") {
-        return withCors(await getCurrentUser(request, env));
+        const res = await getCurrentUser(request, env);
+        const headers = new Headers(res.headers);
+
+        const cors = getCorsHeaders(request, env);
+        for (const [k, v] of Object.entries(cors)) {
+          headers.set(k, v);
+        }
+
+        return new Response(res.body, {
+          status: res.status,
+          headers,
+        });
       }
 
       /* ===== CART ===== */
-      if (pathname === "/api/cart" && method === "POST") {
-        return withCors(await createCart(request, env));
-      }
+      if (pathname === "/api/cart" && method === "POST") return await createCart(request, env);
+      if (pathname === "/api/cart" && method === "GET") return await getCart(request, env);
+      if (pathname === "/api/cart" && method === "PUT") return await updateCart(request, env);
+      if (pathname === "/api/cart/user" && method === "PUT") return await saveUserCart(request, env);
+      if (pathname === "/api/cart/user" && method === "GET") return await getUserCart(request, env);
 
-      if (pathname === "/api/cart" && method === "GET") {
-        return withCors(await getCart(request, env));
-      }
+      /* ===== ORDERS ===== */
+      if (pathname === "/api/order" && method === "POST") return await createOrder(request, env);
+      if (pathname === "/api/order" && method === "GET") return await getOrder(request, env);
+      if (pathname === "/api/orders/list" && method === "GET") return await listOrders(request, env);
 
-      if (pathname === "/api/cart" && method === "PUT") {
-        return withCors(await updateCart(request, env));
-      }
-
-      if (pathname === "/api/cart/user" && method === "PUT") {
-        return withCors(await saveUserCart(request, env));
-      }
-
-      if (pathname === "/api/cart/user" && method === "GET") {
-        return withCors(await getUserCart(request, env));
-      }
-
-      /* ===== ORDERS (PUBLIC) ===== */
-      if (pathname === "/api/order" && method === "POST") {
-        return withCors(await createOrder(request, env));
-      }
-
-      if (pathname === "/api/order" && method === "GET") {
-        return withCors(await getOrder(request, env));
-      }
-
-      if (pathname === "/api/orders/list" && method === "GET") {
-        return withCors(await listOrders(request, env));
-      }
-
-      /* ===== ORDERS (ADMIN) ===== */
+      /* ===== ADMIN ===== */
       if (pathname === "/api/admin/orders/list" && method === "GET") {
         const denied = requireAdmin(request, env);
-        if (denied) return withCors(denied);
-        return withCors(await listOrders(request, env));
+        if (denied) return denied;
+        return await listOrders(request, env);
       }
 
       if (pathname === "/api/admin/order" && method === "GET") {
         const denied = requireAdmin(request, env);
-        if (denied) return withCors(denied);
-        return withCors(await getOrder(request, env));
+        if (denied) return denied;
+        return await getOrder(request, env);
       }
 
       /* ===== PRODUCTS ===== */
-      if (pathname === "/api/products" && method === "GET") {
-        return withCors(await getProducts(env));
-      }
-
-      if (pathname === "/api/product" && method === "GET") {
-        return withCors(await getProduct(request, env));
-      }
-
-      if (pathname === "/api/products/register" && method === "PUT") {
-        return withCors(await registerProduct(request, env));
-      }
+      if (pathname === "/api/products" && method === "GET") return await getProducts(env);
+      if (pathname === "/api/product" && method === "GET") return await getProduct(request, env);
+      if (pathname === "/api/products/register" && method === "PUT") return await registerProduct(request, env);
 
       /* ===== POLICY ===== */
-      if (pathname === "/api/policy/version/register" && method === "POST") {
-        return withCors(await registerPolicyVersion(request, env));
-      }
-
-      if (pathname === "/api/policy/version/latest" && method === "GET") {
-        return withCors(await getLatestPolicy(env));
-      }
-
-      if (pathname === "/api/policy/version/get" && method === "GET") {
-        return withCors(await getPolicyVersion(request, env));
-      }
-
-      if (pathname === "/api/policy/version/list" && method === "GET") {
-        return withCors(await listPolicyVersions(env));
-      }
-
-      if (pathname === "/api/policy/accept" && method === "POST") {
-        return withCors(await acceptPolicy(request, env));
-      }
-
-      if (pathname === "/api/policy/status" && method === "GET") {
-        return withCors(await getPolicyStatus(request, env));
-      }
+      if (pathname === "/api/policy/version/register" && method === "POST") return await registerPolicyVersion(request, env);
+      if (pathname === "/api/policy/version/latest" && method === "GET") return await getLatestPolicy(env);
+      if (pathname === "/api/policy/version/get" && method === "GET") return await getPolicyVersion(request, env);
+      if (pathname === "/api/policy/version/list" && method === "GET") return await listPolicyVersions(env);
+      if (pathname === "/api/policy/accept" && method === "POST") return await acceptPolicy(request, env);
+      if (pathname === "/api/policy/status" && method === "GET") return await getPolicyStatus(request, env);
 
       /* ===== COOKIES ===== */
-      if (pathname === "/api/cookies/accept" && method === "POST") {
-        return withCors(await acceptCookies(request, env));
-      }
-
-      if (pathname === "/api/cookies/status" && method === "GET") {
-        return withCors(await getCookieStatus(request, env));
-      }
+      if (pathname === "/api/cookies/accept" && method === "POST") return await acceptCookies(request, env);
+      if (pathname === "/api/cookies/status" && method === "GET") return await getCookieStatus(request, env);
 
       /* ===== PAYPAL ===== */
-      if (
-        pathname === "/api/payment/paypal/create-order" &&
-        method === "POST"
-      ) {
-        return withCors(await createPaypalOrder(request, env));
-      }
+      if (pathname === "/api/payment/paypal/create-order" && method === "POST")
+        return await createPaypalOrder(request, env);
 
-      if (
-        pathname === "/api/payment/paypal/capture-order" &&
-        method === "POST"
-      ) {
-        return withCors(await capturePaypalOrder(request, env));
-      }
+      if (pathname === "/api/payment/paypal/capture-order" && method === "POST")
+        return await capturePaypalOrder(request, env);
 
       /* ===== 404 ===== */
-      return json({ ok: false, error: "Not Found" }, 404);
+      return json({ ok: false, error: "Not Found" }, request, env, 404);
     } catch (err: any) {
       console.error("Unhandled error:", err);
       return json(
         { ok: false, error: err?.message ?? "Internal error" },
+        request,
+        env,
         500
       );
     }

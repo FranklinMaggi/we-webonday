@@ -2,16 +2,10 @@ import type { Env } from "../types/env";
 
 import { UserSchema, UserInputSchema } from "../schemas/userSchema";
 
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-};
-
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json", ...CORS },
+    headers: { "Content-Type": "application/json"},
   });
 }
 

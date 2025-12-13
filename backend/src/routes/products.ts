@@ -3,18 +3,12 @@ import type { Env } from "../types/env";
 import { normalizeProduct } from "../normalizers/normalizeProduct";
 import { ProductSchema } from "../schemas/productSchema";
 
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
-      "Content-Type": "application/json",
-      ...CORS_HEADERS,
+      "Content-Type": "application/json"
     },
   });
 }

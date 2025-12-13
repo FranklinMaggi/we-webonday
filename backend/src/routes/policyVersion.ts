@@ -1,16 +1,10 @@
 import type { Env } from "../types/env";
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
-      "Content-Type": "application/json",
-      ...CORS_HEADERS,
+      "Content-Type": "application/json"
     },
   });
 }
@@ -74,8 +68,8 @@ export async function getLatestPolicy(env: Env) {
   
   return new Response(data, {
     headers: {
-      "Content-Type": "application/json",
-      ...CORS_HEADERS,
+      "Content-Type": "application/json"
+     
     },
   });
 }
@@ -91,7 +85,6 @@ export async function getPolicyVersion(request: Request, env: Env) {
   return new Response(data, {
     headers: {
       "Content-Type": "application/json",
-      ...CORS_HEADERS,
     },
   });
 }

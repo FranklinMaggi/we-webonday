@@ -1,16 +1,11 @@
 // backend/src/routes/orders.ts
 import type { Env } from "../types/env";
 
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json", ...CORS },
+    headers: { "Content-Type": "application/json"},
   });
 }
 
@@ -22,7 +17,7 @@ export async function listOrders(
   env: Env
 ): Promise<Response> {
   if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: CORS });
+    return new Response(null, { status: 204});
   }
 
   const list = await env.ORDER_KV.list({ prefix: "ORDER:" });
@@ -50,7 +45,7 @@ export async function getOrder(
   env: Env
 ): Promise<Response> {
   if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: CORS });
+    return new Response(null, { status: 204 });
   }
 
   const url = new URL(request.url);

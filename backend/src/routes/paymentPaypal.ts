@@ -3,16 +3,11 @@ import type { Env } from "../types/env";
 import { OrderSchema } from "../schemas/orderSchema";
 import type { CartItemDTO } from "../schemas/cartSchema";
 
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json", ...CORS },
+    headers: { "Content-Type": "application/json"},
   });
 }
 
@@ -64,7 +59,7 @@ export async function createPaypalOrder(
   env: Env
 ): Promise<Response> {
   if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: CORS });
+    return new Response(null, { status: 204});
   }
 
   const body = (await request.json()) as {
@@ -177,7 +172,7 @@ export async function capturePaypalOrder(
   env: Env
 ): Promise<Response> {
   if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: CORS });
+    return new Response(null, { status: 204});
   }
 
   const body = (await request.json()) as {

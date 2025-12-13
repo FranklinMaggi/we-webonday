@@ -1,7 +1,14 @@
-//backend/src/routes/userGoogle.ts
+// backend/src/routes/userGoogle.ts
 import type { Env } from "../types/env";
+import { getCorsHeaders } from "../index";
 
-export async function googleAuth(request: Request, env: Env): Promise<Response> {
+/* ============================
+   GOOGLE AUTH
+============================ */
+export async function googleAuth(
+  request: Request,
+  env: Env
+): Promise<Response> {
   const url = new URL(request.url);
   const redirect = url.searchParams.get("redirect") ?? "/user/checkout";
 
@@ -10,38 +17,42 @@ export async function googleAuth(request: Request, env: Env): Promise<Response> 
     redirect_uri: env.GOOGLE_REDIRECT_URI,
     response_type: "code",
     scope: "openid email profile",
-    access_type: "offline",
     prompt: "select_account",
-    // Può essere path (/user/checkout) o URL assoluta (https://www.webonday.it/user/checkout)
     state: redirect,
   });
 
-  return Response.redirect(
-    "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString(),
-    302
-  );
+  const headers = new Headers({
+    Location:
+      "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString(),
+  });
+
+  const cors = getCorsHeaders(request, env);
+  for (const [k, v] of Object.entries(cors)) {
+    headers.set(k, v);
+  }
+
+  return new Response(null, {
+    status: 302,
+    headers,
+  });
 }
 
-export async function googleCallback(request: Request, env: Env): Promise<Response> {
-  // Log di debug (non stampano segreti, solo presenza)
-  console.log("Google callback: CLIENT_ID presente?", !!env.GOOGLE_CLIENT_ID);
-  console.log("Google callback: SECRET presente?", !!env.GOOGLE_CLIENT_SECRET);
-  console.log("Google callback: REDIRECT_URI =", env.GOOGLE_REDIRECT_URI);
-
+/* ============================
+   GOOGLE CALLBACK
+============================ */
+export async function googleCallback(
+  request: Request,
+  env: Env
+): Promise<Response> {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const redirectState = url.searchParams.get("state") ?? "/user/checkout";
 
   if (!code) {
-    return new Response(
-      JSON.stringify({ ok: false, error: "Missing code" }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
-    );
+    return json({ ok: false, error: "Missing code" }, request, env, 400);
   }
 
-  // ===========================
-  // SCAMBIO CODE -> TOKEN GOOGLE
-  // ===========================
+  /* ===== TOKEN EXCHANGE ===== */
   const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -55,123 +66,93 @@ export async function googleCallback(request: Request, env: Env): Promise<Respon
   });
 
   if (!tokenRes.ok) {
-    const errText = await tokenRes.text();
-    console.error("Google token error:", tokenRes.status, errText);
-
-    return new Response(
-      JSON.stringify({
-        ok: false,
-        error: "Google token error",
-        details: errText,
-      }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    console.error("Google token error:", await tokenRes.text());
+    return json({ ok: false, error: "Google token error" }, request, env, 500);
   }
 
   const tokenJson = (await tokenRes.json()) as { id_token?: string };
 
   if (!tokenJson.id_token) {
-    console.error("Google token response senza id_token:", tokenJson);
-    return new Response(
-      JSON.stringify({
-        ok: false,
-        error: "Missing id_token in Google response",
-      }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return json({ ok: false, error: "Missing id_token" }, request, env, 500);
   }
 
-  // ===========================
-  // DECODE ID_TOKEN (JWT)
-  // ===========================
-  const payloadStr = tokenJson.id_token.split(".")[1];
-  const payloadJson = JSON.parse(atob(payloadStr));
+  /* ===== DECODE JWT ===== */
+  const payload = JSON.parse(atob(tokenJson.id_token.split(".")[1]));
+  const email = payload.email as string;
+  const googleId = payload.sub as string;
 
-  const email = payloadJson.email as string;
-  const googleId = payloadJson.sub as string;
-
-  // ===========================
-  // LOOKUP / CREAZIONE UTENTE
-  // ===========================
+  /* ===== USER LOOKUP / CREATE ===== */
   let userId = await env.ON_USERS_KV.get(`google_${googleId}`);
 
   if (!userId) {
     userId = crypto.randomUUID();
 
-    const userObj = {
-      id: userId,
-      email,
-      googleId,
-      createdAt: new Date().toISOString(),
-    };
+    await env.ON_USERS_KV.put(
+      `user_${userId}`,
+      JSON.stringify({
+        id: userId,
+        email,
+        googleId,
+        createdAt: new Date().toISOString(),
+      })
+    );
 
-    await env.ON_USERS_KV.put(`user_${userId}`, JSON.stringify(userObj));
     await env.ON_USERS_KV.put(`google_${googleId}`, userId);
   }
 
-  // ===========================
-  // COSTRUZIONE REDIRECT FINALE
-  // ===========================
-  const allowedOrigins = [
-    env.FRONTEND_URL,              // es. https://www.webonday.it
-    "http://localhost:5173",       // dev locale
-    "https://payment.webonday.it", // futuro sottodominio pagamenti
-  ];
-
-  let finalRedirect: string;
+  /* ===== SAFE REDIRECT ===== */
+  let finalRedirect = env.FRONTEND_URL + "/user/checkout";
 
   try {
-    // Se redirectState è una URL assoluta (es. https://www.webonday.it/user/checkout)
-    const maybeUrl = new URL(redirectState);
-
-    const originAllowed = allowedOrigins.some(
-      (origin) => maybeUrl.origin === origin
-    );
-
-    if (originAllowed) {
-      finalRedirect = maybeUrl.toString();
-    } else {
-      // Origin NON ammessa → fallback
-      finalRedirect = env.FRONTEND_URL + "/user/checkout";
+    const u = new URL(redirectState);
+    if ([env.FRONTEND_URL, "http://localhost:5173"].includes(u.origin)) {
+      finalRedirect = u.toString();
     }
   } catch {
-    // redirectState NON è una URL assoluta → lo tratto come path
     finalRedirect = env.FRONTEND_URL + redirectState;
   }
 
-  // Aggiungo userId nella query string, così il frontend può salvarlo in localStorage
   const redirectUrl = new URL(finalRedirect);
-  redirectUrl.searchParams.set("userId", userId);
   redirectUrl.searchParams.set("email", email);
 
-  // ===========================
-  // COOKIE SESSIONE
-  // ===========================
+  /* ===== SESSION COOKIE ===== */
   const isLocal = env.FRONTEND_URL.startsWith("http://localhost");
 
   const cookieParts = [
     `webonday_session=${userId}`,
     "Path=/",
     "HttpOnly",
-    "Max-Age=2592000", // 30 giorni circa
-    "SameSite=None",
+    "Max-Age=2592000",
+    `Domain=${new URL(env.FRONTEND_URL).hostname}`,
   ];
+  
 
-  if (!isLocal) {
+  if (isLocal) {
+    cookieParts.push("SameSite=Lax");
+  } else {
+    cookieParts.push("SameSite=None");
     cookieParts.push("Secure");
   }
 
-  const cookieHeader = cookieParts.join("; ");
+  const headers = new Headers({
+    "Set-Cookie": cookieParts.join("; "),
+    Location: redirectUrl.toString(),
+  });
+
+  const cors = getCorsHeaders(request, env);
+  for (const [k, v] of Object.entries(cors)) {
+    headers.set(k, v);
+  }
 
   return new Response(null, {
     status: 302,
-    headers: {
-      "Set-Cookie": cookieHeader,
-      "Location": redirectUrl.toString(),
-    },
+    headers,
   });
 }
 
+/* ============================
+   GET CURRENT USER
+============================ */
 export async function getCurrentUser(
   request: Request,
   env: Env
@@ -179,21 +160,48 @@ export async function getCurrentUser(
   const cookie = request.headers.get("Cookie") ?? "";
   const match = cookie.match(/webonday_session=([^;]+)/);
 
-  if (!match) {
-    return new Response(
-      JSON.stringify({ ok: true, user: null }),
-      { headers: { "Content-Type": "application/json" } }
-    );
+  let user = null;
+
+  if (match) {
+    const raw = await env.ON_USERS_KV.get(`user_${match[1]}`);
+    if (raw) user = JSON.parse(raw);
   }
 
-  const userId = match[1];
-  const raw = await env.ON_USERS_KV.get(`user_${userId}`);
+  const headers = new Headers({
+    "Content-Type": "application/json",
+  });
+
+  const cors = getCorsHeaders(request, env);
+  for (const [k, v] of Object.entries(cors)) {
+    headers.set(k, v);
+  }
 
   return new Response(
-    JSON.stringify({
-      ok: true,
-      user: raw ? JSON.parse(raw) : null,
-    }),
-    { headers: { "Content-Type": "application/json" } }
+    JSON.stringify({ ok: true, user }),
+    { headers }
   );
+}
+
+/* ============================
+   JSON HELPER
+============================ */
+function json(
+  body: unknown,
+  request: Request,
+  env: Env,
+  status = 200
+): Response {
+  const headers = new Headers({
+    "Content-Type": "application/json",
+  });
+
+  const cors = getCorsHeaders(request, env);
+  for (const [k, v] of Object.entries(cors)) {
+    headers.set(k, v);
+  }
+
+  return new Response(JSON.stringify(body), {
+    status,
+    headers,
+  });
 }
