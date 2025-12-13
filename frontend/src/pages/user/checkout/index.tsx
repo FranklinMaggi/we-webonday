@@ -1,6 +1,9 @@
-import { useState, useEffect, useRef } from "react";
-import { getOrCreateVisitorId } from "../../../utils/cookieConsent";
-import { cartStore } from "../../../lib/cartStore";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { cartStore, type CartItem } from "../../../lib/cartStore";
+import { getCurrentUser, getGoogleLoginUrl, type CurrentUser } from "../../../lib/authApi";
+import { createOrder } from "../../../lib/ordersApi";
+import { fetchLatestPolicy, acceptPolicyApi } from "../../../lib/policyApi";
+import { loadPaypalSdk, mountPaypalButtons } from "../../../lib/payments/paypal";
 import "./checkout.css";
 
 const PAYPAL_CLIENT_ID =
@@ -9,13 +12,61 @@ const PAYPAL_CLIENT_ID =
 
 type PendingAction = "order" | "paypal" | null;
 
+function isValidEmail(v: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+}
+
 export default function CheckoutPage() {
-  const items = cartStore.getState().items;
-  const total = items.reduce((s, i) => s + i.total, 0);
-  const visitorId = getOrCreateVisitorId();
+  // ===========================
+  // CARRELLO (reattivo)
+  // ===========================
+  const [items, setItems] = useState<CartItem[]>(cartStore.getState().items);
 
-  const [userId, setUserId] = useState<string | null | undefined>(undefined);
+  useEffect(() => {
+    return cartStore.subscribe((state) => setItems(state.items));
+  }, []);
 
+  const total = useMemo(
+    () => items.reduce((s, i) => s + (Number(i.total) || 0), 0),
+    [items]
+  );
+
+  // ===========================
+  // AUTH
+  // ===========================
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const user = await getCurrentUser();
+        if (!cancelled) setCurrentUser(user);
+      } finally {
+        if (!cancelled) setAuthChecked(true);
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Se non loggato: redirect deterministico
+  useEffect(() => {
+    if (!authChecked) return;
+    if (currentUser) return;
+
+    const redirectAbs = window.location.origin + "/user/checkout";
+    window.location.href = getGoogleLoginUrl(redirectAbs);
+  }, [authChecked, currentUser]);
+
+  // ===========================
+  // FORM
+  // ===========================
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -24,328 +75,267 @@ export default function CheckoutPage() {
   const [piva, setPiva] = useState("");
   const [businessName, setBusinessName] = useState("");
 
+  // Precompila dai dati utente
+  useEffect(() => {
+    if (!currentUser) return;
+    if (currentUser.email) setEmail(currentUser.email);
+    if (currentUser.firstName) setFirstName(currentUser.firstName);
+    if (currentUser.lastName) setLastName(currentUser.lastName);
+  }, [currentUser]);
+
+  // ===========================
+  // POLICY GATING (coerente)
+  // ===========================
   const [policyAccepted, setPolicyAccepted] = useState(false);
+  const [policyVersion, setPolicyVersion] = useState<string | null>(null);
   const [showPolicyModal, setShowPolicyModal] = useState(false);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [isAcceptingPolicy, setIsAcceptingPolicy] = useState(false);
 
-  const lastOrderIdRef = useRef<string | null>(null);
-  const paypalMountedRef = useRef(false);
+  async function ensurePolicyVersionLoaded() {
+    if (policyVersion) return policyVersion;
+    const latest = await fetchLatestPolicy();
+    setPolicyVersion(latest.version);
+    return latest.version;
+  }
 
-  // ===========================
-  // INIZIALIZZA userId + email da URL / localStorage
-  // ===========================
-  useEffect(() => {
+  async function handleAcceptPolicy() {
+    if (!currentUser?.id) {
+      alert("Sessione non valida. Effettua di nuovo l’accesso.");
+      return;
+    }
+
+    setIsAcceptingPolicy(true);
     try {
-      const params = new URLSearchParams(window.location.search);
-      const userIdFromUrl = params.get("userId");
-      const emailFromUrl = params.get("email");
+      const v = await ensurePolicyVersionLoaded();
 
-      const storedUserId = localStorage.getItem("webonday_user_v1");
-      let finalUserId = storedUserId;
+      await acceptPolicyApi({
+        userId: currentUser.id,
+        email: email || currentUser.email,
+        policyVersion: v,
+      });
 
-      if (userIdFromUrl) {
-        finalUserId = userIdFromUrl;
-        localStorage.setItem("webonday_user_v1", userIdFromUrl);
+      setPolicyAccepted(true);
+      setShowPolicyModal(false);
+
+      if (pendingAction === "order") await submitOrder();
+      if (pendingAction === "paypal") {
+        document.getElementById("paypal-section")?.scrollIntoView({ behavior: "smooth" });
       }
 
-      if (emailFromUrl) {
-        setEmail(emailFromUrl);
-      }
-
-      const { origin, pathname } = window.location;
-      window.history.replaceState({}, "", origin + pathname);
-
-      setUserId(finalUserId);
-    } catch {
-      setUserId(null);
+      setPendingAction(null);
+    } catch (err) {
+      console.error("[Checkout] accept policy error:", err);
+      alert("Errore durante l’accettazione della policy.");
+    } finally {
+      setIsAcceptingPolicy(false);
     }
-  }, []);
+  }
 
-  // ===========================
-  // PREFILL DATI UTENTE DA /api/user/me
-  // ===========================
-  useEffect(() => {
-    if (!userId) return;
-
-    async function fetchUser() {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/user/me`,
-          { credentials: "include" }
-        );
-        const out = await res.json();
-
-        if (out.ok && out.user) {
-          const u = out.user as any;
-          if (!email && u.email) setEmail(u.email);
-          if (u.firstName) setFirstName(u.firstName);
-          if (u.lastName) setLastName(u.lastName);
-          if (u.phone) setPhone(u.phone);
-          // se in futuro salvi billing info lato user, puoi prefillare anche qui
-        }
-      } catch (err) {
-        console.error("Errore recupero utente", err);
-      }
-    }
-
-    fetchUser();
-  }, [userId, email]);
-
-  // ===========================
-  // REDIRECT AL LOGIN SE NON AUTENTICATO (Google)
-  // ===========================
-  useEffect(() => {
-    if (userId === undefined) return;
-
-    if (!userId) {
-      const redirectUrl = window.location.origin + "/user/checkout";
-      const loginUrl =
-        `${import.meta.env.VITE_API_URL}/api/user/google/auth?redirect=` +
-        encodeURIComponent(redirectUrl);
-      window.location.href = loginUrl;
-    }
-  }, [userId]);
-
-  // ===========================
-  // ORDINE CLASSICO (BONIFICO / MANUALE)
-  // ===========================
-  const doSubmitOrder = async () => {
-    if (!userId) {
-      alert("Devi essere loggato.");
+  function requestPolicyThen(action: PendingAction) {
+    if (!isValidEmail(email)) {
+      alert("Inserisci un’email valida (obbligatoria).");
       return;
     }
-    if (!email) {
-      alert("Inserisci un'email valida.");
-      return;
-    }
-
-    const res = await fetch(import.meta.env.VITE_API_URL + "/api/order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        visitorId,
-        userId,
-        email,
-        firstName,
-        lastName,
-        phone,
-        billingAddress,
-        piva,
-        businessName,
-        items,
-        total,
-      }),
-    });
-
-    const out = await res.json();
-
-    if (!out.ok) {
-      console.error("Ordine fallito", out);
-      alert("Errore nella creazione dell'ordine.");
-      return;
-    }
-
-    cartStore.getState().clear();
-    window.location.href = "/thankyou";
-  };
-
-  // ===========================
-  // ENTRY POINT UNICO PER I BOTTONI DI ACQUISTO
-  // ===========================
-  const requestPolicyThen = (action: PendingAction) => {
-    if (!userId) {
-      alert("Devi essere loggato.");
-      return;
-    }
-    if (!email) {
-      alert("Inserisci un'email valida.");
+    if (items.length === 0 || total <= 0) {
+      alert("Il carrello è vuoto o il totale non è valido.");
       return;
     }
 
     if (policyAccepted) {
-      if (action === "order") {
-        void doSubmitOrder();
-      } else if (action === "paypal") {
-        document
-          .getElementById("paypal-section")
-          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (action === "order") void submitOrder();
+      if (action === "paypal") {
+        document.getElementById("paypal-section")?.scrollIntoView({ behavior: "smooth" });
       }
       return;
     }
 
     setPendingAction(action);
     setShowPolicyModal(true);
-  };
-
-  const handleSubmitOrderClick = () => {
-    requestPolicyThen("order");
-  };
-
-  const handlePaypalCtaClick = () => {
-    requestPolicyThen("paypal");
-  };
+    void ensurePolicyVersionLoaded();
+  }
 
   // ===========================
-  // ACCETTAZIONE POLICY (MODAL)
+  // ORDINE MANUALE
   // ===========================
-  const handleAcceptPolicy = async () => {
-    if (!userId) return;
-    setIsAcceptingPolicy(true);
-    try {
-      const latestRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/policy/version/latest`
-      );
-      const latest = await latestRes.json();
+  const [submitting, setSubmitting] = useState(false);
 
-      await fetch(`${import.meta.env.VITE_API_URL}/api/policy/accept`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId,
-          policyVersionId: latest.id ?? latest.versionId ?? latest.version?.id,
-        }),
-      });
-
-      setPolicyAccepted(true);
-      setShowPolicyModal(false);
-
-      if (pendingAction === "order") {
-        await doSubmitOrder();
-      } else if (pendingAction === "paypal") {
-        setTimeout(() => {
-          document
-            .getElementById("paypal-section")
-            ?.scrollIntoView({ behavior: "smooth", block: "center" });
-        }, 300);
-      }
-
-      setPendingAction(null);
-    } catch (err) {
-      console.error("Errore accettazione policy", err);
-      alert("Errore durante l'accettazione della policy. Riprova.");
-    } finally {
-      setIsAcceptingPolicy(false);
+  async function submitOrder() {
+    if (submitting) return;
+    if (!isValidEmail(email)) {
+      alert("Inserisci un’email valida.");
+      return;
     }
-  };
-
-  // ===========================
-  // PAYPAL CHECKOUT (abilitato SOLO dopo policy)
-  // ===========================
-  useEffect(() => {
-    if (!userId || items.length === 0 || total <= 0) return;
-    if (!email) return;
-    if (!policyAccepted) return;
-    if (paypalMountedRef.current) return;
-
-    const paypalButtonsConfig = {
-      createOrder: async () => {
-        const res = await fetch(
-          import.meta.env.VITE_API_URL +
-            "/api/payment/paypal/create-order",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              userId,
-              email,
-              firstName,
-              lastName,
-              phone,
-              billingAddress,
-              piva,
-              businessName,
-              items,
-              total,
-            }),
-          }
-        );
-
-        const out = await res.json();
-
-        if (!out.ok) {
-          console.error("PayPal create-order error", out);
-          throw new Error("Create order failed");
-        }
-
-        lastOrderIdRef.current = out.orderId;
-        return out.paypalOrderId;
-      },
-
-      onApprove: async (data: any) => {
-        const res = await fetch(
-          import.meta.env.VITE_API_URL +
-            "/api/payment/paypal/capture-order",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              paypalOrderId: data.orderID,
-              orderId: lastOrderIdRef.current,
-            }),
-          }
-        );
-
-        const out = await res.json();
-
-        if (!out.ok) {
-          console.error("PayPal capture error", out);
-          alert("Errore durante la conferma del pagamento.");
-          return;
-        }
-
-        cartStore.getState().clear();
-        window.location.href =
-          "/thankyou?orderId=" +
-          encodeURIComponent(lastOrderIdRef.current!);
-      },
-
-      onError: (err: any) => {
-        console.error("PayPal Buttons error", err);
-        alert("Errore PayPal.");
-      },
-    };
-
-    function mountPaypal() {
-      // @ts-ignore
-      window.paypal.Buttons(paypalButtonsConfig).render(
-        "#paypal-button-container"
-      );
-      paypalMountedRef.current = true;
+    if (items.length === 0 || total <= 0) {
+      alert("Il carrello è vuoto o il totale non è valido.");
+      return;
     }
-
-    // @ts-ignore
-    if (window.paypal) {
-      mountPaypal();
+    if (!policyAccepted) {
+      requestPolicyThen("order");
       return;
     }
 
-    const script = document.createElement("script");
-    script.src =
-      `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR`;
-    script.async = true;
-    script.onload = mountPaypal;
-    document.body.appendChild(script);
-  }, [
-    userId,
-    email,
-    firstName,
-    lastName,
-    phone,
-    billingAddress,
-    total,
-    items.length,
-    policyAccepted,
-  ]);
+    setSubmitting(true);
+    try {
+      const out = await createOrder({
+        email,
+        firstName: firstName || undefined,
+        lastName: lastName || undefined,
+        phone: phone || undefined,
+        billingAddress: billingAddress || undefined,
+        piva: piva || undefined,
+        businessName: businessName || undefined,
+        items,
+        total,
+      });
+
+      cartStore.getState().clear();
+      window.location.href = "/thankyou?orderId=" + encodeURIComponent(out.orderId);
+    } catch (err) {
+      console.error("[Checkout] createOrder error:", err);
+      alert("Errore durante la creazione dell’ordine.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   // ===========================
-  // RENDER
+  // PAYPAL
   // ===========================
-  if (userId === undefined) {
+  const lastOrderIdRef = useRef<string | null>(null);
+  const paypalMountedRef = useRef(false);
+
+  useEffect(() => {
+    if (!policyAccepted) return;
+    if (items.length === 0 || total <= 0) return;
+    if (!isValidEmail(email)) return;
+    if (paypalMountedRef.current) return;
+
+    let cancelled = false;
+
+    async function initPaypal() {
+      try {
+        await loadPaypalSdk(PAYPAL_CLIENT_ID);
+        if (cancelled) return;
+
+        mountPaypalButtons("#paypal-button-container", {
+          createOrder: async () => {
+            const res = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/payment/paypal/create-order`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  email,
+                  firstName,
+                  lastName,
+                  phone,
+                  billingAddress,
+                  piva,
+                  businessName,
+                  items,
+                  total,
+                }),
+              }
+            );
+
+            const out = await res.json().catch(() => null);
+
+            if (!res.ok || !out) {
+              console.error("[PayPal] create-order HTTP error:", res.status, out);
+              throw new Error("Create order failed");
+            }
+
+            // Compatibilità: alcuni BE rispondono con { ok, paypalOrderId, orderId }
+            const paypalOrderId = out.paypalOrderId ?? out.id ?? out.orderID;
+            const orderId = out.orderId ?? out.internalOrderId;
+
+            if (!paypalOrderId) {
+              console.error("[PayPal] create-order missing paypalOrderId:", out);
+              throw new Error("Missing PayPal order id");
+            }
+
+            lastOrderIdRef.current = orderId ?? null;
+            return paypalOrderId;
+          },
+
+          onApprove: async (data: any) => {
+            try {
+              const res = await fetch(
+                `${import.meta.env.VITE_API_URL}/api/payment/paypal/capture-order`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    paypalOrderId: data?.orderID,
+                    orderId: lastOrderIdRef.current,
+                  }),
+                }
+              );
+
+              const out = await res.json().catch(() => null);
+
+              if (!res.ok) {
+                console.error("[PayPal] capture HTTP error:", res.status, out);
+                alert("Errore durante la conferma del pagamento PayPal.");
+                return;
+              }
+
+              // se BE usa { ok: false } lo intercetti
+              if (out && out.ok === false) {
+                console.error("[PayPal] capture failed:", out);
+                alert("Pagamento non confermato. Riprova o contattaci.");
+                return;
+              }
+
+              cartStore.getState().clear();
+
+              const orderId = lastOrderIdRef.current ?? out?.orderId ?? "";
+              window.location.href = "/thankyou" + (orderId ? `?orderId=${encodeURIComponent(orderId)}` : "");
+            } catch (err) {
+              console.error("[PayPal] onApprove error:", err);
+              alert("Errore imprevisto durante la conferma PayPal.");
+            }
+          },
+
+          onError: (err: any) => {
+            console.error("[PayPal] Buttons error:", err);
+            alert("Errore PayPal.");
+          },
+        });
+
+        paypalMountedRef.current = true;
+      } catch (err) {
+        console.error("[Checkout] PayPal init error:", err);
+      }
+    }
+
+    initPaypal();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [policyAccepted, items.length, total, email]);
+
+  // ===========================
+  // RENDER: blocchi chiari
+  // ===========================
+  if (!authChecked) {
     return (
       <div className="checkout-page">
         <div className="checkout-shell">
           <p>Verifica accesso in corso…</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Se non loggato stiamo già redirectando
+  if (!currentUser) {
+    return (
+      <div className="checkout-page">
+        <div className="checkout-shell">
+          <p>Reindirizzamento al login…</p>
         </div>
       </div>
     );
@@ -356,21 +346,16 @@ export default function CheckoutPage() {
       <div className="checkout-shell">
         <header className="checkout-header">
           <h1>Completa il tuo ordine</h1>
-          <p>
-            Rivedi il riepilogo, verifica i dati di fatturazione e scegli il
-            metodo di pagamento.
-          </p>
+          <p>Rivedi il riepilogo, verifica i dati e scegli il pagamento.</p>
         </header>
 
         <div className="checkout-grid">
-          {/* SX – RIEPILOGO CARRELLO */}
           <section className="checkout-card checkout-summary">
             <h2>Riepilogo ordine</h2>
 
             {items.length === 0 ? (
               <p className="empty-cart-text">
-                Il carrello è vuoto. Torna alla home per aggiungere un
-                prodotto.
+                Il carrello è vuoto. Torna alla home e aggiungi un prodotto.
               </p>
             ) : (
               <>
@@ -379,10 +364,9 @@ export default function CheckoutPage() {
                     <li key={idx} className="checkout-item">
                       <div className="item-main">
                         <span className="item-title">{item.title}</span>
-                        <span className="item-price">
-                          € {item.total.toFixed(2)}
-                        </span>
+                        <span className="item-price">€ {item.total.toFixed(2)}</span>
                       </div>
+
                       {item.options?.length > 0 && (
                         <ul className="item-options">
                           {item.options.map((opt) => (
@@ -398,81 +382,49 @@ export default function CheckoutPage() {
 
                 <div className="checkout-total">
                   <span>Totale</span>
-                  <span className="checkout-total-value">
-                    € {total.toFixed(2)}
-                  </span>
+                  <span className="checkout-total-value">€ {total.toFixed(2)}</span>
                 </div>
               </>
             )}
           </section>
 
-          {/* DX – DATI & PAGAMENTO */}
           <section className="checkout-card checkout-form">
             <h2>Dati cliente & fatturazione</h2>
 
             <div className="checkout-form-grid">
               <div className="field">
                 <label>Nome</label>
-                <input
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Nome"
-                />
+                <input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Nome" />
               </div>
 
               <div className="field">
                 <label>Cognome</label>
-                <input
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Cognome"
-                />
+                <input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Cognome" />
               </div>
 
               <div className="field">
                 <label>Email (obbligatoria)</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="nome@azienda.it"
-                />
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nome@azienda.it" />
               </div>
 
               <div className="field">
                 <label>Telefono (opzionale)</label>
-                <input
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+39 ..."
-                />
+                <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+39 ..." />
               </div>
 
               <div className="field">
                 <label>Indirizzo di fatturazione (opzionale)</label>
-                <input
-                  value={billingAddress}
-                  onChange={(e) => setBillingAddress(e.target.value)}
-                  placeholder="Via, numero civico, città"
-                />
+                <input value={billingAddress} onChange={(e) => setBillingAddress(e.target.value)} placeholder="Via, numero civico, città" />
               </div>
 
               <div className="field">
                 <label>Partita IVA (opzionale)</label>
-                <input
-                  value={piva}
-                  onChange={(e) => setPiva(e.target.value)}
-                  placeholder="IT00000000000"
-                />
+                <input value={piva} onChange={(e) => setPiva(e.target.value)} placeholder="IT00000000000" />
               </div>
 
               <div className="field">
                 <label>Nome azienda (opzionale)</label>
-                <input
-                  value={businessName}
-                  onChange={(e) => setBusinessName(e.target.value)}
-                  placeholder="La tua azienda"
-                />
+                <input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="La tua azienda" />
               </div>
             </div>
 
@@ -482,38 +434,33 @@ export default function CheckoutPage() {
                 <a href="/policy" target="_blank" rel="noreferrer">
                   Privacy &amp; Termini
                 </a>{" "}
-                e il trattamento dei dati per finalità di fatturazione e
-                contatto.
+                e il trattamento dati per fatturazione e contatto.
               </span>
-              {policyAccepted && (
-                <span className="policy-ok">✓ Policy accettata</span>
-              )}
+
+              {policyAccepted && <span className="policy-ok">✓ Policy accettata</span>}
             </div>
 
             <div className="checkout-actions">
               <button
                 type="button"
                 className="btn-primary"
-                onClick={handleSubmitOrderClick}
-                disabled={items.length === 0}
+                onClick={() => requestPolicyThen("order")}
+                disabled={items.length === 0 || submitting}
               >
-                Conferma ordine (bonifico / manuale)
+                {submitting ? "Invio ordine..." : "Conferma ordine (bonifico / manuale)"}
               </button>
             </div>
 
             <div id="paypal-section" className="checkout-paypal-block">
               <div className="paypal-header">
                 <h3>Paga con PayPal</h3>
-                <p>
-                  Paga in modo sicuro con il tuo account PayPal o con una carta
-                  collegata.
-                </p>
+                <p>Pagamento sicuro via PayPal o carta collegata.</p>
               </div>
 
               <button
                 type="button"
                 className="btn-paypal"
-                onClick={handlePaypalCtaClick}
+                onClick={() => requestPolicyThen("paypal")}
                 disabled={items.length === 0}
               >
                 Procedi con PayPal
@@ -521,30 +468,24 @@ export default function CheckoutPage() {
 
               {!policyAccepted && (
                 <p className="paypal-note">
-                  Cliccando su “Procedi con PayPal” ti mostreremo prima Privacy
-                  e Termini da accettare.
+                  Cliccando su “Procedi con PayPal” ti mostreremo prima Privacy e Termini da accettare.
                 </p>
               )}
 
-              <div
-                id="paypal-button-container"
-                className="paypal-buttons-slot"
-              />
+              <div id="paypal-button-container" className="paypal-buttons-slot" />
             </div>
           </section>
         </div>
       </div>
 
-      {/* MODAL POLICY */}
       {showPolicyModal && (
         <div className="policy-modal-backdrop">
           <div className="policy-modal">
             <h2>Privacy Policy &amp; Termini</h2>
             <p>
-              Prima di completare il pagamento è necessario accettare la nostra
-              Privacy Policy e i Termini di Servizio, inclusa la gestione dei
-              tuoi dati di contatto e fatturazione.
+              Prima di completare il pagamento è necessario accettare la nostra Privacy Policy e i Termini di Servizio.
             </p>
+
             <p className="policy-link-text">
               Puoi leggere il testo completo qui:{" "}
               <a href="/policy" target="_blank" rel="noreferrer">
@@ -564,15 +505,14 @@ export default function CheckoutPage() {
               >
                 Annulla
               </button>
+
               <button
                 type="button"
                 className="btn-accept"
                 onClick={handleAcceptPolicy}
                 disabled={isAcceptingPolicy}
               >
-                {isAcceptingPolicy
-                  ? "Salvo accettazione..."
-                  : "Accetto e procedo"}
+                {isAcceptingPolicy ? "Salvo accettazione..." : "Accetto e procedo"}
               </button>
             </div>
           </div>

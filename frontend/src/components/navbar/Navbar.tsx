@@ -1,27 +1,20 @@
+// frontend/src/components/navbar/Navbar.tsx
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { cartStore } from "../../lib/cartStore";
+import { Link } from "react-router-dom";
+import { cartStore } from "../../lib/cartStore"; // questo DEVE essere il "hook" di zustand
 import "./navbar.css";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const location = useLocation();
 
-  // Se cartStore è uno store Zustand classico:
-  // const cartCount = cartStore((s) => s.items.length);
-  // Se invece in altri punti usi getState(), manteniamo lo stesso approccio:
-  const cartCount = cartStore.getState().items.length;
-
-  const toggleMenu = () => setOpen((v) => !v);
-  const closeMenu = () => setOpen(false);
-
-  const isActive = (path: string) =>
-    location.pathname.startsWith(path) ? "wd-link-active" : "";
+  // 🔴 IMPORTANTE: qui NON usare getState()
+  const items = cartStore((s) => s.items);
+  const cartCount = items.length;
 
   return (
     <nav className="wd-navbar">
       {/* LOGO */}
-      <Link to="/" className="wd-navbar-logo" onClick={closeMenu}>
+      <div className="wd-navbar-logo">
         <img
           src="/icon/favicon.ico"
           alt="Moka Icon"
@@ -32,49 +25,20 @@ export default function Navbar() {
           <span className="we">We</span>
           <span className="webonday">WebOnDay</span>
         </div>
-      </Link>
+      </div>
 
       {/* MOBILE MENU BUTTON */}
-      <button
-        className="menu-btn"
-        onClick={toggleMenu}
-        aria-label="Apri/chiudi menu"
-        aria-expanded={open}
-      >
+      <button className="menu-btn" onClick={() => setOpen(!open)}>
         ☰
       </button>
 
       {/* RIGHT LINKS */}
       <div className={`nav-right ${open ? "open" : ""}`}>
-        <Link
-          to="/vision"
-          className={`wd-navbar-link ${isActive("/vision")}`}
-          onClick={closeMenu}
-        >
-          Vision
-        </Link>
+        <Link to="/vision" className="wd-navbar-link">Vision</Link>
+        <Link to="/mission" className="wd-navbar-link">Mission</Link>
+        <Link to="/user/login" className="wd-navbar-link">Accedi</Link>
 
-        <Link
-          to="/mission"
-          className={`wd-navbar-link ${isActive("/mission")}`}
-          onClick={closeMenu}
-        >
-          Mission
-        </Link>
-
-        <Link
-          to="/user/login"
-          className={`wd-navbar-link ${isActive("/user")}`}
-          onClick={closeMenu}
-        >
-          Accedi
-        </Link>
-
-        <Link
-          to="/cart"
-          className={`wd-navbar-link wd-link-accent ${isActive("/cart")}`}
-          onClick={closeMenu}
-        >
+        <Link to="/cart" className="wd-navbar-link wd-link-accent">
           Carrello ({cartCount})
         </Link>
       </div>

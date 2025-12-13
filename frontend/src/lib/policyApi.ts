@@ -1,7 +1,23 @@
 // src/lib/policyApi.ts
 
-// URL BASE SEMPRE DEFINITA
+// src/lib/policyApi.ts
 const API_BASE = import.meta.env.VITE_API_URL;
+
+export async function getLatestPolicyVersion(): Promise<{ id: string }> {
+  const res = await fetch(`${API_BASE}/api/policy/version/latest`);
+  if (!res.ok) throw new Error("Errore fetch policy");
+  return res.json();
+}
+
+export async function acceptPolicy(policyVersionId: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/policy/accept`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ policyVersionId }),
+  });
+
+  if (!res.ok) throw new Error("Errore accept policy");
+}
 
 if (!API_BASE || !API_BASE.startsWith("https://")) {
   console.error("[PolicyAPI] ERRORE: VITE_API_URL non valida:", API_BASE);
