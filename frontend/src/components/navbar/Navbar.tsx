@@ -1,13 +1,12 @@
 // frontend/src/components/navbar/Navbar.tsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { cartStore } from "../../lib/cartStore"; // questo DEVE essere il "hook" di zustand
+import { cartStore } from "../../lib/cartStore"; // hook zustand
+import { uiBus } from "../../lib/uiBus";
 import "./navbar.css";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-
-  // 🔴 IMPORTANTE: qui NON usare getState()
   const items = cartStore((s) => s.items);
   const cartCount = items.length;
 
@@ -15,12 +14,7 @@ export default function Navbar() {
     <nav className="wd-navbar">
       {/* LOGO */}
       <div className="wd-navbar-logo">
-        <img
-          src="/icon/favicon.ico"
-          alt="Moka Icon"
-          className="moka-icon"
-        />
-
+        <img src="/icon/favicon.ico" alt="Moka Icon" className="moka-icon" />
         <div className="logo-text">
           <span className="we">We</span>
           <span className="webonday">WebOnDay</span>
@@ -28,7 +22,7 @@ export default function Navbar() {
       </div>
 
       {/* MOBILE MENU BUTTON */}
-      <button className="menu-btn" onClick={() => setOpen(!open)}>
+      <button className="menu-btn" onClick={() => setOpen(!open)} aria-expanded={open}>
         ☰
       </button>
 
@@ -38,9 +32,16 @@ export default function Navbar() {
         <Link to="/mission" className="wd-navbar-link">Mission</Link>
         <Link to="/user/login" className="wd-navbar-link">Accedi</Link>
 
-        <Link to="/cart" className="wd-navbar-link wd-link-accent">
-          Carrello ({cartCount})
-        </Link>
+        {/* Sostituisce il vecchio <Link to="/cart"> */}
+        <button
+          type="button"
+          onClick={() => uiBus.emit("cart:toggle")}
+          className="wd-navbar-link wd-link-accent nav-cart-toggle"
+          aria-label="Apri carrello"
+          title="Apri carrello"
+        >
+          Carrello <span className="nav-cart-badge">{cartCount}</span>
+        </button>
       </div>
     </nav>
   );

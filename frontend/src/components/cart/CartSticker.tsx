@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { cartStore } from "../../lib/cartStore";
 import type { CartItem } from "../../lib/cartStore";
 import { eur } from "../../utils/format";
-import "./cart-stiker.css";
+import "./cart-sticker.css";
 import { uiBus } from "../../lib/uiBus";
 export default function CartSticker() {
 const [items, setItems] = useState<CartItem[]>(cartStore.getState().items);

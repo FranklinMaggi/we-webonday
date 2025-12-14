@@ -8,7 +8,6 @@ import Vision from "../pages/vision";
 import Mission from "../pages/mission";
 import UserLogin from "../pages/user/login";
 import CheckoutPage from "../pages/user/checkout";
-import CartPage from "../pages/cart";
 
 // Policy
 import Policy from "../pages/policy";
@@ -51,11 +50,6 @@ const router = createBrowserRouter([
     ],
   },
 
-  // Cart
-  {
-    path: "/cart",
-    element: <CartPage />
-  },
 
   // Checkout user
   {
