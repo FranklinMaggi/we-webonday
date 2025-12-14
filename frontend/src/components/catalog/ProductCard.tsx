@@ -1,3 +1,4 @@
+//ProductCard
 import { useState } from "react";
 import "./catalog.css";
 import type { ProductDTO } from "../../lib/types";

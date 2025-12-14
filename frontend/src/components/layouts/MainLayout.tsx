@@ -5,7 +5,7 @@ import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 import WhatsAppButton from "../whatsapp/WhatsAppButton";
 import { CookieBanner } from "../cookie/CookieBanner";
-
+import CartSticker from "../cart/CartSticker"; // <- assicurati percorso corretto
 import { setDocumentTitle } from "../../utils/seo";
 import "./mainLayout.css";
 
@@ -15,11 +15,7 @@ export function MainLayout({
   suffix = "Espresso digitale"
 }) {
   useEffect(() => {
-    setDocumentTitle({
-      icon,
-      title: baseTitle,
-      suffix
-    });
+    setDocumentTitle({ icon, title: baseTitle, suffix });
   }, [icon, baseTitle, suffix]);
 
   return (
@@ -30,10 +26,14 @@ export function MainLayout({
         <Outlet />
       </main>
 
+      {/* Componenti “flottanti” o di utilità */}
       <WhatsAppButton />
-      <Footer />
       <CookieBanner />
-     
+
+      {/* Sticker del carrello visibile ovunque */}
+      <CartSticker />
+
+      <Footer />
     </div>
   );
 }

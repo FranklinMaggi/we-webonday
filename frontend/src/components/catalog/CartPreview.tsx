@@ -1,6 +1,8 @@
+// CartPreview.tsx
 import type { ProductDTO } from "../../lib/types";
 import { cartStore } from "../../lib/cartStore";
-    import { getOrCreateVisitorId } from "../../utils/cookieConsent";
+import { getOrCreateVisitorId } from "../../utils/cookieConsent";
+import { eur } from "../../utils/format";
 
 interface Props {
   product: ProductDTO;
@@ -8,17 +10,12 @@ interface Props {
 }
 
 export default function CartPreview({ product, selectedOptions }: Props) {
-  const selectedObjects = product.options.filter((o) =>
-    selectedOptions.includes(o.id)
-  );
-
+  const selectedObjects = product.options.filter((o) => selectedOptions.includes(o.id));
   const optionsTotal = selectedObjects.reduce((sum, o) => sum + o.price, 0);
-
   const total = product.basePrice + optionsTotal;
 
   const addToCart = () => {
     const visitorId = getOrCreateVisitorId();
-  
     cartStore.getState().addItem({
       visitorId,
       productId: product.id,
@@ -28,33 +25,42 @@ export default function CartPreview({ product, selectedOptions }: Props) {
       total,
     });
   };
-  
+
   return (
-    <div className="cart-preview">
-      <h3>Riepilogo</h3>
+    <aside className="cart-preview card">
+      <div className="card__header">
+        <h3 className="card__title">Riepilogo</h3>
+      </div>
 
-      <p>Prodotto: <strong>{product.title}</strong></p>
+      <div className="cart-line">
+        <span>Prodotto</span>
+        <strong>{product.title}</strong>
+      </div>
 
-      <p>Base: € {product.basePrice.toFixed(2)}</p>
+      <div className="cart-line">
+        <span>Base</span>
+        <strong>{eur.format(product.basePrice)}</strong>
+      </div>
 
       {selectedObjects.length > 0 && (
         <ul className="cart-options">
           {selectedObjects.map((opt) => (
-            <li key={opt.id}>
-              {opt.label} — € {opt.price.toFixed(2)}
+            <li key={opt.id} className="cart-option">
+              <span className="cart-option__label">{opt.label}</span>
+              <span className="cart-option__price">{eur.format(opt.price)}</span>
             </li>
           ))}
         </ul>
       )}
 
       <div className="cart-total">
-        Totale: <strong>€ {total.toFixed(2)}</strong>
+        <span>Totale</span>
+        <strong>{eur.format(total)}</strong>
       </div>
 
-      <button className="cart-add-btn" onClick={addToCart}>
+      <button className="btn btn-primary cart-add-btn" onClick={addToCart}>
         Aggiungi al Carrello
       </button>
-    </div>
+    </aside>
   );
 }
-console.log("STORE IMPORTATO ->", cartStore);console.log("METODI STORE ->", cartStore.getState());

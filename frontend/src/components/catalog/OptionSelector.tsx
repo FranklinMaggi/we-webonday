@@ -1,4 +1,6 @@
+// OptionSelector.tsx
 import type { ProductOptionDTO } from "../../lib/types";
+import { eur } from "../../utils/format";
 
 interface Props {
   options: ProductOptionDTO[];
@@ -7,31 +9,35 @@ interface Props {
 }
 
 export default function OptionSelector({ options, selected, onChange }: Props) {
-  const toggle = (id: string) => {
-    if (selected.includes(id)) {
-      onChange(selected.filter((x) => x !== id));
-    } else {
-      onChange([...selected, id]);
-    }
-  };
+  const toggle = (id: string) =>
+    selected.includes(id) ? onChange(selected.filter((x) => x !== id)) : onChange([...selected, id]);
 
   return (
-    <div className="option-selector">
-      <h4>Opzioni disponibili</h4>
+    <div className="option-selector card">
+      <div className="card__header">
+        <h4 className="card__title">Opzioni disponibili</h4>
+      </div>
 
       <div className="option-list">
-        {options.map((opt) => (
-          <label key={opt.id} className="option-item">
-            <input
-              type="checkbox"
-              checked={selected.includes(opt.id)}
-              onChange={() => toggle(opt.id)}
-            />
-
-            <span className="option-label">{opt.label}</span>
-            <span className="option-price">+ € {opt.price.toFixed(2)}</span>
-          </label>
-        ))}
+        {options.map((opt) => {
+          const checked = selected.includes(opt.id);
+          return (
+            <label key={opt.id} className={`option-item ${checked ? "is-checked" : ""}`}>
+              <input
+                type="checkbox"
+                className="option-item__checkbox"
+                checked={checked}
+                onChange={() => toggle(opt.id)}
+                aria-label={`${opt.label} ${eur.format(opt.price)}`}
+              />
+              <span className="option-item__box" aria-hidden="true" />
+              <span className="option-item__content">
+                <span className="option-label">{opt.label}</span>
+                <span className="option-price">+ {eur.format(opt.price)}</span>
+              </span>
+            </label>
+          );
+        })}
       </div>
     </div>
   );

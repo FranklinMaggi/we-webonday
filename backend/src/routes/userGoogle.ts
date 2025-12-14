@@ -81,24 +81,46 @@ export async function googleCallback(
   const email = payload.email as string;
   const googleId = payload.sub as string;
 
-  /* ===== USER LOOKUP / CREATE ===== */
-  let userId = await env.ON_USERS_KV.get(`google_${googleId}`);
+/* ===== USER LOOKUP / UPSERT ===== */
+let userId = await env.ON_USERS_KV.get(`google_${googleId}`);
 
-  if (!userId) {
-    userId = crypto.randomUUID();
+const userRecord = {
+  // chiave stabile
+  id: userId ?? crypto.randomUUID(),
+  // identità
+  googleId,
+  email,
+  emailVerified: Boolean(payload.email_verified),
+  // profilo base
+  name: (payload.name as string) ?? null,
+  givenName: (payload.given_name as string) ?? null,
+  familyName: (payload.family_name as string) ?? null,
+  picture: (payload.picture as string) ?? null,
+  locale: (payload.locale as string) ?? null,
+  // metadata
+  lastLoginAt: new Date().toISOString(),
+};
 
-    await env.ON_USERS_KV.put(
-      `user_${userId}`,
-      JSON.stringify({
-        id: userId,
-        email,
-        googleId,
-        createdAt: new Date().toISOString(),
-      })
-    );
+// se nuovo utente: set createdAt
+if (!userId) {
+  (userRecord as any).createdAt = userRecord.lastLoginAt;
+}
 
-    await env.ON_USERS_KV.put(`google_${googleId}`, userId);
+// merge con eventuale record esistente (mantieni createdAt)
+if (userId) {
+  const prevRaw = await env.ON_USERS_KV.get(`user_${userId}`);
+  if (prevRaw) {
+    const prev = JSON.parse(prevRaw);
+    (userRecord as any).createdAt = prev.createdAt ?? userRecord.lastLoginAt;
   }
+}
+
+// salva record e indici secondari
+await env.ON_USERS_KV.put(`user_${userRecord.id}`, JSON.stringify(userRecord));
+await env.ON_USERS_KV.put(`EMAIL:${email.toLowerCase()}`, userRecord.id);
+await env.ON_USERS_KV.put(`google_${googleId}`, userRecord.id);
+
+userId = userRecord.id;
 
   /* ===== SAFE REDIRECT ===== */
   let finalRedirect = env.FRONTEND_URL + "/user/checkout";
@@ -115,72 +137,56 @@ export async function googleCallback(
   const redirectUrl = new URL(finalRedirect);
   redirectUrl.searchParams.set("email", email);
 
-  /* ===== SESSION COOKIE ===== */
-  const isLocal = env.FRONTEND_URL.startsWith("http://localhost");
+// ===========================
+// COOKIE SESSIONE
+// ===========================
+const isLocal = env.FRONTEND_URL.startsWith("http://localhost");
 
-  const cookieParts = [
-    `webonday_session=${userId}`,
-    "Path=/",
-    "HttpOnly",
-    "Max-Age=2592000",
-    `Domain=${new URL(env.FRONTEND_URL).hostname}`,
-  ];
-  
+// In locale: SameSite=Lax (niente Secure), in produzione: SameSite=None; Secure
+const cookieParts = [
+  `webonday_session=${userId}`,
+  "Path=/",
+  "HttpOnly",
+  "Max-Age=2592000",
+  isLocal ? "SameSite=Lax" : "SameSite=None",
+];
 
-  if (isLocal) {
-    cookieParts.push("SameSite=Lax");
-  } else {
-    cookieParts.push("SameSite=None");
-    cookieParts.push("Secure");
-  }
-
-  const headers = new Headers({
-    "Set-Cookie": cookieParts.join("; "),
-    Location: redirectUrl.toString(),
-  });
-
-  const cors = getCorsHeaders(request, env);
-  for (const [k, v] of Object.entries(cors)) {
-    headers.set(k, v);
-  }
-
-  return new Response(null, {
-    status: 302,
-    headers,
-  });
+if (!isLocal) {
+  cookieParts.push("Secure");
 }
+
+const cookieHeader = cookieParts.join("; ");
+
+return new Response(null, {
+  status: 302,
+  headers: {
+    "Set-Cookie": cookieHeader,
+    "Location": redirectUrl.toString(),
+  },
+});}
 
 /* ============================
    GET CURRENT USER
 ============================ */
 export async function getCurrentUser(
-  request: Request,
-  env: Env
-): Promise<Response> {
-  const cookie = request.headers.get("Cookie") ?? "";
-  const match = cookie.match(/webonday_session=([^;]+)/);
-
-  let user = null;
-
-  if (match) {
-    const raw = await env.ON_USERS_KV.get(`user_${match[1]}`);
-    if (raw) user = JSON.parse(raw);
+    request: Request,
+    env: Env
+  ): Promise<Response> {
+    const cookie = request.headers.get("Cookie") ?? "";
+    const match = cookie.match(/webonday_session=([^;]+)/);
+  
+    let user = null;
+  
+    if (match) {
+      const raw = await env.ON_USERS_KV.get(`user_${match[1]}`);
+      if (raw) user = JSON.parse(raw);
+    }
+  
+    return new Response(JSON.stringify({ ok: true, user }), {
+      headers: { "Content-Type": "application/json" },
+    });
   }
-
-  const headers = new Headers({
-    "Content-Type": "application/json",
-  });
-
-  const cors = getCorsHeaders(request, env);
-  for (const [k, v] of Object.entries(cors)) {
-    headers.set(k, v);
-  }
-
-  return new Response(
-    JSON.stringify({ ok: true, user }),
-    { headers }
-  );
-}
+  
 
 /* ============================
    JSON HELPER
