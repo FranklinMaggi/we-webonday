@@ -1,32 +1,34 @@
 // backend/src/routes/paymentPaypal.ts
 import type { Env } from "../types/env";
 import { OrderSchema } from "../schemas/orderSchema";
-import type { CartItemDTO } from "../schemas/cartSchema";
+import { z } from "zod";
 
+/* ============================
+   SCHEMAS
+============================ */
+const CreatePaypalOrderBody = z.object({
+  orderId: z.string().uuid(),
+});
 
+const CapturePaypalOrderBody = z.object({
+  orderId: z.string().uuid(),
+});
+
+/* ============================
+   JSON HELPER
+============================ */
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json"},
+    headers: { "Content-Type": "application/json" },
   });
 }
 
-// ==========================
-// Helper: PayPal Access Token
-// ==========================
+/* ============================
+   PAYPAL ACCESS TOKEN
+============================ */
 async function getPaypalAccessToken(env: Env): Promise<string> {
-  console.log("PayPal env check", {
-    clientIdPresent: !!env.PAYPAL_CLIENT_ID,
-    secretPresent: !!env.PAYPAL_SECRET,
-    apiBase: env.PAYPAL_API_BASE,
-  });
-
   if (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_SECRET || !env.PAYPAL_API_BASE) {
-    console.error("Missing PayPal configuration", {
-      clientIdPresent: !!env.PAYPAL_CLIENT_ID,
-      secretPresent: !!env.PAYPAL_SECRET,
-      apiBase: env.PAYPAL_API_BASE,
-    });
     throw new Error("Missing PayPal configuration");
   }
 
@@ -42,82 +44,56 @@ async function getPaypalAccessToken(env: Env): Promise<string> {
   });
 
   if (!res.ok) {
-    const txt = await res.text();
-    console.error("PayPal token error:", txt);
     throw new Error("PayPal auth failed");
   }
 
-  const jsonData = (await res.json()) as { access_token: string };
-  return jsonData.access_token;
+  const data = (await res.json()) as { access_token: string };
+  return data.access_token;
 }
 
-// =================================================
-// POST /api/payment/paypal/create-order
-// =================================================
+/* =================================================
+   POST /api/payment/paypal/create-order
+================================================= */
 export async function createPaypalOrder(
   request: Request,
   env: Env
 ): Promise<Response> {
   if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204});
+    return new Response(null, { status: 204 });
   }
 
-  const body = (await request.json()) as {
-    userId?: string;
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-    phone?: string;
-    billingAddress?: string;
-    piva?: string;
-    businessName?: string;
-    items?: CartItemDTO[];
-    total?: number;
-  };
-
-  if (!body.email || !Array.isArray(body.items) || typeof body.total !== "number") {
-    return json({ ok: false, error: "Missing fields" }, 400);
+  // 1) validate input
+  let body: z.infer<typeof CreatePaypalOrderBody>;
+  try {
+    body = CreatePaypalOrderBody.parse(await request.json());
+  } catch {
+    return json({ ok: false, error: "Invalid input" }, 400);
   }
 
-  const orderId = crypto.randomUUID();
-
-  const orderRaw = {
-    id: orderId,
-    userId: body.userId ?? null,
-    email: body.email,
-
-    firstName: body.firstName ?? null,
-    lastName: body.lastName ?? null,
-    phone: body.phone ?? null,
-    billingAddress: body.billingAddress ?? null,
-
-    piva: body.piva ?? null,
-    businessName: body.businessName ?? null,
-
-    items: body.items,
-    total: body.total,
-    status: "pending" as const,
-    createdAt: new Date().toISOString(),
-  };
+  // 2) load order
+  const raw = await env.ORDER_KV.get(`ORDER:${body.orderId}`);
+  if (!raw) {
+    return json({ ok: false, error: "Order not found" }, 404);
+  }
 
   let order;
   try {
-    order = OrderSchema.parse(orderRaw);
-  } catch (err) {
-    console.error("Order validation failed (paypal)", err);
-    return json({ ok: false, error: "Order validation failed" }, 400);
+    order = OrderSchema.parse(JSON.parse(raw));
+  } catch {
+    return json({ ok: false, error: "Corrupted order data" }, 500);
   }
 
-  await env.ORDER_KV.put(`ORDER:${orderId}`, JSON.stringify(order));
-
-  // === crea ordine su PayPal ===
-  let accessToken: string;
-  try {
-    accessToken = await getPaypalAccessToken(env);
-  } catch (err) {
-    console.error("PayPal auth error", err);
-    return json({ ok: false, error: "PayPal auth error" }, 500);
+  // 3) idempotency
+  if (order.paypalOrderId) {
+    return json({
+      ok: true,
+      orderId: order.id,
+      paypalOrderId: order.paypalOrderId,
+    });
   }
+
+  // 4) create PayPal order using backend-calculated total
+  const accessToken = await getPaypalAccessToken(env);
 
   const paypalRes = await fetch(`${env.PAYPAL_API_BASE}/v2/checkout/orders`, {
     method: "POST",
@@ -129,10 +105,10 @@ export async function createPaypalOrder(
       intent: "CAPTURE",
       purchase_units: [
         {
-          reference_id: orderId,
+          reference_id: order.id,
           amount: {
             currency_code: "EUR",
-            value: body.total.toFixed(2),
+            value: order.total.toFixed(2),
           },
         },
       ],
@@ -141,14 +117,14 @@ export async function createPaypalOrder(
 
   if (!paypalRes.ok) {
     const txt = await paypalRes.text();
-    console.error("PayPal create order error:", txt);
     return json({ ok: false, error: "PayPal create error", details: txt }, 500);
   }
 
   const paypalOrder = (await paypalRes.json()) as { id: string };
 
+  // 5) persist PayPal metadata
   await env.ORDER_KV.put(
-    `ORDER:${orderId}`,
+    `ORDER:${order.id}`,
     JSON.stringify({
       ...order,
       paymentProvider: "paypal",
@@ -159,61 +135,69 @@ export async function createPaypalOrder(
 
   return json({
     ok: true,
-    orderId,
+    orderId: order.id,
     paypalOrderId: paypalOrder.id,
   });
 }
 
-// =================================================
-// POST /api/payment/paypal/capture-order
-// =================================================
+/* =================================================
+   POST /api/payment/paypal/capture-order
+================================================= */
 export async function capturePaypalOrder(
   request: Request,
   env: Env
 ): Promise<Response> {
   if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204});
+    return new Response(null, { status: 204 });
   }
 
-  const body = (await request.json()) as {
-    paypalOrderId?: string;
-    orderId?: string;
-  };
-
-  if (!body.paypalOrderId || !body.orderId) {
-    return json({ ok: false, error: "Missing ids" }, 400);
+  // 1) validate input
+  let body: z.infer<typeof CapturePaypalOrderBody>;
+  try {
+    body = CapturePaypalOrderBody.parse(await request.json());
+  } catch {
+    return json({ ok: false, error: "Invalid input" }, 400);
   }
 
+  // 2) load order
   const raw = await env.ORDER_KV.get(`ORDER:${body.orderId}`);
   if (!raw) {
     return json({ ok: false, error: "Order not found" }, 404);
   }
 
-  const order = JSON.parse(raw);
-
-  let accessToken: string;
+  let order;
   try {
-    accessToken = await getPaypalAccessToken(env);
-  } catch (err) {
-    console.error("PayPal auth error (capture)", err);
-    return json({ ok: false, error: "PayPal auth error" }, 500);
+    order = OrderSchema.parse(JSON.parse(raw));
+  } catch {
+    return json({ ok: false, error: "Corrupted order data" }, 500);
   }
 
+  // 3) idempotency
+  if (order.paymentStatus === "paid") {
+    return json({ ok: true, alreadyCaptured: true });
+  }
+
+  if (!order.paypalOrderId) {
+    return json({ ok: false, error: "Missing paypalOrderId" }, 409);
+  }
+
+  // 4) capture
+  const accessToken = await getPaypalAccessToken(env);
+
   const capRes = await fetch(
-    `${env.PAYPAL_API_BASE}/v2/checkout/orders/${body.paypalOrderId}/capture`,
+    `${env.PAYPAL_API_BASE}/v2/checkout/orders/${order.paypalOrderId}/capture`,
     {
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: "{}", // body vuoto
+      body: "{}",
     }
   );
 
   if (!capRes.ok) {
     const txt = await capRes.text();
-    console.error("PayPal capture error:", txt);
     return json(
       { ok: false, error: "PayPal capture error", details: txt },
       500
@@ -222,8 +206,9 @@ export async function capturePaypalOrder(
 
   const capture = await capRes.json();
 
+  // 5) persist capture
   await env.ORDER_KV.put(
-    `ORDER:${body.orderId}`,
+    `ORDER:${order.id}`,
     JSON.stringify({
       ...order,
       paymentStatus: "paid",

@@ -1,29 +1,13 @@
+// backend/src/routes/products.ts
 import type { Env } from "../types/env";
 
 import { normalizeProduct } from "../normalizers/normalizeProduct";
 import { ProductSchema } from "../schemas/productSchema";
 
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
-
-function json(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      "Content-Type": "application/json",
-      ...CORS_HEADERS,
-    },
-  });
-}
-
-
 /* ============================================================
-   GET ALL PRODUCTS
+   GET ALL PRODUCTS (DOMAIN ONLY)
    ============================================================ */
-export async function getProducts(env: Env): Promise<Response> {
+export async function getProducts(env: Env) {
   const list = await env.PRODUCTS_KV.list({ prefix: "PRODUCT:" });
 
   const rawProducts: any[] = [];
@@ -34,56 +18,54 @@ export async function getProducts(env: Env): Promise<Response> {
   }
 
   const normalized = rawProducts.map(normalizeProduct);
-
   const validated = normalized.map((p) => ProductSchema.parse(p));
 
-  return json(validated);
+  return validated;
 }
 
-
 /* ============================================================
-   GET SINGLE PRODUCT
+   GET SINGLE PRODUCT (DOMAIN ONLY)
    ============================================================ */
-export async function getProduct(request: Request, env: Env): Promise<Response> {
+export async function getProduct(request: Request, env: Env) {
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
 
-  if (!id) return json({ error: "Missing id" }, 400);
+  if (!id) {
+    throw new Error("Missing product id");
+  }
 
   const data = await env.PRODUCTS_KV.get(`PRODUCT:${id}`);
-  if (!data) return json({ error: "Not found" }, 404);
+  if (!data) {
+    throw new Error("Product not found");
+  }
 
   const raw = JSON.parse(data);
-
   const normalized = normalizeProduct(raw);
-
   const validated = ProductSchema.parse(normalized);
 
-  return json(validated);
+  return validated;
 }
 
-
 /* ============================================================
-   REGISTER / UPDATE PRODUCT
+   REGISTER / UPDATE PRODUCT (DOMAIN ONLY)
    ============================================================ */
 export async function registerProduct(
   request: Request,
   env: Env
-): Promise<Response> {
-  let body: any = null;
+) {
+  let body: any;
 
   try {
     body = await request.json();
   } catch {
-    return json({ error: "Invalid JSON" }, 400);
+    throw new Error("Invalid JSON body");
   }
 
   if (!body.id) {
-    return json({ error: "Missing product ID" }, 400);
+    throw new Error("Missing product id");
   }
 
   const normalized = normalizeProduct(body);
-
   const validated = ProductSchema.parse(normalized);
 
   await env.PRODUCTS_KV.put(
@@ -91,5 +73,5 @@ export async function registerProduct(
     JSON.stringify(validated)
   );
 
-  return json({ ok: true, product: validated });
+  return validated;
 }

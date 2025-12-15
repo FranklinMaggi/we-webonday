@@ -2,12 +2,10 @@
 import type { Env } from "./types/env";
 
 import {
-  createCart,
+  saveCart,
   getCart,
-  updateCart,
-  saveUserCart,
-  getUserCart,
 } from "./routes/cart";
+
 
 import {
   getProducts,
@@ -131,23 +129,39 @@ export default {
       }
 
       /* ===== CART ===== */
-      if (pathname === "/api/cart" && method === "POST") {
-        return withCors(await createCart(request, env), request, env);
-      }
-      if (pathname === "/api/cart" && method === "GET") {
-        return withCors(await getCart(request, env), request, env);
-      }
-      if (pathname === "/api/cart" && method === "PUT") {
-        return withCors(await updateCart(request, env), request, env);
-      }
-      if (pathname === "/api/cart/user" && method === "PUT") {
-        return withCors(await saveUserCart(request, env), request, env);
-      }
-      if (pathname === "/api/cart/user" && method === "GET") {
-        return withCors(await getUserCart(request, env), request, env);
-      }
-
-      /* ===== ORDERS (PUBLIC) ===== */
+if (pathname === "/api/cart" && method === "POST") {
+  try {
+    const cart = await saveCart(request, env);
+    return withCors(
+      json({ ok: true, cart }, request, env),
+      request,
+      env
+    );
+  } catch (err: any) {
+    return withCors(
+      json({ ok: false, error: err.message }, request, env, 400),
+      request,
+      env
+    );
+  }
+}
+if (pathname === "/api/cart" && method === "GET") {
+  try {
+    const cart = await getCart(request, env);
+    return withCors(
+      json({ ok: true, cart }, request, env),
+      request,
+      env
+    );
+  } catch (err: any) {
+    return withCors(
+      json({ ok: false, error: err.message }, request, env, 400),
+      request,
+      env
+    );
+  }
+}
+     /* ===== ORDERS (PUBLIC) ===== */
       if (pathname === "/api/order" && method === "POST") {
         return withCors(await createOrder(request, env), request, env);
       }
@@ -172,17 +186,50 @@ export default {
       }
 
       /* ===== PRODUCTS ===== */
-      if (pathname === "/api/products" && method === "GET") {
-        return withCors(await getProducts(env), request, env);
-      }
+ /* ===== PRODUCTS ===== */
 
-      if (pathname === "/api/product" && method === "GET") {
-        return withCors(await getProduct(request, env), request, env);
-      }
+if (pathname === "/api/products" && method === "GET") {
+  try {
+    const products = await getProducts(env);
+    return json({ ok: true, products }, request, env);
+  } catch (err: any) {
+    return json(
+      { ok: false, error: err.message },
+      request,
+      env,
+      500
+    );
+  }
+}
 
-      if (pathname === "/api/products/register" && method === "PUT") {
-        return withCors(await registerProduct(request, env), request, env);
-      }
+if (pathname === "/api/product" && method === "GET") {
+  try {
+    const product = await getProduct(request, env);
+    return json({ ok: true, product }, request, env);
+  } catch (err: any) {
+    return json(
+      { ok: false, error: err.message },
+      request,
+      env,
+      404
+    );
+  }
+}
+
+if (pathname === "/api/products/register" && method === "PUT") {
+  try {
+    const product = await registerProduct(request, env);
+    return json({ ok: true, product }, request, env);
+  } catch (err: any) {
+    return json(
+      { ok: false, error: err.message },
+      request,
+      env,
+      400
+    );
+  }
+}
+
 
       /* ===== POLICY ===== */
       if (pathname === "/api/policy/version/register" && method === "POST") {

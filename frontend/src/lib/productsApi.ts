@@ -1,37 +1,40 @@
 import type { ProductDTO } from "./types";
 import { API_BASE } from "./config";
 
-async function handleResponse<T>(res: Response): Promise<T> {
-  if (!res.ok) {
-    console.error("[ProductsAPI] HTTP error:", res.status, res.statusText);
-    throw new Error(`Failed request (${res.status})`);
-  }
-  return res.json() as Promise<T>;
-}
-
 export async function fetchProducts(): Promise<ProductDTO[]> {
-  try {
     const res = await fetch(`${API_BASE}/api/products`, {
-      headers: { "Accept": "application/json" },
+      headers: { Accept: "application/json" },
     });
-    const data = await handleResponse<ProductDTO[]>(res);
-    return Array.isArray(data) ? data : [];
-  } catch (err) {
-    console.error("[ProductsAPI] fetchProducts error:", err);
-    throw err;
-  }
-}
-export async function fetchProduct(id: string): Promise<ProductDTO | { error: string }> {
-    const res = await fetch(`${API_BASE}/api/product?id=${encodeURIComponent(id)}`);
   
-    let parsed: any;
-  
-    try {
-      parsed = await res.json();
-    } catch (err) {
-      throw new Error("Risposta non valida dal backend in fetchProduct()");
+    if (!res.ok) {
+      throw new Error(`Products fetch failed (${res.status})`);
     }
   
-    return parsed;
+    const data = await res.json();
+  
+    if (!data.ok || !Array.isArray(data.products)) {
+      throw new Error("Invalid products response shape");
+    }
+  
+    return data.products;
+  }
+  
+  export async function fetchProduct(id: string): Promise<ProductDTO> {
+    const res = await fetch(
+      `${API_BASE}/api/product?id=${encodeURIComponent(id)}`,
+      { headers: { Accept: "application/json" } }
+    );
+  
+    if (!res.ok) {
+      throw new Error(`Product fetch failed (${res.status})`);
+    }
+  
+    const data = await res.json();
+  
+    if (!data.ok || !data.product) {
+      throw new Error(data.error ?? "Invalid product response shape");
+    }
+  
+    return data.product;
   }
   

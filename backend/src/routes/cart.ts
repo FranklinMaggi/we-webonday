@@ -1,88 +1,83 @@
+// backend/src/routes/cart.ts
 import type { Env } from "../types/env";
-
-function json(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { "Content-Type": "application/json", },
-  });
-}
+import { z } from "zod";
+import { CartItemSchema } from "../schemas/cartSchema";
 
 /* ============================================================
-   GUEST CART (ANONIMO) — FUNZIONA COME LA TUA VERSIONE VECCHIA
+   CART DOMAIN — visitorId based (v46)
 ============================================================ */
 
-export async function createCart(request: Request, env: Env) {
-  const body = await request.json();
-  const id = crypto.randomUUID();
+const CartSchema = z.object({
+  visitorId: z.string(),
+  items: z.array(CartItemSchema),
+  total: z.number(),
+  updatedAt: z.string(),
+});
 
-  await env.CART_KV.put(`CART:${id}`, JSON.stringify({
-    cartId: id,
-    items: body,
-    createdAt: new Date().toISOString(),
-  }));
+type CartDTO = z.infer<typeof CartSchema>;
 
-  return json({ ok: true, cartId: id });
-}
+/* ============================================================
+   SAVE CART
+   POST /api/cart
+============================================================ */
+export async function saveCart(request: Request, env: Env) {
+  let raw: any;
 
-export async function getCart(request: Request, env: Env) {
-  const url = new URL(request.url);
-  const id = url.searchParams.get("id");
-  if (!id) return json({ error: "Missing id" }, 400);
+  try {
+    raw = await request.json();
+  } catch {
+    throw new Error("Invalid JSON body");
+  }
 
-  const stored = await env.CART_KV.get(`CART:${id}`);
-  if (!stored) return json({ error: "Not found" }, 404);
+  if (!raw.visitorId) {
+    throw new Error("Missing visitorId");
+  }
 
-  return json(JSON.parse(stored));
-}
+  const items = z.array(CartItemSchema).parse(raw.items);
 
-export async function updateCart(request: Request, env: Env) {
-  const url = new URL(request.url);
-  const id = url.searchParams.get("id");
-  if (!id) return json({ error: "Missing id" }, 400);
+  // 🔒 total calcolato dal backend
+  const total = items.reduce(
+    (sum, i) =>
+      sum +
+      i.basePrice +
+      i.options.reduce((s, o) => s + o.price, 0),
+    0
+  );
 
-  const items = await request.json();
-  
-  await env.CART_KV.put(`CART:${id}`, JSON.stringify({
-    cartId: id,
+  const cart: CartDTO = CartSchema.parse({
+    visitorId: raw.visitorId,
     items,
+    total,
     updatedAt: new Date().toISOString(),
-  }));
+  });
 
-  return json({ ok: true, id, items });
+  await env.CART_KV.put(
+    `CART:${cart.visitorId}`,
+    JSON.stringify(cart)
+  );
+
+  return cart;
 }
 
 /* ============================================================
-   USER CART — CARRELLO ASSOCIATO A USERID (NUOVO)
+   GET CART
+   GET /api/cart?visitorId=XXX
 ============================================================ */
+export async function getCart(request: Request, env: Env) {
+  const visitorId = new URL(request.url).searchParams.get("visitorId");
+  if (!visitorId) {
+    throw new Error("Missing visitorId");
+  }
 
-export async function saveUserCart(request: Request, env: Env) {
-  const body = await request.json() as {
-    userId: string;
-    items: any[];
-  };
+  const raw = await env.CART_KV.get(`CART:${visitorId}`);
+  if (!raw) {
+    return {
+      visitorId,
+      items: [],
+      total: 0,
+      updatedAt: new Date().toISOString(),
+    };
+  }
 
-  if (!body.userId)
-    return json({ error: "Missing userId" }, 400);
-
-  await env.CART_KV.put(`USER_CART:${body.userId}`, JSON.stringify({
-    userId: body.userId,
-    items: body.items,
-    updatedAt: new Date().toISOString(),
-  }));
-
-  return json({ ok: true });
-}
-
-export async function getUserCart(request: Request, env: Env) {
-  const url = new URL(request.url);
-  const userId = url.searchParams.get("userId");
-
-  if (!userId)
-    return json({ error: "Missing userId" }, 400);
-
-  const stored = await env.CART_KV.get(`USER_CART:${userId}`);
-  if (!stored)
-    return json({ items: [] }); // utente nuovo = nessun carrello ancora
-
-  return json(JSON.parse(stored));
+  return CartSchema.parse(JSON.parse(raw));
 }
