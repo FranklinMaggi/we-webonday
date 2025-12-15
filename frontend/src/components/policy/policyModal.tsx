@@ -6,7 +6,7 @@ import {
   acceptPolicyApi,
   type PolicyVersion,
 } from "../../lib/policyApi";
-import { getOrCreateVisitorId } from "../../utils/visitor"; // o dal tuo file esistente
+import { getOrCreateVisitorId } from "../../utils/visitor";
 
 type Props = {
   userEmail: string;

@@ -24,21 +24,22 @@ const initialState: CheckoutState = {
 ========================= */
 
 export function useCheckout() {
+  useEffect(() => {
+    const userId = localStorage.getItem("webonday_user_v1");
+    const email = localStorage.getItem("webonday_user_email");
+  
+    if (!userId || !email) {
+      window.location.href = "/user/login?redirect=/user/checkout";
+      return;
+    }
+  
+    setState((s) => ({ ...s, email }));
+  }, []);
+  
   const cart = cartStore((s) => s.items);
   const [state, setState] = useState<CheckoutState>(initialState);
 
-  /* =========================
-     AUTH GUARD (HARD)
-  ========================= */
 
-  useEffect(() => {
-    const userId = localStorage.getItem("webonday_user_v1");
-    if (!userId) {
-      window.location.href =
-        "/user/login?redirect=" +
-        encodeURIComponent("/user/checkout");
-    }
-  }, []);
 
   /* =========================
      PREFILL EMAIL

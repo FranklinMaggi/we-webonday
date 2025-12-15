@@ -1,7 +1,7 @@
 // CartPreview.tsx
 import type { ProductDTO } from "../../lib/types";
 import { cartStore } from "../../lib/cartStore";
-import { getOrCreateVisitorId } from "../../utils/cookieConsent";
+import { getOrCreateVisitorId } from "../../utils/visitor";
 import { eur } from "../../utils/format";
 
 interface Props {

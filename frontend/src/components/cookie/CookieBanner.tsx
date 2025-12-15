@@ -1,10 +1,10 @@
 // src/components/cookie/CookieBanner.tsx
 import { useEffect, useState } from "react";
 import { API_BASE } from "../../lib/config";
+import { getOrCreateVisitorId } from "../../utils/visitor";
 
 import {
   getLocalConsent,
-  getOrCreateVisitorId,
   saveLocalConsent,
 } from "../../utils/cookieConsent";
 import type { LocalConsent } from "../../utils/cookieConsent";
