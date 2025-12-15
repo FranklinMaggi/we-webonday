@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   fetchLatestPolicy,
   acceptPolicyApi,
-  type PolicyVersion,
 } from "../../../../lib/policyApi";
 
 interface Props {
@@ -12,21 +11,19 @@ interface Props {
 }
 
 export default function PolicyGate({ userId, email, onAccepted }: Props) {
-  const [policy, setPolicy] = useState<PolicyVersion | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | undefined>();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>();
+  const [policyVersion, setPolicyVersion] = useState<string>();
 
+  // 🔹 carica policy dal BE
   useEffect(() => {
     fetchLatestPolicy()
-      .then(setPolicy)
-      .catch(() =>
-        setError("Impossibile caricare la privacy policy")
-      )
-      .finally(() => setLoading(false));
+      .then((p) => setPolicyVersion(p.version))
+      .catch(() => setError("Impossibile caricare la policy"));
   }, []);
 
   async function accept() {
-    if (!policy) return;
+    if (!policyVersion) return;
 
     try {
       setLoading(true);
@@ -35,44 +32,29 @@ export default function PolicyGate({ userId, email, onAccepted }: Props) {
       await acceptPolicyApi({
         userId,
         email,
-        policyVersion: policy.version,
+        policyVersion,
       });
 
       await onAccepted();
     } catch (e: any) {
       setError(e.message ?? "Errore accettazione policy");
+    } finally {
       setLoading(false);
     }
   }
-
-  if (loading) return <p>Caricamento policy…</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-  if (!policy) return null;
 
   return (
     <section>
       <h2>Privacy & Termini</h2>
 
-      <small>
-        Versione policy: <strong>{policy.version}</strong>
-      </small>
+      <p>
+        Per continuare devi accettare la privacy policy
+        (versione: <strong>{policyVersion ?? "…"}</strong>)
+      </p>
 
-      <article
-        style={{
-          marginTop: 16,
-          padding: 12,
-          border: "1px solid #ddd",
-          maxHeight: 300,
-          overflowY: "auto",
-        }}
-        dangerouslySetInnerHTML={{ __html: policy.content }}
-      />
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <button
-        disabled={loading}
-        onClick={accept}
-        style={{ marginTop: 16 }}
-      >
+      <button disabled={loading || !policyVersion} onClick={accept}>
         Accetta e continua
       </button>
     </section>
