@@ -13,45 +13,21 @@ import type { CheckoutState, CheckoutStep } from "./types";
    INITIAL STATE
 ========================= */
 
-const initialState: CheckoutState = {
-  step: "cart",
-  email: "",
-  loading: false,
-};
 
 /* =========================
    HOOK
 ========================= */
 
-export function useCheckout() {
-  useEffect(() => {
-    const userId = localStorage.getItem("webonday_user_v1");
-    const email = localStorage.getItem("webonday_user_email");
-  
-    if (!userId || !email) {
-      window.location.href = "/user/login?redirect=/user/checkout";
-      return;
-    }
-  
-    setState((s) => ({ ...s, email }));
-  }, []);
-  
+export function useCheckout(userId: string, email: string) {
+ 
   const cart = cartStore((s) => s.items);
+ 
+  const initialState: CheckoutState = {
+    step: "cart",
+    email,
+    loading: false,
+  };
   const [state, setState] = useState<CheckoutState>(initialState);
-
-
-
-  /* =========================
-     PREFILL EMAIL
-  ========================= */
-
-  useEffect(() => {
-    const savedEmail = localStorage.getItem("webonday_user_email");
-    if (savedEmail) {
-      setState((s) => ({ ...s, email: savedEmail }));
-    }
-  }, []);
-
   /* =========================
      LOAD POLICY ON STEP
   ========================= */
@@ -142,8 +118,6 @@ export function useCheckout() {
   ========================= */
 
   async function acceptPolicy() {
-    const userId = localStorage.getItem("webonday_user_v1");
-
     if (!userId || !state.policyVersion) {
       setState((s) => ({
         ...s,
@@ -151,19 +125,18 @@ export function useCheckout() {
       }));
       return;
     }
-
+  
     try {
       setState((s) => ({ ...s, loading: true, error: undefined }));
-
+  
       await acceptPolicyApi({
-        userId,
+        userId,              // ✅ user reale
         email: state.email,
         policyVersion: state.policyVersion,
       });
-
-      await submitOrder();   // ordine creato DOPO policy
-      next("payment");       // vai al pagamento
-
+  
+      await submitOrder();
+      next("payment");
     } catch (e: any) {
       setState((s) => ({
         ...s,
@@ -172,7 +145,7 @@ export function useCheckout() {
       }));
     }
   }
-
+  
   /* =========================
      API
   ========================= */

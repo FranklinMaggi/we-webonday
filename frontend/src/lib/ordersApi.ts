@@ -15,6 +15,7 @@ export async function createOrder(
 ): Promise<{ orderId: string }> {
   const res = await fetch(`${API_BASE}/api/order`, {
     method: "POST",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });

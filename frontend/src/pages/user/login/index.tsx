@@ -91,9 +91,7 @@ export default function UserLoginPage() {
         return;
       }
 
-      localStorage.setItem("webonday_user_v1", out.user.id);
-      localStorage.setItem("webonday_user_email", email);
-
+  
       window.location.href = redirect;
     } catch (err) {
       setLoading(false);

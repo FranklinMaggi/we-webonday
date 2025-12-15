@@ -18,8 +18,9 @@ export default function CartReview({ cart, next }: Props) {
       <h2>Riepilogo carrello</h2>
 
       <ul>
-        {cart.map((item) => (
-          <li key={item.productId}>
+      {cart.map((item, idx) => (
+  <li key={`${item.productId}-${idx}`}>
+
             {item.title} — €{item.total.toFixed(2)}
           </li>
         ))}

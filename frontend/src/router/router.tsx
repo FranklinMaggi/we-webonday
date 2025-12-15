@@ -1,6 +1,5 @@
 // src/router/router.tsx
-import type { ReactNode } from "react";
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { MainLayout } from "../components/layouts/MainLayout";
 import AdminLayout from "../components/layouts/AdminLayout";
 
@@ -18,7 +17,6 @@ import UserLogin from "../pages/user/login";
 import CheckoutPage from "../pages/user/checkout";
 
 // Policy
-import Policy from "../pages/policy";
 import Privacy from "../pages/policy/privacy";
 import Terms from "../pages/policy/terms";
 
@@ -36,61 +34,28 @@ import SuperAdminUsers from "../pages/superadmin/dashboard/Users";
 import SuperAdminOrders from "../pages/superadmin/dashboard/Orders";
 import SuperAdminLogs from "../pages/superadmin/dashboard/Logs";
 
-/* =========================
-   USER GUARD
-========================= */
-function UserGuard({ children }: { children: ReactNode }) {
-  const userId = localStorage.getItem("webonday_user_v1");
-
-  if (!userId) {
-    return (
-      <Navigate
-        to="/user/login?redirect=/user/checkout"
-        replace
-      />
-    );
-  }
-
-  return <>{children}</>;
-}
-
-
-/* =========================
-   ROUTER
-========================= */
-
 const router = createBrowserRouter([
+  /* =========================
+     PUBLIC + USER
+  ========================= */
   {
     path: "/",
     element: <MainLayout />,
     children: [
       { index: true, element: <Home /> },
-
       { path: "vision", element: <Vision /> },
       { path: "mission", element: <Mission /> },
-
-      // User login
       { path: "user/login", element: <UserLogin /> },
-
-      // Policy pages
-      { path: "policy", element: <Policy /> },
       { path: "policy/privacy", element: <Privacy /> },
       { path: "policy/terms", element: <Terms /> },
     ],
   },
-
-  /* =========================
-     USER CHECKOUT (PROTETTO)
-  ========================= */
+  
   {
     path: "/user/checkout",
-    element: (
-      <UserGuard>
-        <CheckoutPage />
-      </UserGuard>
-    ),
+    element: <CheckoutPage />,
   },
-
+  
   /* =========================
      ADMIN
   ========================= */
@@ -98,7 +63,6 @@ const router = createBrowserRouter([
     path: "/admin",
     children: [
       { path: "login", element: <AdminLogin /> },
-
       {
         element: <AdminLayout />,
         children: [

@@ -15,8 +15,8 @@ export default function Footer() {
       </div>
 
       <div className="wd-footer-col">
-        <h4 className="wd-footer-title">Policy</h4>
-        <a className="wd-footer-link" href="/policy">Termini e condizioni</a>
+      <a className="wd-footer-link" href="/policy/terms">Termini</a>
+      <a className="wd-footer-link" href="/policy/privacy">Privacy</a>
       </div>
 
     </footer>

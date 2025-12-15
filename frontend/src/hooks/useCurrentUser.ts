@@ -1,13 +1,13 @@
-// frontend/src/hooks/useCurrentUser.ts
+// src/hooks/useCurrentUser.ts
 import { useEffect, useState } from "react";
 import { API_BASE } from "../lib/config";
 
-export interface CurrentUser {
+export type CurrentUser = {
   id: string;
-  email?: string;
-  googleId?: string;
-  createdAt?: string;
-}
+  email: string;
+  firstName?: string;
+  lastName?: string;
+};
 
 export function useCurrentUser() {
   const [user, setUser] = useState<CurrentUser | null>(null);
@@ -16,29 +16,23 @@ export function useCurrentUser() {
   useEffect(() => {
     let cancelled = false;
 
-    async function load() {
-      try {
-        const res = await fetch(
-          `${API_BASE}/api/user/me`,
-          {
-            credentials: "include",
-          }
-        );
-
-        const out = await res.json();
-
-        if (!cancelled) {
-          setUser(out.user ?? null);
-        }
-      } catch (err) {
-        console.error("Errore /api/user/me", err);
+    fetch(`${API_BASE}/api/user/me`, {
+      credentials: "include",
+    })
+      .then(async (res) => {
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data?.user ?? null;
+      })
+      .then((u) => {
+        if (!cancelled) setUser(u);
+      })
+      .catch(() => {
         if (!cancelled) setUser(null);
-      } finally {
+      })
+      .finally(() => {
         if (!cancelled) setLoading(false);
-      }
-    }
-
-    load();
+      });
 
     return () => {
       cancelled = true;

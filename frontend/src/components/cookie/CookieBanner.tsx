@@ -31,7 +31,7 @@ export function CookieBanner() {
     try {
       setLoading(true);
       await fetch(`${API_BASE}/api/cookies/accept`, {
-        method: "POST",
+        method: "POST",credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           visitorId,
