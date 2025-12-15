@@ -1,8 +1,7 @@
 // src/components/cookie/CookieBanner.tsx
 import { useEffect, useState } from "react";
-import { API_BASE } from "../../lib/config";
 import { getOrCreateVisitorId } from "../../utils/visitor";
-
+import { acceptCookies } from "../../lib/api";
 import {
   getLocalConsent,
   saveLocalConsent,
@@ -22,30 +21,21 @@ export function CookieBanner() {
 
   async function sendConsentToBackend(consent: LocalConsent) {
     const visitorId = getOrCreateVisitorId();
-
-    if (!API_BASE) {
-      console.warn("API BASE URL non impostato. Salvataggio cookie non avverrà.");
-      return;
-    }
-
+  
     try {
       setLoading(true);
-      await fetch(`${API_BASE}/api/cookies/accept`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          visitorId,
-          analytics: consent.analytics,
-          marketing: consent.marketing,
-        }),
-      });
+      await acceptCookies(
+        visitorId,
+        consent.analytics,
+        consent.marketing
+      );
     } catch (err) {
       console.error("Errore salvataggio consenso cookie:", err);
     } finally {
       setLoading(false);
     }
   }
-
+  
   async function handleAcceptAll() {
     const consent: LocalConsent = {
       necessary: true,

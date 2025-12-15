@@ -32,9 +32,15 @@ export async function apiFetch(
   }
 }
 // COOKIES
-export function acceptCookies(visitorId: string, analytics: boolean, marketing: boolean) {
+export function acceptCookies(
+  visitorId: string, 
+  analytics: boolean, 
+  marketing: boolean
+) 
+  {
     return apiFetch("/api/cookies/accept", {
       method: "POST",
+      credentials: "include" ,
       body: JSON.stringify({ visitorId, analytics, marketing })
     });
   }
