@@ -28,10 +28,14 @@ import {
   getLatestPolicy,
   getPolicyVersion,
   listPolicyVersions,
-} from "./routes/policyVersion";
+} from "./routes/policy";
 
-import { createOrder } from "./routes/order";
-import { listOrders, getOrder } from "./routes/orders";
+import {
+  createOrder,
+  listOrders,
+  getOrder,
+} from "./routes/orders";
+
 
 import {
   googleAuth,

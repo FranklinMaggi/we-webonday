@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { API_BASE } from "../../lib/config";
+
 
 export default function PolicyPage() {
   const params = new URLSearchParams(window.location.search);
@@ -13,14 +15,15 @@ export default function PolicyPage() {
     async function loadPolicy() {
       try {
         const res = await fetch(
-          import.meta.env.VITE_API_URL + "/api/policy/version/latest"
+         `${API_BASE}/api/policy/version/latest`
         );
         const out = await res.json();
 
         setPolicyVersion(out.version ?? "v1");
 
         const contentRes = await fetch(
-          import.meta.env.VITE_API_URL + "/api/policy/content?version=" + out.version
+         `${API_BASE}/api/policy/content?version=${out.version}`
+
         );
         const content = await contentRes.text();
         setPolicyText(content);
@@ -45,7 +48,7 @@ export default function PolicyPage() {
       return;
     }
 
-    const res = await fetch(import.meta.env.VITE_API_URL + "/api/policy/accept", {
+    const res = await fetch(`${API_BASE}/api/policy/accept`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

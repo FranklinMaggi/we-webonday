@@ -1,16 +1,13 @@
 // src/lib/ordersApi.ts
-const API_BASE = import.meta.env.VITE_API_URL;
+import { API_BASE } from "./config";
 
 export type CreateOrderPayload = {
   email: string;
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  billingAddress?: string;
-  piva?: string;
-  businessName?: string;
   items: any[];
   total: number;
+
+  // 🔒 OBBLIGATORIO
+  policyVersion: string;
 };
 
 export async function createOrder(

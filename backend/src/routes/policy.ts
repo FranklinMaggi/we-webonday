@@ -1,66 +1,186 @@
 // backend/src/routes/policy.ts
 import type { Env } from "../types/env";
-interface PolicyAcceptBody {
-  userId: string;
-  email: string;
-  policyVersion: string;
-}
+import { z } from "zod";
 
+/* =========================
+   HELPERS
+========================= */
 
-function jsonResponse(body: unknown, status = 200): Response {
+function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
   });
 }
 
-export async function acceptPolicy(request: Request, env: Env): Promise<Response> {
-  let body: PolicyAcceptBody;
+/* =========================
+   SCHEMAS
+========================= */
 
+const RegisterPolicySchema = z.object({
+  version: z.string().min(1),
+  content: z.string().min(1),
+});
+
+const AcceptPolicySchema = z.object({
+  userId: z.string().min(1),
+  email: z.string().email(),
+  policyVersion: z.string().min(1),
+});
+
+/* =========================
+   REGISTER POLICY VERSION (ADMIN)
+========================= */
+
+export async function registerPolicyVersion(
+  request: Request,
+  env: Env
+): Promise<Response> {
+  let body;
   try {
-    body = (await request.json()) as PolicyAcceptBody;
+    body = RegisterPolicySchema.parse(await request.json());
   } catch {
-    return jsonResponse({ error: "Invalid JSON" }, 400);
+    return json({ ok: false, error: "Invalid body" }, 400);
+  }
+
+  const { version, content } = body;
+
+  const hashBuffer = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(content)
+  );
+  const hash = [...new Uint8Array(hashBuffer)]
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+
+  const record = {
+    version,
+    content,
+    hash,
+    timestamp: new Date().toISOString(),
+  };
+
+  await env.POLICY_KV.put(
+    `POLICY_VERSION:${version}`,
+    JSON.stringify(record)
+  );
+  await env.POLICY_KV.put("POLICY_LATEST", version);
+
+  return json({ ok: true, version, hash });
+}
+
+/* =========================
+   GET LATEST POLICY
+========================= */
+
+export async function getLatestPolicy(env: Env): Promise<Response> {
+  const latest = await env.POLICY_KV.get("POLICY_LATEST");
+  if (!latest) {
+    return json({ ok: true, hasPolicy: false, policy: null });
+  }
+
+  const data = await env.POLICY_KV.get(`POLICY_VERSION:${latest}`);
+  if (!data) {
+    return json({ ok: false, error: "Latest policy missing" }, 500);
+  }
+
+  return new Response(data, {
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+/* =========================
+   GET POLICY BY VERSION
+========================= */
+
+export async function getPolicyVersion(
+  request: Request,
+  env: Env
+): Promise<Response> {
+  const version = new URL(request.url).searchParams.get("version");
+  if (!version) return json({ error: "Missing version" }, 400);
+
+  const data = await env.POLICY_KV.get(`POLICY_VERSION:${version}`);
+  if (!data) return json({ error: "Not found" }, 404);
+
+  return new Response(data, {
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+/* =========================
+   LIST POLICY VERSIONS
+========================= */
+
+export async function listPolicyVersions(env: Env): Promise<Response> {
+  const list = await env.POLICY_KV.list({ prefix: "POLICY_VERSION:" });
+  const versions = list.keys.map((k) =>
+    k.name.replace("POLICY_VERSION:", "")
+  );
+  return json({ ok: true, versions });
+}
+
+/* =========================
+   ACCEPT POLICY (USER)
+========================= */
+
+export async function acceptPolicy(
+  request: Request,
+  env: Env
+): Promise<Response> {
+  let body;
+  try {
+    body = AcceptPolicySchema.parse(await request.json());
+  } catch {
+    return json({ ok: false, error: "Invalid input" }, 400);
   }
 
   const { userId, email, policyVersion } = body;
 
-  if (!userId || !email || !policyVersion) {
-    return jsonResponse({ error: "Missing fields" }, 400);
+  const latest = await env.POLICY_KV.get("POLICY_LATEST");
+  if (!latest) {
+    return json({ ok: false, error: "No policy available" }, 500);
   }
 
-  const data = {
-    email,
-    policyVersion,
-    acceptedAt: new Date().toISOString(),
-  };
+  if (policyVersion !== latest) {
+    return json({ ok: false, error: "POLICY_OUTDATED" }, 409);
+  }
 
-  await env.POLICY_KV.put(`ACCEPT:${userId}`, JSON.stringify(data));
+  await env.POLICY_KV.put(
+    `POLICY_ACCEPTANCE:${userId}:${policyVersion}`,
+    JSON.stringify({
+      email,
+      acceptedAt: new Date().toISOString(),
+    })
+  );
 
-  return jsonResponse({ ok: true, data }, 200);
+  return json({ ok: true });
 }
 
-export async function getPolicyStatus(request: Request, env: Env): Promise<Response> {
-  const url = new URL(request.url);
-  const userId = url.searchParams.get("userId");
+/* =========================
+   GET POLICY STATUS
+========================= */
 
-  if (!userId) {
-    return jsonResponse({ error: "Missing userId" }, 400);
-  }
+export async function getPolicyStatus(
+  request: Request,
+  env: Env
+): Promise<Response> {
+  const userId = new URL(request.url).searchParams.get("userId");
+  if (!userId) return json({ error: "Missing userId" }, 400);
 
-  const stored = await env.POLICY_KV.get(`ACCEPT:${userId}`);
+  const latest = await env.POLICY_KV.get("POLICY_LATEST");
+  if (!latest) return json({ accepted: false });
+
+  const key = `POLICY_ACCEPTANCE:${userId}:${latest}`;
+  const stored = await env.POLICY_KV.get(key);
 
   if (!stored) {
-    return jsonResponse({ accepted: false }, 200);
+    return json({ accepted: false, policyVersion: latest });
   }
 
-  return jsonResponse(
-    {
-      accepted: true,
-      ...JSON.parse(stored),
-    },
-    200
-  );
+  return json({
+    accepted: true,
+    policyVersion: latest,
+    ...JSON.parse(stored),
+  });
 }

@@ -1,5 +1,6 @@
 // frontend/src/hooks/useCurrentUser.ts
 import { useEffect, useState } from "react";
+import { API_BASE } from "../lib/config";
 
 export interface CurrentUser {
   id: string;
@@ -18,7 +19,7 @@ export function useCurrentUser() {
     async function load() {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/user/me`,
+          `${API_BASE}/api/user/me`,
           {
             credentials: "include",
           }

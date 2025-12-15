@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { API_BASE } from "../../../lib/config";
 export default function UserLoginPage() {
   // ===========================
   // GESTIONE REDIRECT
@@ -38,7 +38,7 @@ export default function UserLoginPage() {
 
     try {
       const res = await fetch(
-        import.meta.env.VITE_API_URL + "/api/user/login",
+        `${API_BASE}/api/user/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -75,7 +75,7 @@ export default function UserLoginPage() {
 
     try {
       const res = await fetch(
-        import.meta.env.VITE_API_URL + "/api/user/register",
+        `${API_BASE}/api/user/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -107,7 +107,7 @@ export default function UserLoginPage() {
   const googleLogin = () => {
     // costruisco l'URL via URL API per avere encode automatico
     const url = new URL(
-      import.meta.env.VITE_API_URL + "/api/user/google/auth"
+      `${API_BASE}/api/user/google/auth`
     );
     url.searchParams.set("redirect", redirect);
 

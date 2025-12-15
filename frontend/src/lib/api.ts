@@ -1,6 +1,5 @@
 // src/lib/api.ts
-
-const API_BASE = import.meta.env.VITE_API_URL;
+import { API_BASE } from "./config";
 
 if (!API_BASE) {
   console.warn("ATTENZIONE: VITE_API_BASE_URL non definita nel .env");

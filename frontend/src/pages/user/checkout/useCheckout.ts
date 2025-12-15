@@ -1,9 +1,17 @@
-import { fetchLatestPolicy, acceptPolicyApi } from "../../../lib/policyApi";
-
 import { useEffect, useState } from "react";
+
 import { cartStore } from "../../../lib/cartStore";
 import { createOrder } from "../../../lib/ordersApi";
+import {
+  fetchLatestPolicy,
+  acceptPolicyApi,
+} from "../../../lib/policyApi";
+
 import type { CheckoutState, CheckoutStep } from "./types";
+
+/* =========================
+   INITIAL STATE
+========================= */
 
 const initialState: CheckoutState = {
   step: "cart",
@@ -11,27 +19,50 @@ const initialState: CheckoutState = {
   loading: false,
 };
 
+/* =========================
+   HOOK
+========================= */
+
 export function useCheckout() {
   const cart = cartStore((s) => s.items);
   const [state, setState] = useState<CheckoutState>(initialState);
 
   /* =========================
-     PREFILL EMAIL (LOGIN)
+     AUTH GUARD (HARD)
   ========================= */
+
+  useEffect(() => {
+    const userId = localStorage.getItem("webonday_user_v1");
+    if (!userId) {
+      window.location.href =
+        "/user/login?redirect=" +
+        encodeURIComponent("/user/checkout");
+    }
+  }, []);
+
+  /* =========================
+     PREFILL EMAIL
+  ========================= */
+
   useEffect(() => {
     const savedEmail = localStorage.getItem("webonday_user_email");
     if (savedEmail) {
       setState((s) => ({ ...s, email: savedEmail }));
     }
   }, []);
+
+  /* =========================
+     LOAD POLICY ON STEP
+  ========================= */
+
   useEffect(() => {
     if (state.step !== "policy") return;
-  
+
     fetchLatestPolicy()
       .then((policy) => {
         setState((s) => ({
           ...s,
-          policyVersion: policy.version, // ← usa `version`
+          policyVersion: policy.version,
         }));
       })
       .catch(() => {
@@ -41,10 +72,11 @@ export function useCheckout() {
         }));
       });
   }, [state.step]);
-  
+
   /* =========================
-     GUARDIE DI NAVIGAZIONE
+     NAVIGATION GUARDS
   ========================= */
+
   function canGoTo(step: CheckoutStep): boolean {
     if (step === "user" && cart.length === 0) return false;
     if (step === "policy" && !state.email) return false;
@@ -63,26 +95,33 @@ export function useCheckout() {
   }
 
   /* =========================
-     CREATE ORDER
+     CREATE ORDER (LOCKED)
   ========================= */
+
   async function submitOrder() {
-    if (!state.email || cart.length === 0) {
-      setState((s) => ({ ...s, error: "Checkout non valido" }));
+    if (!state.email || cart.length === 0 || !state.policyVersion) {
+      setState((s) => ({
+        ...s,
+        error: "Checkout non valido",
+      }));
       return;
     }
-  
-    // totale deterministico lato FE (coerente con CartItem.total)
-    const total = cart.reduce((sum, i) => sum + (Number(i.total) || 0), 0);
-  
+
+    const total = cart.reduce(
+      (sum, i) => sum + (Number(i.total) || 0),
+      0
+    );
+
     setState((s) => ({ ...s, loading: true }));
-  
+
     try {
       const res = await createOrder({
         email: state.email,
         items: cart,
         total,
+        policyVersion: state.policyVersion, // 🔒 vincolo legale
       });
-  
+
       setState((s) => ({
         ...s,
         orderId: res.orderId,
@@ -96,32 +135,34 @@ export function useCheckout() {
       }));
     }
   }
-  
 
   /* =========================
-     POLICY
+     POLICY ACCEPTANCE
   ========================= */
+
   async function acceptPolicy() {
-    if (!state.policyVersion) {
+    const userId = localStorage.getItem("webonday_user_v1");
+
+    if (!userId || !state.policyVersion) {
       setState((s) => ({
         ...s,
-        error: "Policy non disponibile",
+        error: "Utente o policy non valida",
       }));
       return;
     }
-  
+
     try {
       setState((s) => ({ ...s, loading: true, error: undefined }));
-  
+
       await acceptPolicyApi({
-        userId: localStorage.getItem("webonday_user_v1") ?? "guest",
+        userId,
         email: state.email,
         policyVersion: state.policyVersion,
       });
-  
-      await submitOrder();   // crea ordine
-      next("payment");       // naviga
-  
+
+      await submitOrder();   // ordine creato DOPO policy
+      next("payment");       // vai al pagamento
+
     } catch (e: any) {
       setState((s) => ({
         ...s,
@@ -130,8 +171,11 @@ export function useCheckout() {
       }));
     }
   }
-  
-  
+
+  /* =========================
+     API
+  ========================= */
+
   return {
     state,
     setState,

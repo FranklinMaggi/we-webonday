@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const ActivitySchema = z.object({
   id: z.string().uuid(),
-  userId: z.string(),              // o hashId, se preferisci
+  userId: z.string().nullable(),              // o hashId, se preferisci
   type: z.string(),                // "LOGIN", "ORDER_CREATED", ecc.
   timestamp: z.string(),           // ISO
   hash: z.string(),                // hash dell’evento/payload

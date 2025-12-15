@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import './admin.css';
+import { API_BASE } from "../../../lib/config";
+
+
 interface Order {
   id: string;
   userId: string | null;
@@ -24,7 +27,7 @@ export default function AdminOrdersPage() {
       return;
     }
 
-    fetch(import.meta.env.VITE_API_URL + "/api/admin/orders/list", {
+    fetch(`${API_BASE}/api/admin/orders/list`, {
       headers: {
         "x-admin-token": token
       }

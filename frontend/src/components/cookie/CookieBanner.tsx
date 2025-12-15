@@ -1,14 +1,13 @@
 // src/components/cookie/CookieBanner.tsx
 import { useEffect, useState } from "react";
+import { API_BASE } from "../../lib/config";
+
 import {
   getLocalConsent,
   getOrCreateVisitorId,
   saveLocalConsent,
 } from "../../utils/cookieConsent";
 import type { LocalConsent } from "../../utils/cookieConsent";
-
-const API_BASE = import.meta.env.VITE_API_URL;
-console.log("[CookieBanner] API_BASE =", API_BASE);
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);

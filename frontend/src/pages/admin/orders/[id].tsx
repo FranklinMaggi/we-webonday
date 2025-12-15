@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { requireAdminToken } from "../../../utils/admin";
+import { API_BASE } from "../../../lib/config";
+
 
 export default function AdminOrderDetails() {
   const { id } = useParams();
@@ -11,7 +13,7 @@ export default function AdminOrderDetails() {
 
     const token = requireAdminToken();
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/admin/orders/get?id=${id}`, {
+    fetch(`${API_BASE}/api/admin/orders/get?id=${id}`, {
       headers: {
         "x-admin-token": token,
       },

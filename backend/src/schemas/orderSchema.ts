@@ -1,12 +1,25 @@
-// backend/src/schemas/orderSchema.ts
 import { z } from "zod";
 import { CartItemSchema } from "./cartSchema";
 
-export const OrderSchema = z.object({
-  id: z.string().uuid(),
-  userId: z.string().nullable(),          // null se guest (anche se noi usiamo Google)
+export const OrderStatusSchema = z.enum([
+  "pending",
+  "confirmed",
+  "cancelled",
+]);
 
-  // DATI CONTATTO / FATTURAZIONE
+export const PaymentStatusSchema = z.enum([
+  "pending",
+  "paid",
+]);
+
+/* ============================
+   BASE OBJECT (NO LOGIC)
+============================ */
+export const OrderBaseSchema = z.object({
+  id: z.string().uuid(),
+
+  userId: z.string().nullable(),
+
   email: z.string().email(),
   firstName: z.string().nullable().optional(),
   lastName: z.string().nullable().optional(),
@@ -16,19 +29,48 @@ export const OrderSchema = z.object({
   piva: z.string().nullable().optional(),
   businessName: z.string().nullable().optional(),
 
-  // CARRELLO
+  policyVersion: z.string().min(1),
+
   items: z.array(CartItemSchema),
-  total: z.number(),
+  total: z.number().nonnegative(),
 
-  // META STATO
-  status: z.enum(["pending", "confirmed", "cancelled"]),
-  createdAt: z.string(), // ISO
+  status: OrderStatusSchema,
+  createdAt: z.string(),
 
-  // OPZIONALE: INFO PAGAMENTO
-  paymentProvider: z.string().optional(),   // "paypal", "manual", ecc.
-  paymentStatus: z.string().optional(),    // "pending", "paid", ...
+  paymentProvider: z.literal("paypal").optional(),
+  paymentStatus: PaymentStatusSchema.optional(),
   paypalOrderId: z.string().optional(),
   paypalCapture: z.unknown().optional(),
 });
 
+/* ============================
+   DOMAIN INVARIANTS
+============================ */
+export const OrderSchema = OrderBaseSchema.superRefine((order, ctx) => {
+  if (order.paymentStatus && !order.paymentProvider) {
+    ctx.addIssue({
+      path: ["paymentProvider"],
+      message: "paymentProvider required when paymentStatus is set",
+      code: z.ZodIssueCode.custom,
+    });
+  }
+
+  if (order.paymentStatus === "paid" && order.status !== "confirmed") {
+    ctx.addIssue({
+      path: ["status"],
+      message: "paid order must be confirmed",
+      code: z.ZodIssueCode.custom,
+    });
+  }
+
+  if (order.paymentProvider === "paypal" && !order.paypalOrderId) {
+    ctx.addIssue({
+      path: ["paypalOrderId"],
+      message: "paypalOrderId required for PayPal orders",
+      code: z.ZodIssueCode.custom,
+    });
+  }
+});
+
 export type OrderDTO = z.infer<typeof OrderSchema>;
+export type OrderStatus = z.infer<typeof OrderStatusSchema>;

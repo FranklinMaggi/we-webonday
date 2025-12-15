@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type {ReactNode} from "react";
-const API_BASE = import.meta.env.VITE_API_URL;
+import { API_BASE } from "../../lib/config";
+
 
 export default function SuperAdminGuard({ children }: { children: ReactNode }) {
   const [allowed, setAllowed] = useState<boolean | null>(null);

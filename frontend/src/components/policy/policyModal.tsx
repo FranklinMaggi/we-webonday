@@ -9,8 +9,7 @@ import {
 import { getOrCreateVisitorId } from "../../utils/visitor"; // o dal tuo file esistente
 
 type Props = {
-  // Se in futuro avrai un vero userId da auth, puoi passarlo qui
-  userEmail?: string;
+  userEmail: string;
 };
 
 export function PolicyModal({ userEmail }: Props) {
@@ -54,8 +53,14 @@ export function PolicyModal({ userEmail }: Props) {
 
   async function handleAccept() {
     if (!policy) return;
+  
+    if (!userEmail) {
+      setError("Email mancante. Effettua il login per continuare.");
+      return;
+    }
+  
     const visitorId = getOrCreateVisitorId();
-
+  
     try {
       setAccepting(true);
       await acceptPolicyApi({
@@ -71,7 +76,7 @@ export function PolicyModal({ userEmail }: Props) {
       setAccepting(false);
     }
   }
-
+  
   if (!open) return null;
 
   return (
