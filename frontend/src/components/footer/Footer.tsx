@@ -1,24 +1,24 @@
-import './footer.css'
+import { Link } from "react-router-dom";
+import "./footer.css";
 
 export default function Footer() {
   return (
     <footer className="wd-footer">
-
       <div className="wd-footer-col">
-        <h4 className="wd-footer-title">Chi Siamo</h4>
-        <a className="wd-footer-link" href="/chi-siamo">La nostra storia</a>
-      </div>
+        <h4 className="wd-footer-title">Policy</h4>
 
-      <div className="wd-footer-col">
-        <h4 className="wd-footer-title">Contatti</h4>
-        <a className="wd-footer-link" href="/contatti">Scrivici</a>
-      </div>
+        <Link className="wd-footer-link" to="/policy/terms">
+          Termini di Servizio
+        </Link>
 
-      <div className="wd-footer-col">
-      <a className="wd-footer-link" href="/policy/terms">Termini</a>
-      <a className="wd-footer-link" href="/policy/privacy">Privacy</a>
-      </div>
+        <Link className="wd-footer-link" to="/policy/privacy">
+          Privacy Policy
+        </Link>
 
+        <Link className="wd-footer-link" to="/policy">
+           Policy
+        </Link>
+      </div>
     </footer>
   );
 }

@@ -19,6 +19,7 @@ import CheckoutPage from "../pages/user/checkout";
 // Policy
 import Privacy from "../pages/policy/privacy";
 import Terms from "../pages/policy/terms";
+import PolicyPage from "../pages/policy/policy";
 
 // Admin
 import AdminLogin from "../pages/admin/utils/login";
@@ -48,6 +49,8 @@ const router = createBrowserRouter([
       { path: "user/login", element: <UserLogin /> },
       { path: "policy/privacy", element: <Privacy /> },
       { path: "policy/terms", element: <Terms /> },
+      { path: "policy", element: <PolicyPage /> },
+      
     ],
   },
   

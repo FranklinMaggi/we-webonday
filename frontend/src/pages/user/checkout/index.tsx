@@ -24,8 +24,18 @@ export default function CheckoutPage() {
 
   if (step === "cart") return <CartReview {...checkout} />;
   if (step === "user") return <UserData {...checkout} />;
-  if (step === "policy") return <PolicyGate {...checkout} />;
-  if (step === "payment") return <PaymentPayPal state={checkout.state} />;
+  if (step === "policy")
+    return (
+      <PolicyGate
+        userId={user.id}
+        email={user.email}
+        onAccepted={async () => {
+          await checkout.submitOrder();
+          checkout.next("payment");
+        }}
+      />
+    );
+   if (step === "payment") return <PaymentPayPal state={checkout.state} />;
 
   return null;
 }
