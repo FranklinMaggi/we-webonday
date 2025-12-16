@@ -2,9 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { fetchProducts } from "../../lib/productsApi";
 import type { Product } from "../../lib/types";
 import { normalizeProduct } from "../../lib/normalizers/productNormalizer";
+
 import ProductCard from "../../components/catalog/ProductCard";
 import OptionSelector from "../../components/catalog/OptionSelector";
 import CartPreview from "../../components/catalog/CartPreview";
+
+import "./home.css";
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -22,11 +25,15 @@ export default function Home() {
 
       try {
         const raw = await fetchProducts();
-        const normalized = (raw ?? []).map((p: any) => normalizeProduct(p));
+        const normalized = (raw ?? []).map((p: any) =>
+          normalizeProduct(p)
+        );
         if (!cancelled) setProducts(normalized);
       } catch (err: any) {
         console.error("[Home] fetchProducts error:", err);
-        if (!cancelled) setError(err?.message || "Errore caricamento prodotti");
+        if (!cancelled) {
+          setError(err?.message || "Errore caricamento prodotti");
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -41,48 +48,75 @@ export default function Home() {
   const hasProducts = useMemo(() => products.length > 0, [products]);
 
   return (
-    <div className="catalog">
-      <h1>Catalogo WebOnDay</h1>
-
-      {loading && <p>Caricamento prodotti…</p>}
-
-      {!loading && error && (
-        <div style={{ padding: 12 }}>
-          <p style={{ color: "red" }}>{error}</p>
-          <button onClick={() => window.location.reload()}>Riprova</button>
+    <main>
+      {/* ================= HERO ================= */}
+      <section className="hero">
+        <div className="hero-content">
+          <h1>Il tuo e-commerce pronto per vendere</h1>
+          <p>
+            Webonday crea siti professionali per PMI con e-commerce,
+            pagamenti online e gestione ordini semplice.
+          </p>
         </div>
-      )}
 
-      {!loading && !error && !hasProducts && (
-        <p>Nessun prodotto disponibile al momento.</p>
-      )}
-
-      {!loading && !error && hasProducts && (
-        <div className="product-list">
-          {products.map((p) => (
-            <ProductCard
-              key={p.id}
-              product={p}
-              onSelect={(prod) => {
-                setSelected(prod);
-                setSelectedOptions([]);
-              }}
-            />
-          ))}
-        </div>
-      )}
-
-      {selected && (
-        <>
-          <OptionSelector
-            options={selected.options}
-            selected={selectedOptions}
-            onChange={setSelectedOptions}
+        <div className="hero-image">
+          <img
+            src="/image/hero/hero-webonday.jpg"
+            alt="Webonday e-commerce per PMI"
           />
+        </div>
+      </section>
 
-          <CartPreview product={selected} selectedOptions={selectedOptions} />
-        </>
-      )}
-    </div>
+      {/* ================= CATALOGO ================= */}
+      <section className="catalog">
+        <h2>Catalogo Webonday</h2>
+
+        {loading && <p>Caricamento prodotti…</p>}
+
+        {!loading && error && (
+          <div style={{ padding: 12 }}>
+            <p style={{ color: "red" }}>{error}</p>
+            <button onClick={() => window.location.reload()}>
+              Riprova
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && !hasProducts && (
+          <p>Nessun prodotto disponibile al momento.</p>
+        )}
+
+        {!loading && !error && hasProducts && (
+          <div className="product-list">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onSelect={(prod) => {
+                  setSelected(prod);
+                  setSelectedOptions([]);
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* ================= CONFIGURATORE ================= */}
+        {selected && (
+          <div className="product-configurator">
+            <OptionSelector
+              options={selected.options}
+              selected={selectedOptions}
+              onChange={setSelectedOptions}
+            />
+
+            <CartPreview
+              product={selected}
+              selectedOptions={selectedOptions}
+            />
+          </div>
+        )}
+      </section>
+    </main>
   );
 }

@@ -1,12 +1,8 @@
-// src/components/cookie/CookieBanner.tsx
 import { useEffect, useState } from "react";
-import { getOrCreateVisitorId } from "../../utils/visitor";
-import { acceptCookies } from "../../lib/api";
 import {
   getLocalConsent,
   saveLocalConsent,
 } from "../../utils/cookieConsent";
-import type { LocalConsent } from "../../utils/cookieConsent";
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -19,107 +15,115 @@ export function CookieBanner() {
     }
   }, []);
 
-  async function sendConsentToBackend(consent: LocalConsent) {
-    const visitorId = getOrCreateVisitorId();
-  
+  async function notifyBackend(payload: {
+    action: "accept" | "reject";
+    analytics: boolean;
+    marketing: boolean;
+  }) {
     try {
       setLoading(true);
-      await acceptCookies(
-        visitorId,
-        consent.analytics,
-        consent.marketing
-      );
+      await fetch("/api/policy/consent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
     } catch (err) {
-      console.error("Errore salvataggio consenso cookie:", err);
+      console.error("Errore invio consenso cookie:", err);
     } finally {
       setLoading(false);
     }
   }
-  
+
   async function handleAcceptAll() {
-    const consent: LocalConsent = {
-      necessary: true,
+    const consent = saveLocalConsent({
       analytics: true,
       marketing: true,
-    };
+    });
 
-    saveLocalConsent(consent);
-    await sendConsentToBackend(consent);
+    await notifyBackend({
+      action: "accept",
+      analytics: consent.analytics,
+      marketing: consent.marketing,
+    });
+
     setVisible(false);
   }
 
   async function handleRejectAll() {
-    const consent: LocalConsent = {
-      necessary: true,
+    const consent = saveLocalConsent({
       analytics: false,
       marketing: false,
-    };
+    });
 
-    saveLocalConsent(consent);
-    await sendConsentToBackend(consent);
+    await notifyBackend({
+      action: "reject",
+      analytics: consent.analytics,
+      marketing: consent.marketing,
+    });
+
     setVisible(false);
   }
 
   if (!visible) return null;
 
+  return (
+    <div
+      style={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: "1rem",
+        background: "#111",
+        color: "#fff",
+        display: "flex",
+        justifyContent: "space-between",
+        gap: "1rem",
+        zIndex: 9999,
+        boxShadow: "0 -4px 16px rgba(0,0,0,0.25)",
+      }}
+    >
+      <div style={{ maxWidth: "70%" }}>
+        <strong>Cookie WebOnDay</strong>
+        <p style={{ fontSize: "0.9rem", marginTop: "0.5rem" }}>
+          Utilizziamo cookie tecnici necessari e, previo consenso,
+          cookie analitici e marketing per migliorare l’esperienza.
+          Puoi modificare le preferenze in qualsiasi momento.
+        </p>
+      </div>
 
-return visible ? (
-  <div
-    style={{
-      position: "fixed",
-      bottom: 0,
-      left: 0,
-      right: 0,
-      padding: "1rem",
-      background: "#111",
-      color: "#fff",
-      display: "flex",
-      justifyContent: "space-between",
-      gap: "1rem",
-      zIndex: 9999,
-      boxShadow: "0 -4px 16px rgba(0,0,0,0.25)"
-    }}
-  >
-    <div style={{ maxWidth: "70%" }}>
-      <strong>Cookie WebOnDay</strong>
-      <p style={{ fontSize: "0.9rem", marginTop: "0.5rem" }}>
-        Usiamo cookie tecnici e, previo tuo consenso, cookie di analisi e marketing per
-        migliorare la tua esperienza. Puoi modificare le tue preferenze in qualsiasi momento.
-      </p>
+      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+        <button
+          disabled={loading}
+          onClick={handleRejectAll}
+          style={{
+            padding: "0.5rem 1rem",
+            borderRadius: "999px",
+            border: "1px solid #555",
+            background: "#222",
+            color: "#fff",
+            cursor: "pointer",
+          }}
+        >
+          Solo necessari
+        </button>
+
+        <button
+          disabled={loading}
+          onClick={handleAcceptAll}
+          style={{
+            padding: "0.5rem 1rem",
+            borderRadius: "999px",
+            border: "1px solid transparent",
+            background: "#4f46e5",
+            color: "#fff",
+            cursor: "pointer",
+          }}
+        >
+          Accetta tutti
+        </button>
+      </div>
     </div>
-
-    <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-      <button
-        disabled={loading}
-        onClick={handleRejectAll}
-        style={{
-          padding: "0.5rem 1rem",
-          borderRadius: "999px",
-          border: "1px solid #555",
-          background: "#222",
-          color: "#fff",
-          cursor: "pointer"
-        }}
-      >
-        Solo necessari
-      </button>
-
-      <button
-        disabled={loading}
-        onClick={handleAcceptAll}
-        style={{
-          padding: "0.5rem 1rem",
-          borderRadius: "999px",
-          border: "1px solid transparent",
-          background: "#4f46e5",
-          color: "#fff",
-          cursor: "pointer"
-        }}
-      >
-        Accetta tutti
-      </button>
-    </div>
-  </div>
-) : null;
-
+  );
 }

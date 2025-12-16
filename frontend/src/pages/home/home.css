@@ -31,4 +31,13 @@
     transform: translateY(-5px);
     background: #eaeaea;
   }
+  .catalog {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
   
+  .catalog h2 {
+    font-size: 1.8rem;
+    margin-bottom: 16px;
+  }
