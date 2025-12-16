@@ -42,7 +42,7 @@ export default function PaymentPaypal({ state }: Props) {
 
           /* ===== CREATE PAYPAL ORDER ===== */
           createOrder: async () => {
-            const res = await fetch("/api/payment/paypal/create-order", {
+            const res = await fetch( `${import.meta.env.VITE_API_URL}/api/payment/paypal/create-order`, {
               method: "POST",
               credentials: "include",
               headers: {
@@ -67,7 +67,7 @@ export default function PaymentPaypal({ state }: Props) {
 
           /* ===== CAPTURE = SOLDI ===== */
           onApprove: async () => {
-            const res = await fetch("/api/payment/paypal/capture-order", {
+            const res = await fetch( `${import.meta.env.VITE_API_URL}/api/payment/paypal/capture-order`, {
               method: "POST",
               credentials: "include",
               headers: {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cartStore } from "../../../lib/cartStore";
 import { createOrder } from "../../../lib/ordersApi";
 import { getOrCreateVisitorId } from "../../../utils/visitor";
@@ -6,32 +6,12 @@ import { API_BASE } from "../../../lib/config";
 import type { CartItem } from "../../../lib/cartStore";
 
 /* ======================================================
-   FETCH CART FROM BACKEND (KV → FE rehydration)
+   SYNC CART → BACKEND (KV = source of truth)
 ====================================================== */
-async function fetchCart(visitorId: string): Promise<{
-  visitorId: string;
-  items: CartItem[];
-  total: number;
-}> {
-  const res = await fetch(
-    `${API_BASE}/api/cart?visitorId=${visitorId}`,
-    {
-      credentials: "include",
-    }
-  );
 
-  if (!res.ok) {
-    throw new Error("Errore recupero carrello");
-  }
 
-  const data = await res.json();
-  return data.cart ?? data;
-}
-
-/* ======================================================
-   SYNC CART → BACKEND (FE → KV)
-====================================================== */
 async function syncCart(visitorId: string, cart: CartItem[]) {
+  
   const res = await fetch(`${API_BASE}/api/cart`, {
     method: "POST",
     credentials: "include",
@@ -52,36 +32,16 @@ async function syncCart(visitorId: string, cart: CartItem[]) {
    CHECKOUT HOOK
 ====================================================== */
 export function useCheckout(email: string) {
-  // 🔹 cart dallo store (cache FE)
+  // 🔹 cart dallo store (source FE)
   const cart = cartStore((s) => s.items);
 
-  const [orderId, setOrderId] = useState<string>();
+  const [orderId, setOrderId] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<string | undefined>();
 
-  /* ====================================================
-     REHYDRATE CART ON MOUNT (KV → Zustand)
-  ==================================================== */
-  useEffect(() => {
-    const visitorId = getOrCreateVisitorId();
-
-    if (cart.length === 0) {
-      fetchCart(visitorId)
-        .then((remoteCart) => {
-          if (remoteCart.items.length > 0) {
-            cartStore.getState().setItems(remoteCart.items);
-          }
-        })
-        .catch(() => {
-          // silenzioso: carrello può essere vuoto davvero
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  /* ====================================================
-     SUBMIT ORDER (ONE-WAY FLOW)
-  ==================================================== */
+  /* ============================
+     SUBMIT ORDER (ONE WAY)
+  ============================ */
   async function submitOrder(policyVersion: string): Promise<string> {
     if (!email) {
       throw new Error("Email mancante");
@@ -95,12 +55,13 @@ export function useCheckout(email: string) {
     setError(undefined);
 
     try {
+      // 1️⃣ visitorId stabile
       const visitorId = getOrCreateVisitorId();
 
-      // 1️⃣ Sync cart → KV
+      // 2️⃣ SYNC CART → CART_KV
       await syncCart(visitorId, cart);
 
-      // 2️⃣ Create order → ORDER_KV
+      // 3️⃣ CREATE ORDER → ORDER_KV
       const res = await createOrder({
         visitorId,
         email,
@@ -122,9 +83,9 @@ export function useCheckout(email: string) {
     }
   }
 
-  /* ====================================================
-     PUBLIC API
-  ==================================================== */
+  /* ============================
+     API DEL HOOK
+  ============================ */
   return {
     cart,
     orderId,
