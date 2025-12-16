@@ -11,10 +11,10 @@ GOOGLE_CLIENT_ID = "779755703612-3b1vcbkbvekjq80k4q1508h4efev7jac.apps.googleuse
 GOOGLE_REDIRECT_URI = "https://we-webonday-backend.franklin19.workers.dev/api/user/google/callback"
 
 # PayPal (SANDBOX o LIVE, a seconda di cosa usi)
-PAYPAL_CLIENT_ID = "AflIiDW49-yYddybFt68Vr95D6XaUhPpVWE1VdhebTfoyDgHWd6tMCacWd9wkJg9a6iDYiG2HiPNoTJm"
-PAYPAL_API_BASE = "https://api-m.paypal.com" 
-
-
+#PAYPAL_CLIENT_ID = "AflIiDW49-yYddybFt68Vr95D6XaUhPpVWE1VdhebTfoyDgHWd6tMCacWd9wkJg9a6iDYiG2HiPNoTJm"
+PAYPAL_API_BASE = "https://api-m.sandbox.paypal.com" 
+PAYPAL_CLIENT_ID ="AYEUMQQoMpjiulN7LR55YoYmMCFKedP2sv2UHp0fbyQ5NZiF5Q9__k3VFmrkgxEzSOFmCdgz-75X_cpO"
+PAYPAL_SECRET="EGaXsBB1OWf2t2L-cWZ4ho5apyU3cNpIE4qBkPxEnuG27udWyl1jiaJvjNs_gacTehs4hqfAdS55qYiN"
 # ============================
 # KV NAMESPACE BINDINGS
 # ============================
