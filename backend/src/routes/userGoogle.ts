@@ -135,7 +135,6 @@ userId = userRecord.id;
   }
 
   const redirectUrl = new URL(finalRedirect);
-  redirectUrl.searchParams.set("email", email);
 
 // ===========================
 // COOKIE SESSIONE
