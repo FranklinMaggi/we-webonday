@@ -5,7 +5,6 @@ export type CreateOrderPayload = {
   visitorId: string;
   email: string;
   policyVersion: string;
-  userId?: string | null;
 };
 
 export async function createOrder(
