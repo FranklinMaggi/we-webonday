@@ -1,4 +1,3 @@
-// src/pages/user/checkout/steps/CartReview.tsx
 import { useEffect, useState } from "react";
 import type { CartItem } from "../../../../lib/cartStore";
 import { eur } from "../../../../utils/format";
@@ -12,7 +11,7 @@ interface Props {
   cart: CartItem[];
   userId: string;
   email: string;
-  submitOrder: () => Promise<string>;
+  submitOrder: (policyVersion: string) => Promise<string>;
 }
 
 export default function CartReview({
@@ -42,15 +41,15 @@ export default function CartReview({
       setLoading(true);
       setError(undefined);
 
-      // 1️⃣ accettazione policy (KV)
+      // 1️⃣ accetta policy
       await acceptPolicyApi({
         userId,
         email,
         policyVersion,
       });
 
-      // 2️⃣ creazione ordine (KV)
-      const oid = await submitOrder();
+      // 2️⃣ crea ordine (KV)
+      const oid = await submitOrder(policyVersion);
 
       // 3️⃣ mostra PayPal
       setOrderId(oid);
@@ -70,7 +69,6 @@ export default function CartReview({
     <section style={{ maxWidth: 760, margin: "0 auto", padding: 24 }}>
       <h2>Checkout</h2>
 
-      {/* ===== RIEPILOGO ===== */}
       <ul>
         {cart.map((item, idx) => (
           <li
@@ -91,24 +89,6 @@ export default function CartReview({
         <strong>Totale: {eur.format(total)}</strong>
       </div>
 
-      {/* ===== BADGE FIDUCIA ===== */}
-      <div
-        style={{
-          marginTop: 20,
-          padding: 12,
-          borderRadius: 8,
-          background: "#f8fafc",
-          display: "flex",
-          justifyContent: "space-around",
-          fontSize: 13,
-        }}
-      >
-        <span>🔒 Pagamento sicuro</span>
-        <span>🛡️ Protezione PayPal</span>
-        <span>⚡ Attivazione rapida</span>
-      </div>
-
-      {/* ===== POLICY + CTA ===== */}
       {!accepted && (
         <div style={{ marginTop: 24 }}>
           <p style={{ fontSize: 13, opacity: 0.7 }}>
@@ -136,7 +116,6 @@ export default function CartReview({
         </div>
       )}
 
-      {/* ===== PAYPAL INLINE ===== */}
       {accepted && orderId && (
         <div style={{ marginTop: 24 }}>
           <PaymentPaypal state={{ orderId }} />

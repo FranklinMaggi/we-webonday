@@ -1,37 +1,32 @@
-// src/pages/user/checkout/useCheckout.ts
+
 import { useState } from "react";
 import { cartStore } from "../../../lib/cartStore";
 import { createOrder } from "../../../lib/ordersApi";
 import { getOrCreateVisitorId } from "../../../utils/visitor";
-const visitorId = getOrCreateVisitorId();
-export function useCheckout(email: string) {
+
+export function useCheckout(email: string, userId?: string) {
   const cart = cartStore((s) => s.items);
 
   const [orderId, setOrderId] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
 
-  async function submitOrder(): Promise<string> {
-    
+  async function submitOrder(policyVersion: string): Promise<string> {
     if (!email || cart.length === 0) {
       throw new Error("Checkout non valido");
     }
 
-    const total = cart.reduce((sum, i) => sum + i.total, 0);
+    const visitorId = getOrCreateVisitorId();
 
     setLoading(true);
     setError(undefined);
 
     try {
-
       const res = await createOrder({
-        
         visitorId,
         email,
-        items: cart,
-        total,
-        // 🔒 policyVersion viene già validata prima
-        policyVersion: "latest",
+        policyVersion,
+        userId: userId ?? null,
       });
 
       setOrderId(res.orderId);

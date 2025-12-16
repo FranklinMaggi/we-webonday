@@ -4,11 +4,8 @@ import { API_BASE } from "./config";
 export type CreateOrderPayload = {
   visitorId: string;
   email: string;
-  items: any[];
-  total: number;
-
-  // 🔒 OBBLIGATORIO
   policyVersion: string;
+  userId?: string | null;
 };
 
 export async function createOrder(

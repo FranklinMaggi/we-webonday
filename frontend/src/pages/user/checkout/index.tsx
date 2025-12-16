@@ -1,4 +1,3 @@
-// src/pages/user/checkout/index.tsx
 import "./checkout.css";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import { useCheckout } from "./useCheckout";
@@ -7,8 +6,7 @@ import CartReview from "./steps/CartReview";
 export default function CheckoutPage() {
   const { user, loading } = useCurrentUser();
 
-  // hook SEMPRE chiamato
-  const checkout = useCheckout(user?.email ?? "");
+  const checkout = useCheckout(user?.email ?? "", user?.id);
 
   if (loading) {
     return <p>Caricamento…</p>;
