@@ -3,7 +3,6 @@ import { useCheckout } from "./useCheckout";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
 
 import CartReview from "./steps/CartReview";
-import UserData from "./steps/UserData";
 import PolicyGate from "./steps/PolicyGate";
 import PaymentPayPal from "./steps/PaymentPaypal";
 
@@ -35,9 +34,6 @@ export default function CheckoutPage() {
     return <CartReview {...checkout} />;
   }
 
-  if (step === "user") {
-    return <UserData {...checkout} />;
-  }
 
   if (step === "policy") {
     return (
