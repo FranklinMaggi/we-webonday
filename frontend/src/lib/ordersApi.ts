@@ -2,6 +2,7 @@
 import { API_BASE } from "./config";
 
 export type CreateOrderPayload = {
+  visitorId: string;
   email: string;
   items: any[];
   total: number;

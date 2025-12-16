@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { cartStore } from "../../../lib/cartStore";
 import { createOrder } from "../../../lib/ordersApi";
-
+import { getOrCreateVisitorId } from "../../../utils/visitor";
+const visitorId = getOrCreateVisitorId();
 export function useCheckout(email: string) {
   const cart = cartStore((s) => s.items);
 
@@ -11,6 +12,7 @@ export function useCheckout(email: string) {
   const [error, setError] = useState<string>();
 
   async function submitOrder(): Promise<string> {
+    
     if (!email || cart.length === 0) {
       throw new Error("Checkout non valido");
     }
@@ -21,7 +23,10 @@ export function useCheckout(email: string) {
     setError(undefined);
 
     try {
+
       const res = await createOrder({
+        
+        visitorId,
         email,
         items: cart,
         total,

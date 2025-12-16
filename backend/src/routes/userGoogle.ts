@@ -1,7 +1,7 @@
 // backend/src/routes/userGoogle.ts
 import type { Env } from "../types/env";
 import { getCorsHeaders } from "../index";
-
+import { logActivity } from "../lib/logActivity";
 /* ============================
    GOOGLE AUTH
 ============================ */
@@ -121,6 +121,17 @@ await env.ON_USERS_KV.put(`EMAIL:${email.toLowerCase()}`, userRecord.id);
 await env.ON_USERS_KV.put(`google_${googleId}`, userRecord.id);
 
 userId = userRecord.id;
+await logActivity(
+  env,
+  "LOGIN",
+  userId,
+  {
+    provider: "google",
+    email,
+    ip: request.headers.get("CF-Connecting-IP"),
+    userAgent: request.headers.get("User-Agent"),
+  }
+);
 
   /* ===== SAFE REDIRECT ===== */
   let finalRedirect = env.FRONTEND_URL + "/user/checkout";
@@ -155,13 +166,15 @@ if (!isLocal) {
 }
 
 const cookieHeader = cookieParts.join("; ");
-
+ 
 return new Response(null, {
   status: 302,
   headers: {
     "Set-Cookie": cookieHeader,
     "Location": redirectUrl.toString(),
   },
+
+
 });}
 
 /* ============================
@@ -186,13 +199,7 @@ export async function getCurrentUser(
     });
   }
   
-  await logLogin(env, {
-    userId: user.id,
-    email: user.email,
-    provider: "google",
-    ip: request.headers.get("CF-Connecting-IP"),
-    userAgent: request.headers.get("User-Agent"),
-  });
+ 
   
 /* ============================
    JSON HELPER

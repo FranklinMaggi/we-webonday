@@ -1,5 +1,6 @@
+//backend/src/routes/user.ts
 import type { Env } from "../types/env";
-import { logLogin } from "../lib/logActivity";
+import { logActivity } from "../lib/logActivity";
 import { UserSchema, UserInputSchema } from "../schemas/userSchema";
 
 function json(body: unknown, status = 200) {
@@ -109,7 +110,19 @@ export async function loginUser(request: Request, env: Env) {
 
   if (passwordHash !== user.passwordHash)
     return json({ error: "Invalid credentials" }, 401);
-
+  
+  await logActivity(
+    env,
+    "LOGIN",
+    user.id,
+    {
+      provider: "password",
+      email: user.email,
+      ip: request.headers.get("CF-Connecting-IP"),
+      userAgent: request.headers.get("User-Agent"),
+    }
+  );
+  
   return json({
     ok: true,
     userId: user.id,
@@ -118,13 +131,7 @@ export async function loginUser(request: Request, env: Env) {
   });
   
 }
-await logLogin(env, {
-  userId: user.id,
-  email: user.email,
-  provider: "password",
-  ip: request.headers.get("CF-Connecting-IP"),
-  userAgent: request.headers.get("User-Agent"),
-});
+
 
 /* ===========================================
    GET USER /api/user/me?userId=UUID
