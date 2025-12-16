@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { API_BASE } from "../../../../lib/config";
 import {
   loadPaypalSdk,
   mountPaypalButtons,
@@ -16,33 +15,43 @@ export default function PaymentPaypal({ state }: Props) {
 
   useEffect(() => {
     if (!state.orderId) return;
-    if (mountedRef.current) return; // evita doppio mount (StrictMode)
+    if (mountedRef.current) return; // evita doppio mount (React StrictMode)
 
     mountedRef.current = true;
     let cancelled = false;
 
-    async function init() {
+    async function initPaypal() {
       try {
-        // 1️⃣ carica SDK PayPal
+        /* =========================
+           1) Load PayPal SDK
+        ========================= */
         await loadPaypalSdk(import.meta.env.VITE_PAYPAL_CLIENT_ID);
+
         if (cancelled) return;
 
-        // 2️⃣ monta i bottoni
+        /* =========================
+           2) Mount PayPal Buttons
+        ========================= */
         mountPaypalButtons("#paypal-buttons", {
+          style: {
+            layout: "vertical",
+            color: "gold",
+            shape: "pill",
+            label: "paypal",
+          },
+
+          /* ===== CREATE PAYPAL ORDER ===== */
           createOrder: async () => {
-            const res = await fetch(
-              `${API_BASE}/api/payment/paypal/create-order`,
-              {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  orderId: state.orderId,
-                }),
-              }
-            );
+            const res = await fetch("/api/payment/paypal/create-order", {
+              method: "POST",
+              credentials: "include",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                orderId: state.orderId,
+              }),
+            });
 
             if (!res.ok) {
               throw new Error("PayPal create-order HTTP error");
@@ -56,35 +65,33 @@ export default function PaymentPaypal({ state }: Props) {
             return out.paypalOrderId;
           },
 
+          /* ===== CAPTURE = SOLDI ===== */
           onApprove: async () => {
-            const res = await fetch(
-              `${API_BASE}/api/payment/paypal/capture-order`,
-              {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  orderId: state.orderId,
-                }),
-              }
-            );
+            const res = await fetch("/api/payment/paypal/capture-order", {
+              method: "POST",
+              credentials: "include",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                orderId: state.orderId,
+              }),
+            });
 
             if (!res.ok) {
               throw new Error("PayPal capture HTTP error");
             }
 
             const out = await res.json();
-            if (!out.ok) {
-              throw new Error("Capture failed");
+            if (!out.ok || out.paymentStatus !== "paid") {
+              throw new Error("PayPal capture failed");
             }
 
-            // ✅ pagamento completato
+            /* ===== SUCCESS ===== */
             window.location.href = "/user/dashboard";
           },
 
-          onError: (err: any) => {
+          onError: (err: unknown) => {
             console.error("PayPal error:", err);
             alert("Errore durante il pagamento. Riprova.");
           },
@@ -94,12 +101,16 @@ export default function PaymentPaypal({ state }: Props) {
       }
     }
 
-    init();
+    initPaypal();
 
     return () => {
       cancelled = true;
     };
   }, [state.orderId]);
+
+  /* =========================
+     RENDER
+  ========================= */
 
   if (!state.orderId) {
     return <p>Ordine non pronto…</p>;
@@ -108,6 +119,8 @@ export default function PaymentPaypal({ state }: Props) {
   return (
     <section>
       <h2>Pagamento</h2>
+      <p>Completa il pagamento con PayPal</p>
+
       <div id="paypal-buttons" />
     </section>
   );
