@@ -101,6 +101,7 @@ function json(body: unknown, request: Request, env: Env, status = 200): Response
   );
 }
 
+
 /* ============================
    WORKER
 ============================ */
@@ -190,7 +191,7 @@ if (pathname === "/api/cart" && method === "GET") {
       }
 
       /* ===== PRODUCTS ===== */
- /* ===== PRODUCTS ===== */
+
 
 if (pathname === "/api/products" && method === "GET") {
   try {
@@ -254,6 +255,15 @@ if (pathname === "/api/products/register" && method === "PUT") {
       if (pathname === "/api/policy/status" && method === "GET") {
         return withCors(await getPolicyStatus(request, env), request, env);
       }
+      /* ===== COOKIES ===== */
+if (pathname === "/api/cookies/accept" && method === "POST") {
+  return withCors(await acceptCookies(request, env), request, env);
+}
+
+if (pathname === "/api/cookies/status" && method === "GET") {
+  return withCors(await getCookieStatus(request, env), request, env);
+}
+
 
       /* ===== PAYPAL ===== */
       if (pathname === "/api/payment/paypal/create-order" && method === "POST") {
