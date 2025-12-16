@@ -4,8 +4,10 @@ declare global {
       paypal: any;
     }
   }
-  
+ 
   export async function loadPaypalSdk(clientId: string): Promise<void> {
+    if (typeof window === "undefined") return;
+    
     if (window.paypal) return;
   
     await new Promise<void>((resolve, reject) => {
@@ -22,6 +24,15 @@ declare global {
     containerId: string,
     config: any
   ): void {
-    window.paypal.Buttons(config).render(containerId);
+    const el =
+      typeof containerId === "string"
+        ? document.querySelector(containerId)
+        : containerId;
+  
+    if (!el) {
+      throw new Error("PayPal container not found");
+    }
+  
+    window.paypal.Buttons(config).render(el);
   }
   
