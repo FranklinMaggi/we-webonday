@@ -16,20 +16,19 @@ export function CookieBanner() {
   }, []);
 
   async function notifyBackend(payload: {
-    action: "accept" | "reject";
     analytics: boolean;
     marketing: boolean;
   }) {
     try {
       setLoading(true);
-      await fetch("/api/policy/accept", {
+      await fetch("/api/cookies/accept", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(    
-          {analytics: true,
-          marketing: true,}
-      ),
+        body: JSON.stringify({
+          analytics: payload.analytics,
+          marketing: payload.marketing,
+        }),
       });
     } catch (err) {
       console.error("Errore invio consenso cookie:", err);
@@ -37,7 +36,6 @@ export function CookieBanner() {
       setLoading(false);
     }
   }
-
   async function handleAcceptAll() {
     const consent = saveLocalConsent({
       analytics: true,
@@ -45,7 +43,7 @@ export function CookieBanner() {
     });
 
     await notifyBackend({
-      action: "accept",
+    
       analytics: consent.analytics,
       marketing: consent.marketing,
     });
@@ -60,7 +58,7 @@ export function CookieBanner() {
     });
 
     await notifyBackend({
-      action: "reject",
+     
       analytics: consent.analytics,
       marketing: consent.marketing,
     });
