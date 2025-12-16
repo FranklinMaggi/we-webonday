@@ -6,7 +6,7 @@ import CartReview from "./steps/CartReview";
 export default function CheckoutPage() {
   const { user, loading } = useCurrentUser();
 
-  const checkout = useCheckout(user?.email ?? "", user?.id);
+  const checkout = useCheckout(user?.email ?? "");
 
   if (loading) {
     return <p>Caricamento…</p>;
