@@ -1,73 +1,83 @@
+// src/components/cookie/CookieBanner.tsx
+
 import { useEffect, useState } from "react";
 import {
   getLocalConsent,
   saveLocalConsent,
 } from "../../utils/cookieConsent";
+import { getOrCreateVisitorId } from "../../utils/visitor";
+import { acceptCookies } from "../../lib/api";
 
+/**
+ * CookieBanner
+ * - Mostrato solo se NON esiste consenso locale
+ * - Salva consenso in localStorage
+ * - Invia consenso al backend (COOKIES_KV)
+ */
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  /* =========================
+     CHECK INIZIALE
+  ========================= */
   useEffect(() => {
     const consent = getLocalConsent();
-    if (!consent) {
-      setVisible(true);
-    }
+    if (!consent) setVisible(true);
   }, []);
 
-  async function notifyBackend(payload: {
-    analytics: boolean;
-    marketing: boolean;
-  }) {
+  /* =========================
+     SYNC BACKEND
+  ========================= */
+  async function syncBackend(
+    analytics: boolean,
+    marketing: boolean
+  ) {
     try {
       setLoading(true);
-      await fetch("/api/cookies/accept", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          analytics: payload.analytics,
-          marketing: payload.marketing,
-        }),
-      });
+
+      const visitorId = getOrCreateVisitorId();
+
+      await acceptCookies(
+        visitorId,
+        analytics,
+        marketing
+      );
     } catch (err) {
-      console.error("Errore invio consenso cookie:", err);
+      console.error("[CookieBanner] sync error:", err);
     } finally {
       setLoading(false);
     }
   }
+
+  /* =========================
+     HANDLERS
+  ========================= */
   async function handleAcceptAll() {
-    const consent = saveLocalConsent({
+    saveLocalConsent({
       analytics: true,
       marketing: true,
     });
 
-    await notifyBackend({
-    
-      analytics: consent.analytics,
-      marketing: consent.marketing,
-    });
-
+    await syncBackend(true, true);
     setVisible(false);
   }
 
   async function handleRejectAll() {
-    const consent = saveLocalConsent({
+    saveLocalConsent({
       analytics: false,
       marketing: false,
     });
 
-    await notifyBackend({
-     
-      analytics: consent.analytics,
-      marketing: consent.marketing,
-    });
-
+    await syncBackend(false, false);
     setVisible(false);
   }
 
   if (!visible) return null;
 
+  /* =========================
+     RENDER
+  ========================= */
   return (
     <div
       style={{
@@ -94,13 +104,13 @@ export function CookieBanner() {
         </p>
       </div>
 
-      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+      <div style={{ display: "flex", gap: "0.5rem" }}>
         <button
           disabled={loading}
           onClick={handleRejectAll}
           style={{
             padding: "0.5rem 1rem",
-            borderRadius: "999px",
+            borderRadius: 999,
             border: "1px solid #555",
             background: "#222",
             color: "#fff",
@@ -115,11 +125,12 @@ export function CookieBanner() {
           onClick={handleAcceptAll}
           style={{
             padding: "0.5rem 1rem",
-            borderRadius: "999px",
-            border: "1px solid transparent",
+            borderRadius: 999,
+            border: "none",
             background: "#4f46e5",
             color: "#fff",
             cursor: "pointer",
+            fontWeight: 600,
           }}
         >
           Accetta tutti

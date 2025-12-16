@@ -1,5 +1,5 @@
 import type { Env } from "../types/env";
-
+import { logLogin } from "../lib/logActivity";
 import { UserSchema, UserInputSchema } from "../schemas/userSchema";
 
 function json(body: unknown, status = 200) {
@@ -116,8 +116,15 @@ export async function loginUser(request: Request, env: Env) {
     userType: user.userType,
     membershipLevel: user.membershipLevel,
   });
+  
 }
-
+await logLogin(env, {
+  userId: user.id,
+  email: user.email,
+  provider: "password",
+  ip: request.headers.get("CF-Connecting-IP"),
+  userAgent: request.headers.get("User-Agent"),
+});
 
 /* ===========================================
    GET USER /api/user/me?userId=UUID

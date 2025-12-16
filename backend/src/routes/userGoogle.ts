@@ -186,7 +186,14 @@ export async function getCurrentUser(
     });
   }
   
-
+  await logLogin(env, {
+    userId: user.id,
+    email: user.email,
+    provider: "google",
+    ip: request.headers.get("CF-Connecting-IP"),
+    userAgent: request.headers.get("User-Agent"),
+  });
+  
 /* ============================
    JSON HELPER
 ============================ */

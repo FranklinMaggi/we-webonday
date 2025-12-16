@@ -36,20 +36,25 @@ export async function apiFetch(
 }
 
 /* =========================
-   COOKIES (NO visitorId)
+   COOKIES
 ========================= */
 export function acceptCookies(
+  visitorId: string,
   analytics: boolean,
   marketing: boolean
 ) {
-  return apiFetch("/cookies/accept", {
+  return apiFetch("/api/cookies/accept", {
     method: "POST",
-    body: JSON.stringify({ analytics, marketing }),
+    body: JSON.stringify({
+      visitorId,
+      analytics,
+      marketing,
+    }),
   });
 }
 
-export function getCookieStatus() {
-  return apiFetch("/cookies/status");
+export function getCookieStatus(visitorId: string) {
+  return apiFetch(`/api/cookies/status?visitorId=${visitorId}`);
 }
 
 /* =========================

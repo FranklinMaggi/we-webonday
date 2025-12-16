@@ -1,7 +1,8 @@
-const CONSENT_KEY = "webonday_cookie_consent_v1";
-const CONSENT_VERSION = "1.0.0";
+// src/utils/cookieConsent.ts
 
-export type CookieConsent = {
+const CONSENT_KEY = "webonday_cookie_consent_v1";
+
+export type LocalConsent = {
   necessary: true;
   analytics: boolean;
   marketing: boolean;
@@ -9,47 +10,48 @@ export type CookieConsent = {
   updatedAt: string;
 };
 
-export function getLocalConsent(): CookieConsent | null {
+/**
+ * Legge il consenso locale (localStorage)
+ */
+export function getLocalConsent(): LocalConsent | null {
   const raw = localStorage.getItem(CONSENT_KEY);
   if (!raw) return null;
 
   try {
-    return JSON.parse(raw) as CookieConsent;
+    return JSON.parse(raw) as LocalConsent;
   } catch {
     return null;
   }
 }
 
-export function saveLocalConsent(input: {
+/**
+ * Salva il consenso locale (NON ritorna nulla)
+ */
+export function saveLocalConsent(params: {
   analytics: boolean;
   marketing: boolean;
 }) {
-  const consent: CookieConsent = {
+  const payload: LocalConsent = {
     necessary: true,
-    analytics: input.analytics,
-    marketing: input.marketing,
-    version: CONSENT_VERSION,
+    analytics: params.analytics,
+    marketing: params.marketing,
+    version: "1.0.0",
     updatedAt: new Date().toISOString(),
   };
 
-  localStorage.setItem(CONSENT_KEY, JSON.stringify(consent));
-  return consent;
+  localStorage.setItem(CONSENT_KEY, JSON.stringify(payload));
 }
 
 /* =========================
-   Helper di comodo
+   Helpers opzionali
 ========================= */
 
-export function hasAnalyticsConsent(): boolean {
+export function hasAnalyticsConsent() {
   return getLocalConsent()?.analytics === true;
 }
 
-export function hasMarketingConsent(): boolean {
+export function hasMarketingConsent() {
   return getLocalConsent()?.marketing === true;
-}
-
-export function hasAnyConsent(): boolean {
-  return getLocalConsent() !== null;
 }
 
 export function clearLocalConsent() {

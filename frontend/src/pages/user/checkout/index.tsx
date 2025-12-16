@@ -1,56 +1,30 @@
+// src/pages/user/checkout/index.tsx
 import "./checkout.css";
-import { useCheckout } from "./useCheckout";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
-
+import { useCheckout } from "./useCheckout";
 import CartReview from "./steps/CartReview";
-import PolicyGate from "./steps/PolicyGate";
-import PaymentPayPal from "./steps/PaymentPaypal";
 
 export default function CheckoutPage() {
-  // 🔹 1. Hook SEMPRE chiamato
   const { user, loading } = useCurrentUser();
 
-  // 🔹 2. Hook checkout SEMPRE chiamato (mai condizionale)
-  const checkout = useCheckout(
-    user?.id ?? "",
-    user?.email ?? ""
-  );
+  // hook SEMPRE chiamato
+  const checkout = useCheckout(user?.email ?? "");
 
-  // 🔹 3. Stati di guardia DOPO gli hook
   if (loading) {
-    return <p>Caricamento...</p>;
+    return <p>Caricamento…</p>;
   }
 
   if (!user) {
-    window.location.href =
-      "/user/login?redirect=/user/checkout";
+    window.location.href = "/user/login?redirect=/user/checkout";
     return null;
   }
 
-  // 🔹 4. Render step
-  const { step } = checkout.state;
-
-  if (step === "cart") {
-    return <CartReview {...checkout} />;
-  }
-
-
-  if (step === "policy") {
-    return (
-      <PolicyGate
-        userId={user.id}
-        email={user.email}
-        onAccepted={async () => {
-          await checkout.submitOrder();
-          checkout.next("payment");
-        }}
-      />
-    );
-  }
-
-  if (step === "payment") {
-    return <PaymentPayPal state={checkout.state} />;
-  }
-
-  return null;
+  return (
+    <CartReview
+      cart={checkout.cart}
+      userId={user.id}
+      email={user.email}
+      submitOrder={checkout.submitOrder}
+    />
+  );
 }
