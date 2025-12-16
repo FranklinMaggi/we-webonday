@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-
+import { API_BASE } from "../../lib/config";
 type Props = {
   orderId: string; // ID ordine interno (KV)
 };
@@ -26,7 +26,7 @@ export default function PaypalButton({ orderId }: Props) {
 
       // 1️⃣ crea ordine PayPal
       createOrder: async () => {
-        const res = await fetch("/api/payment/paypal/create-order", {
+        const res = await fetch(`${API_BASE}/api/payment/paypal/create-order`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ orderId }),
@@ -42,7 +42,7 @@ export default function PaypalButton({ orderId }: Props) {
 
       // 2️⃣ capture = SOLDI
       onApprove: async () => {
-        const res = await fetch("/api/payment/paypal/capture-order", {
+        const res = await fetch(`${API_BASE}/api/payment/paypal/capture-order`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ orderId }),
