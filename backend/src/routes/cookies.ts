@@ -1,75 +1,92 @@
-// src/routes/cookies.ts
 import type { Env } from "../types/env";
 
-function jsonResponse(body: unknown, status = 200): Response {
+/* =========================
+   HELPERS
+========================= */
+function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
     },
   });
 }
 
-type CookieConsentPayload = {
-  visitorId: string;
+/* =========================
+   TYPES
+========================= */
+type CookieEventPayload = {
   analytics: boolean;
   marketing: boolean;
 };
 
-type StoredCookieConsent = {
-  visitorId: string;
-  analytics: boolean;
-  marketing: boolean;
-  necessary: boolean;
-  version: string;
-  updatedAt: string;
-};
+/* =========================
+   POST /api/cookies/accept
+   → LOG AGGREGATO
+========================= */
+export async function acceptCookies(
+  request: Request,
+  env: Env
+): Promise<Response> {
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
+  }
 
-export async function acceptCookies(request: Request, env: Env): Promise<Response> {
-  let payload: CookieConsentPayload;
+  if (request.method !== "POST") {
+    return json({ error: "Method Not Allowed" }, 405);
+  }
 
+  let payload: CookieEventPayload;
   try {
-    payload = (await request.json()) as CookieConsentPayload;
+    payload = (await request.json()) as CookieEventPayload;
   } catch {
-    return jsonResponse({ error: "Invalid JSON body" }, 400);
+    return json({ error: "Invalid JSON body" }, 400);
   }
 
-  if (!payload.visitorId || typeof payload.visitorId !== "string") {
-    return jsonResponse({ error: "Missing or invalid visitorId" }, 400);
+  const today = new Date().toISOString().slice(0, 10);
+  const key = `COOKIE_STATS:${today}`;
+
+  const raw = await env.COOKIES_KV.get(key);
+  const stats = raw
+    ? JSON.parse(raw)
+    : {
+        accepted: 0,
+        rejected: 0,
+        analyticsOn: 0,
+        marketingOn: 0,
+      };
+
+  // evento: accettazione / rifiuto
+  if (payload.analytics || payload.marketing) {
+    stats.accepted++;
+  } else {
+    stats.rejected++;
   }
 
-  const consent: StoredCookieConsent = {
-    visitorId: payload.visitorId,
-    analytics: Boolean(payload.analytics),
-    marketing: Boolean(payload.marketing),
-    necessary: true,
-    version: "1.0.0",
-    updatedAt: new Date().toISOString(),
-  };
+  if (payload.analytics) stats.analyticsOn++;
+  if (payload.marketing) stats.marketingOn++;
 
-  const key = `cookie-consent:${payload.visitorId}`;
-  await env.COOKIES_KV.put(key, JSON.stringify(consent));
+  await env.COOKIES_KV.put(key, JSON.stringify(stats));
 
-  return jsonResponse({ ok: true });
+  return json({ ok: true });
 }
 
-export async function getCookieStatus(request: Request, env: Env): Promise<Response> {
-  const url = new URL(request.url);
-  const visitorId = url.searchParams.get("visitorId");
-
-  if (!visitorId) {
-    return jsonResponse({ error: "Missing visitorId" }, 400);
-  }
-
-  const key = `cookie-consent:${visitorId}`;
-  const stored = await env.COOKIES_KV.get(key);
-
-  if (!stored) {
-    return jsonResponse({ exists: false });
-  }
-
-  return jsonResponse({
-    exists: true,
-    consent: JSON.parse(stored) as StoredCookieConsent,
+/* =========================
+   GET /api/cookies/status
+   → STATO DEFAULT (NO PROFILING)
+========================= */
+export async function getCookieStatus(): Promise<Response> {
+  return json({
+    necessary: true,
+    analytics: false,
+    marketing: false,
   });
 }

@@ -22,11 +22,14 @@ export function CookieBanner() {
   }) {
     try {
       setLoading(true);
-      await fetch("/api/policy/consent", {
+      await fetch("/api/policy/accept", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(payload),
+        body: JSON.stringify(    
+          {analytics: true,
+          marketing: true,}
+      ),
       });
     } catch (err) {
       console.error("Errore invio consenso cookie:", err);

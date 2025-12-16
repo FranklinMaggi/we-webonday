@@ -261,7 +261,7 @@ if (pathname === "/api/cookies/accept" && method === "POST") {
 }
 
 if (pathname === "/api/cookies/status" && method === "GET") {
-  return withCors(await getCookieStatus(request, env), request, env);
+  return withCors(await getCookieStatus(), request, env);
 }
 
 
