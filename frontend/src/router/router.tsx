@@ -44,6 +44,7 @@ const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       { index: true, element: <Home /> },
+      
       { path: "vision", element: <Vision /> },
       { path: "mission", element: <Mission /> },
       { path: "user/login", element: <UserLogin /> },
@@ -55,9 +56,20 @@ const router = createBrowserRouter([
   },
   
   {
-    path: "/user/checkout",
-    element: <CheckoutPage />,
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: "vision", element: <Vision /> },
+      { path: "mission", element: <Mission /> },
+      { path: "user/login", element: <UserLogin /> },
+      { path: "user/checkout", element: <CheckoutPage /> },
+      { path: "policy/privacy", element: <Privacy /> },
+      { path: "policy/terms", element: <Terms /> },
+      { path: "policy", element: <PolicyPage /> },
+    ],
   },
+  
   
   /* =========================
      ADMIN

@@ -1,19 +1,27 @@
 import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
-
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 import WhatsAppButton from "../whatsapp/WhatsAppButton";
 import { CookieBanner } from "../cookie/CookieBanner";
-import CartSticker from "../cart/CartSticker"; // <- assicurati percorso corretto
+import CartSticker from "../cart/CartSticker";
 import { setDocumentTitle } from "../../utils/seo";
 import "./mainLayout.css";
 
+/**
+ * Props del layout principale dell'app
+ */
+interface MainLayoutProps {
+  icon?: string;
+  baseTitle?: string;
+  suffix?: string;
+}
+
 export function MainLayout({
   icon = "☕",
-  baseTitle = "Webonday",
-  suffix = "Espresso digitale"
-}) {
+  baseTitle = "WebOnDay",
+  suffix = "Espresso digitale",
+}: MainLayoutProps) {
   useEffect(() => {
     setDocumentTitle({ icon, title: baseTitle, suffix });
   }, [icon, baseTitle, suffix]);
@@ -26,11 +34,9 @@ export function MainLayout({
         <Outlet />
       </main>
 
-      {/* Componenti “flottanti” o di utilità */}
+      {/* Componenti flottanti globali */}
       <WhatsAppButton />
       <CookieBanner />
-
-      {/* Sticker del carrello visibile ovunque */}
       <CartSticker />
 
       <Footer />

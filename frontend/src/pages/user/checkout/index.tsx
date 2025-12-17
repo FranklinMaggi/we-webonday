@@ -1,22 +1,24 @@
 import "./checkout.css";
+import { useEffect } from "react";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import { useCheckout } from "./useCheckout";
 import CartReview from "./steps/CartReview";
-import { MainLayout } from "../../../components/layouts/MainLayout";
 
 export default function CheckoutPage() {
-  <MainLayout></MainLayout>
-  
   const { user, loading } = useCurrentUser();
-
   const checkout = useCheckout(user?.email ?? "");
+
+  useEffect(() => {
+    if (!loading && !user) {
+      window.location.href = "/user/login?redirect=/user/checkout";
+    }
+  }, [loading, user]);
 
   if (loading) {
     return <p>Caricamento…</p>;
   }
 
   if (!user) {
-    window.location.href = "/user/login?redirect=/user/checkout";
     return null;
   }
 
