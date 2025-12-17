@@ -12,14 +12,18 @@ export default function Navbar() {
 
   return (
     <nav className="wd-navbar">
-      {/* LOGO */}
-      <div className="wd-navbar-logo">
-        <img src="/icon/favicon.ico" alt="Moka Icon" className="moka-icon" />
-        <div className="logo-text">
-          <span className="we">We</span>
-          <span className="webonday">WebOnDay</span>
-        </div>
-      </div>
+     {/* LOGO */}
+<Link to="/" className="wd-navbar-logo" aria-label="WebOnDay Home">
+  <img
+    src="/icon/favicon.ico"
+    alt="WebOnDay logo"
+    className="moka-icon"
+  />
+  <div className="logo-text">
+    <span className="we">We</span>
+    <span className="webonday">WebOnDay</span>
+  </div>
+</Link>
 
       {/* MOBILE MENU BUTTON */}
       <button className="menu-btn" onClick={() => setOpen(!open)} aria-expanded={open}>

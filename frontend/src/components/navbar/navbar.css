@@ -55,7 +55,14 @@
   color: white;
   cursor: pointer;
 }
-
+.wd-navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
 /* -----------------------------------------------------------
    MOBILE RESPONSIVE MENU
 ----------------------------------------------------------- */
