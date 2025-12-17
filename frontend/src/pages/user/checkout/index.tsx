@@ -2,8 +2,11 @@ import "./checkout.css";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import { useCheckout } from "./useCheckout";
 import CartReview from "./steps/CartReview";
+import { MainLayout } from "../../../components/layouts/MainLayout";
 
 export default function CheckoutPage() {
+  <MainLayout></MainLayout>
+  
   const { user, loading } = useCurrentUser();
 
   const checkout = useCheckout(user?.email ?? "");
