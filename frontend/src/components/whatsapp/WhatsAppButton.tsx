@@ -1,6 +1,5 @@
 // components/whatsapp/WhatsAppButton.tsx
 import iconUrl from "./WhatsApp.png";
-import "./whatsapp.css";
 
 export default function WhatsAppButton() {
   return (

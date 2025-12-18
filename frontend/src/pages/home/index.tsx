@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { fetchProducts } from "../../lib/productsApi";
 import type { Product } from "../../lib/types";
 import { normalizeProduct } from "../../lib/normalizers/productNormalizer";
-
+import HomeHero from "../../components/hero/home/HomeHero"
 import ProductCard from "../../components/catalog/ProductCard";
 import OptionSelector from "../../components/catalog/OptionSelector";
 import CartPreview from "../../components/catalog/CartPreview";
@@ -10,6 +10,7 @@ import CartPreview from "../../components/catalog/CartPreview";
 import "./home.css";
 
 export default function Home() {
+  
   const [products, setProducts] = useState<Product[]>([]);
   const [selected, setSelected] = useState<Product | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
@@ -60,10 +61,7 @@ export default function Home() {
         </div>
 
         <div className="hero-image">
-          <img
-            src="/image/hero/hero-webonday.jpg"
-            alt="Webonday e-commerce per PMI"
-          />
+          <HomeHero/>
         </div>
       </section>
 

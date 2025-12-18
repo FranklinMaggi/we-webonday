@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { cartStore } from "../../lib/cartStore"; // hook zustand
 import { uiBus } from "../../lib/uiBus";
-import "./navbar.css";
+
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -11,7 +11,7 @@ export default function Navbar() {
   const cartCount = items.length;
 
   return (
-    <nav className="wd-navbar">
+    <nav className="wd-navbar wd-navbar-neon">
      {/* LOGO */}
 <Link to="/" className="wd-navbar-logo" aria-label="WebOnDay Home">
   <img

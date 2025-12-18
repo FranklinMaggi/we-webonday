@@ -11,6 +11,7 @@ import AdminLayout from "../components/layouts/AdminLayout";
 import Home from "../pages/home";
 import Vision from "../pages/vision";
 import Mission from "../pages/mission";
+import FounderPage from "../pages/founder";
 
 // User
 import UserLogin from "../pages/user/login";
@@ -37,40 +38,26 @@ import SuperAdminLogs from "../pages/superadmin/dashboard/Logs";
 
 const router = createBrowserRouter([
   /* =========================
-     PUBLIC + USER
+     PUBLIC + USER (MAIN LAYOUT)
   ========================= */
   {
     path: "/",
     element: <MainLayout />,
     children: [
       { index: true, element: <Home /> },
-      
       { path: "vision", element: <Vision /> },
       { path: "mission", element: <Mission /> },
-      { path: "user/login", element: <UserLogin /> },
-      { path: "policy/privacy", element: <Privacy /> },
-      { path: "policy/terms", element: <Terms /> },
-      { path: "policy", element: <PolicyPage /> },
-      
-    ],
-  },
-  
-  {
-    path: "/",
-    element: <MainLayout />,
-    children: [
-      { index: true, element: <Home /> },
-      { path: "vision", element: <Vision /> },
-      { path: "mission", element: <Mission /> },
+      { path: "founder", element: <FounderPage /> },
+
       { path: "user/login", element: <UserLogin /> },
       { path: "user/checkout", element: <CheckoutPage /> },
+
       { path: "policy/privacy", element: <Privacy /> },
       { path: "policy/terms", element: <Terms /> },
       { path: "policy", element: <PolicyPage /> },
     ],
   },
-  
-  
+
   /* =========================
      ADMIN
   ========================= */

@@ -1,0 +1,187 @@
+  /* =======================================================================
+     FOOTER PRESET (compatibile con Footer.tsx)
+  ======================================================================= */
+  
+  .wd-footer {
+    background: var(--wd-gray-900);
+    color: var(--wd-gray-300);
+    padding: 40px 24px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  
+  .wd-footer h4 {
+    margin-bottom: 12px;
+    color: white;
+  }
+  
+  .wd-footer a {
+    display: block;
+    color: var(--wd-gray-300);
+    margin-bottom: 8px;
+    text-decoration: none;
+  }
+  
+  .wd-footer a:hover {
+    color: var(--wd-cyan-300);
+  }
+  /* Footer columns */
+.wd-footer-col {
+    min-width: 180px;
+    margin-bottom: 20px;
+  }
+  
+  .wd-footer-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: white;
+  }
+  
+  .wd-footer-link {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--wd-gray-300);
+    text-decoration: none;
+  }
+  
+  .wd-footer-link:hover {
+    color: var(--wd-cyan-300);
+  }
+  
+
+/* =======================================================================
+
+   FOOTER NEON GLOW – WebOnDay
+   Estende wd-footer con effetti luminosi
+======================================================================= */
+
+.wd-footer-neon {
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 -4px 25px rgba(34,211,238,0.25),
+                0 -2px 8px rgba(244,114,182,0.25);
+  }
+  
+  /* Glow dinamico sottile su sfondo */
+  .wd-footer-neon::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at top center,
+      rgba(34,211,238,0.12),
+      rgba(244,114,182,0.10),
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  /* Glow animato laterale */
+  .wd-footer-neon::after {
+    content: "";
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 220%;
+    height: 80px;
+    background: radial-gradient(
+      ellipse,
+      rgba(34,211,238,0.25),
+      rgba(244,114,182,0.18),
+      transparent 80%
+    );
+    filter: blur(20px);
+    animation: wdNeonPulse 6s infinite ease-in-out;
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  @keyframes wdNeonPulse {
+    0% { opacity: 0.35; transform: translateX(-50%) scale(1); }
+    50% { opacity: 0.55; transform: translateX(-50%) scale(1.2); }
+    100% { opacity: 0.35; transform: translateX(-50%) scale(1); }
+  }
+  
+  
+  /* -----------------------------------------------------------------------
+     LINK NEON EFFECT
+  ----------------------------------------------------------------------- */
+  
+  .wd-footer-link {
+    position: relative;
+    z-index: 2;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
+  }
+  
+  .wd-footer-link:hover {
+    color: var(--wd-cyan-300);
+    text-shadow:
+        0 0 8px rgba(34,211,238,0.8),
+        0 0 14px rgba(34,211,238,0.6),
+        0 0 25px rgba(34,211,238,0.8);
+  }
+  .wd-footer-link::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: var(--wd-cyan-300);
+    box-shadow: 0 0 6px rgba(34,211,238,0.8);
+    transition: width .25s ease;
+  }
+  
+  .wd-footer-link:hover::after {
+    width: 100%;
+  }
+  
+  /* -----------------------------------------------------------------------
+     TITOLI NEON
+  ----------------------------------------------------------------------- */
+  
+  .wd-footer-title {
+    position: relative;
+    z-index: 2;
+    color: white;
+    text-shadow:
+      0 0 6px rgba(255,255,255,0.6),
+      0 0 14px rgba(34,211,238,0.4);
+  }
+  /* -----------------------------------------------------------------------
+   FOOTER STRUCTURE
+----------------------------------------------------------------------- */
+
+.wd-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 32px;
+  padding: 48px 32px 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.wd-footer-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* -----------------------------------------------------------------------
+   FOOTER BOTTOM
+----------------------------------------------------------------------- */
+
+.wd-footer-bottom {
+  text-align: center;
+  padding: 16px 24px 28px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 2;
+}

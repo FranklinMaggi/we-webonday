@@ -1,0 +1,26 @@
+@charset "UTF-8";
+
+/* ===============================
+   IMPORT CSS LEGACY (PRIMA DI TUTTO)
+================================ */
+@import "./base.css" ; 
+@import "./base.css";
+@import "./legacy-style.css";
+@import "./catalog.css";
+@import "./whatsapp.css";
+@import './hero.css';
+@import "./footer.css";
+@import "./navbar.css";
+@import "./login.css"; 
+@import "./checkout.css"; 
+
+
+/* ===============================
+   TAILWIND
+================================ */
+
+/* TAILWIND */
+@tailwindcss ;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

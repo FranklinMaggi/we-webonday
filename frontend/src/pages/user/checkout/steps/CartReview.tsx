@@ -66,61 +66,50 @@ export default function CartReview({
   }
 
   return (
-    <section style={{ maxWidth: 760, margin: "0 auto", padding: 24 }}>
-      <h2>Checkout</h2>
-
-      <ul>
-        {cart.map((item, idx) => (
-          <li
-            key={idx}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: 8,
-            }}
-          >
-            <span>{item.title}</span>
-            <strong>{eur.format(item.total)}</strong>
-          </li>
-        ))}
-      </ul>
-
-      <div style={{ marginTop: 16, fontSize: 18 }}>
-        <strong>Totale: {eur.format(total)}</strong>
-      </div>
-
-      {!accepted && (
-        <div style={{ marginTop: 24 }}>
-          <p style={{ fontSize: 13, opacity: 0.7 }}>
-            Procedendo accetti i Termini e la Privacy Policy (v.
-            {policyVersion ?? "…"}).
-          </p>
-
-          {error && <p style={{ color: "red" }}>{error}</p>}
-
-          <button
-            onClick={acceptAndPay}
-            disabled={loading || !policyVersion}
-            style={{
-              width: "100%",
-              padding: 14,
-              marginTop: 8,
-              background: "#111",
-              color: "#fff",
-              borderRadius: 8,
-              fontWeight: 600,
-            }}
-          >
-            {loading ? "Preparazione pagamento…" : "Paga con PayPal"}
-          </button>
+    <div className="checkout-page">
+      <section className="checkout-card">
+  
+        <h2 className="checkout-title">Checkout</h2>
+  
+        <ul className="checkout-list">
+          {cart.map((item, idx) => (
+            <li key={idx} className="checkout-item">
+              <span className="checkout-item-title">{item.title}</span>
+              <strong>{eur.format(item.total)}</strong>
+            </li>
+          ))}
+        </ul>
+  
+        <div className="checkout-total">
+          Totale <strong>{eur.format(total)}</strong>
         </div>
-      )}
-
-      {accepted && orderId && (
-        <div style={{ marginTop: 24 }}>
-          <PaymentPaypal state={{ orderId }} />
-        </div>
-      )}
-    </section>
+  
+        {!accepted && (
+          <div className="checkout-action">
+            <p className="checkout-policy">
+              Procedendo accetti i Termini e la Privacy Policy (v.
+              {policyVersion ?? "…"}).
+            </p>
+  
+            {error && <p className="checkout-error">{error}</p>}
+  
+            <button
+              onClick={acceptAndPay}
+              disabled={loading || !policyVersion}
+              className="checkout-pay-btn"
+            >
+              {loading ? "Preparazione pagamento…" : "Paga con PayPal"}
+            </button>
+          </div>
+        )}
+  
+        {accepted && orderId && (
+          <div className="checkout-paypal">
+            <PaymentPaypal state={{ orderId }} />
+          </div>
+        )}
+      </section>
+    </div>
   );
+  
 }

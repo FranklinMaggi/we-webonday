@@ -1,0 +1,125 @@
+/* ======================================
+   CHECKOUT – Responsive / Neon / Dark
+====================================== */
+
+.checkout-page{
+    min-height: 100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px;
+    background:
+      radial-gradient(circle at top, rgba(34,211,238,.10), transparent 40%),
+      radial-gradient(circle at bottom, rgba(244,114,182,.10), transparent 40%);
+  }
+  
+  .checkout-card{
+    width:100%;
+    max-width: 760px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow:
+      0 20px 50px rgba(0,0,0,.45),
+      0 0 30px rgba(34,211,238,.12);
+    backdrop-filter: blur(6px);
+  }
+  
+  /* TITOLI */
+  .checkout-title{
+    margin:0 0 20px;
+    font-size: 26px;
+    text-align:center;
+    letter-spacing:-.02em;
+  }
+  
+  /* LISTA PRODOTTI */
+  .checkout-list{
+    list-style:none;
+    padding:0;
+    margin:0 0 18px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  
+  .checkout-item{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.10);
+  }
+  
+  .checkout-item-title{
+    font-size:14px;
+    opacity:.9;
+  }
+  
+  /* TOTALE */
+  .checkout-total{
+    display:flex;
+    justify-content:space-between;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(255,255,255,.25);
+    font-size: 18px;
+  }
+  
+  /* AZIONI */
+  .checkout-action{
+    margin-top: 24px;
+  }
+  
+  .checkout-policy{
+    font-size: 12px;
+    opacity:.7;
+    text-align:center;
+  }
+  
+  .checkout-error{
+    margin-top: 8px;
+    font-size: 13px;
+    color: #f87171;
+    text-align:center;
+  }
+  
+  /* PAY BUTTON */
+  .checkout-pay-btn{
+    margin-top: 12px;
+    width:100%;
+    padding: 14px;
+    border-radius: 999px;
+    border:none;
+    background: linear-gradient(90deg,#22d3ee,#f472b6);
+    color:#020617;
+    font-weight:700;
+    cursor:pointer;
+  }
+  
+  .checkout-pay-btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+  }
+  
+  /* PAYPAL */
+  .checkout-paypal{
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,.12);
+  }
+  
+  /* MOBILE TUNING */
+  @media (max-width: 480px){
+    .checkout-card{
+      padding: 22px 18px;
+    }
+  
+    .checkout-title{
+      font-size: 22px;
+    }
+  }
+  

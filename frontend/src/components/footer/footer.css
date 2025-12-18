@@ -99,4 +99,35 @@
       0 0 6px rgba(255,255,255,0.6),
       0 0 14px rgba(34,211,238,0.4);
   }
-  
+  /* -----------------------------------------------------------------------
+   FOOTER STRUCTURE
+----------------------------------------------------------------------- */
+
+.wd-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 32px;
+  padding: 48px 32px 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.wd-footer-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* -----------------------------------------------------------------------
+   FOOTER BOTTOM
+----------------------------------------------------------------------- */
+
+.wd-footer-bottom {
+  text-align: center;
+  padding: 16px 24px 28px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 2;
+}

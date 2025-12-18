@@ -113,41 +113,63 @@ export default function UserLoginPage() {
   };
 
   return (
-    <div className="user-login-page" style={{ padding: "40px" }}>
-      <h1>Area Cliente</h1>
-
-      {/* LOGIN CON GOOGLE */}
-      <button onClick={googleLogin} className="google-btn">
-        Accedi con Google
-      </button>
-
-      <hr />
-
-      {/* FORM LOGIN MANUALE */}
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-
-      {errorMsg && (
-        <p style={{ color: "red", marginTop: 10 }}>{errorMsg}</p>
-      )}
-
-      <button disabled={loading} onClick={login}>
-        Accedi
-      </button>
-
-      <button disabled={loading} onClick={register}>
-        Registrati
-      </button>
+    <div className="login-page">
+      <div className="login-card">
+  
+        <h1 className="login-title">Area Cliente</h1>
+        <p className="login-subtitle">
+          Accedi o registrati per continuare
+        </p>
+  
+        {/* GOOGLE LOGIN */}
+        <button onClick={googleLogin} className="login-google-btn">
+          <span className="google-icon">G</span>
+          Accedi con Google
+        </button>
+  
+        <div className="login-divider">
+          <span>oppure</span>
+        </div>
+  
+        {/* FORM */}
+        <div className="login-form">
+          <input
+            className="login-input"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+  
+          <input
+            className="login-input"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+  
+          {errorMsg && (
+            <p className="login-error">{errorMsg}</p>
+          )}
+  
+          <button
+            disabled={loading}
+            onClick={login}
+            className="login-primary-btn"
+          >
+            {loading ? "Accesso…" : "Accedi"}
+          </button>
+  
+          <button
+            disabled={loading}
+            onClick={register}
+            className="login-secondary-btn"
+          >
+            Registrati
+          </button>
+        </div>
+      </div>
     </div>
   );
+  
 }
