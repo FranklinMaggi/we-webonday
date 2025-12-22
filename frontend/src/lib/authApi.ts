@@ -24,3 +24,9 @@ export function getGoogleLoginUrl(redirect?: string): string {
   if (redirect) url.searchParams.set("redirect", redirect);
   return url.toString();
 }
+export async function logout() {
+  await fetch(`${API_BASE}/api/user/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+}

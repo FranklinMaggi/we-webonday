@@ -62,6 +62,7 @@ import {
   registerUser,
   loginUser,
   getUser,
+  logoutUser
 } from "./routes/user";
 
 import { requireAdmin } from "./lib/adminAuth";
@@ -159,6 +160,11 @@ if (pathname === "/api/user/login" && method === "POST") {
 
 if (pathname === "/api/user/get" && method === "GET") {
   return withCors(await getUser(request, env), request, env);
+
+}
+
+if (pathname === "/api/user/logout" && method === "POST") {
+  return withCors(await logoutUser(request, env), request, env);
 }
 
       /* ===== CART ===== */

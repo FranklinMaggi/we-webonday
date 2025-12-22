@@ -149,3 +149,19 @@ export async function getUser(request: Request, env: Env) {
 
   return json({ ok: true, user: safeUser });
 }
+// POST /api/user/logout
+export async function logoutUser(request: Request, env: Env) {
+  const headers = new Headers();
+  headers.append(
+    "Set-Cookie",
+    "session=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0"
+  );
+
+  return new Response(
+    JSON.stringify({ ok: true }),
+    {
+      status: 200,
+      headers,
+    }
+  );
+}
