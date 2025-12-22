@@ -44,7 +44,7 @@ export default function PaymentPaypal({ state }: Props) {
           createOrder: async () => {
             const res = await fetch( `${import.meta.env.VITE_API_URL}/api/payment/paypal/create-order`, {
               method: "POST",
-              credentials: "include",
+          
               headers: {
                 "Content-Type": "application/json",
               },
@@ -69,7 +69,7 @@ export default function PaymentPaypal({ state }: Props) {
           onApprove: async () => {
             const res = await fetch( `${import.meta.env.VITE_API_URL}/api/payment/paypal/capture-order`, {
               method: "POST",
-              credentials: "include",
+             
               headers: {
                 "Content-Type": "application/json",
               },

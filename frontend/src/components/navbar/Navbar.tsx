@@ -6,6 +6,8 @@ import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { logout } from "../../lib/authApi";
 import ModeSwitch from "./ModeSwitch";
 import { useNavigate } from "react-router-dom";
+import { currentUserStore } from "../../lib/currentUserStore";
+
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -17,11 +19,12 @@ export default function Navbar() {
 
   async function handleLogout() {
     await logout();
-    localStorage.removeItem("user_mode"); // reset esplicito
-    window.location.href = "/user/login";
+  
+    currentUserStore.getState().clearUser();
+    localStorage.removeItem("user_mode");
+  
     navigate("/user/login", { replace: true });
   }
-
   return (
     <nav className="wd-navbar wd-navbar-neon">
       {/* LOGO */}

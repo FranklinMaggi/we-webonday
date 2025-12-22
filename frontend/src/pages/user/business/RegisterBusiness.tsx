@@ -35,7 +35,7 @@ export default function RegisterBusiness() {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
-        ownerUserId: user.userId,
+       
         name: "Business",
         address: "-",
         phone: "-",

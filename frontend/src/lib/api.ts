@@ -15,8 +15,8 @@ export async function apiFetch<T = any>(
   const url = `${API_BASE}${path}`;
 
   const res = await fetch(url, {
-    credentials: "include",
     ...options,
+    credentials: options.credentials,
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {}),

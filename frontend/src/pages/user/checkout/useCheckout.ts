@@ -14,7 +14,7 @@ async function syncCart(visitorId: string, cart: CartItem[]) {
   
   const res = await fetch(`${API_BASE}/api/cart`, {
     method: "POST",
-    credentials: "include",
+   
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       visitorId,

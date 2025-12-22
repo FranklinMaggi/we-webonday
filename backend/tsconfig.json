@@ -8,6 +8,6 @@
       "allowJs": false,
       "isolatedModules": true
     },
-    "include": ["src"]
+    "include": ["src", "../frontend/app"]
   }
   

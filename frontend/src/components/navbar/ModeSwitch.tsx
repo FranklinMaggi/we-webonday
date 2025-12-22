@@ -1,14 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { useUserMode } from "../../lib/userModeStore";
 import { getMyBusiness } from "../../lib/businessApi";
-import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { useState } from "react";
 import { useEffect } from "react";
+import { currentUserStore } from "../../lib/currentUserStore";
+
+const user = currentUserStore((s) => s.user);
 
 
 export default function ModeSwitch() {
   const { mode, setMode } = useUserMode();
-  const { user } = useCurrentUser();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   useEffect(() => {

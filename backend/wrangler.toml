@@ -1,9 +1,7 @@
 name = "we-webonday-backend"
 main = "src/index.ts"
 compatibility_date = "2025-12-08"
-routes = [
-  { pattern = "www.webonday.it/api/*", zone_name = "webonday.it" }
-]
+
 # ============================
 # VARIABILI DI AMBIENTE
 # ============================
