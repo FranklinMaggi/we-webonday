@@ -16,7 +16,7 @@ export const UserInputSchema = z.object({
 export const UserSchema = z.object({
   id: z.string().uuid(),
   email: z.string().email(),
-  passwordHash: z.string(),
+  passwordHash: z.string().optional().nullable(),
 
   businessName: z.string().optional().nullable(),
   piva: z.string().optional().nullable(),

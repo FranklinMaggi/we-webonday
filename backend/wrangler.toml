@@ -8,7 +8,7 @@ compatibility_date = "2025-12-08"
 [vars]
 FRONTEND_URL = "https://www.webonday.it"
 GOOGLE_CLIENT_ID = "779755703612-3b1vcbkbvekjq80k4q1508h4efev7jac.apps.googleusercontent.com"
-GOOGLE_REDIRECT_URI = "https://we-webonday-backend.franklin19.workers.dev/api/user/google/callback"
+GOOGLE_REDIRECT_URI = "https://api.webonday.it/api/user/google/callback"
 
 R2_PUBLIC_BASE_URL = "https://menus.webonday.it"
 

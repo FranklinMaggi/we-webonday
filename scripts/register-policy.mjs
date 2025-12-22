@@ -3,7 +3,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 // Node 18+ ha fetch globale → niente node-fetch
-const API_BASE = "https://we-webonday-backend.franklin19.workers.dev";
+const API_BASE = "https://api.webonday.it";
+
 
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
 if (!ADMIN_TOKEN) {

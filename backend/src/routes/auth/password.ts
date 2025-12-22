@@ -1,42 +1,47 @@
-//backend/src/routes/password.ts
+// backend/src/routes/password.ts
+
 import type { Env } from "../../types/env";
 import { logActivity } from "../../lib/logActivity";
+import { buildSessionCookie } from "../../lib/auth/session";
 import { UserSchema, UserInputSchema } from "../../schemas/core/userSchema";
-
-function json(body: unknown, status = 200) {
+import { getUserFromSession } from "../../lib/auth/session";
+/**
+ * Helper JSON response standard
+ */
+function json(body: unknown, status = 200, headers?: HeadersInit) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 
+    headers: {
       "Content-Type": "application/json",
-      
+      ...headers,
     },
   });
 }
 
-/* ===========================================
-   REGISTER USER
-   =========================================== */
+/* ============================================================
+   REGISTER USER (PASSWORD)
+   POST /api/user/register
+   ============================================================ */
 export async function registerUser(request: Request, env: Env) {
-  let parsedInput;
+  let input;
 
+  // 1️⃣ Parse + validate input
   try {
-    const rawBody = await request.json();
-    parsedInput = UserInputSchema.parse(rawBody);
+    input = UserInputSchema.parse(await request.json());
   } catch (err) {
     return json({ error: "Invalid input", details: err }, 400);
   }
 
-  const { email, password, piva, businessName } = parsedInput;
+  const { email, password, piva, businessName } = input;
+  const normalizedEmail = email.toLowerCase();
 
-  // Controllo se email già registrata tramite indice
-  const existingId = await env.ON_USERS_KV.get(`EMAIL:${email.toLowerCase()}`);
+  // 2️⃣ Email uniqueness check (index)
+  const existingId = await env.ON_USERS_KV.get(`EMAIL:${normalizedEmail}`);
   if (existingId) {
     return json({ error: "Email already registered" }, 409);
   }
 
-  const id = crypto.randomUUID();
-
-  // Hash password SHA-256
+  // 3️⃣ Hash password (SHA-256)
   const hashBuf = await crypto.subtle.digest(
     "SHA-256",
     new TextEncoder().encode(password)
@@ -45,11 +50,13 @@ export async function registerUser(request: Request, env: Env) {
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 
+  const userId = crypto.randomUUID();
   const userType = piva ? "business" : "private";
 
+  // 4️⃣ Build raw user
   const userRaw = {
-    id,
-    email: email.toLowerCase(),
+    id: userId,
+    email: normalizedEmail,
     passwordHash,
     businessName: businessName ?? null,
     piva: piva ?? null,
@@ -59,50 +66,62 @@ export async function registerUser(request: Request, env: Env) {
     createdAt: new Date().toISOString(),
   };
 
-  let validatedUser;
+  // 5️⃣ Schema validation (Zod)
+  let user;
   try {
-    validatedUser = UserSchema.parse(userRaw);
+    user = UserSchema.parse(userRaw);
   } catch (err) {
     return json({ error: "User validation failed", details: err }, 400);
   }
 
-  // Salva user
-  await env.ON_USERS_KV.put(`USER:${id}`, JSON.stringify(validatedUser));
+  // 6️⃣ Persist user + indexes
+  await env.ON_USERS_KV.put(`USER:${user.id}`, JSON.stringify(user));
+  await env.ON_USERS_KV.put(`EMAIL:${user.email}`, user.id);
 
-  // Indice email → userId
-  await env.ON_USERS_KV.put(`EMAIL:${validatedUser.email}`, id);
+  // 7️⃣ Create session immediately (UX + consistency)
+  const cookie = buildSessionCookie(env, user.id);
 
-  return json({ ok: true, userId: id });
+  return json(
+    { ok: true, userId: user.id },
+    201,
+    { "Set-Cookie": cookie }
+  );
 }
 
-
-/* ===========================================
-   LOGIN USER
-   =========================================== */
+/* ============================================================
+   LOGIN USER (PASSWORD)
+   POST /api/user/login
+   ============================================================ */
 export async function loginUser(request: Request, env: Env) {
   let body: { email: string; password: string };
 
+  // 1️⃣ Parse body
   try {
     body = await request.json();
   } catch {
     return json({ error: "Invalid JSON body" }, 400);
   }
 
-  if (!body.email || !body.password)
+  if (!body.email || !body.password) {
     return json({ error: "Missing credentials" }, 400);
+  }
 
   const email = body.email.toLowerCase();
 
-  // lookup rapido tramite indice
+  // 2️⃣ Lookup via email index
   const userId = await env.ON_USERS_KV.get(`EMAIL:${email}`);
-  if (!userId) return json({ error: "Invalid credentials" }, 401);
+  if (!userId) {
+    return json({ error: "Invalid credentials" }, 401);
+  }
 
   const stored = await env.ON_USERS_KV.get(`USER:${userId}`);
-  if (!stored) return json({ error: "Invalid credentials" }, 401);
+  if (!stored) {
+    return json({ error: "Invalid credentials" }, 401);
+  }
 
   const user = JSON.parse(stored);
 
-  // Hash password inserita
+  // 3️⃣ Password check
   const hashBuf = await crypto.subtle.digest(
     "SHA-256",
     new TextEncoder().encode(body.password)
@@ -111,69 +130,67 @@ export async function loginUser(request: Request, env: Env) {
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 
-  if (passwordHash !== user.passwordHash)
+  if (passwordHash !== user.passwordHash) {
     return json({ error: "Invalid credentials" }, 401);
-  
-  await logActivity(
-    env,
-    "LOGIN",
-    user.id,
-    {
-      provider: "password",
-      email: user.email,
-      ip: request.headers.get("CF-Connecting-IP"),
-      userAgent: request.headers.get("User-Agent"),
-    }
-  );
-  
-  return json({
-    ok: true,
-    userId: user.id,
-    userType: user.userType,
-    membershipLevel: user.membershipLevel,
+  }
+
+  // 4️⃣ Activity log
+  await logActivity(env, "LOGIN", user.id, {
+    provider: "password",
+    email: user.email,
+    ip: request.headers.get("CF-Connecting-IP"),
+    userAgent: request.headers.get("User-Agent"),
   });
+
+  // 5️⃣ Session cookie (🔥 QUESTO ERA IL BUG)
+  const cookie = buildSessionCookie(env, user.id);
+
+  return json(
+    {
+      ok: true,
+      userId: user.id,
+      userType: user.userType,
+      membershipLevel: user.membershipLevel,
+    },
+    200,
+    { "Set-Cookie": cookie }
+  );
+}
+
+/* ============================================================
+   GET CURRENT USER
+   GET /api/user/me
+   (userId risolto dal middleware/session)
+   ============================================================ */
+   export async function getUser(request: Request, env: Env) {
+    const user = await getUserFromSession(request, env);
   
-}
-
-
-/* ===========================================
-   GET USER /api/user/me?userId=UUID
-   =========================================== */
-export async function getUser(request: Request, env: Env) {
-  const url = new URL(request.url);
-  const id = url.searchParams.get("userId");
-
-  if (!id) return json({ error: "Missing userId" }, 400);
-
-  const stored = await env.ON_USERS_KV.get(`USER:${id}`);
-  if (!stored) return json({ error: "User not found" }, 404);
-
-  const { passwordHash, ...safeUser } = JSON.parse(stored);
-
-  return json({ ok: true, user: safeUser });
-}
-// POST /api/user/logout
-export async function logoutUser(request: Request, env: Env) {
+    if (!user) {
+      return json({ ok: true, user: null });
+    }
+  
+    const { passwordHash, ...safeUser } = user;
+    return json({ ok: true, user: safeUser });
+  }
+  
+/* ============================================================
+   LOGOUT
+   POST /api/user/logout
+   ============================================================ */
+export async function logoutUser() {
   const headers = new Headers();
 
-  headers.append(
+  headers.set(
     "Set-Cookie",
     [
       "webonday_session=",
       "Path=/",
       "HttpOnly",
-      "SameSite=None",
       "Secure",
+      "SameSite=None",
       "Max-Age=0",
     ].join("; ")
   );
 
-  return new Response(
-    JSON.stringify({ ok: true }),
-    {
-      status: 200,
-      headers,
-    }
-  );
+  return json({ ok: true }, 200, headers);
 }
-
