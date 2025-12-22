@@ -9,10 +9,16 @@ export default function UserLoginPage() {
   // ===========================
   const user = useAuthStore((s) => s.user);
   const ready = useAuthStore((s) => s.ready);
+  const fetchUser = useAuthStore((s) => s.fetchUser);
 
   const navigate = useNavigate();
   const location = useLocation();
-
+  // 🔁 Rileggi l'utente quando torni da Google OAuth
+useEffect(() => {
+  if (!ready) {
+    fetchUser();
+  }
+}, [ready, fetchUser]);
   // 🔁 Redirect automatico DOPO login
   useEffect(() => {
     if (!ready || !user) return;
