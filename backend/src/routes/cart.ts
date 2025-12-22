@@ -1,7 +1,7 @@
 // backend/src/routes/cart.ts
 import type { Env } from "../types/env";
 import { z } from "zod";
-import { CartItemSchema } from "../schemas/cartSchema";
+import { CartItemSchema } from "../schemas/core/cartSchema";
 
 /* ============================================================
    CART DOMAIN — visitorId based (v46)

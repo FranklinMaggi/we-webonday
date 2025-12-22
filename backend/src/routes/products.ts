@@ -2,7 +2,7 @@
 import type { Env } from "../types/env";
 
 import { normalizeProduct } from "../normalizers/normalizeProduct";
-import { ProductSchema } from "../schemas/productSchema";
+import { ProductSchema } from "../schemas/food/productSchema";
 
 /* ============================================================
    GET ALL PRODUCTS (DOMAIN ONLY)

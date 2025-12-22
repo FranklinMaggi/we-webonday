@@ -1,0 +1,85 @@
+import { useState } from "react";
+
+export default function RegisterBusiness() {
+  const [email, setEmail] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  function onFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setFile(f);
+    setPreview(URL.createObjectURL(f));
+  }
+
+  async function submit() {
+    if (!file || !email) return alert("Completa i campi");
+
+    // 1. register user
+    const userRes = await fetch("/api/user/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        email,
+        password: "temporary123",
+        businessName: "My Business",
+        piva: "TEMP",
+      }),
+    });
+    const user = await userRes.json();
+
+    // 2. create business
+    const bRes = await fetch("/api/business/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        ownerUserId: user.userId,
+        name: "Business",
+        address: "-",
+        phone: "-",
+      }),
+    });
+    const { business } = await bRes.json();
+
+    // 3. upload menu
+    const fd = new FormData();
+    fd.append("file", file);
+
+    await fetch(
+      `/api/business/menu/upload?businessId=${business.id}`,
+      {
+        method: "POST",
+        body: fd,
+        credentials: "include",
+      }
+    );
+
+    alert("Business attivato");
+  }
+
+  return (
+    <div>
+      <h1>Registra Business</h1>
+
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+
+      <input type="file" accept="application/pdf" onChange={onFile} />
+
+      {preview && (
+        <iframe
+          src={preview}
+          style={{ width: "100%", height: 400 }}
+        />
+      )}
+
+      <button onClick={submit}>Invia</button>
+    </div>
+  );
+}

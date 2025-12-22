@@ -1,0 +1,104 @@
+/* =====================================================
+   HOME PAGE – WebOnDay
+   Layout + composition only
+===================================================== */
+
+.home-page {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+  
+  /* ================= HERO ================= */
+  
+  .home-hero {
+    margin-top: 24px;
+  }
+  
+  /* ================= SEZIONI GENERICHE ================= */
+  
+  .home-section {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  
+  /* Header sezione */
+  .home-section__header {
+    max-width: 640px;
+  }
+  
+  .home-section__title {
+    margin: 0;
+    font-size: clamp(22px, 3vw, 32px);
+    letter-spacing: -0.02em;
+  }
+  
+  .home-section__subtitle {
+    margin-top: 8px;
+    color: var(--wd-text-muted);
+    font-size: 15px;
+  }
+  
+  /* ================= CATALOGO ================= */
+  
+  .home-catalog {
+    margin-top: 24px;
+  }
+  
+  .home-grid {
+    display: grid;
+    gap: 24px;
+  }
+  
+  @media (min-width: 640px) {
+    .home-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .home-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  /* ================= CTA ================= */
+  
+  .home-cta {
+    margin: 48px 0;
+  }
+  
+  .home-cta__box {
+    padding: 32px;
+    border-radius: var(--wd-radius-lg);
+  
+    background: var(--wd-panel);
+    border: 1px solid var(--wd-border);
+  
+    text-align: center;
+  }
+  
+  .home-cta__title {
+    margin: 0 0 12px;
+    font-size: 22px;
+  }
+  
+  .home-cta__text {
+    margin: 0;
+    color: var(--wd-text-muted);
+    font-size: 15px;
+  }
+  
+  /* ================= RESPONSIVE ================= */
+  
+  @media (max-width: 640px) {
+    .home-page {
+      gap: 48px;
+    }
+  
+    .home-cta__box {
+      padding: 24px;
+    }
+  }
+  

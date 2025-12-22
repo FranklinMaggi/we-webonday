@@ -13,11 +13,11 @@
 
 import type { Env } from "../types/env";
 import { z } from "zod";
-import { OrderSchema } from "../schemas/orderSchema";
-import { CartItemSchema } from "../schemas/cartSchema";
+import { OrderSchema } from "../schemas/core/orderSchema";
+import { CartItemSchema } from "../schemas/core/cartSchema";
 import { logActivity } from "../lib/logActivity";
-import type { OrderStatus } from "../schemas/orderSchema";
-import { OrderBaseSchema } from "../schemas/orderSchema";
+import type { OrderStatus } from "../schemas/core/orderSchema";
+import { OrderBaseSchema } from "../schemas/core/orderSchema";
 
 const ORDER_TRANSITIONS = {
   pending: ["confirmed", "cancelled"],

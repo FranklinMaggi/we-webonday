@@ -3,6 +3,7 @@ import type { ProductDTO } from "../../lib/types";
 import { cartStore } from "../../lib/cartStore";
 import { getOrCreateVisitorId } from "../../utils/visitor";
 import { eur } from "../../utils/format";
+import { useRef } from "react";
 
 interface Props {
   product: ProductDTO;
@@ -13,9 +14,10 @@ export default function CartPreview({ product, selectedOptions }: Props) {
   const selectedObjects = product.options.filter((o) => selectedOptions.includes(o.id));
   const optionsTotal = selectedObjects.reduce((sum, o) => sum + o.price, 0);
   const total = product.basePrice + optionsTotal;
-
+  const previewRef = useRef<HTMLElement>(null);
   const addToCart = () => {
     const visitorId = getOrCreateVisitorId();
+  
     cartStore.getState().addItem({
       visitorId,
       productId: product.id,
@@ -24,10 +26,17 @@ export default function CartPreview({ product, selectedOptions }: Props) {
       options: selectedObjects,
       total,
     });
+  
+    // feedback visivo "aggiunto al carrello"
+    previewRef.current?.classList.add("is-added");
+    setTimeout(() => {
+      previewRef.current?.classList.remove("is-added");
+    }, 450);
   };
+  
 
   return (
-    <aside className="cart-preview card">
+    <aside ref={previewRef} className="cart-preview card">
       <div className="card__header">
         <h3 className="card__title">Riepilogo</h3>
       </div>

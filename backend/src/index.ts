@@ -1,11 +1,21 @@
 // backend/src/index.ts
 import type { Env } from "./types/env";
-
+import { testUploadMenu } from "./routes/testUpload";
+import { uploadBusinessMenu } from "./routes/uploadMenu";
 import {
   saveCart,
   getCart,
 } from "./routes/cart";
 
+import {
+  createBusiness,
+  getBusiness
+} from "./routes/business";
+
+import { getMyBusiness } 
+from "./routes/businessMine";
+
+import { getBusinessPublic } from "./routes/businessPublic";
 
 import {
   getProducts,
@@ -47,6 +57,12 @@ import {
   createPaypalOrder,
   capturePaypalOrder,
 } from "./routes/paymentPaypal";
+
+import {
+  registerUser,
+  loginUser,
+  getUser,
+} from "./routes/user";
 
 import { requireAdmin } from "./lib/adminAuth";
 
@@ -132,6 +148,18 @@ export default {
       if (pathname === "/api/user/me" && method === "GET") {
         return withCors(await getCurrentUser(request, env), request, env);
       }
+        /* ===== USER AUTH (PASSWORD) ===== */
+if (pathname === "/api/user/register" && method === "POST") {
+  return withCors(await registerUser(request, env), request, env);
+}
+
+if (pathname === "/api/user/login" && method === "POST") {
+  return withCors(await loginUser(request, env), request, env);
+}
+
+if (pathname === "/api/user/get" && method === "GET") {
+  return withCors(await getUser(request, env), request, env);
+}
 
       /* ===== CART ===== */
 if (pathname === "/api/cart" && method === "POST") {
@@ -221,19 +249,19 @@ if (pathname === "/api/product" && method === "GET") {
   }
 }
 
-if (pathname === "/api/products/register" && method === "PUT") {
-  try {
-    const product = await registerProduct(request, env);
-    return json({ ok: true, product }, request, env);
-  } catch (err: any) {
-    return json(
-      { ok: false, error: err.message },
-      request,
-      env,
-      400
-    );
-  }
-}
+      if (pathname === "/api/products/register" && method === "PUT") {
+        try {
+          const product = await registerProduct(request, env);
+          return json({ ok: true, product }, request, env);
+        } catch (err: any) {
+          return json(
+            { ok: false, error: err.message },
+            request,
+            env,
+            400
+          );
+        }
+      }
 
 
       /* ===== POLICY ===== */
@@ -256,23 +284,52 @@ if (pathname === "/api/products/register" && method === "PUT") {
         return withCors(await getPolicyStatus(request, env), request, env);
       }
       /* ===== COOKIES ===== */
-if (pathname === "/api/cookies/accept" && method === "POST") {
-  return withCors(await acceptCookies(request, env), request, env);
-}
+      if (pathname === "/api/cookies/accept" && method === "POST") {
+        return withCors(await acceptCookies(request, env), request, env);
+      }
 
-if (pathname === "/api/cookies/status" && method === "GET") {
-  return withCors(await getCookieStatus(), request, env);
-}
+      if (pathname === "/api/cookies/status" && method === "GET") {
+        return withCors(await getCookieStatus(), request, env);
+      }
+      /* ===== BUSINESS ===== */
+      if (pathname === "/api/business/mine" && method === "GET") {
+      return withCors(await getMyBusiness(request, env), request, env);
+      }
 
+      if (pathname === "/api/business/create" && method === "POST") {
+      return withCors(await createBusiness(request, env), request, env);
+      }
 
+      if (pathname.startsWith("/api/business/") && method === "GET") {
+      return withCors(await getBusiness(request, env), request, env);
+      }
+      if (pathname.startsWith("/api/business/public/") && method === "GET") {
+        return withCors(await getBusinessPublic(request, env), request, env);
+      }
+      
       /* ===== PAYPAL ===== */
       if (pathname === "/api/payment/paypal/create-order" && method === "POST") {
         return withCors(await createPaypalOrder(request, env), request, env);
       }
       if (pathname === "/api/payment/paypal/capture-order" && method === "POST") {
         return withCors(await capturePaypalOrder(request, env), request, env);
-      }
+        }
 
+      /* ===== TEST UPLOAD R2 ===== */
+      if (pathname === "/api/test/upload" && method === "POST") {
+      return withCors(await testUploadMenu(request, env), request, env);
+        }
+       /* ===== BUSINESS MENU UPLOAD ===== */
+      if (
+      pathname === "/api/business/menu/upload" &&
+      method === "POST"
+      ) {
+      return withCors(
+        await uploadBusinessMenu(request, env),
+        request,
+        env
+      );
+        } 
       /* ===== 404 ===== */
       return json({ ok: false, error: "Not Found" }, request, env, 404);
     } catch (err: any) {

@@ -1,6 +1,6 @@
 import type { Env } from "../types/env";
 
-import { ActivitySchema } from "../schemas/activitySchema";
+import { ActivitySchema } from "../schemas/core/activitySchema";
 
 export async function logActivity(
   env: Env,

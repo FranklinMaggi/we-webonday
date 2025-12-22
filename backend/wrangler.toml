@@ -10,6 +10,8 @@ FRONTEND_URL = "https://www.webonday.it"
 GOOGLE_CLIENT_ID = "779755703612-3b1vcbkbvekjq80k4q1508h4efev7jac.apps.googleusercontent.com"
 GOOGLE_REDIRECT_URI = "https://we-webonday-backend.franklin19.workers.dev/api/user/google/callback"
 
+R2_PUBLIC_BASE_URL = "https://menus.webonday.it"
+
 # PayPal (SANDBOX o LIVE, a seconda di cosa usi)
 PAYPAL_API_BASE = "https://api-m.sandbox.paypal.com" 
 PAYPAL_CLIENT_ID ="AYEUMQQoMpjiulN7LR55YoYmMCFKedP2sv2UHp0fbyQ5NZiF5Q9__k3VFmrkgxEzSOFmCdgz-75X_cpO"
@@ -52,3 +54,20 @@ id = "ebfebc35a65748ab9f24534643029618"
 [[kv_namespaces]]
 binding = "ORDER_KV"
 id = "61b8542d46fe4c809b3dfe5ebb9d852a"
+
+# Business registrati
+[[kv_namespaces]]
+binding = "BUSINESS_KV"
+id = "b6d212990044437f9720e048babab427"
+
+# Referral token → businessId
+[[kv_namespaces]]
+binding = "REFERRAL_KV"
+id = "47f5579302014b59a8167fdd2e8081de"
+
+# ============================
+# R2 BUCKET (MENU PDF)
+# ============================
+[[r2_buckets]]
+binding = "BUSINESS_MENU_BUCKET"
+bucket_name = "business-menus"

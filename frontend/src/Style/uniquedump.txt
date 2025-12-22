@@ -1,0 +1,4237 @@
+francescomaggi@MacBook-Pro Style % showcode
+📁 Gerarchia e Codice (.):
+
+./
+css/
+  productCard.css
+    >>> Contenuto di css/productCard.css:
+      .product-card {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 18px;
+          border-radius: var(--wd-radius-lg);
+          color: var(--wd-text-main);
+        }
+        
+        .product-card__title {
+          color: var(--wd-text-main);
+        }
+        
+        .product-card__description {
+          color: var(--wd-text-muted);
+        }
+        
+        .product-card__price {
+          color: var(--wd-accent-cyan);
+        }
+        
+        .option-item {
+          color: var(--wd-text-main);
+        }
+        /* ======================================================
+         OPTION SELECTOR – Product domain
+      ====================================================== */
+      
+      .option-selector {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        
+        .option-list {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        
+        .option-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        
+          padding: 10px 12px;
+          border-radius: var(--wd-radius-md);
+          border: 1px solid var(--wd-border);
+          background: rgba(255,255,255,0.03);
+        
+          cursor: pointer;
+          transition: background .2s ease, border .2s ease, box-shadow .2s ease;
+        }
+        
+        .option-item:hover {
+          background: rgba(255,255,255,0.06);
+        }
+        
+        .option-item.is-checked {
+          border-color: var(--wd-accent-cyan);
+          box-shadow: 0 0 12px rgba(34,211,238,.25);
+        }
+        
+        .option-item__checkbox {
+          display: none;
+        }
+        
+        .option-item__box {
+          width: 16px;
+          height: 16px;
+          border-radius: 4px;
+          border: 1px solid var(--wd-border);
+          background: transparent;
+          flex-shrink: 0;
+        }
+        
+        .option-item.is-checked .option-item__box {
+          background: var(--wd-accent-cyan);
+          border-color: var(--wd-accent-cyan);
+        }
+        
+        .option-item__content {
+          display: flex;
+          justify-content: space-between;
+          width: 100%;
+          font-size: 14px;
+        }
+        
+        .option-label {
+          color: var(--wd-text-main);
+        }
+        
+        .option-price {
+          color: var(--wd-text-muted);
+        }
+        /* ======================================================
+         OPTION SELECTOR – Product domain
+      ====================================================== */
+      
+      .option-selector {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        
+        .option-list {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        
+        .option-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        
+          padding: 10px 12px;
+          border-radius: var(--wd-radius-md);
+          border: 1px solid var(--wd-border);
+          background: rgba(255,255,255,0.03);
+        
+          cursor: pointer;
+          transition: background .2s ease, border .2s ease, box-shadow .2s ease;
+        }
+        
+        .option-item:hover {
+          background: rgba(255,255,255,0.06);
+        }
+        
+        .option-item.is-checked {
+          border-color: var(--wd-accent-cyan);
+          box-shadow: 0 0 12px rgba(34,211,238,.25);
+        }
+        
+        .option-item__checkbox {
+          display: none;
+        }
+        
+        .option-item__box {
+          width: 16px;
+          height: 16px;
+          border-radius: 4px;
+          border: 1px solid var(--wd-border);
+          background: transparent;
+          flex-shrink: 0;
+        }
+        
+        .option-item.is-checked .option-item__box {
+          background: var(--wd-accent-cyan);
+          border-color: var(--wd-accent-cyan);
+        }
+        
+        .option-item__content {
+          display: flex;
+          justify-content: space-between;
+          width: 100%;
+          font-size: 14px;
+        }
+        
+        .option-label {
+          color: var(--wd-text-main);
+        }
+        
+        .option-price {
+          color: var(--wd-text-muted);
+        }
+    ... (fine css/productCard.css) ...
+
+  home.css
+    >>> Contenuto di css/home.css:
+    ... (fine css/home.css) ...
+
+  checkout.css
+    >>> Contenuto di css/checkout.css:
+      /* ======================================
+         CHECKOUT – Responsive / Neon / Dark
+      ====================================== */
+      
+      .checkout-page{
+          min-height: 100vh;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          padding: 24px;
+          background:
+            radial-gradient(circle at top, rgba(34,211,238,.10), transparent 40%),
+            radial-gradient(circle at bottom, rgba(244,114,182,.10), transparent 40%);
+        }
+        
+        .checkout-card{
+          width:100%;
+          max-width: 760px;
+          background: rgba(255,255,255,.05);
+          border: 1px solid rgba(255,255,255,.12);
+          border-radius: 22px;
+          padding: 28px;
+          box-shadow:
+            0 20px 50px rgba(0,0,0,.45),
+            0 0 30px rgba(34,211,238,.12);
+          backdrop-filter: blur(6px);
+        }
+        
+        /* TITOLI */
+        .checkout-title{
+          margin:0 0 20px;
+          font-size: 26px;
+          text-align:center;
+          letter-spacing:-.02em;
+        }
+        
+        /* LISTA PRODOTTI */
+        .checkout-list{
+          list-style:none;
+          padding:0;
+          margin:0 0 18px;
+          display:flex;
+          flex-direction:column;
+          gap:10px;
+        }
+        
+        .checkout-item{
+          display:flex;
+          justify-content:space-between;
+          gap:12px;
+          padding: 10px 12px;
+          border-radius: 12px;
+          background: rgba(255,255,255,.04);
+          border: 1px solid rgba(255,255,255,.10);
+        }
+        
+        .checkout-item-title{
+          font-size:14px;
+          opacity:.9;
+        }
+        
+        /* TOTALE */
+        .checkout-total{
+          display:flex;
+          justify-content:space-between;
+          margin-top: 14px;
+          padding-top: 14px;
+          border-top: 1px dashed rgba(255,255,255,.25);
+          font-size: 18px;
+        }
+        
+        /* AZIONI */
+        .checkout-action{
+          margin-top: 24px;
+        }
+        
+        .checkout-policy{
+          font-size: 12px;
+          opacity:.7;
+          text-align:center;
+        }
+        
+        .checkout-error{
+          margin-top: 8px;
+          font-size: 13px;
+          color: #f87171;
+          text-align:center;
+        }
+        
+        /* PAY BUTTON */
+        .checkout-pay-btn{
+          margin-top: 12px;
+          width:100%;
+          padding: 14px;
+          border-radius: 999px;
+          border:none;
+          background: linear-gradient(90deg,#22d3ee,#f472b6);
+          color:#020617;
+          font-weight:700;
+          cursor:pointer;
+        }
+        
+        .checkout-pay-btn:disabled{
+          opacity:.6;
+          cursor:not-allowed;
+        }
+        
+        /* PAYPAL */
+        .checkout-paypal{
+          margin-top: 24px;
+          padding-top: 18px;
+          border-top: 1px solid rgba(255,255,255,.12);
+        }
+        
+        /* MOBILE TUNING */
+        @media (max-width: 480px){
+          .checkout-card{
+            padding: 22px 18px;
+          }
+        
+          .checkout-title{
+            font-size: 22px;
+          }
+        }
+    ... (fine css/checkout.css) ...
+
+  legacy-style.css
+    >>> Contenuto di css/legacy-style.css:
+      /* =======================================================================
+         WEBONDAY – LEGACY STYLE PRESET
+         Compatibile con struttura e naming v27
+         Prefisso standard: wd-
+      ======================================================================= */
+      
+      
+      /* -----------------------------------------------------------------------
+         PALETTE – CENTRALIZZATA
+      ----------------------------------------------------------------------- */
+      :root {
+          /* Neon / Digital */
+          --wd-cyan-300: #67e8f9;
+          --wd-cyan-400: #22d3ee;
+          --wd-cyan-500: #06b6d4;
+        
+          --wd-fuchsia-300: #f9a8d4;
+          --wd-fuchsia-400: #f472b6;
+          --wd-fuchsia-500: #ec4899;
+        
+          --wd-blue-300: #93c5fd;
+          --wd-blue-600: #2563eb;
+          --wd-blue-700: #1d4ed8;
+          --wd-blue-800: #1e40af;
+        
+          --wd-amber-300: #fcd34d;
+          --wd-amber-400: #fbbf24;
+        
+          /* Background */
+          --wd-dark-1: #050509;
+          --wd-dark-2: #090912;
+        
+          --wd-gray-50: #f9fafb;
+          --wd-gray-100: #f3f4f6;
+          --wd-gray-300: #d1d5db;
+          --wd-gray-600: #4b5563;
+          --wd-gray-700: #374151;
+          --wd-gray-900: #111827;
+        
+          /* Radius */
+          --wd-radius-lg: 16px;
+          --wd-radius-xl: 24px;
+        
+          /* Shadow */
+          --wd-shadow-md: 0 5px 15px rgba(0,0,0,0.15);
+          --wd-shadow-lg: 0 10px 30px rgba(0,0,0,0.25);
+        
+          /* Glow presets */
+          --wd-glow-cyan: 0 0 20px rgba(34,211,238,.7);
+          --wd-glow-fuchsia: 0 0 20px rgba(244,114,182,.7);
+          --wd-glow-blue: 0 0 20px rgba(37,99,235,.6);
+        }
+        
+        
+        /* -----------------------------------------------------------------------
+           TYPOGRAPHY (eredita Inter da Tailwind)
+        ----------------------------------------------------------------------- */
+        body {
+          font-family: Inter, sans-serif;
+        }
+        
+        
+        /* -----------------------------------------------------------------------
+           LAYOUT HELPERS
+        ----------------------------------------------------------------------- */
+        .wd-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 24px;
+        }
+        
+        .wd-section {
+          padding: 80px 0;
+        }
+        
+        .wd-background-dark {
+          background: var(--wd-dark-1);
+          color: white;
+        }
+        
+        
+        
+        /* =======================================================================
+           NAVBAR PRESET (compatibile con src/components/navbar/Navbar.css)
+        ======================================================================= */
+        
+        .wd-navbar {
+          background: var(--wd-gray-900);
+          color: white;
+          padding: 16px 24px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .wd-navbar-logo {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        
+        .wd-navbar .wd-link {
+          color: white;
+          margin-left: 20px;
+          text-decoration: none;
+          font-weight: 500;
+        }
+        
+        .wd-navbar .wd-link:hover {
+          color: var(--wd-cyan-300);
+        }
+        
+        /* NAVBAR LINKS */
+      
+      .wd-link {
+          color: white;
+          font-weight: 500;
+          margin-left: 20px;
+          transition: 0.25s ease;
+          text-decoration: none;
+        }
+        
+        .wd-link:hover {
+          color: var(--wd-cyan-300);
+        }
+        
+        /* Link evidenziato / carrello */
+        .wd-link-accent {
+          padding: 6px 12px;
+          border-radius: 8px;
+          background: rgba(34,211,238,0.15);
+          border: 1px solid var(--wd-cyan-400);
+        }
+        
+        .wd-link-accent:hover {
+          background: rgba(34,211,238,0.25);
+          color: white;
+          box-shadow: var(--wd-glow-cyan);
+        }
+        
+        
+        /* =======================================================================
+           CARD SYSTEM (Base + Accent + Neon)
+        ======================================================================= */
+        
+        .wd-card {
+          background: white;
+          border-radius: var(--wd-radius-xl);
+          padding: 32px;
+          box-shadow: var(--wd-shadow-md);
+          border: 1px solid var(--wd-gray-100);
+          transition: 0.25s ease;
+        }
+        
+        .wd-card:hover {
+          box-shadow: var(--wd-shadow-lg);
+        }
+        
+        /* Accent borders */
+        .wd-card-cyan { border-color: var(--wd-cyan-400); }
+        .wd-card-fuchsia { border-color: var(--wd-fuchsia-400); }
+        .wd-card-amber { border-color: var(--wd-amber-400); }
+        
+        /* NEON VERSIONS */
+        .wd-card-neon {
+          border-width: 2px;
+          box-shadow: var(--wd-glow-cyan);
+        }
+        
+        .wd-card-neon-fuchsia {
+          border-color: var(--wd-fuchsia-400);
+          box-shadow: var(--wd-glow-fuchsia);
+        }
+        
+        .wd-card-neon-blue {
+          border-color: var(--wd-blue-600);
+          box-shadow: var(--wd-glow-blue);
+        }
+        
+        
+        
+        /* =======================================================================
+           HERO SYSTEM (Founder, ChiSiamo, Vision, Mission)
+        ======================================================================= */
+        
+        .wd-hero {
+          position: relative;
+          text-align: center;
+          padding: 120px 0;
+          color: white;
+        }
+        
+        .wd-hero-gradient {
+          background: linear-gradient(90deg,
+            #4c1d95,   /* purple-800 */
+            #db2777,   /* pink-600 */
+            #1d4ed8    /* blue-700 */
+          );
+        }
+        
+        /* Neon title used across pages */
+        .neon-title {
+          text-shadow:
+            0 0 10px rgba(255,255,255,0.6),
+            0 0 30px var(--wd-cyan-300);
+        }
+        
+        /* Bubble text box */
+        .neon-bubble {
+          background: rgba(0,0,0,0.25);
+          padding: 16px 24px;
+          border-radius: 16px;
+          backdrop-filter: blur(6px);
+          border: 1px solid rgba(255,255,255,0.25);
+        }
+        
+        /* Founder image glow */
+        .wd-founder-photo {
+          width: 160px;
+          height: 160px;
+          border-radius: 50%;
+          border: 4px solid var(--wd-cyan-400);
+          box-shadow: var(--wd-glow-cyan);
+        }
+        
+        
+        
+        /* =======================================================================
+           GLOW / BACKGROUND EFFECTS (per Azienda, ChiSiamo, Legal)
+        ======================================================================= */
+        
+        .wd-background-glow {
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(
+            circle at center,
+            rgba(34,211,238,0.15),
+            transparent 70%
+          );
+          pointer-events: none;
+        }
+        
+        
+        
+        /* =======================================================================
+           FOOTER PRESET (compatibile con Footer.tsx)
+        ======================================================================= */
+        
+        .wd-footer {
+          background: var(--wd-gray-900);
+          color: var(--wd-gray-300);
+          padding: 40px 24px;
+          display: flex;
+          justify-content: space-around;
+          flex-wrap: wrap;
+        }
+        
+        .wd-footer h4 {
+          margin-bottom: 12px;
+          color: white;
+        }
+        
+        .wd-footer a {
+          display: block;
+          color: var(--wd-gray-300);
+          margin-bottom: 8px;
+          text-decoration: none;
+        }
+        
+        .wd-footer a:hover {
+          color: var(--wd-cyan-300);
+        }
+        /* Footer columns */
+      .wd-footer-col {
+          min-width: 180px;
+          margin-bottom: 20px;
+        }
+        
+        .wd-footer-title {
+          font-size: 1rem;
+          font-weight: 600;
+          margin-bottom: 12px;
+          color: white;
+        }
+        
+        .wd-footer-link {
+          display: block;
+          margin-bottom: 8px;
+          color: var(--wd-gray-300);
+          text-decoration: none;
+        }
+        
+        .wd-footer-link:hover {
+          color: var(--wd-cyan-300);
+        }
+        
+      
+      
+      
+      
+        
+        /* =======================================================================
+         WHATSAPP BUTTON NEON – WebOnDay Style
+      ======================================================================= */
+      
+      .whatsapp-btn {
+          position: fixed;
+          bottom: 22px;
+          right: 22px;
+          width: 62px;
+          height: 62px;
+        
+          background: #25d366;
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        
+          cursor: pointer;
+          z-index: 999;
+        
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        
+        /* Icon size */
+        .whatsapp-btn img {
+          width: 34px;
+          height: 34px;
+        }
+        
+        /* Neon Glow variant */
+        .wd-whatsapp-neon {
+          box-shadow:
+            0 0 10px rgba(37, 211, 102, 0.7),
+            0 0 20px rgba(34, 211, 238, 0.15),
+            0 0 40px rgba(34, 211, 238, 0.12);
+        
+          animation: wdWhatsPulse 4.5s infinite ease-in-out;
+        }
+        
+        /* Pulsazione neon */
+        @keyframes wdWhatsPulse {
+          0% { transform: scale(1); box-shadow:
+                0 0 10px rgba(37, 211, 102, 0.7),
+                0 0 20px rgba(34,211,238,0.15),
+                0 0 40px rgba(34,211,238,0.12); }
+        
+          50% { transform: scale(1.08); box-shadow:
+                0 0 16px rgba(37, 211, 102, 0.9),
+                0 0 30px rgba(34,211,238,0.25),
+                0 0 60px rgba(34,211,238,0.18); }
+        
+          100% { transform: scale(1); box-shadow:
+                0 0 10px rgba(37, 211, 102, 0.7),
+                0 0 20px rgba(34,211,238,0.15),
+                0 0 40px rgba(34,211,238,0.12); }
+        }
+        
+        /* Hover amplificato */
+        .whatsapp-btn:hover {
+          transform: scale(1.12);
+          box-shadow:
+            0 0 20px rgba(37, 211, 102, 0.9),
+            0 0 35px rgba(34,211,238,0.25),
+            0 0 65px rgba(34,211,238,0.18);
+        }
+    ... (fine css/legacy-style.css) ...
+
+  catalog.css
+    >>> Contenuto di css/catalog.css:
+    ... (fine css/catalog.css) ...
+
+  login.css
+    >>> Contenuto di css/login.css:
+      /* ================================
+         LOGIN PAGE – Tailwind style
+      ================================ */
+      
+      .login-page{
+          min-height: 100vh;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          padding: 24px;
+          background:
+            radial-gradient(circle at top, rgba(34,211,238,.12), transparent 40%),
+            radial-gradient(circle at bottom, rgba(244,114,182,.12), transparent 40%);
+        }
+        
+        .login-card{
+          width:100%;
+          max-width: 420px;
+          background: rgba(255,255,255,.05);
+          border: 1px solid rgba(255,255,255,.12);
+          border-radius: 20px;
+          padding: 32px 28px;
+          box-shadow:
+            0 20px 50px rgba(0,0,0,.45),
+            0 0 30px rgba(34,211,238,.12);
+          backdrop-filter: blur(6px);
+        }
+        
+        /* TITOLI */
+        .login-title{
+          margin:0;
+          font-size: 28px;
+          text-align:center;
+          letter-spacing:-.02em;
+        }
+        
+        .login-subtitle{
+          margin: 6px 0 22px;
+          text-align:center;
+          font-size: 14px;
+          opacity:.75;
+        }
+        
+        /* GOOGLE BUTTON */
+        .login-google-btn{
+          width:100%;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:10px;
+          padding: 12px;
+          border-radius: 999px;
+          border: 1px solid rgba(255,255,255,.18);
+          background: rgba(255,255,255,.08);
+          color:white;
+          font-weight:600;
+          cursor:pointer;
+          transition: background .2s ease, transform .15s ease;
+        }
+        
+        .login-google-btn:hover{
+          background: rgba(255,255,255,.15);
+          transform: translateY(-1px);
+        }
+        
+        .google-icon{
+          width:22px;
+          height:22px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          border-radius:50%;
+          background:#fff;
+          color:#111;
+          font-weight:700;
+        }
+        
+        /* DIVIDER */
+        .login-divider{
+          display:flex;
+          align-items:center;
+          gap:12px;
+          margin: 22px 0;
+          font-size: 12px;
+          opacity:.6;
+        }
+        
+        .login-divider::before,
+        .login-divider::after{
+          content:"";
+          flex:1;
+          height:1px;
+          background: rgba(255,255,255,.15);
+        }
+        
+        /* FORM */
+        .login-form{
+          display:flex;
+          flex-direction:column;
+          gap:12px;
+        }
+        
+        .login-input{
+          padding: 12px 14px;
+          border-radius: 12px;
+          background: rgba(255,255,255,.08);
+          border: 1px solid rgba(255,255,255,.15);
+          color:white;
+          font-size:14px;
+        }
+        
+        .login-input::placeholder{
+          color: rgba(255,255,255,.55);
+        }
+        
+        .login-input:focus{
+          outline:none;
+          border-color: #22d3ee;
+          box-shadow: 0 0 0 1px rgba(34,211,238,.5);
+        }
+        
+        /* ERROR */
+        .login-error{
+          font-size: 13px;
+          color: #f87171;
+          text-align:center;
+        }
+        
+        /* BUTTONS */
+        .login-primary-btn{
+          margin-top: 6px;
+          padding: 12px;
+          border-radius: 999px;
+          border:none;
+          background: linear-gradient(90deg,#22d3ee,#f472b6);
+          color:#020617;
+          font-weight:700;
+          cursor:pointer;
+        }
+        
+        .login-primary-btn:disabled{
+          opacity:.6;
+          cursor:not-allowed;
+        }
+        
+        .login-secondary-btn{
+          padding: 10px;
+          border-radius: 999px;
+          border: 1px solid rgba(255,255,255,.25);
+          background: transparent;
+          color:white;
+          cursor:pointer;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 420px){
+          .login-card{
+            padding: 24px 20px;
+          }
+        }
+    ... (fine css/login.css) ...
+
+  hero.css
+    >>> Contenuto di css/hero.css:
+      .wd-hero {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 80px 24px;
+          display: grid;
+          gap: 48px;
+        }
+        
+        @media (min-width: 768px) {
+          .wd-hero {
+            grid-template-columns: 1.1fr 0.9fr;
+            align-items: center;
+          }
+        }
+        
+        .wd-hero__title {
+          font-size: clamp(2rem, 5vw, 3.5rem);
+          font-weight: 800;
+          line-height: 1.1;
+        }
+        
+        .wd-hero__subtitle {
+          margin-top: 16px;
+          font-size: 1.1rem;
+          opacity: 0.85;
+          max-width: 520px;
+        }
+        
+        .wd-hero__media img {
+          width: 100%;
+          height: auto;
+          border-radius: 20px;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+        }
+        
+      
+      .wd-hero__media {
+          position: relative;
+        }
+        
+        .wd-hero__media img {
+          width: 100%;
+          height: auto;
+          border-radius: 20px;
+          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.45);
+          filter: brightness(0.9) contrast(1.05);
+        }
+        
+        /* Overlay leggero per profondità */
+        .wd-hero__media::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: 20px;
+          background: linear-gradient(
+            to bottom right,
+            rgba(0, 0, 0, 0.15),
+            rgba(0, 0, 0, 0.35)
+          );
+          pointer-events: none;
+        }
+        .wd-hero__actions {
+          margin-top: 32px;
+        }
+        
+        .wd-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 14px 28px;
+          border-radius: 999px;
+          font-weight: 600;
+          text-decoration: none;
+          transition: all 0.25s ease;
+        }
+        
+        /* Bottone referral */
+        .wd-btn-referral {
+          background: linear-gradient(
+            135deg,
+            #4f46e5,
+            #9333ea
+          );
+          color: #fff;
+          box-shadow: 0 10px 30px rgba(147, 51, 234, 0.35);
+        }
+        
+        .wd-btn-referral:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 16px 40px rgba(147, 51, 234, 0.55);
+        }
+        
+        .wd-hero__media img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        
+          filter: blur(4px) brightness(0.85);
+          transform: scale(1.1); /* evita bordi bianchi dopo blur */
+        
+          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+        }
+        .wd-hero__media::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            to bottom right,
+            rgba(0, 0, 0, 0.25),
+            rgba(0, 0, 0, 0.45)
+          );
+          pointer-events: none;
+        }
+        /* hero.css */
+      
+      .wd-hero{
+          position:relative;
+          overflow:hidden;
+          border-radius: 24px;
+          border: 1px solid var(--wd-border);
+          background: radial-gradient(circle at 20% 0%, rgba(34,211,238,.10), transparent 55%),
+                      radial-gradient(circle at 80% 10%, rgba(244,114,182,.10), transparent 55%);
+        }
+        
+        .wd-hero__grid{
+          display:grid;
+          gap: 20px;
+          padding: clamp(18px, 3vw, 36px);
+          align-items:center;
+        }
+        
+        @media (min-width: 900px){
+          .wd-hero__grid{
+            grid-template-columns: 1.15fr 0.85fr;
+          }
+        }
+        
+        .wd-hero__title{
+          font-size: clamp(26px, 3.2vw, 44px);
+          margin:0 0 10px;
+          letter-spacing:-.02em;
+        }
+        
+        .wd-hero__subtitle{
+          margin:0 0 18px;
+          color: var(--wd-muted);
+          font-size: clamp(14px, 1.5vw, 18px);
+        }
+        
+        .wd-hero__cta{
+          display:flex;
+          flex-wrap:wrap;
+          gap: 12px;
+          margin-top: 10px;
+        }
+        
+        /* Media */
+        .wd-hero__media{
+          position:relative;
+          border-radius: 18px;
+          overflow:hidden;
+          min-height: 180px;
+          border: 1px solid var(--wd-border);
+        }
+        
+        .wd-hero__media img{
+          width:100%;
+          height:100%;
+          object-fit:cover;
+          transform: scale(1.05);
+          filter: blur(2.5px) brightness(.85) contrast(1.05);
+        }
+        
+        /* overlay ombra */
+        .wd-hero__media::after{
+          content:"";
+          position:absolute;
+          inset:0;
+          background: linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.55));
+          pointer-events:none;
+        }
+    ... (fine css/hero.css) ...
+
+  navbar.css
+    >>> Contenuto di css/navbar.css:
+      /* =====================================================
+         NAVBAR – single source of truth
+      ===================================================== */
+      
+      .wd-navbar{
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 20px;
+        background: #050816;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+      }
+      
+      /* ================= LOGO ================= */
+      
+      .wd-navbar-logo{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        text-decoration:none;
+        color:inherit;
+        z-index: 3;
+      }
+      
+      .moka-icon{
+        width:32px;
+        height:32px;
+      }
+      
+      .logo-text{
+        display:flex;
+        flex-direction:column;
+        line-height:1.1;
+      }
+      
+      .logo-text .we{
+        font-size:12px;
+        color:#a1a1aa;
+        text-transform:uppercase;
+        letter-spacing:.1em;
+      }
+      
+      .logo-text .webonday{
+        font-size:18px;
+        font-weight:700;
+        color:#f9fafb;
+      }
+      
+      /* ================= DESKTOP LINKS ================= */
+      
+      .nav-right{
+        display:flex;
+        align-items:center;
+        gap:18px;
+      }
+      
+      .wd-navbar-link{
+        position:relative;
+        font-size:14px;
+        color:#e5e7eb;
+        font-weight:500;
+        background:none;
+        border:none;
+        cursor:pointer;
+      }
+      
+      .wd-navbar-link:hover{
+        color:#ffffff;
+      }
+      
+      /* ACCENT (Carrello) */
+      .wd-link-accent{
+        padding:6px 12px;
+        border-radius:999px;
+        background:#22c55e;
+        color:#020617;
+        font-weight:600;
+      }
+      
+      .wd-link-accent:hover{
+        background:#16a34a;
+      }
+      
+      /* BADGE */
+      .nav-cart-badge{
+        margin-left:6px;
+        background:#020617;
+        color:#22c55e;
+        border-radius:999px;
+        padding:2px 6px;
+        font-size:12px;
+        font-weight:700;
+      }
+      
+      /* ================= MOBILE ================= */
+      
+      .menu-btn{
+        display:none;
+        border:none;
+        background:none;
+        font-size:24px;
+        color:#f9fafb;
+        cursor:pointer;
+        z-index: 3;
+      }
+      
+      @media (max-width: 768px){
+        .menu-btn{
+          display:block;
+        }
+      
+        .nav-right{
+          position:absolute;
+          top: 100%;
+          right: 12px;
+          width: min(80vw, 260px);
+          flex-direction:column;
+          align-items:flex-start;
+          gap:12px;
+          padding:14px 16px;
+      
+          background:#020617;
+          border:1px solid rgba(255,255,255,.12);
+          border-radius:12px;
+      
+          box-shadow:
+            0 20px 50px rgba(0,0,0,.45),
+            0 0 20px rgba(34,211,238,.15);
+      
+          display:none;
+          z-index: 200;
+        }
+      
+        .nav-right.open{
+          display:flex;
+        }
+      }
+      
+      /* ================= NEON GLOW ================= */
+      
+      .wd-navbar-neon{
+        position:relative;
+      }
+      
+      .wd-navbar-neon::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        background: radial-gradient(
+          circle at bottom center,
+          rgba(34,211,238,.12),
+          rgba(244,114,182,.08),
+          transparent 70%
+        );
+        pointer-events:none;
+        z-index:0;
+      }
+      
+      .wd-navbar-neon::after{
+        content:"";
+        position:absolute;
+        top:-40px;
+        left:50%;
+        transform:translateX(-50%);
+        width:200%;
+        height:80px;
+        background: radial-gradient(
+          ellipse,
+          rgba(34,211,238,.25),
+          rgba(244,114,182,.18),
+          transparent 80%
+        );
+        filter: blur(25px);
+        animation: wdNavNeonPulse 6s infinite ease-in-out;
+        pointer-events:none;
+        z-index:0;
+      }
+      
+      @keyframes wdNavNeonPulse{
+        0%{ opacity:.3; transform:translateX(-50%) scale(1); }
+        50%{ opacity:.55; transform:translateX(-50%) scale(1.2); }
+        100%{ opacity:.3; transform:translateX(-50%) scale(1); }
+      }
+    ... (fine css/navbar.css) ...
+
+  tokens.css
+    >>> Contenuto di css/tokens.css:
+      @layer base {
+          body {
+            @apply bg-wd-bg text-white antialiased;
+          }
+        
+          h1 {
+            @apply text-4xl font-bold tracking-tight;
+          }
+        
+          h2 {
+            @apply text-3xl font-semibold;
+          }
+        
+          p {
+            @apply text-wd-muted leading-relaxed;
+          }
+        
+          a {
+            @apply text-wd-primary hover:underline;
+          }
+        }
+    ... (fine css/tokens.css) ...
+
+  index.css
+    >>> Contenuto di css/index.css:
+      @charset "UTF-8";
+      
+      /* =========================
+         1. TAILWIND CORE
+         ========================= */
+      @tailwind base;
+      @tailwind components;
+      @tailwind utilities;
+      
+      /* =========================
+         2. TOKEN GLOBALI
+         ========================= */
+      @import "./tokens.css";
+      
+      /* =========================
+         3. COMPONENTI RIUTILIZZABILI
+         ========================= */
+      @import "./components.css";
+      
+      /* =========================
+         4. LEGACY (CONTENUTO)
+         ========================= */
+      @import "./legacy.css";
+    ... (fine css/index.css) ...
+
+  cart.css
+    >>> Contenuto di css/cart.css:
+      /* =====================================================
+         CART STICKER – Mini cart responsive / neon
+      ===================================================== */
+      /* =========================
+         CART – RESPONSIVE
+      ========================= */
+      
+      /* Desktop */
+      .cart-sticker__panel {
+          max-width: 380px;
+        }
+        
+        /* Tablet */
+        @media (max-width: 900px) {
+          .cart-sticker__panel {
+            width: 90vw;
+            right: 5vw;
+          }
+        }
+        
+        /* Mobile */
+        @media (max-width: 640px) {
+          .cart-sticker {
+            left: 0;
+            right: 0;
+            bottom: 0;
+          }
+        
+          .cart-sticker__panel {
+            width: 100vw;
+            max-height: 80vh;
+            border-radius: 20px 20px 0 0;
+          }
+        }
+        
+      .cart-sticker{
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 200;
+        font-size: 14px;
+      }
+      
+      /* TOGGLE BUTTON */
+      .cart-sticker__toggle{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,.2);
+        background: rgba(2,6,23,.85);
+        color: #f9fafb;
+        cursor:pointer;
+        box-shadow:
+          0 12px 30px rgba(0,0,0,.45),
+          0 0 20px rgba(34,211,238,.25);
+        backdrop-filter: blur(6px);
+      }
+      
+      /* BADGE */
+      .cart-sticker__badge{
+        min-width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        background: linear-gradient(90deg,#22d3ee,#f472b6);
+        color:#020617;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      
+      /* LABEL + TOTAL */
+      .cart-sticker__label{
+        font-weight:600;
+      }
+      
+      .cart-sticker__total{
+        font-weight:700;
+        opacity:.9;
+      }
+      
+      /* CHEVRON */
+      .cart-sticker__chev{
+        width:18px;
+        height:18px;
+        transition: transform .2s ease;
+      }
+      
+      .cart-sticker.is-open .cart-sticker__chev{
+        transform: rotate(180deg);
+      }
+      
+      /* =====================================================
+         PANEL
+      ===================================================== */
+      
+      .cart-sticker__panel{
+        position:absolute;
+        right:0;
+        bottom: 56px;
+        width: min(92vw, 380px);
+        max-height: 70vh;
+        overflow:auto;
+      
+        background: rgba(5,8,22,.95);
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 20px;
+        box-shadow:
+          0 20px 50px rgba(0,0,0,.55),
+          0 0 30px rgba(34,211,238,.2);
+      
+        padding: 14px;
+        opacity:0;
+        pointer-events:none;
+        transform: translateY(10px);
+        transition: all .2s ease;
+      }
+      
+      .cart-sticker.is-open .cart-sticker__panel{
+        opacity:1;
+        pointer-events:auto;
+        transform: translateY(0);
+      }
+      
+      /* EMPTY */
+      .cart-sticker__empty{
+        padding: 24px;
+        text-align:center;
+        opacity:.7;
+      }
+      
+      /* =====================================================
+         LISTA ITEMS
+      ===================================================== */
+      
+      .cart-sticker__list{
+        list-style:none;
+        padding:0;
+        margin:0;
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+      }
+      
+      .cart-sticker__item{
+        padding: 12px;
+        border-radius: 14px;
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(255,255,255,.12);
+      }
+      
+      /* HEADER ITEM */
+      .item__head{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom: 6px;
+      }
+      
+      .item__title{
+        font-size:14px;
+        font-weight:600;
+      }
+      
+      .item__remove{
+        background:none;
+        border:none;
+        color:#f87171;
+        cursor:pointer;
+        font-size:16px;
+      }
+      
+      /* LINE */
+      .item__line,
+      .item__total{
+        display:flex;
+        justify-content:space-between;
+        font-size:13px;
+        opacity:.9;
+      }
+      
+      /* OPTIONS */
+      .item__options{
+        margin-top:6px;
+      }
+      
+      .item__options summary{
+        cursor:pointer;
+        font-size:12px;
+        opacity:.75;
+      }
+      
+      .item__opt{
+        display:flex;
+        justify-content:space-between;
+        font-size:12px;
+        opacity:.85;
+      }
+      
+      /* =====================================================
+         FOOTER
+      ===================================================== */
+      
+      .cart-sticker__footer{
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255,255,255,.12);
+      }
+      
+      .cart-sticker__grand{
+        display:flex;
+        justify-content:space-between;
+        margin-bottom: 10px;
+        font-size:16px;
+        font-weight:700;
+      }
+      
+      /* =====================================================
+         MOBILE TUNING
+      ===================================================== */
+      
+      @media (max-width: 480px){
+        .cart-sticker{
+          right: 12px;
+          bottom: 12px;
+        }
+      
+        .cart-sticker__panel{
+          width: 94vw;
+          right: -6px;
+        }
+      }
+      /* =====================================================
+         CART PREVIEW – Responsive behavior
+      ===================================================== */
+      
+      /* Desktop: sidebar affiancata */
+      @media (min-width: 1024px){
+        .cart-preview{
+          position: sticky;
+          top: 96px; /* sotto navbar */
+          max-width: 360px;
+        }
+      }
+      
+      /* Tablet */
+      @media (max-width: 1023px){
+        .cart-preview{
+          width: 100%;
+          margin-top: 24px;
+        }
+      }
+      
+      /* Mobile: full-width bottom card */
+      @media (max-width: 640px){
+        .cart-preview{
+          position: fixed;
+          left: 12px;
+          right: 12px;
+          bottom: 12px;
+          z-index: 150;
+      
+          max-width: none;
+          box-shadow:
+            0 20px 50px rgba(0,0,0,.55),
+            0 0 30px rgba(34,211,238,.25);
+        }
+      
+        /* Spazio extra per evitare overlap */
+        body{
+          padding-bottom: 120px;
+        }
+      }
+      /* =====================================================
+         ADD TO CART – Feedback animation
+      ===================================================== */
+      
+      @keyframes cartPulse {
+        0%   { transform: scale(1); box-shadow: none; }
+        40%  { transform: scale(1.04); box-shadow: 0 0 24px rgba(34,211,238,.45); }
+        100% { transform: scale(1); box-shadow: none; }
+      }
+      
+      .cart-preview.is-added{
+        animation: cartPulse .45s ease-out;
+      }
+    ... (fine css/cart.css) ...
+
+  whatsapp.css
+    >>> Contenuto di css/whatsapp.css:
+          /* =======================================================================
+                      WHATSAPP BUTTON NEON – WebOnDay Style
+          ======================================================================= */
+      
+          .whatsapp-btn {
+          position: fixed;
+          bottom: 22px;
+          right: 22px;
+          width: 62px;
+          height: 62px;
+      
+          background: #25d366;
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+      
+          cursor: pointer;
+          z-index: 999;
+      
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+          }
+      
+          /* Icon size */
+          .whatsapp-btn img {
+          width: 34px;
+          height: 34px;
+          }
+      
+          /* Neon Glow variant */
+          .wd-whatsapp-neon {
+          box-shadow:
+              0 0 10px rgba(37, 211, 102, 0.7),
+              0 0 20px rgba(34, 211, 238, 0.15),
+              0 0 40px rgba(34, 211, 238, 0.12);
+      
+          animation: wdWhatsPulse 4.5s infinite ease-in-out;
+          }
+      
+          /* Pulsazione neon */
+          @keyframes wdWhatsPulse {
+          0% { transform: scale(1); box-shadow:
+                  0 0 10px rgba(37, 211, 102, 0.7),
+                  0 0 20px rgba(34,211,238,0.15),
+                  0 0 40px rgba(34,211,238,0.12); }
+      
+          50% { transform: scale(1.08); box-shadow:
+                  0 0 16px rgba(37, 211, 102, 0.9),
+                  0 0 30px rgba(34,211,238,0.25),
+                  0 0 60px rgba(34,211,238,0.18); }
+      
+          100% { transform: scale(1); box-shadow:
+                  0 0 10px rgba(37, 211, 102, 0.7),
+                  0 0 20px rgba(34,211,238,0.15),
+                  0 0 40px rgba(34,211,238,0.12); }
+          }
+      
+          /* Hover amplificato */
+          .whatsapp-btn:hover {
+          transform: scale(1.12);
+          box-shadow:
+              0 0 20px rgba(37, 211, 102, 0.9),
+              0 0 35px rgba(34,211,238,0.25),
+              0 0 65px rgba(34,211,238,0.18);
+          }
+    ... (fine css/whatsapp.css) ...
+
+  legacy.css
+    >>> Contenuto di css/legacy.css:
+          /* =======================================================================
+                      WHATSAPP BUTTON NEON – WebOnDay Style
+          ======================================================================= */
+      
+          .whatsapp-btn {
+              position: fixed;
+              bottom: 22px;
+              right: 22px;
+              width: 62px;
+              height: 62px;
+          
+              background: #25d366;
+              border-radius: 50%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+          
+              cursor: pointer;
+              z-index: 999;
+          
+              transition: transform 0.25s ease, box-shadow 0.25s ease;
+              }
+          
+              /* Icon size */
+              .whatsapp-btn img {
+              width: 34px;
+              height: 34px;
+              }
+          
+              /* Neon Glow variant */
+              .wd-whatsapp-neon {
+              box-shadow:
+                  0 0 10px rgba(37, 211, 102, 0.7),
+                  0 0 20px rgba(34, 211, 238, 0.15),
+                  0 0 40px rgba(34, 211, 238, 0.12);
+          
+              animation: wdWhatsPulse 4.5s infinite ease-in-out;
+              }
+          
+              /* Pulsazione neon */
+              @keyframes wdWhatsPulse {
+              0% { transform: scale(1); box-shadow:
+                      0 0 10px rgba(37, 211, 102, 0.7),
+                      0 0 20px rgba(34,211,238,0.15),
+                      0 0 40px rgba(34,211,238,0.12); }
+          
+              50% { transform: scale(1.08); box-shadow:
+                      0 0 16px rgba(37, 211, 102, 0.9),
+                      0 0 30px rgba(34,211,238,0.25),
+                      0 0 60px rgba(34,211,238,0.18); }
+          
+              100% { transform: scale(1); box-shadow:
+                      0 0 10px rgba(37, 211, 102, 0.7),
+                      0 0 20px rgba(34,211,238,0.15),
+                      0 0 40px rgba(34,211,238,0.12); }
+              }
+          
+              /* Hover amplificato */
+              .whatsapp-btn:hover {
+              transform: scale(1.12);
+              box-shadow:
+                  0 0 20px rgba(37, 211, 102, 0.9),
+                  0 0 35px rgba(34,211,238,0.25),
+                  0 0 65px rgba(34,211,238,0.18);
+              }
+              .product-card {
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: space-between;
+                  padding: 18px;
+                  border-radius: var(--wd-radius-lg);
+                  color: var(--wd-text-main);
+                }
+                
+                .product-card__title {
+                  color: var(--wd-text-main);
+                }
+                
+                .product-card__description {
+                  color: var(--wd-text-muted);
+                }
+                
+                .product-card__price {
+                  color: var(--wd-accent-cyan);
+                }
+                
+                .option-item {
+                  color: var(--wd-text-main);
+                }
+                /* ======================================================
+                 OPTION SELECTOR – Product domain
+              ====================================================== */
+              
+              .option-selector {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 12px;
+                }
+                
+                .option-list {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 10px;
+                }
+                
+                .option-item {
+                  display: flex;
+                  align-items: center;
+                  gap: 12px;
+                
+                  padding: 10px 12px;
+                  border-radius: var(--wd-radius-md);
+                  border: 1px solid var(--wd-border);
+                  background: rgba(255,255,255,0.03);
+                
+                  cursor: pointer;
+                  transition: background .2s ease, border .2s ease, box-shadow .2s ease;
+                }
+                
+                .option-item:hover {
+                  background: rgba(255,255,255,0.06);
+                }
+                
+                .option-item.is-checked {
+                  border-color: var(--wd-accent-cyan);
+                  box-shadow: 0 0 12px rgba(34,211,238,.25);
+                }
+                
+                .option-item__checkbox {
+                  display: none;
+                }
+                
+                .option-item__box {
+                  width: 16px;
+                  height: 16px;
+                  border-radius: 4px;
+                  border: 1px solid var(--wd-border);
+                  background: transparent;
+                  flex-shrink: 0;
+                }
+                
+                .option-item.is-checked .option-item__box {
+                  background: var(--wd-accent-cyan);
+                  border-color: var(--wd-accent-cyan);
+                }
+                
+                .option-item__content {
+                  display: flex;
+                  justify-content: space-between;
+                  width: 100%;
+                  font-size: 14px;
+                }
+                
+                .option-label {
+                  color: var(--wd-text-main);
+                }
+                
+                .option-price {
+                  color: var(--wd-text-muted);
+                }
+                /* ======================================================
+                 OPTION SELECTOR – Product domain
+              ====================================================== */
+              
+              .option-selector {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 12px;
+                }
+                
+                .option-list {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 10px;
+                }
+                
+                .option-item {
+                  display: flex;
+                  align-items: center;
+                  gap: 12px;
+                
+                  padding: 10px 12px;
+                  border-radius: var(--wd-radius-md);
+                  border: 1px solid var(--wd-border);
+                  background: rgba(255,255,255,0.03);
+                
+                  cursor: pointer;
+                  transition: background .2s ease, border .2s ease, box-shadow .2s ease;
+                }
+                
+                .option-item:hover {
+                  background: rgba(255,255,255,0.06);
+                }
+                
+                .option-item.is-checked {
+                  border-color: var(--wd-accent-cyan);
+                  box-shadow: 0 0 12px rgba(34,211,238,.25);
+                }
+                
+                .option-item__checkbox {
+                  display: none;
+                }
+                
+                .option-item__box {
+                  width: 16px;
+                  height: 16px;
+                  border-radius: 4px;
+                  border: 1px solid var(--wd-border);
+                  background: transparent;
+                  flex-shrink: 0;
+                }
+                
+                .option-item.is-checked .option-item__box {
+                  background: var(--wd-accent-cyan);
+                  border-color: var(--wd-accent-cyan);
+                }
+                
+                .option-item__content {
+                  display: flex;
+                  justify-content: space-between;
+                  width: 100%;
+                  font-size: 14px;
+                }
+                
+                .option-label {
+                  color: var(--wd-text-main);
+                }
+                
+                .option-price {
+                  color: var(--wd-text-muted);
+                }
+                  /* =======================================================================
+           FOOTER PRESET (compatibile con Footer.tsx)
+        ======================================================================= */
+        
+        .wd-footer {
+          background: var(--wd-gray-900);
+          color: var(--wd-gray-300);
+          padding: 40px 24px;
+          display: flex;
+          justify-content: space-around;
+          flex-wrap: wrap;
+        }
+        
+        .wd-footer h4 {
+          margin-bottom: 12px;
+          color: white;
+        }
+        
+        .wd-footer a {
+          display: block;
+          color: var(--wd-gray-300);
+          margin-bottom: 8px;
+          text-decoration: none;
+        }
+        
+        .wd-footer a:hover {
+          color: var(--wd-cyan-300);
+        }
+        /* Footer columns */
+      .wd-footer-col {
+          min-width: 180px;
+          margin-bottom: 20px;
+        }
+        
+        .wd-footer-title {
+          font-size: 1rem;
+          font-weight: 600;
+          margin-bottom: 12px;
+          color: white;
+        }
+        
+        .wd-footer-link {
+          display: block;
+          margin-bottom: 8px;
+          color: var(--wd-gray-300);
+          text-decoration: none;
+        }
+        
+        .wd-footer-link:hover {
+          color: var(--wd-cyan-300);
+        }
+        
+      
+      /* =======================================================================
+      
+         FOOTER NEON GLOW – WebOnDay
+         Estende wd-footer con effetti luminosi
+      ======================================================================= */
+      
+      .wd-footer-neon {
+          position: relative;
+          overflow: hidden;
+          border-top: 1px solid rgba(255,255,255,0.08);
+          box-shadow: 0 -4px 25px rgba(34,211,238,0.25),
+                      0 -2px 8px rgba(244,114,182,0.25);
+        }
+        
+        /* Glow dinamico sottile su sfondo */
+        .wd-footer-neon::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(
+            circle at top center,
+            rgba(34,211,238,0.12),
+            rgba(244,114,182,0.10),
+            transparent 70%
+          );
+          pointer-events: none;
+          z-index: 0;
+        }
+        
+        /* Glow animato laterale */
+        .wd-footer-neon::after {
+          content: "";
+          position: absolute;
+          bottom: -40px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 220%;
+          height: 80px;
+          background: radial-gradient(
+            ellipse,
+            rgba(34,211,238,0.25),
+            rgba(244,114,182,0.18),
+            transparent 80%
+          );
+          filter: blur(20px);
+          animation: wdNeonPulse 6s infinite ease-in-out;
+          pointer-events: none;
+          z-index: 0;
+        }
+        
+        @keyframes wdNeonPulse {
+          0% { opacity: 0.35; transform: translateX(-50%) scale(1); }
+          50% { opacity: 0.55; transform: translateX(-50%) scale(1.2); }
+          100% { opacity: 0.35; transform: translateX(-50%) scale(1); }
+        }
+        
+        
+        /* -----------------------------------------------------------------------
+           LINK NEON EFFECT
+        ----------------------------------------------------------------------- */
+        
+        .wd-footer-link {
+          position: relative;
+          z-index: 2;
+          transition: color 0.25s ease, text-shadow 0.25s ease;
+        }
+        
+        .wd-footer-link:hover {
+          color: var(--wd-cyan-300);
+          text-shadow:
+              0 0 8px rgba(34,211,238,0.8),
+              0 0 14px rgba(34,211,238,0.6),
+              0 0 25px rgba(34,211,238,0.8);
+        }
+        .wd-footer-link::after {
+          content: "";
+          position: absolute;
+          bottom: -4px;
+          left: 0;
+          width: 0%;
+          height: 2px;
+          background: var(--wd-cyan-300);
+          box-shadow: 0 0 6px rgba(34,211,238,0.8);
+          transition: width .25s ease;
+        }
+        
+        .wd-footer-link:hover::after {
+          width: 100%;
+        }
+        
+        /* -----------------------------------------------------------------------
+           TITOLI NEON
+        ----------------------------------------------------------------------- */
+        
+        .wd-footer-title {
+          position: relative;
+          z-index: 2;
+          color: white;
+          text-shadow:
+            0 0 6px rgba(255,255,255,0.6),
+            0 0 14px rgba(34,211,238,0.4);
+        }
+        /* -----------------------------------------------------------------------
+         FOOTER STRUCTURE
+      ----------------------------------------------------------------------- */
+      
+      .wd-footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 32px;
+        padding: 48px 32px 24px;
+        position: relative;
+        z-index: 2;
+      }
+      
+      .wd-footer-text {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.75);
+      }
+      
+      /* -----------------------------------------------------------------------
+         FOOTER BOTTOM
+      ----------------------------------------------------------------------- */
+      
+      .wd-footer-bottom {
+        text-align: center;
+        padding: 16px 24px 28px;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.55);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        position: relative;
+        z-index: 2;
+      }
+    ... (fine css/legacy.css) ...
+
+  layout.css
+    >>> Contenuto di css/layout.css:
+      /* =========================
+         GLOBAL RESPONSIVE LAYOUT
+      ========================= */
+      
+      .app-layout {
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+        }
+        
+        .site-content {
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 24px;
+        }
+        
+        /* Tablet */
+        @media (max-width: 1024px) {
+          .site-content {
+            padding: 20px;
+          }
+        }
+        
+        /* Mobile */
+        @media (max-width: 640px) {
+          .site-content {
+            padding: 16px;
+          }
+        }
+    ... (fine css/layout.css) ...
+
+  components.css
+    >>> Contenuto di css/components.css:
+      @layer components {
+          /* CARD */
+          .wd-card {
+            @apply bg-wd-panel rounded-wd shadow-lg p-6;
+          }
+        
+          /* BUTTON */
+          .wd-btn {
+            @apply px-4 py-2 rounded-lg font-semibold transition;
+            @apply bg-wd-primary text-black hover:opacity-90;
+          }
+        
+          .wd-btn-outline {
+            @apply border border-wd-primary text-wd-primary hover:bg-wd-primary hover:text-black;
+          }
+        
+          /* NAVBAR */
+          .wd-nav {
+            @apply flex items-center justify-between px-6 py-4 bg-wd-panel;
+          }
+        
+          /* FOOTER */
+          .wd-footer {
+            @apply mt-20 border-t border-white/10 text-sm text-wd-muted;
+          }
+        
+          /* HERO */
+          .wd-hero {
+            @apply grid gap-8 py-20 text-center;
+          }
+        }
+    ... (fine css/components.css) ...
+
+  base.css
+    >>> Contenuto di css/base.css:
+      /* =========================
+         BASE CSS – Webonday
+         Punto di verità globale
+      ========================= */
+      
+      :root {
+          /* Colors */
+          --wd-bg: #05070a;
+          --wd-panel: rgba(255,255,255,0.06);
+          --wd-border: rgba(255,255,255,0.12);
+        
+          --wd-text-main: #e5e7eb;
+          --wd-text-muted: #9ca3af;
+        
+          --wd-accent-cyan: #22d3ee;
+          --wd-accent-pink: #f472b6;
+          --wd-danger: #f87171;
+        
+          /* Layout */
+          --wd-radius-lg: 22px;
+          --wd-radius-md: 14px;
+        }
+        
+        /* Reset minimo */
+        *,
+        *::before,
+        *::after {
+          box-sizing: border-box;
+        }
+        
+        html, body {
+          margin: 0;
+          padding: 0;
+          min-height: 100%;
+        }
+        
+        body {
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          background:
+            radial-gradient(circle at top, rgba(34,211,238,.08), transparent 45%),
+            var(--wd-bg);
+          color: var(--wd-text-main);
+          line-height: 1.5;
+        }
+        
+        /* Link e testo */
+        a {
+          color: var(--wd-accent-cyan);
+          text-decoration: none;
+        }
+        
+        a:hover {
+          text-decoration: underline;
+        }
+        
+        /* Card generica (riutilizzabile) */
+        .card {
+          background: var(--wd-panel);
+          border: 1px solid var(--wd-border);
+          border-radius: var(--wd-radius-lg);
+          box-shadow: 0 20px 50px rgba(0,0,0,.45);
+        }
+        
+        /* Responsive base */
+        img, video {
+          max-width: 100%;
+          height: auto;
+        }
+    ... (fine css/base.css) ...
+
+  footer.css
+    >>> Contenuto di css/footer.css:
+        /* =======================================================================
+           FOOTER PRESET (compatibile con Footer.tsx)
+        ======================================================================= */
+        
+        .wd-footer {
+          background: var(--wd-gray-900);
+          color: var(--wd-gray-300);
+          padding: 40px 24px;
+          display: flex;
+          justify-content: space-around;
+          flex-wrap: wrap;
+        }
+        
+        .wd-footer h4 {
+          margin-bottom: 12px;
+          color: white;
+        }
+        
+        .wd-footer a {
+          display: block;
+          color: var(--wd-gray-300);
+          margin-bottom: 8px;
+          text-decoration: none;
+        }
+        
+        .wd-footer a:hover {
+          color: var(--wd-cyan-300);
+        }
+        /* Footer columns */
+      .wd-footer-col {
+          min-width: 180px;
+          margin-bottom: 20px;
+        }
+        
+        .wd-footer-title {
+          font-size: 1rem;
+          font-weight: 600;
+          margin-bottom: 12px;
+          color: white;
+        }
+        
+        .wd-footer-link {
+          display: block;
+          margin-bottom: 8px;
+          color: var(--wd-gray-300);
+          text-decoration: none;
+        }
+        
+        .wd-footer-link:hover {
+          color: var(--wd-cyan-300);
+        }
+        
+      
+      /* =======================================================================
+      
+         FOOTER NEON GLOW – WebOnDay
+         Estende wd-footer con effetti luminosi
+      ======================================================================= */
+      
+      .wd-footer-neon {
+          position: relative;
+          overflow: hidden;
+          border-top: 1px solid rgba(255,255,255,0.08);
+          box-shadow: 0 -4px 25px rgba(34,211,238,0.25),
+                      0 -2px 8px rgba(244,114,182,0.25);
+        }
+        
+        /* Glow dinamico sottile su sfondo */
+        .wd-footer-neon::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(
+            circle at top center,
+            rgba(34,211,238,0.12),
+            rgba(244,114,182,0.10),
+            transparent 70%
+          );
+          pointer-events: none;
+          z-index: 0;
+        }
+        
+        /* Glow animato laterale */
+        .wd-footer-neon::after {
+          content: "";
+          position: absolute;
+          bottom: -40px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 220%;
+          height: 80px;
+          background: radial-gradient(
+            ellipse,
+            rgba(34,211,238,0.25),
+            rgba(244,114,182,0.18),
+            transparent 80%
+          );
+          filter: blur(20px);
+          animation: wdNeonPulse 6s infinite ease-in-out;
+          pointer-events: none;
+          z-index: 0;
+        }
+        
+        @keyframes wdNeonPulse {
+          0% { opacity: 0.35; transform: translateX(-50%) scale(1); }
+          50% { opacity: 0.55; transform: translateX(-50%) scale(1.2); }
+          100% { opacity: 0.35; transform: translateX(-50%) scale(1); }
+        }
+        
+        
+        /* -----------------------------------------------------------------------
+           LINK NEON EFFECT
+        ----------------------------------------------------------------------- */
+        
+        .wd-footer-link {
+          position: relative;
+          z-index: 2;
+          transition: color 0.25s ease, text-shadow 0.25s ease;
+        }
+        
+        .wd-footer-link:hover {
+          color: var(--wd-cyan-300);
+          text-shadow:
+              0 0 8px rgba(34,211,238,0.8),
+              0 0 14px rgba(34,211,238,0.6),
+              0 0 25px rgba(34,211,238,0.8);
+        }
+        .wd-footer-link::after {
+          content: "";
+          position: absolute;
+          bottom: -4px;
+          left: 0;
+          width: 0%;
+          height: 2px;
+          background: var(--wd-cyan-300);
+          box-shadow: 0 0 6px rgba(34,211,238,0.8);
+          transition: width .25s ease;
+        }
+        
+        .wd-footer-link:hover::after {
+          width: 100%;
+        }
+        
+        /* -----------------------------------------------------------------------
+           TITOLI NEON
+        ----------------------------------------------------------------------- */
+        
+        .wd-footer-title {
+          position: relative;
+          z-index: 2;
+          color: white;
+          text-shadow:
+            0 0 6px rgba(255,255,255,0.6),
+            0 0 14px rgba(34,211,238,0.4);
+        }
+        /* -----------------------------------------------------------------------
+         FOOTER STRUCTURE
+      ----------------------------------------------------------------------- */
+      
+      .wd-footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 32px;
+        padding: 48px 32px 24px;
+        position: relative;
+        z-index: 2;
+      }
+      
+      .wd-footer-text {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.75);
+      }
+      
+      /* -----------------------------------------------------------------------
+         FOOTER BOTTOM
+      ----------------------------------------------------------------------- */
+      
+      .wd-footer-bottom {
+        text-align: center;
+        padding: 16px 24px 28px;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.55);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        position: relative;
+        z-index: 2;
+      }
+    ... (fine css/footer.css) ...
+
+francescomaggi@MacBook-Pro Style % cd ..
+francescomaggi@MacBook-Pro src % cd ..
+francescomaggi@MacBook-Pro frontend % npm uninstall tailwind
+
+up to date, audited 267 packages in 1s
+
+63 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+francescomaggi@MacBook-Pro frontend % cd src
+francescomaggi@MacBook-Pro src % cd S* 
+francescomaggi@MacBook-Pro Style % showcode
+📁 Gerarchia e Codice (.):
+
+./
+css/
+  productCard.css
+    >>> Contenuto di css/productCard.css:
+      /* components/product-card.css */
+      
+      .product-card{
+          display:flex;
+          flex-direction:column;
+          justify-content:space-between;
+          padding:18px;
+          border-radius:20px;
+          background:
+            radial-gradient(circle at top, rgba(34,211,238,.10), transparent 45%),
+            rgba(255,255,255,.04);
+          border:1px solid var(--wd-border);
+          box-shadow:
+            0 20px 50px rgba(0,0,0,.45),
+            0 0 25px rgba(34,211,238,.12);
+          transition: all .25s ease;
+        }
+        
+        .product-card:hover{
+          border-color: var(--wd-cyan-300);
+          box-shadow:
+            0 25px 60px rgba(0,0,0,.6),
+            0 0 30px rgba(34,211,238,.35);
+        }
+        
+        .product-card__title{
+          font-size:20px;
+          font-weight:700;
+          color:var(--wd-text-main);
+          margin-bottom:6px;
+        }
+        
+        .product-card__description{
+          font-size:14px;
+          color:var(--wd-text-muted);
+          margin-bottom:12px;
+        }
+        
+        .product-card__price{
+          font-size:22px;
+          font-weight:800;
+          color:var(--wd-accent-cyan);
+        }
+        
+        .product-card__footer{
+          margin-top:16px;
+        }
+        .option-selector{
+          padding:18px;
+          border-radius:20px;
+          background: rgba(255,255,255,.04);
+          border:1px solid var(--wd-border);
+        }
+        
+        .option-item{
+          display:flex;
+          justify-content:space-between;
+          padding:12px 14px;
+          border-radius:14px;
+          background: rgba(255,255,255,.03);
+          border:1px solid rgba(255,255,255,.10);
+          cursor:pointer;
+          transition: all .2s ease;
+        }
+        
+        .option-item.is-checked{
+          background: linear-gradient(
+            90deg,
+            rgba(34,211,238,.25),
+            rgba(244,114,182,.25)
+          );
+          border-color: var(--wd-cyan-300);
+          box-shadow: 0 0 18px rgba(34,211,238,.35);
+        }
+        
+        .option-label{
+          font-weight:600;
+          color:var(--wd-text-main);
+        }
+        
+        .option-price{
+          font-weight:700;
+          color:var(--wd-text-muted);
+        }
+        
+        .option-item.is-checked .option-label,
+        .option-item.is-checked .option-price{
+          color:#020617;
+        }
+    ... (fine css/productCard.css) ...
+
+  home.css
+    >>> Contenuto di css/home.css:
+    ... (fine css/home.css) ...
+
+  checkout.css
+    >>> Contenuto di css/checkout.css:
+      /* ======================================
+         CHECKOUT – Responsive / Neon / Dark
+      ====================================== */
+      
+      .checkout-page{
+          min-height: 100vh;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          padding: 24px;
+          background:
+            radial-gradient(circle at top, rgba(34,211,238,.10), transparent 40%),
+            radial-gradient(circle at bottom, rgba(244,114,182,.10), transparent 40%);
+        }
+        
+        .checkout-card{
+          width:100%;
+          max-width: 760px;
+          background: rgba(255,255,255,.05);
+          border: 1px solid rgba(255,255,255,.12);
+          border-radius: 22px;
+          padding: 28px;
+          box-shadow:
+            0 20px 50px rgba(0,0,0,.45),
+            0 0 30px rgba(34,211,238,.12);
+          backdrop-filter: blur(6px);
+        }
+        
+        /* TITOLI */
+        .checkout-title{
+          margin:0 0 20px;
+          font-size: 26px;
+          text-align:center;
+          letter-spacing:-.02em;
+        }
+        
+        /* LISTA PRODOTTI */
+        .checkout-list{
+          list-style:none;
+          padding:0;
+          margin:0 0 18px;
+          display:flex;
+          flex-direction:column;
+          gap:10px;
+        }
+        
+        .checkout-item{
+          display:flex;
+          justify-content:space-between;
+          gap:12px;
+          padding: 10px 12px;
+          border-radius: 12px;
+          background: rgba(255,255,255,.04);
+          border: 1px solid rgba(255,255,255,.10);
+        }
+        
+        .checkout-item-title{
+          font-size:14px;
+          opacity:.9;
+        }
+        
+        /* TOTALE */
+        .checkout-total{
+          display:flex;
+          justify-content:space-between;
+          margin-top: 14px;
+          padding-top: 14px;
+          border-top: 1px dashed rgba(255,255,255,.25);
+          font-size: 18px;
+        }
+        
+        /* AZIONI */
+        .checkout-action{
+          margin-top: 24px;
+        }
+        
+        .checkout-policy{
+          font-size: 12px;
+          opacity:.7;
+          text-align:center;
+        }
+        
+        .checkout-error{
+          margin-top: 8px;
+          font-size: 13px;
+          color: #f87171;
+          text-align:center;
+        }
+        
+        /* PAY BUTTON */
+        .checkout-pay-btn{
+          margin-top: 12px;
+          width:100%;
+          padding: 14px;
+          border-radius: 999px;
+          border:none;
+          background: linear-gradient(90deg,#22d3ee,#f472b6);
+          color:#020617;
+          font-weight:700;
+          cursor:pointer;
+        }
+        
+        .checkout-pay-btn:disabled{
+          opacity:.6;
+          cursor:not-allowed;
+        }
+        
+        /* PAYPAL */
+        .checkout-paypal{
+          margin-top: 24px;
+          padding-top: 18px;
+          border-top: 1px solid rgba(255,255,255,.12);
+        }
+        
+        /* MOBILE TUNING */
+        @media (max-width: 480px){
+          .checkout-card{
+            padding: 22px 18px;
+          }
+        
+          .checkout-title{
+            font-size: 22px;
+          }
+        }
+    ... (fine css/checkout.css) ...
+
+  legacy-style.css
+    >>> Contenuto di css/legacy-style.css:
+    ... (fine css/legacy-style.css) ...
+
+  catalog.css
+    >>> Contenuto di css/catalog.css:
+    ... (fine css/catalog.css) ...
+
+  login.css
+    >>> Contenuto di css/login.css:
+      /* ================================
+         LOGIN PAGE – Tailwind style
+      ================================ */
+      
+      .login-page{
+          min-height: 100vh;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          padding: 24px;
+          background:
+            radial-gradient(circle at top, rgba(34,211,238,.12), transparent 40%),
+            radial-gradient(circle at bottom, rgba(244,114,182,.12), transparent 40%);
+        }
+        
+        .login-card{
+          width:100%;
+          max-width: 420px;
+          background: rgba(255,255,255,.05);
+          border: 1px solid rgba(255,255,255,.12);
+          border-radius: 20px;
+          padding: 32px 28px;
+          box-shadow:
+            0 20px 50px rgba(0,0,0,.45),
+            0 0 30px rgba(34,211,238,.12);
+          backdrop-filter: blur(6px);
+        }
+        
+        /* TITOLI */
+        .login-title{
+          margin:0;
+          font-size: 28px;
+          text-align:center;
+          letter-spacing:-.02em;
+        }
+        
+        .login-subtitle{
+          margin: 6px 0 22px;
+          text-align:center;
+          font-size: 14px;
+          opacity:.75;
+        }
+        
+        /* GOOGLE BUTTON */
+        .login-google-btn{
+          width:100%;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:10px;
+          padding: 12px;
+          border-radius: 999px;
+          border: 1px solid rgba(255,255,255,.18);
+          background: rgba(255,255,255,.08);
+          color:white;
+          font-weight:600;
+          cursor:pointer;
+          transition: background .2s ease, transform .15s ease;
+        }
+        
+        .login-google-btn:hover{
+          background: rgba(255,255,255,.15);
+          transform: translateY(-1px);
+        }
+        
+        .google-icon{
+          width:22px;
+          height:22px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          border-radius:50%;
+          background:#fff;
+          color:#111;
+          font-weight:700;
+        }
+        
+        /* DIVIDER */
+        .login-divider{
+          display:flex;
+          align-items:center;
+          gap:12px;
+          margin: 22px 0;
+          font-size: 12px;
+          opacity:.6;
+        }
+        
+        .login-divider::before,
+        .login-divider::after{
+          content:"";
+          flex:1;
+          height:1px;
+          background: rgba(255,255,255,.15);
+        }
+        
+        /* FORM */
+        .login-form{
+          display:flex;
+          flex-direction:column;
+          gap:12px;
+        }
+        
+        .login-input{
+          padding: 12px 14px;
+          border-radius: 12px;
+          background: rgba(255,255,255,.08);
+          border: 1px solid rgba(255,255,255,.15);
+          color:white;
+          font-size:14px;
+        }
+        
+        .login-input::placeholder{
+          color: rgba(255,255,255,.55);
+        }
+        
+        .login-input:focus{
+          outline:none;
+          border-color: #22d3ee;
+          box-shadow: 0 0 0 1px rgba(34,211,238,.5);
+        }
+        
+        /* ERROR */
+        .login-error{
+          font-size: 13px;
+          color: #f87171;
+          text-align:center;
+        }
+        
+        /* BUTTONS */
+        .login-primary-btn{
+          margin-top: 6px;
+          padding: 12px;
+          border-radius: 999px;
+          border:none;
+          background: linear-gradient(90deg,#22d3ee,#f472b6);
+          color:#020617;
+          font-weight:700;
+          cursor:pointer;
+        }
+        
+        .login-primary-btn:disabled{
+          opacity:.6;
+          cursor:not-allowed;
+        }
+        
+        .login-secondary-btn{
+          padding: 10px;
+          border-radius: 999px;
+          border: 1px solid rgba(255,255,255,.25);
+          background: transparent;
+          color:white;
+          cursor:pointer;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 420px){
+          .login-card{
+            padding: 24px 20px;
+          }
+        }
+    ... (fine css/login.css) ...
+
+  hero.css
+    >>> Contenuto di css/hero.css:
+      .wd-hero {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 80px 24px;
+          display: grid;
+          gap: 48px;
+        }
+        
+        @media (min-width: 768px) {
+          .wd-hero {
+            grid-template-columns: 1.1fr 0.9fr;
+            align-items: center;
+          }
+        }
+        
+        .wd-hero__title {
+          font-size: clamp(2rem, 5vw, 3.5rem);
+          font-weight: 800;
+          line-height: 1.1;
+        }
+        
+        .wd-hero__subtitle {
+          margin-top: 16px;
+          font-size: 1.1rem;
+          opacity: 0.85;
+          max-width: 520px;
+        }
+        
+        .wd-hero__media img {
+          width: 100%;
+          height: auto;
+          border-radius: 20px;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+        }
+        
+      
+      .wd-hero__media {
+          position: relative;
+        }
+        
+        .wd-hero__media img {
+          width: 100%;
+          height: auto;
+          border-radius: 20px;
+          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.45);
+          filter: brightness(0.9) contrast(1.05);
+        }
+        
+        /* Overlay leggero per profondità */
+        .wd-hero__media::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: 20px;
+          background: linear-gradient(
+            to bottom right,
+            rgba(0, 0, 0, 0.15),
+            rgba(0, 0, 0, 0.35)
+          );
+          pointer-events: none;
+        }
+        .wd-hero__actions {
+          margin-top: 32px;
+        }
+        
+        .wd-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 14px 28px;
+          border-radius: 999px;
+          font-weight: 600;
+          text-decoration: none;
+          transition: all 0.25s ease;
+        }
+        
+        /* Bottone referral */
+        .wd-btn-referral {
+          background: linear-gradient(
+            135deg,
+            #4f46e5,
+            #9333ea
+          );
+          color: #fff;
+          box-shadow: 0 10px 30px rgba(147, 51, 234, 0.35);
+        }
+        
+        .wd-btn-referral:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 16px 40px rgba(147, 51, 234, 0.55);
+        }
+        
+        .wd-hero__media img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        
+          filter: blur(4px) brightness(0.85);
+          transform: scale(1.1); /* evita bordi bianchi dopo blur */
+        
+          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+        }
+        .wd-hero__media::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            to bottom right,
+            rgba(0, 0, 0, 0.25),
+            rgba(0, 0, 0, 0.45)
+          );
+          pointer-events: none;
+        }
+        /* hero.css */
+      
+      .wd-hero{
+          position:relative;
+          overflow:hidden;
+          border-radius: 24px;
+          border: 1px solid var(--wd-border);
+          background: radial-gradient(circle at 20% 0%, rgba(34,211,238,.10), transparent 55%),
+                      radial-gradient(circle at 80% 10%, rgba(244,114,182,.10), transparent 55%);
+        }
+        
+        .wd-hero__grid{
+          display:grid;
+          gap: 20px;
+          padding: clamp(18px, 3vw, 36px);
+          align-items:center;
+        }
+        
+        @media (min-width: 900px){
+          .wd-hero__grid{
+            grid-template-columns: 1.15fr 0.85fr;
+          }
+        }
+        
+        .wd-hero__title{
+          font-size: clamp(26px, 3.2vw, 44px);
+          margin:0 0 10px;
+          letter-spacing:-.02em;
+        }
+        
+        .wd-hero__subtitle{
+          margin:0 0 18px;
+          color: var(--wd-muted);
+          font-size: clamp(14px, 1.5vw, 18px);
+        }
+        
+        .wd-hero__cta{
+          display:flex;
+          flex-wrap:wrap;
+          gap: 12px;
+          margin-top: 10px;
+        }
+        
+        /* Media */
+        .wd-hero__media{
+          position:relative;
+          border-radius: 18px;
+          overflow:hidden;
+          min-height: 180px;
+          border: 1px solid var(--wd-border);
+        }
+        
+        .wd-hero__media img{
+          width:100%;
+          height:100%;
+          object-fit:cover;
+          transform: scale(1.05);
+          filter: blur(2.5px) brightness(.85) contrast(1.05);
+        }
+        
+        /* overlay ombra */
+        .wd-hero__media::after{
+          content:"";
+          position:absolute;
+          inset:0;
+          background: linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.55));
+          pointer-events:none;
+        }
+    ... (fine css/hero.css) ...
+
+  navbar.css
+    >>> Contenuto di css/navbar.css:
+      /* =====================================================
+         NAVBAR – single source of truth
+      ===================================================== */
+      
+      .wd-navbar{
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 20px;
+        background: #050816;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+      }
+      
+      /* ================= LOGO ================= */
+      
+      .wd-navbar-logo{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        text-decoration:none;
+        color:inherit;
+        z-index: 3;
+      }
+      
+      .moka-icon{
+        width:32px;
+        height:32px;
+      }
+      
+      .logo-text{
+        display:flex;
+        flex-direction:column;
+        line-height:1.1;
+      }
+      
+      .logo-text .we{
+        font-size:12px;
+        color:#a1a1aa;
+        text-transform:uppercase;
+        letter-spacing:.1em;
+      }
+      
+      .logo-text .webonday{
+        font-size:18px;
+        font-weight:700;
+        color:#f9fafb;
+      }
+      
+      /* ================= DESKTOP LINKS ================= */
+      
+      .nav-right{
+        display:flex;
+        align-items:center;
+        gap:18px;
+      }
+      
+      .wd-navbar-link{
+        position:relative;
+        font-size:14px;
+        color:#e5e7eb;
+        font-weight:500;
+        background:none;
+        border:none;
+        cursor:pointer;
+      }
+      
+      .wd-navbar-link:hover{
+        color:#ffffff;
+      }
+      
+      /* ACCENT (Carrello) */
+      .wd-link-accent{
+        padding:6px 12px;
+        border-radius:999px;
+        background:#22c55e;
+        color:#020617;
+        font-weight:600;
+      }
+      
+      .wd-link-accent:hover{
+        background:#16a34a;
+      }
+      
+      /* BADGE */
+      .nav-cart-badge{
+        margin-left:6px;
+        background:#020617;
+        color:#22c55e;
+        border-radius:999px;
+        padding:2px 6px;
+        font-size:12px;
+        font-weight:700;
+      }
+      
+      /* ================= MOBILE ================= */
+      
+      .menu-btn{
+        display:none;
+        border:none;
+        background:none;
+        font-size:24px;
+        color:#f9fafb;
+        cursor:pointer;
+        z-index: 3;
+      }
+      
+      @media (max-width: 768px){
+        .menu-btn{
+          display:block;
+        }
+      
+        .nav-right{
+          position:absolute;
+          top: 100%;
+          right: 12px;
+          width: min(80vw, 260px);
+          flex-direction:column;
+          align-items:flex-start;
+          gap:12px;
+          padding:14px 16px;
+      
+          background:#020617;
+          border:1px solid rgba(255,255,255,.12);
+          border-radius:12px;
+      
+          box-shadow:
+            0 20px 50px rgba(0,0,0,.45),
+            0 0 20px rgba(34,211,238,.15);
+      
+          display:none;
+          z-index: 200;
+        }
+      
+        .nav-right.open{
+          display:flex;
+        }
+      }
+      
+      /* ================= NEON GLOW ================= */
+      
+      .wd-navbar-neon{
+        position:relative;
+      }
+      
+      .wd-navbar-neon::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        background: radial-gradient(
+          circle at bottom center,
+          rgba(34,211,238,.12),
+          rgba(244,114,182,.08),
+          transparent 70%
+        );
+        pointer-events:none;
+        z-index:0;
+      }
+      
+      .wd-navbar-neon::after{
+        content:"";
+        position:absolute;
+        top:-40px;
+        left:50%;
+        transform:translateX(-50%);
+        width:200%;
+        height:80px;
+        background: radial-gradient(
+          ellipse,
+          rgba(34,211,238,.25),
+          rgba(244,114,182,.18),
+          transparent 80%
+        );
+        filter: blur(25px);
+        animation: wdNavNeonPulse 6s infinite ease-in-out;
+        pointer-events:none;
+        z-index:0;
+      }
+      
+      @keyframes wdNavNeonPulse{
+        0%{ opacity:.3; transform:translateX(-50%) scale(1); }
+        50%{ opacity:.55; transform:translateX(-50%) scale(1.2); }
+        100%{ opacity:.3; transform:translateX(-50%) scale(1); }
+      }
+    ... (fine css/navbar.css) ...
+
+  index.css
+    >>> Contenuto di css/index.css:
+      @charset "UTF-8";
+      @import "./base";
+      @import "./legacy-style.css";   /* solo variabili */
+      @import "./layout.css";
+      @import "./productCard.css";    /* COMPONENTI */
+      @import "./cart-sticker.css";
+      @import "./navbar.css";
+      @import "./footer.css";
+      @import "./hero.css";
+      @import "./login.css";
+      @import "./checkout.css";
+      @import "./whatsapp.css";
+      
+    ... (fine css/index.css) ...
+
+  cart.css
+    >>> Contenuto di css/cart.css:
+      /* =====================================================
+         CART STICKER – Mini cart responsive / neon
+      ===================================================== */
+      /* =========================
+         CART – RESPONSIVE
+      ========================= */
+      
+      /* Desktop */
+      .cart-sticker__panel {
+          max-width: 380px;
+        }
+        
+        /* Tablet */
+        @media (max-width: 900px) {
+          .cart-sticker__panel {
+            width: 90vw;
+            right: 5vw;
+          }
+        }
+        
+        /* Mobile */
+        @media (max-width: 640px) {
+          .cart-sticker {
+            left: 0;
+            right: 0;
+            bottom: 0;
+          }
+        
+          .cart-sticker__panel {
+            width: 100vw;
+            max-height: 80vh;
+            border-radius: 20px 20px 0 0;
+          }
+        }
+        
+      .cart-sticker{
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 200;
+        font-size: 14px;
+      }
+      
+      /* TOGGLE BUTTON */
+      .cart-sticker__toggle{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,.2);
+        background: rgba(2,6,23,.85);
+        color: #f9fafb;
+        cursor:pointer;
+        box-shadow:
+          0 12px 30px rgba(0,0,0,.45),
+          0 0 20px rgba(34,211,238,.25);
+        backdrop-filter: blur(6px);
+      }
+      
+      /* BADGE */
+      .cart-sticker__badge{
+        min-width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        background: linear-gradient(90deg,#22d3ee,#f472b6);
+        color:#020617;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      
+      /* LABEL + TOTAL */
+      .cart-sticker__label{
+        font-weight:600;
+      }
+      
+      .cart-sticker__total{
+        font-weight:700;
+        opacity:.9;
+      }
+      
+      /* CHEVRON */
+      .cart-sticker__chev{
+        width:18px;
+        height:18px;
+        transition: transform .2s ease;
+      }
+      
+      .cart-sticker.is-open .cart-sticker__chev{
+        transform: rotate(180deg);
+      }
+      
+      /* =====================================================
+         PANEL
+      ===================================================== */
+      
+      .cart-sticker__panel{
+        position:absolute;
+        right:0;
+        bottom: 56px;
+        width: min(92vw, 380px);
+        max-height: 70vh;
+        overflow:auto;
+      
+        background: rgba(5,8,22,.95);
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 20px;
+        box-shadow:
+          0 20px 50px rgba(0,0,0,.55),
+          0 0 30px rgba(34,211,238,.2);
+      
+        padding: 14px;
+        opacity:0;
+        pointer-events:none;
+        transform: translateY(10px);
+        transition: all .2s ease;
+      }
+      
+      .cart-sticker.is-open .cart-sticker__panel{
+        opacity:1;
+        pointer-events:auto;
+        transform: translateY(0);
+      }
+      
+      /* EMPTY */
+      .cart-sticker__empty{
+        padding: 24px;
+        text-align:center;
+        opacity:.7;
+      }
+      
+      /* =====================================================
+         LISTA ITEMS
+      ===================================================== */
+      
+      .cart-sticker__list{
+        list-style:none;
+        padding:0;
+        margin:0;
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+      }
+      
+      .cart-sticker__item{
+        padding: 12px;
+        border-radius: 14px;
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(255,255,255,.12);
+      }
+      
+      /* HEADER ITEM */
+      .item__head{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom: 6px;
+      }
+      
+      .item__title{
+        font-size:14px;
+        font-weight:600;
+      }
+      
+      .item__remove{
+        background:none;
+        border:none;
+        color:#f87171;
+        cursor:pointer;
+        font-size:16px;
+      }
+      
+      /* LINE */
+      .item__line,
+      .item__total{
+        display:flex;
+        justify-content:space-between;
+        font-size:13px;
+        opacity:.9;
+      }
+      
+      /* OPTIONS */
+      .item__options{
+        margin-top:6px;
+      }
+      
+      .item__options summary{
+        cursor:pointer;
+        font-size:12px;
+        opacity:.75;
+      }
+      
+      .item__opt{
+        display:flex;
+        justify-content:space-between;
+        font-size:12px;
+        opacity:.85;
+      }
+      
+      /* =====================================================
+         FOOTER
+      ===================================================== */
+      
+      .cart-sticker__footer{
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255,255,255,.12);
+      }
+      
+      .cart-sticker__grand{
+        display:flex;
+        justify-content:space-between;
+        margin-bottom: 10px;
+        font-size:16px;
+        font-weight:700;
+      }
+      
+      /* =====================================================
+         MOBILE TUNING
+      ===================================================== */
+      
+      @media (max-width: 480px){
+        .cart-sticker{
+          right: 12px;
+          bottom: 12px;
+        }
+      
+        .cart-sticker__panel{
+          width: 94vw;
+          right: -6px;
+        }
+      }
+      /* =====================================================
+         CART PREVIEW – Responsive behavior
+      ===================================================== */
+      
+      /* Desktop: sidebar affiancata */
+      @media (min-width: 1024px){
+        .cart-preview{
+          position: sticky;
+          top: 96px; /* sotto navbar */
+          max-width: 360px;
+        }
+      }
+      
+      /* Tablet */
+      @media (max-width: 1023px){
+        .cart-preview{
+          width: 100%;
+          margin-top: 24px;
+        }
+      }
+      
+      /* Mobile: full-width bottom card */
+      @media (max-width: 640px){
+        .cart-preview{
+          position: fixed;
+          left: 12px;
+          right: 12px;
+          bottom: 12px;
+          z-index: 150;
+      
+          max-width: none;
+          box-shadow:
+            0 20px 50px rgba(0,0,0,.55),
+            0 0 30px rgba(34,211,238,.25);
+        }
+      
+        /* Spazio extra per evitare overlap */
+        body{
+          padding-bottom: 120px;
+        }
+      }
+      /* =====================================================
+         ADD TO CART – Feedback animation
+      ===================================================== */
+      
+      @keyframes cartPulse {
+        0%   { transform: scale(1); box-shadow: none; }
+        40%  { transform: scale(1.04); box-shadow: 0 0 24px rgba(34,211,238,.45); }
+        100% { transform: scale(1); box-shadow: none; }
+      }
+      
+      .cart-preview.is-added{
+        animation: cartPulse .45s ease-out;
+      }
+    ... (fine css/cart.css) ...
+
+  whatsapp.css
+    >>> Contenuto di css/whatsapp.css:
+          /* =======================================================================
+                      WHATSAPP BUTTON NEON – WebOnDay Style
+          ======================================================================= */
+      
+          .whatsapp-btn {
+          position: fixed;
+          bottom: 22px;
+          right: 22px;
+          width: 62px;
+          height: 62px;
+      
+          background: #25d366;
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+      
+          cursor: pointer;
+          z-index: 999;
+      
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+          }
+      
+          /* Icon size */
+          .whatsapp-btn img {
+          width: 34px;
+          height: 34px;
+          }
+      
+          /* Neon Glow variant */
+          .wd-whatsapp-neon {
+          box-shadow:
+              0 0 10px rgba(37, 211, 102, 0.7),
+              0 0 20px rgba(34, 211, 238, 0.15),
+              0 0 40px rgba(34, 211, 238, 0.12);
+      
+          animation: wdWhatsPulse 4.5s infinite ease-in-out;
+          }
+      
+          /* Pulsazione neon */
+          @keyframes wdWhatsPulse {
+          0% { transform: scale(1); box-shadow:
+                  0 0 10px rgba(37, 211, 102, 0.7),
+                  0 0 20px rgba(34,211,238,0.15),
+                  0 0 40px rgba(34,211,238,0.12); }
+      
+          50% { transform: scale(1.08); box-shadow:
+                  0 0 16px rgba(37, 211, 102, 0.9),
+                  0 0 30px rgba(34,211,238,0.25),
+                  0 0 60px rgba(34,211,238,0.18); }
+      
+          100% { transform: scale(1); box-shadow:
+                  0 0 10px rgba(37, 211, 102, 0.7),
+                  0 0 20px rgba(34,211,238,0.15),
+                  0 0 40px rgba(34,211,238,0.12); }
+          }
+      
+          /* Hover amplificato */
+          .whatsapp-btn:hover {
+          transform: scale(1.12);
+          box-shadow:
+              0 0 20px rgba(37, 211, 102, 0.9),
+              0 0 35px rgba(34,211,238,0.25),
+              0 0 65px rgba(34,211,238,0.18);
+          }
+    ... (fine css/whatsapp.css) ...
+
+  layout.css
+    >>> Contenuto di css/layout.css:
+      /* =========================
+         GLOBAL RESPONSIVE LAYOUT
+      ========================= */
+      
+      .app-layout {
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+        }
+        
+        .site-content {
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 24px;
+        }
+        
+        /* Tablet */
+        @media (max-width: 1024px) {
+          .site-content {
+            padding: 20px;
+          }
+        }
+        
+        /* Mobile */
+        @media (max-width: 640px) {
+          .site-content {
+            padding: 16px;
+          }
+        }
+    ... (fine css/layout.css) ...
+
+  components.css
+    >>> Contenuto di css/components.css:
+      @layer components {
+          /* CARD */
+          .wd-card {
+            @apply bg-wd-panel rounded-wd shadow-lg p-6;
+          }
+        
+          /* BUTTON */
+          .wd-btn {
+            @apply px-4 py-2 rounded-lg font-semibold transition;
+            @apply bg-wd-primary text-black hover:opacity-90;
+          }
+        
+          .wd-btn-outline {
+            @apply border border-wd-primary text-wd-primary hover:bg-wd-primary hover:text-black;
+          }
+        
+          /* NAVBAR */
+          .wd-nav {
+            @apply flex items-center justify-between px-6 py-4 bg-wd-panel;
+          }
+        
+          /* FOOTER */
+          .wd-footer {
+            @apply mt-20 border-t border-white/10 text-sm text-wd-muted;
+          }
+        
+          /* HERO */
+          .wd-hero {
+            @apply grid gap-8 py-20 text-center;
+          }
+        }
+    ... (fine css/components.css) ...
+
+  base.css
+    >>> Contenuto di css/base.css:
+      /* =======================================================================
+         WEBONDAY – LEGACY STYLE PRESET
+         Compatibile con struttura e naming v27
+         Prefisso standard: wd-
+      ======================================================================= */
+      
+      
+      /* -----------------------------------------------------------------------
+         PALETTE – CENTRALIZZATA
+      ----------------------------------------------------------------------- */
+      :root {
+          /* Neon / Digital */
+          --wd-cyan-300: #67e8f9;
+          --wd-cyan-400: #22d3ee;
+          --wd-cyan-500: #06b6d4;
+        
+          --wd-fuchsia-300: #f9a8d4;
+          --wd-fuchsia-400: #f472b6;
+          --wd-fuchsia-500: #ec4899;
+        
+          --wd-blue-300: #93c5fd;
+          --wd-blue-600: #2563eb;
+          --wd-blue-700: #1d4ed8;
+          --wd-blue-800: #1e40af;
+        
+          --wd-amber-300: #fcd34d;
+          --wd-amber-400: #fbbf24;
+        
+          /* Background */
+          --wd-dark-1: #050509;
+          --wd-dark-2: #090912;
+        
+          --wd-gray-50: #f9fafb;
+          --wd-gray-100: #f3f4f6;
+          --wd-gray-300: #d1d5db;
+          --wd-gray-600: #4b5563;
+          --wd-gray-700: #374151;
+          --wd-gray-900: #111827;
+        
+          /* Radius */
+          --wd-radius-lg: 16px;
+          --wd-radius-xl: 24px;
+        
+          /* Shadow */
+          --wd-shadow-md: 0 5px 15px rgba(0,0,0,0.15);
+          --wd-shadow-lg: 0 10px 30px rgba(0,0,0,0.25);
+        
+          /* Glow presets */
+          --wd-glow-cyan: 0 0 20px rgba(34,211,238,.7);
+          --wd-glow-fuchsia: 0 0 20px rgba(244,114,182,.7);
+          --wd-glow-blue: 0 0 20px rgba(37,99,235,.6);
+        }
+        
+        
+        /* -----------------------------------------------------------------------
+           TYPOGRAPHY (eredita Inter da Tailwind)
+        ----------------------------------------------------------------------- */
+        body {
+          font-family: Inter, sans-serif;
+        }
+        
+        
+        /* -----------------------------------------------------------------------
+           LAYOUT HELPERS
+        ----------------------------------------------------------------------- */
+        .wd-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 24px;
+        }
+        
+        .wd-section {
+          padding: 80px 0;
+        }
+        
+        .wd-background-dark {
+          background: var(--wd-dark-1);
+          color: white;
+        }
+        
+        
+        
+        /* =======================================================================
+           NAVBAR PRESET (compatibile con src/components/navbar/Navbar.css)
+        ======================================================================= */
+        
+        .wd-navbar {
+          background: var(--wd-gray-900);
+          color: white;
+          padding: 16px 24px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .wd-navbar-logo {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        
+        .wd-navbar .wd-link {
+          color: white;
+          margin-left: 20px;
+          text-decoration: none;
+          font-weight: 500;
+        }
+        
+        .wd-navbar .wd-link:hover {
+          color: var(--wd-cyan-300);
+        }
+        
+        /* NAVBAR LINKS */
+      
+      .wd-link {
+          color: white;
+          font-weight: 500;
+          margin-left: 20px;
+          transition: 0.25s ease;
+          text-decoration: none;
+        }
+        
+        .wd-link:hover {
+          color: var(--wd-cyan-300);
+        }
+        
+        /* Link evidenziato / carrello */
+        .wd-link-accent {
+          padding: 6px 12px;
+          border-radius: 8px;
+          background: rgba(34,211,238,0.15);
+          border: 1px solid var(--wd-cyan-400);
+        }
+        
+        .wd-link-accent:hover {
+          background: rgba(34,211,238,0.25);
+          color: white;
+          box-shadow: var(--wd-glow-cyan);
+        }
+        
+        
+        /* =======================================================================
+           CARD SYSTEM (Base + Accent + Neon)
+        ======================================================================= */
+        
+        .wd-card {
+          background: white;
+          border-radius: var(--wd-radius-xl);
+          padding: 32px;
+          box-shadow: var(--wd-shadow-md);
+          border: 1px solid var(--wd-gray-100);
+          transition: 0.25s ease;
+        }
+        
+        .wd-card:hover {
+          box-shadow: var(--wd-shadow-lg);
+        }
+        
+        /* Accent borders */
+        .wd-card-cyan { border-color: var(--wd-cyan-400); }
+        .wd-card-fuchsia { border-color: var(--wd-fuchsia-400); }
+        .wd-card-amber { border-color: var(--wd-amber-400); }
+        
+        /* NEON VERSIONS */
+        .wd-card-neon {
+          border-width: 2px;
+          box-shadow: var(--wd-glow-cyan);
+        }
+        
+        .wd-card-neon-fuchsia {
+          border-color: var(--wd-fuchsia-400);
+          box-shadow: var(--wd-glow-fuchsia);
+        }
+        
+        .wd-card-neon-blue {
+          border-color: var(--wd-blue-600);
+          box-shadow: var(--wd-glow-blue);
+        }
+        
+        
+        
+        /* =======================================================================
+           HERO SYSTEM (Founder, ChiSiamo, Vision, Mission)
+        ======================================================================= */
+        
+        .wd-hero {
+          position: relative;
+          text-align: center;
+          padding: 120px 0;
+          color: white;
+        }
+        
+        .wd-hero-gradient {
+          background: linear-gradient(90deg,
+            #4c1d95,   /* purple-800 */
+            #db2777,   /* pink-600 */
+            #1d4ed8    /* blue-700 */
+          );
+        }
+        
+        /* Neon title used across pages */
+        .neon-title {
+          text-shadow:
+            0 0 10px rgba(255,255,255,0.6),
+            0 0 30px var(--wd-cyan-300);
+        }
+        
+        /* Bubble text box */
+        .neon-bubble {
+          background: rgba(0,0,0,0.25);
+          padding: 16px 24px;
+          border-radius: 16px;
+          backdrop-filter: blur(6px);
+          border: 1px solid rgba(255,255,255,0.25);
+        }
+        
+        /* Founder image glow */
+        .wd-founder-photo {
+          width: 160px;
+          height: 160px;
+          border-radius: 50%;
+          border: 4px solid var(--wd-cyan-400);
+          box-shadow: var(--wd-glow-cyan);
+        }
+        
+        
+        
+        /* =======================================================================
+           GLOW / BACKGROUND EFFECTS (per Azienda, ChiSiamo, Legal)
+        ======================================================================= */
+        
+        .wd-background-glow {
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(
+            circle at center,
+            rgba(34,211,238,0.15),
+            transparent 70%
+          );
+          pointer-events: none;
+        }
+        
+        
+        
+        /* =======================================================================
+           FOOTER PRESET (compatibile con Footer.tsx)
+        ======================================================================= */
+        
+        .wd-footer {
+          background: var(--wd-gray-900);
+          color: var(--wd-gray-300);
+          padding: 40px 24px;
+          display: flex;
+          justify-content: space-around;
+          flex-wrap: wrap;
+        }
+        
+        .wd-footer h4 {
+          margin-bottom: 12px;
+          color: white;
+        }
+        
+        .wd-footer a {
+          display: block;
+          color: var(--wd-gray-300);
+          margin-bottom: 8px;
+          text-decoration: none;
+        }
+        
+        .wd-footer a:hover {
+          color: var(--wd-cyan-300);
+        }
+        /* Footer columns */
+      .wd-footer-col {
+          min-width: 180px;
+          margin-bottom: 20px;
+        }
+        
+        .wd-footer-title {
+          font-size: 1rem;
+          font-weight: 600;
+          margin-bottom: 12px;
+          color: white;
+        }
+        
+        .wd-footer-link {
+          display: block;
+          margin-bottom: 8px;
+          color: var(--wd-gray-300);
+          text-decoration: none;
+        }
+        
+        .wd-footer-link:hover {
+          color: var(--wd-cyan-300);
+        }
+        
+      
+      
+      
+      
+        
+        /* =======================================================================
+         WHATSAPP BUTTON NEON – WebOnDay Style
+      ======================================================================= */
+      
+      .whatsapp-btn {
+          position: fixed;
+          bottom: 22px;
+          right: 22px;
+          width: 62px;
+          height: 62px;
+        
+          background: #25d366;
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        
+          cursor: pointer;
+          z-index: 999;
+        
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        
+        /* Icon size */
+        .whatsapp-btn img {
+          width: 34px;
+          height: 34px;
+        }
+        
+        /* Neon Glow variant */
+        .wd-whatsapp-neon {
+          box-shadow:
+            0 0 10px rgba(37, 211, 102, 0.7),
+            0 0 20px rgba(34, 211, 238, 0.15),
+            0 0 40px rgba(34, 211, 238, 0.12);
+        
+          animation: wdWhatsPulse 4.5s infinite ease-in-out;
+        }
+        
+        /* Pulsazione neon */
+        @keyframes wdWhatsPulse {
+          0% { transform: scale(1); box-shadow:
+                0 0 10px rgba(37, 211, 102, 0.7),
+                0 0 20px rgba(34,211,238,0.15),
+                0 0 40px rgba(34,211,238,0.12); }
+        
+          50% { transform: scale(1.08); box-shadow:
+                0 0 16px rgba(37, 211, 102, 0.9),
+                0 0 30px rgba(34,211,238,0.25),
+                0 0 60px rgba(34,211,238,0.18); }
+        
+          100% { transform: scale(1); box-shadow:
+                0 0 10px rgba(37, 211, 102, 0.7),
+                0 0 20px rgba(34,211,238,0.15),
+                0 0 40px rgba(34,211,238,0.12); }
+        }
+        
+        /* Hover amplificato */
+        .whatsapp-btn:hover {
+          transform: scale(1.12);
+          box-shadow:
+            0 0 20px rgba(37, 211, 102, 0.9),
+            0 0 35px rgba(34,211,238,0.25),
+            0 0 65px rgba(34,211,238,0.18);
+        }
+        :root {
+          /* Background */
+          --wd-bg: #05070a;
+          --wd-panel: rgba(255,255,255,0.06);
+          --wd-border: rgba(255,255,255,0.12);
+        
+          /* Text */
+          --wd-text-main: #e5e7eb;
+          --wd-text-muted: #9ca3af;
+        
+          /* Accent */
+          --wd-accent-cyan: #22d3ee;
+          --wd-accent-pink: #f472b6;
+          --wd-danger: #f87171;
+        
+          /* Radius */
+          --wd-radius-lg: 22px;
+          --wd-radius-md: 14px;
+        }
+        
+        *,
+        *::before,
+        *::after {
+          box-sizing: border-box;
+        }
+        
+        html, body {
+          margin: 0;
+          min-height: 100%;
+        }
+        
+        body {
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          background:
+            radial-gradient(circle at top, rgba(34,211,238,.08), transparent 45%),
+            var(--wd-bg);
+          color: var(--wd-text-main);
+          line-height: 1.5;
+        }
+        
+        a {
+          color: var(--wd-accent-cyan);
+          text-decoration: none;
+        }
+        
+        a:hover {
+          text-decoration: underline;
+        }
+    ... (fine css/base.css) ...
+
+  footer.css
+    >>> Contenuto di css/footer.css:
+        /* =======================================================================
+           FOOTER PRESET (compatibile con Footer.tsx)
+        ======================================================================= */
+        
+        .wd-footer {
+          background: var(--wd-gray-900);
+          color: var(--wd-gray-300);
+          padding: 40px 24px;
+          display: flex;
+          justify-content: space-around;
+          flex-wrap: wrap;
+        }
+        
+        .wd-footer h4 {
+          margin-bottom: 12px;
+          color: white;
+        }
+        
+        .wd-footer a {
+          display: block;
+          color: var(--wd-gray-300);
+          margin-bottom: 8px;
+          text-decoration: none;
+        }
+        
+        .wd-footer a:hover {
+          color: var(--wd-cyan-300);
+        }
+        /* Footer columns */
+      .wd-footer-col {
+          min-width: 180px;
+          margin-bottom: 20px;
+        }
+        
+        .wd-footer-title {
+          font-size: 1rem;
+          font-weight: 600;
+          margin-bottom: 12px;
+          color: white;
+        }
+        
+        .wd-footer-link {
+          display: block;
+          margin-bottom: 8px;
+          color: var(--wd-gray-300);
+          text-decoration: none;
+        }
+        
+        .wd-footer-link:hover {
+          color: var(--wd-cyan-300);
+        }
+        
+      
+      /* =======================================================================
+      
+         FOOTER NEON GLOW – WebOnDay
+         Estende wd-footer con effetti luminosi
+      ======================================================================= */
+      
+      .wd-footer-neon {
+          position: relative;
+          overflow: hidden;
+          border-top: 1px solid rgba(255,255,255,0.08);
+          box-shadow: 0 -4px 25px rgba(34,211,238,0.25),
+                      0 -2px 8px rgba(244,114,182,0.25);
+        }
+        
+        /* Glow dinamico sottile su sfondo */
+        .wd-footer-neon::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(
+            circle at top center,
+            rgba(34,211,238,0.12),
+            rgba(244,114,182,0.10),
+            transparent 70%
+          );
+          pointer-events: none;
+          z-index: 0;
+        }
+        
+        /* Glow animato laterale */
+        .wd-footer-neon::after {
+          content: "";
+          position: absolute;
+          bottom: -40px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 220%;
+          height: 80px;
+          background: radial-gradient(
+            ellipse,
+            rgba(34,211,238,0.25),
+            rgba(244,114,182,0.18),
+            transparent 80%
+          );
+          filter: blur(20px);
+          animation: wdNeonPulse 6s infinite ease-in-out;
+          pointer-events: none;
+          z-index: 0;
+        }
+        
+        @keyframes wdNeonPulse {
+          0% { opacity: 0.35; transform: translateX(-50%) scale(1); }
+          50% { opacity: 0.55; transform: translateX(-50%) scale(1.2); }
+          100% { opacity: 0.35; transform: translateX(-50%) scale(1); }
+        }
+        
+        
+        /* -----------------------------------------------------------------------
+           LINK NEON EFFECT
+        ----------------------------------------------------------------------- */
+        
+        .wd-footer-link {
+          position: relative;
+          z-index: 2;
+          transition: color 0.25s ease, text-shadow 0.25s ease;
+        }
+        
+        .wd-footer-link:hover {
+          color: var(--wd-cyan-300);
+          text-shadow:
+              0 0 8px rgba(34,211,238,0.8),
+              0 0 14px rgba(34,211,238,0.6),
+              0 0 25px rgba(34,211,238,0.8);
+        }
+        .wd-footer-link::after {
+          content: "";
+          position: absolute;
+          bottom: -4px;
+          left: 0;
+          width: 0%;
+          height: 2px;
+          background: var(--wd-cyan-300);
+          box-shadow: 0 0 6px rgba(34,211,238,0.8);
+          transition: width .25s ease;
+        }
+        
+        .wd-footer-link:hover::after {
+          width: 100%;
+        }
+        
+        /* -----------------------------------------------------------------------
+           TITOLI NEON
+        ----------------------------------------------------------------------- */
+        
+        .wd-footer-title {
+          position: relative;
+          z-index: 2;
+          color: white;
+          text-shadow:
+            0 0 6px rgba(255,255,255,0.6),
+            0 0 14px rgba(34,211,238,0.4);
+        }
+        /* -----------------------------------------------------------------------
+         FOOTER STRUCTURE
+      ----------------------------------------------------------------------- */
+      
+      .wd-footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 32px;
+        padding: 48px 32px 24px;
+        position: relative;
+        z-index: 2;
+      }
+      
+      .wd-footer-text {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.75);
+      }
+      
+      /* -----------------------------------------------------------------------
+         FOOTER BOTTOM
+      ----------------------------------------------------------------------- */
+      
+      .wd-footer-bottom {
+        text-align: center;
+        padding: 16px 24px 28px;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.55);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        position: relative;
+        z-index: 2;
+      }
+    ... (fine css/footer.css) ...
+
+francescomaggi@MacBook-Pro Style % 

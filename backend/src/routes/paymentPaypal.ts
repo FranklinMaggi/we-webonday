@@ -1,6 +1,6 @@
 //paymentPaypal.ts
 import type { Env } from "../types/env";
-import { OrderSchema } from "../schemas/orderSchema";
+import { OrderSchema } from "../schemas/core/orderSchema";
 import { z } from "zod";
 import { assertTransition } from "./orders";
 

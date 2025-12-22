@@ -1,83 +1,31 @@
-/* base.css - fondazioni responsive */
-
-:root{
-    --wd-bg:#020617;
-    --wd-panel:#050816;
-    --wd-text:#f9fafb;
-    --wd-muted:rgba(255,255,255,.7);
-    --wd-border:rgba(255,255,255,.10);
+:root {
+    /* SOLO token base NON semantici */
+    --wd-bg: #05070a;
+    --wd-panel: rgba(255,255,255,0.06);
+    --wd-border: rgba(255,255,255,0.12);
   
-    --wd-radius:16px;
-    --wd-gap:16px;
+    --wd-text-main: #e5e7eb;
+    --wd-text-muted: #9ca3af;
   
-    --wd-container: 1200px;
-    --wd-pad: clamp(16px, 2.5vw, 28px);
-  
-    --wd-cyan-300:#22d3ee;
-    --wd-pink-400:#f472b6;
-  
-    --wd-shadow: 0 12px 30px rgba(0,0,0,.35);
+    --wd-radius-lg: 22px;
+    --wd-radius-md: 14px;
   }
   
-  *{ box-sizing:border-box; }
-  html,body{ height:100%; }
-  body{
-    margin:0;
-    background:var(--wd-bg);
-    color:var(--wd-text);
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    line-height:1.5;
+  *, *::before, *::after {
+    box-sizing: border-box;
   }
   
-  img{ max-width:100%; height:auto; display:block; }
-  a{ color:inherit; text-decoration:none; }
-  
-  .wd-container{
-    width:min(var(--wd-container), 100%);
-    margin:0 auto;
-    padding-left:var(--wd-pad);
-    padding-right:var(--wd-pad);
+  html, body {
+    margin: 0;
+    min-height: 100%;
   }
   
-  .wd-section{
-    padding: clamp(28px, 5vw, 64px) 0;
-  }
-  
-  .wd-grid{
-    display:grid;
-    gap: var(--wd-gap);
-  }
-  
-  /* Utility responsive */
-  .wd-hide-mobile{ display:none; }
-  @media (min-width: 768px){
-    .wd-hide-mobile{ display: initial; }
-  }
-  
-  .btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    padding: 10px 14px;
-    border-radius: 999px;
-    border: 1px solid var(--wd-border);
-    background: rgba(255,255,255,.06);
-    color: var(--wd-text);
-    cursor:pointer;
-    font-weight: 650;
-  }
-  
-  .btn-primary{
-    border: none;
-    background: linear-gradient(90deg, rgba(34,211,238,.95), rgba(244,114,182,.95));
-    color:#020617;
-  }
-  
-  .card{
-    background: rgba(255,255,255,.05);
-    border: 1px solid var(--wd-border);
-    border-radius: var(--wd-radius);
-    box-shadow: var(--wd-shadow);
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:
+      radial-gradient(circle at top, rgba(34,211,238,.08), transparent 45%),
+      var(--wd-bg);
+    color: var(--wd-text-main);
+    line-height: 1.5;
   }
   

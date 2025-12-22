@@ -1,186 +1,210 @@
 /* =====================================================
-   NAVBAR – single source of truth
+   NAVBAR – WebOnDay
+   Single source of truth (layout + behavior)
 ===================================================== */
 
-.wd-navbar{
+.wd-navbar {
   position: sticky;
   top: 0;
   z-index: 100;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   padding: 12px 20px;
-  background: #050816;
-  border-bottom: 1px solid rgba(255,255,255,.08);
+
+  background: var(--wd-navbar-bg);
+  color: var(--wd-navbar-text);
+
+  border-bottom: 1px solid var(--wd-navbar-border);
 }
 
 /* ================= LOGO ================= */
 
-.wd-navbar-logo{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  text-decoration:none;
-  color:inherit;
+.wd-navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  text-decoration: none;
+  color: inherit;
   z-index: 3;
 }
 
-.moka-icon{
-  width:32px;
-  height:32px;
+.moka-icon {
+  width: 32px;
+  height: 32px;
 }
 
-.logo-text{
-  display:flex;
-  flex-direction:column;
-  line-height:1.1;
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
 }
 
-.logo-text .we{
-  font-size:12px;
-  color:#a1a1aa;
-  text-transform:uppercase;
-  letter-spacing:.1em;
+.logo-text .we {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--wd-navbar-text-muted);
 }
 
-.logo-text .webonday{
-  font-size:18px;
-  font-weight:700;
-  color:#f9fafb;
+.logo-text .webonday {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--wd-navbar-text);
 }
 
-/* ================= DESKTOP LINKS ================= */
+/* ================= LINKS DESKTOP ================= */
 
-.nav-right{
-  display:flex;
-  align-items:center;
-  gap:18px;
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
 }
 
-.wd-navbar-link{
-  position:relative;
-  font-size:14px;
-  color:#e5e7eb;
-  font-weight:500;
-  background:none;
-  border:none;
-  cursor:pointer;
+.wd-navbar-link {
+  background: none;
+  border: none;
+
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--wd-navbar-text);
+
+  cursor: pointer;
 }
 
-.wd-navbar-link:hover{
-  color:#ffffff;
+.wd-navbar-link:hover {
+  color: var(--wd-navbar-text-hover);
 }
 
-/* ACCENT (Carrello) */
-.wd-link-accent{
-  padding:6px 12px;
-  border-radius:999px;
-  background:#22c55e;
-  color:#020617;
-  font-weight:600;
+/* ================= ACCENT (CART) ================= */
+
+.wd-link-accent {
+  padding: 6px 14px;
+  border-radius: 999px;
+
+  background: var(--wd-navbar-accent-bg);
+  color: var(--wd-navbar-accent-text);
+
+  font-weight: 600;
 }
 
-.wd-link-accent:hover{
-  background:#16a34a;
+.wd-link-accent:hover {
+  background: var(--wd-navbar-accent-bg-hover);
 }
 
-/* BADGE */
-.nav-cart-badge{
-  margin-left:6px;
-  background:#020617;
-  color:#22c55e;
-  border-radius:999px;
-  padding:2px 6px;
-  font-size:12px;
-  font-weight:700;
+/* Badge carrello */
+.nav-cart-badge {
+  margin-left: 6px;
+
+  background: var(--wd-navbar-badge-bg);
+  color: var(--wd-navbar-badge-text);
+
+  border-radius: 999px;
+  padding: 2px 6px;
+
+  font-size: 12px;
+  font-weight: 700;
 }
 
 /* ================= MOBILE ================= */
 
-.menu-btn{
-  display:none;
-  border:none;
-  background:none;
-  font-size:24px;
-  color:#f9fafb;
-  cursor:pointer;
+.menu-btn {
+  display: none;
+  background: none;
+  border: none;
+
+  font-size: 24px;
+  color: var(--wd-navbar-text);
+
+  cursor: pointer;
   z-index: 3;
 }
 
-@media (max-width: 768px){
-  .menu-btn{
-    display:block;
+@media (max-width: 768px) {
+  .menu-btn {
+    display: block;
   }
 
-  .nav-right{
-    position:absolute;
+  .nav-right {
+    position: absolute;
     top: 100%;
     right: 12px;
-    width: min(80vw, 260px);
-    flex-direction:column;
-    align-items:flex-start;
-    gap:12px;
-    padding:14px 16px;
 
-    background:#020617;
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:12px;
+    width: min(80vw, 260px);
+
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    background: var(--wd-navbar-bg);
+    border: 1px solid var(--wd-navbar-border);
+    border-radius: 12px;
 
     box-shadow:
       0 20px 50px rgba(0,0,0,.45),
       0 0 20px rgba(34,211,238,.15);
 
-    display:none;
-    z-index: 200;
+    display: none;
   }
 
-  .nav-right.open{
-    display:flex;
+  .nav-right.open {
+    display: flex;
   }
 }
 
-/* ================= NEON GLOW ================= */
+/* ================= NEON EFFECT ================= */
 
-.wd-navbar-neon{
-  position:relative;
+.wd-navbar-neon {
+  position: relative;
 }
 
-.wd-navbar-neon::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background: radial-gradient(
-    circle at bottom center,
-    rgba(34,211,238,.12),
-    rgba(244,114,182,.08),
-    transparent 70%
-  );
-  pointer-events:none;
-  z-index:0;
-}
+.wd-navbar-neon::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
 
-.wd-navbar-neon::after{
-  content:"";
-  position:absolute;
-  top:-40px;
-  left:50%;
-  transform:translateX(-50%);
-  width:200%;
-  height:80px;
+  width: 200%;
+  height: 80px;
+
   background: radial-gradient(
     ellipse,
-    rgba(34,211,238,.25),
-    rgba(244,114,182,.18),
+    var(--wd-navbar-neon-cyan),
+    var(--wd-navbar-neon-pink),
     transparent 80%
   );
+
   filter: blur(25px);
-  animation: wdNavNeonPulse 6s infinite ease-in-out;
-  pointer-events:none;
-  z-index:0;
+  opacity: .4;
+  pointer-events: none;
+}
+/* NAVBAR */
+.wd-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: var(--wd-navbar-bg);
+  color: var(--wd-navbar-text);
+  border-bottom: 1px solid var(--wd-navbar-border);
+  flex-wrap: wrap; /* Consente di adattare gli elementi in una nuova riga su schermi più piccoli */
 }
 
-@keyframes wdNavNeonPulse{
-  0%{ opacity:.3; transform:translateX(-50%) scale(1); }
-  50%{ opacity:.55; transform:translateX(-50%) scale(1.2); }
-  100%{ opacity:.3; transform:translateX(-50%) scale(1); }
+.wd-navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-right {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  flex-wrap: wrap; /* Permette agli elementi di andare a capo se lo schermo è più stretto */
 }

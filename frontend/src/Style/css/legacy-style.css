@@ -1,187 +1,87 @@
-/* =======================================================================
-   WEBONDAY – LEGACY STYLE PRESET
-   Compatibile con struttura e naming v27
-   Prefisso standard: wd-
-======================================================================= */
+/* legacy-vars.css
+   Variabili storiche WebOnDay
+   Nessun componente, solo token
+*/
 
-
-/* -----------------------------------------------------------------------
-   PALETTE – CENTRALIZZATA
------------------------------------------------------------------------ */
 :root {
-    /* Neon / Digital */
-    --wd-cyan-300: #67e8f9;
-    --wd-cyan-400: #22d3ee;
-    --wd-cyan-500: #06b6d4;
-  
-    --wd-fuchsia-300: #f9a8d4;
-    --wd-fuchsia-400: #f472b6;
-    --wd-fuchsia-500: #ec4899;
-  
-    --wd-blue-300: #93c5fd;
-    --wd-blue-600: #2563eb;
-    --wd-blue-700: #1d4ed8;
-    --wd-blue-800: #1e40af;
-  
-    --wd-amber-300: #fcd34d;
-    --wd-amber-400: #fbbf24;
-  
-    /* Background */
-    --wd-dark-1: #050509;
-    --wd-dark-2: #090912;
-  
-    --wd-gray-50: #f9fafb;
-    --wd-gray-100: #f3f4f6;
-    --wd-gray-300: #d1d5db;
-    --wd-gray-600: #4b5563;
-    --wd-gray-700: #374151;
-    --wd-gray-900: #111827;
-  
-    /* Radius */
-    --wd-radius-lg: 16px;
-    --wd-radius-xl: 24px;
-  
-    /* Shadow */
-    --wd-shadow-md: 0 5px 15px rgba(0,0,0,0.15);
-    --wd-shadow-lg: 0 10px 30px rgba(0,0,0,0.25);
-  
-    /* Glow presets */
-    --wd-glow-cyan: 0 0 20px rgba(34,211,238,.7);
-    --wd-glow-fuchsia: 0 0 20px rgba(244,114,182,.7);
-    --wd-glow-blue: 0 0 20px rgba(37,99,235,.6);
-    --wd-navbar-bg: var(--wd-gray-900);
-  }
-  
-  
-  /* -----------------------------------------------------------------------
-     TYPOGRAPHY (eredita Inter da Tailwind)
-  ----------------------------------------------------------------------- */
-  body {
-    font-family: Inter, sans-serif;
-  }
-  
-  
-  /* -----------------------------------------------------------------------
-     LAYOUT HELPERS
-  ----------------------------------------------------------------------- */
-  .wd-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-  }
-  
-  .wd-section {
-    padding: 80px 0;
-  }
-  
-  .wd-background-dark {
-    background: var(--wd-dark-1);
-    color: white;
-  }
-  
-  
+   /* ===============================================================
+     BRAND / ACCENT
+  =============================================================== */
+  --wd-accent-cyan: #22d3ee;
+  --wd-accent-pink: #f472b6;
 
-  
-  /* =======================================================================
-     CARD SYSTEM (Base + Accent + Neon)
-  ======================================================================= */
-  
-  .wd-card {
-    background: white;
-    border-radius: var(--wd-radius-xl);
-    padding: 32px;
-    box-shadow: var(--wd-shadow-md);
-    border: 1px solid var(--wd-gray-100);
-    transition: 0.25s ease;
-  }
-  
-  .wd-card:hover {
-    box-shadow: var(--wd-shadow-lg);
-  }
-  
-  /* Accent borders */
-  .wd-card-cyan { border-color: var(--wd-cyan-400); }
-  .wd-card-fuchsia { border-color: var(--wd-fuchsia-400); }
-  .wd-card-amber { border-color: var(--wd-amber-400); }
-  
-  /* NEON VERSIONS */
-  .wd-card-neon {
-    border-width: 2px;
-    box-shadow: var(--wd-glow-cyan);
-  }
-  
-  .wd-card-neon-fuchsia {
-    border-color: var(--wd-fuchsia-400);
-    box-shadow: var(--wd-glow-fuchsia);
-  }
-  
-  .wd-card-neon-blue {
-    border-color: var(--wd-blue-600);
-    box-shadow: var(--wd-glow-blue);
-  }
-  
-  
-  
-  /* =======================================================================
-     HERO SYSTEM (Founder, ChiSiamo, Vision, Mission)
-  ======================================================================= */
-  
-  .wd-hero {
-    position: relative;
-    text-align: center;
-    padding: 120px 0;
-    color: white;
-  }
-  
-  .wd-hero-gradient {
-    background: linear-gradient(90deg,
-      #4c1d95,   /* purple-800 */
-      #db2777,   /* pink-600 */
-      #1d4ed8    /* blue-700 */
-    );
-  }
-  
-  /* Neon title used across pages */
-  .neon-title {
-    text-shadow:
-      0 0 10px rgba(255,255,255,0.6),
-      0 0 30px var(--wd-cyan-300);
-  }
-  
-  /* Bubble text box */
-  .neon-bubble {
-    background: rgba(0,0,0,0.25);
-    padding: 16px 24px;
-    border-radius: 16px;
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.25);
-  }
-  
-  /* Founder image glow */
-  .wd-founder-photo {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    border: 4px solid var(--wd-cyan-400);
-    box-shadow: var(--wd-glow-cyan);
-  }
-  
-  
-  
-  /* =======================================================================
-     GLOW / BACKGROUND EFFECTS (per Azienda, ChiSiamo, Legal)
-  ======================================================================= */
-  
-  .wd-background-glow {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      circle at center,
-      rgba(34,211,238,0.15),
-      transparent 70%
-    );
-    pointer-events: none;
-  }
-  
-  
-  
+  /* ===============================================================
+     NAVBAR
+  =============================================================== */
+  --wd-navbar-bg: #050816;
+  --wd-navbar-border: rgba(255,255,255,0.08);
+
+  --wd-navbar-text: #e5e7eb;
+  --wd-navbar-text-muted: #a1a1aa;
+  --wd-navbar-text-hover: #ffffff;
+
+  --wd-navbar-accent-bg: #22c55e;
+  --wd-navbar-accent-bg-hover: #16a34a;
+  --wd-navbar-accent-text: #020617;
+
+  --wd-navbar-badge-bg: #020617;
+  --wd-navbar-badge-text: #22c55e;
+
+  /* Neon navbar */
+  --wd-navbar-neon-cyan: rgba(34,211,238,.25);
+  --wd-navbar-neon-pink: rgba(244,114,182,.18);
+
+  /* ===============================================================
+     FOOTER
+  =============================================================== */
+  --wd-footer-bg: var(--wd-gray-900);
+  --wd-footer-text: var(--wd-gray-300);
+  --wd-footer-title: #ffffff;
+
+  --wd-footer-link: var(--wd-gray-300);
+  --wd-footer-link-hover: var(--wd-cyan-300);
+
+  --wd-footer-border: rgba(255,255,255,0.08);
+
+  /* Neon footer */
+  --wd-footer-neon-cyan: rgba(34,211,238,0.25);
+  --wd-footer-neon-pink: rgba(244,114,182,0.25);
+
+  /* Neon / Digital */
+  --wd-cyan-300: #67e8f9;
+  --wd-cyan-400: #22d3ee;
+  --wd-cyan-500: #06b6d4;
+
+  --wd-fuchsia-300: #f9a8d4;
+  --wd-fuchsia-400: #f472b6;
+  --wd-fuchsia-500: #ec4899;
+
+  --wd-blue-300: #93c5fd;
+  --wd-blue-600: #2563eb;
+  --wd-blue-700: #1d4ed8;
+  --wd-blue-800: #1e40af;
+
+  --wd-amber-300: #fcd34d;
+  --wd-amber-400: #fbbf24;
+
+  /* Grigi legacy */
+  --wd-gray-50: #f9fafb;
+  --wd-gray-100: #f3f4f6;
+  --wd-gray-300: #d1d5db;
+  --wd-gray-600: #4b5563;
+  --wd-gray-700: #374151;
+  --wd-gray-900: #111827;
+
+  /* ===============================================================
+   WHATSAPP BUTTON TOKENS
+=============================================================== */
+
+  --wd-whatsapp-bg: #25d366;
+  --wd-whatsapp-icon-size: 34px;
+  --wd-whatsapp-size: 62px;
+
+  /* Neon / glow */
+  --wd-whatsapp-glow-main: rgba(37, 211, 102, 0.7);
+  --wd-whatsapp-glow-cyan: rgba(34, 211, 238, 0.25);
+}
+

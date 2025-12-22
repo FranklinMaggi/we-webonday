@@ -1,0 +1,40 @@
+import type { Env } from "../types/env";
+import { BusinessSchema } from "../schemas/business/businessSchema";
+import { normalizeBusiness } from "../normalizers/normalizeBusiness";
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+/**
+ * GET /api/business/mine?userId=UUID
+ */
+export async function getMyBusiness(request: Request, env: Env) {
+  const userId = new URL(request.url).searchParams.get("userId");
+  if (!userId) {
+    return json({ error: "Missing userId" }, 400);
+  }
+
+  // 1️⃣ lookup diretto user → business
+  const businessId = await env.BUSINESS_KV.get(`USER_BUSINESS:${userId}`);
+  if (!businessId) {
+    return json({ ok: true, business: null });
+  }
+
+  // 2️⃣ load business
+  const stored = await env.BUSINESS_KV.get(`BUSINESS:${businessId}`);
+  if (!stored) {
+    return json({ ok: true, business: null });
+  }
+
+  // 3️⃣ validazione dominio
+  const parsed = BusinessSchema.parse(JSON.parse(stored));
+
+  // 4️⃣ normalizzazione output
+  const business = normalizeBusiness(parsed);
+
+  return json({ ok: true, business });
+}

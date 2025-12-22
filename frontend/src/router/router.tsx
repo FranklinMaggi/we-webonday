@@ -21,13 +21,20 @@ import CheckoutPage from "../pages/user/checkout";
 import Privacy from "../pages/policy/privacy";
 import Terms from "../pages/policy/terms";
 import PolicyPage from "../pages/policy/policy";
+// User Business
+import UserBusinessDashboard from "../pages/user/business/UserBusinessDashboard";
+import RegisterBusiness from "../pages/user/business/RegisterBusiness";
+
+// Business
+import BusinessDashboard from "../pages/business/Dashboard";
+import BusinessGuard from "../components/business/BusinessGuard";
 
 // Admin
 import AdminLogin from "../pages/admin/utils/login";
 import AdminDashboard from "../pages/admin/dashboard";
 import AdminOrdersPage from "../pages/admin/orders";
-import AdminOrderDetails from "../pages/admin/orders/[id]";
 
+import AdminOrderDetails from "../pages/admin/orders/[id]";
 // SuperAdmin
 import SuperAdminLayout from "../components/superadmin/AdminLayout";
 import SuperAdminGuard from "../components/superadmin/AdminGuard";
@@ -51,6 +58,8 @@ const router = createBrowserRouter([
 
       { path: "user/login", element: <UserLogin /> },
       { path: "user/checkout", element: <CheckoutPage /> },
+      { path: "user/business/dashboard", element: <UserBusinessDashboard /> },
+      { path: "user/business/register", element: <RegisterBusiness /> },
 
       { path: "policy/privacy", element: <Privacy /> },
       { path: "policy/terms", element: <Terms /> },
@@ -93,6 +102,21 @@ const router = createBrowserRouter([
       { path: "logs", element: <SuperAdminLogs /> },
     ],
   },
+  /* =========================
+   BUSINESS (SaaS)
+========================= */
+{
+  path: "/business",
+  element: (
+    <BusinessGuard>
+      <MainLayout />
+    </BusinessGuard>
+  ),
+  children: [
+    { path: "dashboard", element: <BusinessDashboard /> },
+  ],
+},
+
 ]);
 
 export default router;

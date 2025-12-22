@@ -1,18 +1,31 @@
-/* layout.css */
+/* =========================
+   GLOBAL RESPONSIVE LAYOUT
+========================= */
 
-.app-layout{
+.app-layout {
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
-    display:flex;
-    flex-direction:column;
   }
   
-  .site-content{
-    flex:1;
+  .site-content {
     width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
   }
   
-  /* evita contenuti attaccati a navbar/footer */
-  .site-content > *{
-    width:100%;
+  /* Tablet */
+  @media (max-width: 1024px) {
+    .site-content {
+      padding: 20px;
+    }
+  }
+  
+  /* Mobile */
+  @media (max-width: 640px) {
+    .site-content {
+      padding: 16px;
+    }
   }
   

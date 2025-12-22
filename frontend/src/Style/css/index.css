@@ -1,26 +1,21 @@
-@charset "UTF-8";
-
-/* ===============================
-   IMPORT CSS LEGACY (PRIMA DI TUTTO)
-================================ */
-@import "./base.css" ; 
 @import "./base.css";
 @import "./legacy-style.css";
-@import "./catalog.css";
-@import "./whatsapp.css";
-@import './hero.css';
-@import "./footer.css";
+
+@import "./layout.css";
+
+/* global layout blocks */
 @import "./navbar.css";
-@import "./login.css"; 
-@import "./checkout.css"; 
+@import "./footer.css";
 
+/* page sections */
+@import "./hero.css";
 
-/* ===============================
-   TAILWIND
-================================ */
+/* components */
+@import "./productCard.css";
+@import "./cart.css";
+@import "./whatsapp.css";
 
-/* TAILWIND */
-@tailwindcss ;
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* pages */
+@import "./home.css";
+@import "./login.css";
+@import "./checkout.css";

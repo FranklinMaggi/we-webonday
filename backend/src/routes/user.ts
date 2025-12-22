@@ -1,7 +1,7 @@
 //backend/src/routes/user.ts
 import type { Env } from "../types/env";
 import { logActivity } from "../lib/logActivity";
-import { UserSchema, UserInputSchema } from "../schemas/userSchema";
+import { UserSchema, UserInputSchema } from "../schemas/core/userSchema";
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {

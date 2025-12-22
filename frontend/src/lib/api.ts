@@ -8,7 +8,7 @@ if (API_BASE === undefined) {
 /* =========================
    API FETCH WRAPPER
 ========================= */
-export async function apiFetch(
+export async function apiFetch<T = any>(
   path: string,
   options: RequestInit = {}
 ) {
@@ -29,7 +29,7 @@ export async function apiFetch(
   }
 
   try {
-    return await res.json();
+    return await res.json() as Promise<T>;
   } catch {
     return null;
   }

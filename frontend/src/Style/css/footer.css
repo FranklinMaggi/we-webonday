@@ -1,139 +1,78 @@
-  /* =======================================================================
-     FOOTER PRESET (compatibile con Footer.tsx)
-  ======================================================================= */
-  
-  .wd-footer {
-    background: var(--wd-gray-900);
-    color: var(--wd-gray-300);
-    padding: 40px 24px;
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-  }
-  
-  .wd-footer h4 {
-    margin-bottom: 12px;
-    color: white;
-  }
-  
-  .wd-footer a {
-    display: block;
-    color: var(--wd-gray-300);
-    margin-bottom: 8px;
-    text-decoration: none;
-  }
-  
-  .wd-footer a:hover {
-    color: var(--wd-cyan-300);
-  }
-  /* Footer columns */
-.wd-footer-col {
-    min-width: 180px;
-    margin-bottom: 20px;
-  }
-  
-  .wd-footer-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: white;
-  }
-  
-  .wd-footer-link {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--wd-gray-300);
-    text-decoration: none;
-  }
-  
-  .wd-footer-link:hover {
-    color: var(--wd-cyan-300);
-  }
-  
+/* =====================================================
+   FOOTER – WebOnDay
+   Layout + neon (token driven)
+===================================================== */
 
-/* =======================================================================
-
-   FOOTER NEON GLOW – WebOnDay
-   Estende wd-footer con effetti luminosi
-======================================================================= */
-
-.wd-footer-neon {
+.wd-footer {
+    background: var(--wd-footer-bg);
+    color: var(--wd-footer-text);
+  
+    padding: 48px 32px 24px;
+  
+    border-top: 1px solid var(--wd-footer-border);
     position: relative;
     overflow: hidden;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 -4px 25px rgba(34,211,238,0.25),
-                0 -2px 8px rgba(244,114,182,0.25);
   }
   
-  /* Glow dinamico sottile su sfondo */
-  .wd-footer-neon::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      circle at top center,
-      rgba(34,211,238,0.12),
-      rgba(244,114,182,0.10),
-      transparent 70%
-    );
-    pointer-events: none;
-    z-index: 0;
-  }
+  /* ================= GRID ================= */
   
-  /* Glow animato laterale */
-  .wd-footer-neon::after {
-    content: "";
-    position: absolute;
-    bottom: -40px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 220%;
-    height: 80px;
-    background: radial-gradient(
-      ellipse,
-      rgba(34,211,238,0.25),
-      rgba(244,114,182,0.18),
-      transparent 80%
-    );
-    filter: blur(20px);
-    animation: wdNeonPulse 6s infinite ease-in-out;
-    pointer-events: none;
-    z-index: 0;
-  }
+  .wd-footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px;
   
-  @keyframes wdNeonPulse {
-    0% { opacity: 0.35; transform: translateX(-50%) scale(1); }
-    50% { opacity: 0.55; transform: translateX(-50%) scale(1.2); }
-    100% { opacity: 0.35; transform: translateX(-50%) scale(1); }
-  }
-  
-  
-  /* -----------------------------------------------------------------------
-     LINK NEON EFFECT
-  ----------------------------------------------------------------------- */
-  
-  .wd-footer-link {
     position: relative;
     z-index: 2;
-    transition: color 0.25s ease, text-shadow 0.25s ease;
+  }
+  
+  .wd-footer-col {
+    min-width: 180px;
+  }
+  
+  /* ================= TITOLI ================= */
+  
+  .wd-footer-title {
+    margin-bottom: 12px;
+  
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--wd-footer-title);
+  
+    text-shadow:
+      0 0 6px rgba(255,255,255,0.6),
+      0 0 14px rgba(34,211,238,0.4);
+  }
+  
+  /* ================= LINK ================= */
+  
+  .wd-footer-link {
+    display: block;
+    margin-bottom: 8px;
+  
+    color: var(--wd-footer-link);
+    text-decoration: none;
+  
+    position: relative;
+    transition: color .25s ease, text-shadow .25s ease;
   }
   
   .wd-footer-link:hover {
-    color: var(--wd-cyan-300);
+    color: var(--wd-footer-link-hover);
     text-shadow:
-        0 0 8px rgba(34,211,238,0.8),
-        0 0 14px rgba(34,211,238,0.6),
-        0 0 25px rgba(34,211,238,0.8);
+      0 0 8px rgba(34,211,238,0.8),
+      0 0 14px rgba(34,211,238,0.6);
   }
+  
   .wd-footer-link::after {
     content: "";
     position: absolute;
-    bottom: -4px;
     left: 0;
+    bottom: -4px;
+  
     width: 0%;
     height: 2px;
-    background: var(--wd-cyan-300);
-    box-shadow: 0 0 6px rgba(34,211,238,0.8);
+  
+    background: var(--wd-footer-link-hover);
     transition: width .25s ease;
   }
   
@@ -141,47 +80,34 @@
     width: 100%;
   }
   
-  /* -----------------------------------------------------------------------
-     TITOLI NEON
-  ----------------------------------------------------------------------- */
+  /* ================= BOTTOM ================= */
   
-  .wd-footer-title {
-    position: relative;
-    z-index: 2;
-    color: white;
-    text-shadow:
-      0 0 6px rgba(255,255,255,0.6),
-      0 0 14px rgba(34,211,238,0.4);
+  .wd-footer-bottom {
+    margin-top: 32px;
+    padding-top: 16px;
+  
+    text-align: center;
+    font-size: .8rem;
+    opacity: .65;
+  
+    border-top: 1px solid var(--wd-footer-border);
   }
-  /* -----------------------------------------------------------------------
-   FOOTER STRUCTURE
------------------------------------------------------------------------ */
-
-.wd-footer-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 32px;
-  padding: 48px 32px 24px;
-  position: relative;
-  z-index: 2;
-}
-
-.wd-footer-text {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.75);
-}
-
-/* -----------------------------------------------------------------------
-   FOOTER BOTTOM
------------------------------------------------------------------------ */
-
-.wd-footer-bottom {
-  text-align: center;
-  padding: 16px 24px 28px;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.55);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  position: relative;
-  z-index: 2;
-}
+  
+  /* ================= NEON BACKGROUND ================= */
+  
+  .wd-footer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+  
+    background: radial-gradient(
+      circle at top center,
+      var(--wd-footer-neon-cyan),
+      var(--wd-footer-neon-pink),
+      transparent 70%
+    );
+  
+    pointer-events: none;
+    z-index: 0;
+  }
+  
