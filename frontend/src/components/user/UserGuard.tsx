@@ -6,14 +6,14 @@ export default function UserGuard({ children }: { children: ReactNode }) {
   const user = useAuthStore((s) => s.user);
   const ready = useAuthStore((s) => s.ready);
 
-  // ⛔️ Aspetta bootstrap auth
+  // 1️⃣ Auth non ancora risolta → NON FARE NULLA
   if (!ready) return null;
 
-  // ⛔️ Non loggato
+  // 2️⃣ Ready ma user NULL → davvero non loggato
   if (!user) {
-    return <Navigate to="/user/login?redirect=/user/checkout" replace />;
+    return <Navigate to="/user/login" replace />;
   }
 
-  // ✅ OK
+  // 3️⃣ OK
   return <>{children}</>;
 }
