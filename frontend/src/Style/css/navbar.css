@@ -208,3 +208,49 @@
   justify-content: center;
   flex-wrap: wrap; /* Permette agli elementi di andare a capo se lo schermo è più stretto */
 }
+.mode-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mode-switch span {
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+.mode-switch span.active {
+  font-weight: 600;
+  opacity: 1;
+}
+
+.switch {
+  width: 42px;
+  height: 22px;
+  background: #ccc;
+  border-radius: 999px;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.switch::after {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s ease;
+}
+
+.switch.partner {
+  background: #111;
+}
+
+.switch.partner::after {
+  transform: translateX(20px);
+}

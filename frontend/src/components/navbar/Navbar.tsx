@@ -1,10 +1,10 @@
-// frontend/src/components/navbar/Navbar.tsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { cartStore } from "../../lib/cartStore"; // hook zustand
+import { cartStore } from "../../lib/cartStore";
 import { uiBus } from "../../lib/uiBus";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { logout } from "../../lib/authApi";
+import ModeSwitch from "./ModeSwitch";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -15,6 +15,7 @@ export default function Navbar() {
 
   async function handleLogout() {
     await logout();
+    localStorage.removeItem("user_mode"); // reset esplicito
     window.location.href = "/user/login";
   }
 
@@ -47,7 +48,10 @@ export default function Navbar() {
         <Link to="/vision" className="wd-navbar-link">Vision</Link>
         <Link to="/mission" className="wd-navbar-link">Mission</Link>
 
-        {/* AUTH SECTION */}
+        {/* MODE SWITCH */}
+        {!loading && user && <ModeSwitch />}
+
+        {/* AUTH */}
         {!loading && !user && (
           <Link to="/user/login" className="wd-navbar-link">
             Accedi
@@ -70,7 +74,6 @@ export default function Navbar() {
           onClick={() => uiBus.emit("cart:toggle")}
           className="wd-navbar-link wd-link-accent nav-cart-toggle"
           aria-label="Apri carrello"
-          title="Apri carrello"
         >
           Carrello <span className="nav-cart-badge">{cartCount}</span>
         </button>
@@ -78,4 +81,3 @@ export default function Navbar() {
     </nav>
   );
 }
-
