@@ -5,6 +5,7 @@ import { uiBus } from "../../lib/uiBus";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { logout } from "../../lib/authApi";
 import ModeSwitch from "./ModeSwitch";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -12,11 +13,13 @@ export default function Navbar() {
   const cartCount = items.length;
 
   const { user, loading } = useCurrentUser();
+  const navigate = useNavigate();
 
   async function handleLogout() {
     await logout();
     localStorage.removeItem("user_mode"); // reset esplicito
     window.location.href = "/user/login";
+    navigate("/user/login", { replace: true });
   }
 
   return (
@@ -49,7 +52,7 @@ export default function Navbar() {
         <Link to="/mission" className="wd-navbar-link">Mission</Link>
 
         {/* MODE SWITCH */}
-        {!loading && user && <ModeSwitch />}
+        {user && <ModeSwitch />}
 
         {/* AUTH */}
         {!loading && !user && (

@@ -3,13 +3,19 @@ import { useUserMode } from "../../lib/userModeStore";
 import { getMyBusiness } from "../../lib/businessApi";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { useState } from "react";
+import { useEffect } from "react";
+
 
 export default function ModeSwitch() {
   const { mode, setMode } = useUserMode();
   const { user } = useCurrentUser();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
+  useEffect(() => {
+    if (!user) {
+      setMode("client");
+    }
+  }, [user, setMode]);
   if (!user) return null;
   const userId = user.id;
 
