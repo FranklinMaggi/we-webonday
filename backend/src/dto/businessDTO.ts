@@ -12,7 +12,7 @@ export interface BusinessDTO {
     referralToken: string;
     referredBy: string | null;
   
-    status: "draft" | "active" | "suspended";
+    status: "draft" |"pending"| "active" | "suspended";
     createdAt: string;
   }
   

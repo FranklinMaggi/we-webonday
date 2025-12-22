@@ -1,5 +1,6 @@
 import type { Env } from "../types/env";
 import { BusinessSchema } from "../schemas/business/businessSchema";
+import { requireUser } from "../lib/auth";
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -10,19 +11,19 @@ function json(body: unknown, status = 200) {
 
 /**
  * POST /api/business/menu/upload
- * Body: multipart/form-data
- * Field: file (PDF)
- * Query: businessId
- *
- * Regole:
- * - 1 PDF per business
- * - overwrite sicuro
- * - stato business: draft → active
  */
 export async function uploadBusinessMenu(
   request: Request,
   env: Env
 ) {
+  // 1️⃣ AUTH
+  const auth = await requireUser(request, env);
+  if (!auth) {
+    return json({ error: "Unauthorized" }, 401);
+  }
+
+  const { userId } = auth;
+
   const url = new URL(request.url);
   const businessId = url.searchParams.get("businessId");
 
@@ -33,6 +34,13 @@ export async function uploadBusinessMenu(
   const storedBusiness = await env.BUSINESS_KV.get(`BUSINESS:${businessId}`);
   if (!storedBusiness) {
     return json({ error: "Business not found" }, 404);
+  }
+
+  const parsed = BusinessSchema.parse(JSON.parse(storedBusiness));
+
+  // 2️⃣ Ownership check
+  if (parsed.ownerUserId !== userId) {
+    return json({ error: "Forbidden" }, 403);
   }
 
   const form = await request.formData();
@@ -46,25 +54,19 @@ export async function uploadBusinessMenu(
     return json({ error: "Only PDF allowed" }, 400);
   }
 
-  // 🔒 key deterministica → overwrite automatico
+  // 3️⃣ Upload deterministico
   const key = `menu-${businessId}.pdf`;
 
   await env.BUSINESS_MENU_BUCKET.put(key, file.stream(), {
-    httpMetadata: {
-      contentType: "application/pdf",
-    },
+    httpMetadata: { contentType: "application/pdf" },
   });
 
   const menuPdfUrl = `${env.R2_PUBLIC_BASE_URL}/${key}`;
 
-  // 🔒 validazione business esistente
-  const parsed = BusinessSchema.parse(JSON.parse(storedBusiness));
-
-  // ✅ update coerente con schema
   const updatedBusiness = {
     ...parsed,
     menuPdfUrl,
-    status: "active", // ⬅️ AUTO ATTIVAZIONE
+    status: "pending",
   };
 
   await env.BUSINESS_KV.put(
@@ -76,6 +78,6 @@ export async function uploadBusinessMenu(
     ok: true,
     businessId,
     menuPdfUrl,
-    status: "active",
+    status: "pending",
   });
 }

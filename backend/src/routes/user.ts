@@ -152,9 +152,17 @@ export async function getUser(request: Request, env: Env) {
 // POST /api/user/logout
 export async function logoutUser(request: Request, env: Env) {
   const headers = new Headers();
+
   headers.append(
     "Set-Cookie",
-    "session=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0"
+    [
+      "webonday_session=",
+      "Path=/",
+      "HttpOnly",
+      "SameSite=None",
+      "Secure",
+      "Max-Age=0",
+    ].join("; ")
   );
 
   return new Response(
@@ -165,3 +173,4 @@ export async function logoutUser(request: Request, env: Env) {
     }
   );
 }
+

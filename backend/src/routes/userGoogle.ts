@@ -2,6 +2,7 @@
 import type { Env } from "../types/env";
 import { getCorsHeaders } from "../index";
 import { logActivity } from "../lib/logActivity";
+import { getUserFromSession } from "../lib/auth";
 /* ============================
    GOOGLE AUTH
 ============================ */
@@ -108,7 +109,7 @@ if (!userId) {
 
 // merge con eventuale record esistente (mantieni createdAt)
 if (userId) {
-  const prevRaw = await env.ON_USERS_KV.get(`user_${userId}`);
+  const prevRaw = await env.ON_USERS_KV.get(`USER:${userId}`);
   if (prevRaw) {
     const prev = JSON.parse(prevRaw);
     (userRecord as any).createdAt = prev.createdAt ?? userRecord.lastLoginAt;
@@ -181,23 +182,16 @@ return new Response(null, {
    GET CURRENT USER
 ============================ */
 export async function getCurrentUser(
-    request: Request,
-    env: Env
-  ): Promise<Response> {
-    const cookie = request.headers.get("Cookie") ?? "";
-    const match = cookie.match(/webonday_session=([^;]+)/);
-  
-    let user = null;
-  
-    if (match) {
-      const raw = await env.ON_USERS_KV.get(`user_${match[1]}`);
-      if (raw) user = JSON.parse(raw);
-    }
-  
-    return new Response(JSON.stringify({ ok: true, user }), {
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  request: Request,
+  env: Env
+): Promise<Response> {
+  const user = await getUserFromSession(request, env);
+
+  return new Response(
+    JSON.stringify({ ok: true, user }),
+    { headers: { "Content-Type": "application/json" } }
+  );
+}
   
  
   

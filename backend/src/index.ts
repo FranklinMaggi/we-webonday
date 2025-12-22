@@ -1,6 +1,5 @@
 // backend/src/index.ts
 import type { Env } from "./types/env";
-import { testUploadMenu } from "./routes/testUpload";
 import { uploadBusinessMenu } from "./routes/uploadMenu";
 import {
   saveCart,
@@ -16,7 +15,7 @@ import { getMyBusiness }
 from "./routes/businessMine";
 
 import { getBusinessPublic } from "./routes/businessPublic";
-
+import { submitBusiness } from "./routes/businessSubmit";
 import {
   getProducts,
   getProduct,
@@ -312,7 +311,9 @@ if (pathname === "/api/product" && method === "GET") {
       if (pathname.startsWith("/api/business/public/") && method === "GET") {
         return withCors(await getBusinessPublic(request, env), request, env);
       }
-      
+      if (pathname === "/api/business/submit" && method === "POST") {
+        return withCors(await submitBusiness(request, env), request, env);
+      }
       /* ===== PAYPAL ===== */
       if (pathname === "/api/payment/paypal/create-order" && method === "POST") {
         return withCors(await createPaypalOrder(request, env), request, env);
@@ -321,10 +322,7 @@ if (pathname === "/api/product" && method === "GET") {
         return withCors(await capturePaypalOrder(request, env), request, env);
         }
 
-      /* ===== TEST UPLOAD R2 ===== */
-      if (pathname === "/api/test/upload" && method === "POST") {
-      return withCors(await testUploadMenu(request, env), request, env);
-        }
+     
        /* ===== BUSINESS MENU UPLOAD ===== */
       if (
       pathname === "/api/business/menu/upload" &&

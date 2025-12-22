@@ -1,7 +1,8 @@
+//businessmMine.ts
 import type { Env } from "../types/env";
 import { BusinessSchema } from "../schemas/business/businessSchema";
 import { normalizeBusiness } from "../normalizers/normalizeBusiness";
-
+import { requireUser } from "../lib/auth";
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -13,10 +14,10 @@ function json(body: unknown, status = 200) {
  * GET /api/business/mine?userId=UUID
  */
 export async function getMyBusiness(request: Request, env: Env) {
-  const userId = new URL(request.url).searchParams.get("userId");
-  if (!userId) {
-    return json({ error: "Missing userId" }, 400);
-  }
+    const auth = await requireUser(request, env);
+    if (!auth) return json({ error: "Unauthorized" }, 401);
+    
+    const { userId } = auth;
 
   // 1️⃣ lookup diretto user → business
   const businessId = await env.BUSINESS_KV.get(`USER_BUSINESS:${userId}`);

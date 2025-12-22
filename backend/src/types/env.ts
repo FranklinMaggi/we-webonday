@@ -8,7 +8,7 @@ export interface Env {
     ON_ACTIVITY_USER_KV: KVNamespace;
     ORDER_KV: KVNamespace;
     BUSINESS_KV:KVNamespace;
-    REFERRAL_KV:KVNamespace;
+    REFERRALS_KV:KVNamespace;
     BUSINESS_MENU_BUCKET: R2Bucket; // ⬅️ QUESTO
     R2_PUBLIC_BASE_URL: string;
     GOOGLE_CLIENT_ID: string;

@@ -16,7 +16,7 @@ export const BusinessSchema = z.object({
   referralToken: z.string().min(6),
   referredBy: z.string().nullable(),
 
-  status: z.enum(["draft", "active", "suspended"]).default("draft"),
+  status: z.enum(["draft","pending", "active", "suspended"]).default("draft"),
 
   createdAt: z.string(),
 });
