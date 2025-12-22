@@ -15,7 +15,7 @@ interface CurrentUserState {
   clearUser: () => void;
 }
 
-export const currentUserStore = create<CurrentUserState>((set) => ({
+export const useAuthStore = create<CurrentUserState>((set) => ({
   user: null,
   loading: true,
 

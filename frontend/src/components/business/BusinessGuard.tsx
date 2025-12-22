@@ -1,28 +1,35 @@
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { getMyBusiness } from "../../lib/businessApi";
 import { useUserMode } from "../../lib/userModeStore";
 import type { BusinessDTO } from "../../lib/dto/businessDTO";
+import { useAuthStore } from "../../store/auth.store";
 
 interface Props {
   children: React.ReactElement;
 }
 
 export default function BusinessGuard({ children }: Props) {
-  const { user, loading: userLoading } = useCurrentUser();
+  const user = useAuthStore((s) => s.user);
+  const ready = useAuthStore((s) => s.ready);
   const { mode } = useUserMode();
 
   const [business, setBusiness] = useState<BusinessDTO | null>(null);
   const [businessLoading, setBusinessLoading] = useState(true);
 
+  // ⛔️ Aspetta bootstrap auth
+  if (!ready) return null;
+
+  // ⛔️ Non loggato
+  if (!user) return <Navigate to="/user/login" replace />;
+
   // ===============================
-  // Fetch business solo se serve
+  // Fetch business SOLO se partner
   // ===============================
   useEffect(() => {
-    if (!user || mode !== "partner") {
-      setBusinessLoading(false);
+    if (mode !== "partner") {
       setBusiness(null);
+      setBusinessLoading(false);
       return;
     }
 
@@ -46,39 +53,30 @@ export default function BusinessGuard({ children }: Props) {
     return () => {
       alive = false;
     };
-  }, [user, mode]);
+  }, [user.id, mode]);
+
+  // ⏳ Attesa business
+  if (businessLoading) return null;
 
   // ===============================
-  // Stato di caricamento
-  // ===============================
-  if (userLoading || businessLoading) {
-    return null; // oppure spinner globale
-  }
-
-  // ===============================
-  // Guardie in ordine logico
+  // GUARDIE IN ORDINE LOGICO
   // ===============================
 
-  // 1️⃣ Non loggato
-  if (!user) {
-    return <Navigate to="/user/login" replace />;
-  }
-
-  // 2️⃣ Loggato ma non Partner
+  // 1️⃣ Loggato ma NON partner
   if (mode !== "partner") {
     return <Navigate to="/" replace />;
   }
 
-  // 3️⃣ Partner senza business
+  // 2️⃣ Partner senza business
   if (!business) {
     return <Navigate to="/user/business/register" replace />;
   }
 
-  // 4️⃣ Business in bozza → onboarding
+  // 3️⃣ Business in bozza
   if (business.status === "draft") {
     return <Navigate to="/user/business/upload-menu" replace />;
   }
 
-  // 5️⃣ Tutto ok → dashboard
+  // 4️⃣ OK → dashboard
   return children;
 }

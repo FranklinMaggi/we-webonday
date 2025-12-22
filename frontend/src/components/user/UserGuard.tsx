@@ -1,15 +1,19 @@
 import type { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
-import { useCurrentUser } from "../../hooks/useCurrentUser";
+import { useAuthStore } from "../../store/auth.store";
 
 export default function UserGuard({ children }: { children: ReactNode }) {
-  const { user, loading } = useCurrentUser();
+  const user = useAuthStore((s) => s.user);
+  const ready = useAuthStore((s) => s.ready);
 
-  if (loading) return <p>Caricamento…</p>;
+  // ⛔️ Aspetta bootstrap auth
+  if (!ready) return null;
 
+  // ⛔️ Non loggato
   if (!user) {
     return <Navigate to="/user/login?redirect=/user/checkout" replace />;
   }
 
+  // ✅ OK
   return <>{children}</>;
 }

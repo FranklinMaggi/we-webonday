@@ -21,15 +21,21 @@ export async function resolveOrCreateUser(
   const userRaw = {
     id: userId,
     email: identity.email.toLowerCase(),
-    passwordHash: identity.provider === "password" ? identity.providerUserId : null,
+  
+    // 🔐 passwordHash ESISTE SOLO per auth "password"
+    ...(identity.provider === "password"
+      ? { passwordHash: identity.providerUserId }
+      : {}),
+  
     businessName: null,
     piva: null,
+  
     userType: "private",
     membershipLevel: "FREE",
     status: "active",
     createdAt: new Date().toISOString(),
   };
-
+  
   const user = UserSchema.parse(userRaw);
 
   await env.ON_USERS_KV.put(`USER:${user.id}`, JSON.stringify(user));

@@ -10,10 +10,11 @@ export function buildSessionCookie(
       `webonday_session=${userId}`,
       "Path=/",
       "HttpOnly",
+      "Secure",
+      "SameSite=None",
+      "Domain=.webonday.it",
       "Max-Age=2592000",
-      isLocal ? "SameSite=Lax" : "SameSite=None",
-      !isLocal && "Secure",
-    ].filter(Boolean).join("; ");
+    ].join("; ");
   }
   
 /**

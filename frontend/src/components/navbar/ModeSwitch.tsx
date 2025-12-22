@@ -3,9 +3,9 @@ import { useUserMode } from "../../lib/userModeStore";
 import { getMyBusiness } from "../../lib/businessApi";
 import { useState } from "react";
 import { useEffect } from "react";
-import { currentUserStore } from "../../lib/currentUserStore";
+import { useAuthStore } from "../../store/auth.store";
 
-const user = currentUserStore((s) => s.user);
+const user = useAuthStore((s) => s.user);
 
 
 export default function ModeSwitch() {

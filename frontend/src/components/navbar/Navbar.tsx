@@ -1,30 +1,32 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cartStore } from "../../lib/cartStore";
 import { uiBus } from "../../lib/uiBus";
-import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { logout } from "../../lib/authApi";
 import ModeSwitch from "./ModeSwitch";
-import { useNavigate } from "react-router-dom";
-import { currentUserStore } from "../../lib/currentUserStore";
-
+import { useAuthStore } from "../../store/auth.store";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+
   const items = cartStore((s) => s.items);
   const cartCount = items.length;
 
-  const { user, loading } = useCurrentUser();
+  // 🔐 AUTH STATE
+  const user = useAuthStore((s) => s.user);
+  const ready = useAuthStore((s) => s.ready);
+  const clearUser = useAuthStore((s) => s.clearUser);
+
   const navigate = useNavigate();
 
   async function handleLogout() {
-    await logout();
-  
-    currentUserStore.getState().clearUser();
+    await logout();                // invalida cookie server
+    clearUser();                   // pulisce store client
     localStorage.removeItem("user_mode");
-  
+
     navigate("/user/login", { replace: true });
   }
+
   return (
     <nav className="wd-navbar wd-navbar-neon">
       {/* LOGO */}
@@ -58,13 +60,13 @@ export default function Navbar() {
         {user && <ModeSwitch />}
 
         {/* AUTH */}
-        {!loading && !user && (
+        {ready && !user && (
           <Link to="/user/login" className="wd-navbar-link">
             Accedi
           </Link>
         )}
 
-        {!loading && user && (
+        {ready && user && (
           <button
             type="button"
             onClick={handleLogout}

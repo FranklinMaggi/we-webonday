@@ -27,8 +27,12 @@ export default function RegisterBusiness() {
         piva: "TEMP",
       }),
     });
-    const user = await userRes.json();
-
+   
+  const { ok } = await userRes.json();
+  if (!ok) {
+    alert("Errore registrazione utente");
+    return;
+  }
     // 2. create business
     const bRes = await fetch("/api/business/create", {
       method: "POST",
