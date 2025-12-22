@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import router from "./router/router";
 import "./Style/css/index.css";
+console.log("React version:", React.version);
+console.log("useCallback:", typeof React.useCallback);
 
 import { useAuthStore } from "./store/auth.store";
 
