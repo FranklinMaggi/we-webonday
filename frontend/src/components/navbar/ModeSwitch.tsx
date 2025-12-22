@@ -1,23 +1,25 @@
 import { useNavigate } from "react-router-dom";
 import { useUserMode } from "../../lib/userModeStore";
 import { getMyBusiness } from "../../lib/businessApi";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "../../store/auth.store";
 
-const user = useAuthStore((s) => s.user);
-
-
 export default function ModeSwitch() {
+  // ✅ HOOKS SOLO QUI, dentro il componente
+  const user = useAuthStore((s) => s.user);
+
   const { mode, setMode } = useUserMode();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (!user) {
       setMode("client");
     }
   }, [user, setMode]);
+
   if (!user) return null;
+
   const userId = user.id;
 
   async function toggle() {
@@ -26,7 +28,6 @@ export default function ModeSwitch() {
 
     try {
       if (mode === "client") {
-        // 👉 passo a Partner
         setMode("partner");
 
         const res = await getMyBusiness(userId);
@@ -37,7 +38,6 @@ export default function ModeSwitch() {
           navigate("/user/business/register");
         }
       } else {
-        // 👉 ritorno Cliente
         setMode("client");
         navigate("/");
       }
