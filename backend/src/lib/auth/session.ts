@@ -59,3 +59,14 @@ export async function requireUser(
 
   return { userId, user: JSON.parse(raw) };
 }
+export function destroySessionCookie(env: Env) {
+  return [
+    "webonday_session=",
+    "Path=/",
+    "HttpOnly",
+    "Secure",
+    "SameSite=None",
+    "Domain=.webonday.it",
+    "Max-Age=0",
+  ].join("; ");
+}

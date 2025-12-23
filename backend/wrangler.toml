@@ -13,7 +13,7 @@ GOOGLE_REDIRECT_URI = "https://api.webonday.it/api/user/google/callback"
 R2_PUBLIC_BASE_URL = "https://menus.webonday.it"
 
 # PayPal (SANDBOX o LIVE, a seconda di cosa usi)
-PAYPAL_API_BASE = "https://api-m.sandbox.paypal.com" 
+PAYPAL_API_BASE = "https://api-m.paypal.com" 
 PAYPAL_CLIENT_ID ="AYEUMQQoMpjiulN7LR55YoYmMCFKedP2sv2UHp0fbyQ5NZiF5Q9__k3VFmrkgxEzSOFmCdgz-75X_cpO"
 PAYPAL_SECRET="EGaXsBB1OWf2t2L-cWZ4ho5apyU3cNpIE4qBkPxEnuG27udWyl1jiaJvjNs_gacTehs4hqfAdS55qYiN"
 # ============================

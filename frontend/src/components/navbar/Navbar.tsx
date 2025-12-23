@@ -24,7 +24,7 @@ export default function Navbar() {
     clearUser();                   // pulisce store client
     localStorage.removeItem("user_mode");
 
-    navigate("/user/login", { replace: true });
+    navigate("/", { replace: true });
   }
 
   return (

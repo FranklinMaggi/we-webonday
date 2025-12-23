@@ -5,6 +5,8 @@ import { logActivity } from "../../lib/logActivity";
 import { buildSessionCookie } from "../../lib/auth/session";
 import { UserSchema, UserInputSchema } from "../../schemas/core/userSchema";
 import { getUserFromSession } from "../../lib/auth/session";
+import { destroySessionCookie } from "../../lib/auth/session";
+
 /**
  * Helper JSON response standard
  */
@@ -177,20 +179,15 @@ export async function loginUser(request: Request, env: Env) {
    LOGOUT
    POST /api/user/logout
    ============================================================ */
-export async function logoutUser() {
-  const headers = new Headers();
-
-  headers.set(
-    "Set-Cookie",
-    [
-      "webonday_session=",
-      "Path=/",
-      "HttpOnly",
-      "Secure",
-      "SameSite=None",
-      "Max-Age=0",
-    ].join("; ")
-  );
-
-  return json({ ok: true }, 200, headers);
-}
+   export async function logoutUser(
+    _request: Request,
+    env: Env
+  ): Promise<Response> {
+    const headers = new Headers();
+    headers.set("Set-Cookie", destroySessionCookie(env));
+  
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers,
+    });
+  }

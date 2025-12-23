@@ -67,7 +67,7 @@ export async function acceptPolicyApi(params: {
 }): Promise<void> {
   const res = await fetch(`${API_BASE}/api/policy/accept`, {
     method: "POST",
-    credentials: "include",
+ 
     headers: {
       "Content-Type": "application/json",
     },

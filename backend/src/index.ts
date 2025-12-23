@@ -192,7 +192,6 @@ if (pathname === "/api/cart" && method === "GET") {
         return withCors(await getOrder(request, env), request, env);
       }
 
-      /* ===== PRODUCTS ===== */
      /* ===== PRODUCTS ===== */
 if (pathname === "/api/products" && method === "GET") {
   const products = await getProducts(env);
@@ -241,20 +240,28 @@ if (pathname === "/api/products/register" && method === "PUT") {
         return withCors(await getPolicyStatus(request, env), request, env);
 
       /* ===== PAYPAL ===== */
-if (
-  pathname === "/api/payment/paypal/create-order" &&
-  method === "POST"
-) {
-  return await createPaypalOrder(request, env);
-}
-
-if (
-  pathname === "/api/payment/paypal/capture-order" &&
-  method === "POST"
-) {
-  return await capturePaypalOrder(request, env);
-}
-
+      if (
+        pathname === "/api/payment/paypal/create-order" &&
+        method === "POST"
+      ) {
+        return withCors(
+          await createPaypalOrder(request, env),
+          request,
+          env
+        );
+      }
+      
+      if (
+        pathname === "/api/payment/paypal/capture-order" &&
+        method === "POST"
+      ) {
+        return withCors(
+          await capturePaypalOrder(request, env),
+          request,
+          env
+        );
+      }
+      
 
       /* ===== COOKIES ===== */
       if (pathname === "/api/cookies/accept" && method === "POST")

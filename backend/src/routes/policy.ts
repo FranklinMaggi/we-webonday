@@ -2,6 +2,8 @@
 import type { Env } from "../types/env";
 import { z } from "zod";
 
+import { getUserFromSession } from "../lib/auth/session";
+
 /* =========================
    HELPERS
 ========================= */
@@ -128,34 +130,47 @@ export async function acceptPolicy(
   request: Request,
   env: Env
 ): Promise<Response> {
+
+  // 1️⃣ AUTH
+  const user = await getUserFromSession(request, env);
+  if (!user) {
+    return json({ ok: false, error: "UNAUTHORIZED" }, 401);
+  }
+
+  // 2️⃣ BODY
   let body;
   try {
-    body = AcceptPolicySchema.parse(await request.json());
+    body = z
+      .object({ policyVersion: z.string().min(1) })
+      .parse(await request.json());
   } catch {
     return json({ ok: false, error: "Invalid input" }, 400);
   }
 
-  const { userId, email, policyVersion } = body;
+  const { policyVersion } = body;
 
+  // 3️⃣ CHECK LATEST
   const latest = await env.POLICY_KV.get("POLICY_LATEST");
   if (!latest) {
     return json({ ok: false, error: "No policy available" }, 500);
   }
 
   if (policyVersion !== latest) {
+    
     return json({ ok: false, error: "POLICY_OUTDATED" }, 409);
   }
 
+  // 4️⃣ PERSIST ACCEPTANCE (USER-BOUND)
   await env.POLICY_KV.put(
-    `POLICY_ACCEPTANCE:${userId}:${policyVersion}`,
+    `POLICY_ACCEPTANCE:${user.id}:${policyVersion}`,
     JSON.stringify({
-      email,
       acceptedAt: new Date().toISOString(),
     })
   );
 
   return json({ ok: true });
 }
+
 
 /* =========================
    GET POLICY STATUS
@@ -165,13 +180,16 @@ export async function getPolicyStatus(
   request: Request,
   env: Env
 ): Promise<Response> {
-  const userId = new URL(request.url).searchParams.get("userId");
-  if (!userId) return json({ error: "Missing userId" }, 400);
+
+  const user = await getUserFromSession(request, env);
+  if (!user) {
+    return json({ accepted: false });
+  }
 
   const latest = await env.POLICY_KV.get("POLICY_LATEST");
   if (!latest) return json({ accepted: false });
 
-  const key = `POLICY_ACCEPTANCE:${userId}:${latest}`;
+  const key = `POLICY_ACCEPTANCE:${user.id}:${latest}`;
   const stored = await env.POLICY_KV.get(key);
 
   if (!stored) {
