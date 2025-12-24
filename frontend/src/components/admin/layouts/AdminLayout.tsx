@@ -1,10 +1,8 @@
 import { Outlet } from "react-router-dom";
 import "./adminLayout.css";
-import { requireAdminToken } from "../../utils/admin";
 
 export default function AdminLayout() {
   // protezione globale layout
-  requireAdminToken();
 
   return (
     <div className="admin-container">

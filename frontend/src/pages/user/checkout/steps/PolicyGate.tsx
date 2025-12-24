@@ -1,16 +1,11 @@
 import { useEffect, useState } from "react";
-import {
-  fetchLatestPolicy,
-  acceptPolicyApi,
-} from "../../../../lib/policyApi";
+import { fetchLatestPolicy, acceptPolicy } from "../../../../lib/policyApi";
 
 interface Props {
-  userId: string;
-  email: string;
   onAccepted: () => Promise<void>;
 }
 
-export default function PolicyGate({ userId, email, onAccepted }: Props) {
+export default function PolicyGate({ onAccepted }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [policyVersion, setPolicyVersion] = useState<string>();
@@ -29,11 +24,7 @@ export default function PolicyGate({ userId, email, onAccepted }: Props) {
       setLoading(true);
       setError(undefined);
 
-      await acceptPolicyApi({
-        userId,
-        email,
-        policyVersion,
-      });
+      await acceptPolicy(policyVersion);
 
       await onAccepted();
     } catch (e: any) {
@@ -48,8 +39,8 @@ export default function PolicyGate({ userId, email, onAccepted }: Props) {
       <h2>Privacy & Termini</h2>
 
       <p>
-        Per continuare devi accettare la privacy policy
-        (versione: <strong>{policyVersion ?? "…"}</strong>)
+        Per continuare devi accettare la privacy policy (versione:{" "}
+        <strong>{policyVersion ?? "…"}</strong>)
       </p>
 
       {error && <p style={{ color: "red" }}>{error}</p>}

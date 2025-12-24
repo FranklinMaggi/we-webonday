@@ -119,8 +119,7 @@ export default function CheckoutPage() {
   return (
     <CartReview
       cart={checkout.cart}
-      userId={user.id}
-      email={user.email}
+    
       submitOrder={checkout.submitOrder}
     />
   );

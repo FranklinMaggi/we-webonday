@@ -1,4 +1,36 @@
 // backend/src/index.ts
+/**
+ * WEBONDAY BACKEND – CORE FLOWS
+ *
+ * Questo backend è organizzato per DOMINI LOGICI.
+ * Il frontend NON decide mai la validità di un’azione critica.
+ *
+ * FLUSSI CORE (ordine obbligatorio):
+ *
+ * 1. AUTH
+ *    Visitor → OAuth / Login → Session Cookie → /api/user/me
+ *
+ * 2. POLICY (legale, BLOCCANTE)
+ *    User loggato → GET latest → GET status → POST accept
+ *    Senza policy accettata:
+ *      - non si crea ordine
+ *      - non si paga
+ *
+ * 3. CART
+ *    VisitorId → sync cart → KV
+ *
+ * 4. ORDER
+ *    User + Cart + Policy → POST /api/order → orderId
+ *
+ * 5. PAYMENT
+ *    Order valido → PayPal create → PayPal capture
+ *
+ * PRINCIPI:
+ * - La sessione è l’unica fonte dell’identità utente
+ * - Nessun endpoint critico accetta userId dal client
+ * - Il backend rifiuta sempre flussi illegali
+ */
+
 
 import type { Env } from "./types/env";
 
@@ -18,12 +50,10 @@ import {
   getUser,
   logoutUser,
 } from "./routes/auth/password";
+import { saveOrderSetup } from "./routes/orders/orderSetup";
 
-import {
-  getCurrentUser
-} from "./routes/auth/session";
 // CART
-import { saveCart, getCart } from "./routes/cart";
+import { saveCart, getCart } from "./routes/cart/cart";
 
 // BUSINESS
 import { createBusiness, getBusiness } from "./routes/business/business";
@@ -37,7 +67,7 @@ import {
   getProducts,
   getProduct,
   registerProduct,
-} from "./routes/products";
+} from "./routes/products/products";
 
 // ORDERS
 import {
@@ -50,26 +80,25 @@ import {
 import {
   createPaypalOrder,
   capturePaypalOrder,
-} from "./routes/paymentPaypal";
+} from "./routes/payment/paypal";
 
 // POLICY
 import {
   registerPolicyVersion,
   getLatestPolicy,
-  getPolicyVersion,
   listPolicyVersions,
   acceptPolicy,
   getPolicyStatus,
-} from "./routes/policy";
+} from "./routes/policy/";
 
 // COOKIES
 import {
   acceptCookies,
   getCookieStatus,
-} from "./routes/cookies";
+} from "./routes/cookies/cookies";
 
 // ADMIN
-import { requireAdmin } from "./lib/adminAuth";
+import { requireAdmin } from "./routes/admin/admin.guard";
 
 // HTTP
 import { json } from "./lib/https";
@@ -77,6 +106,13 @@ import { json } from "./lib/https";
 /* ============================
    CORS — SINGLE SOURCE
 ============================ */
+/**
+ * CORS — SINGLE SOURCE OF TRUTH
+ *
+ * Tutte le risposte passano da qui.
+ * NON creare mai header CORS in altri file.
+ * Qualsiasi bug di sessione/cookie parte da qui.
+ */
 export function getCorsHeaders(request: Request, env: Env) {
   const origin = request.headers.get("Origin") || "";
   const allowedOrigins = [
@@ -99,6 +135,7 @@ export function getCorsHeaders(request: Request, env: Env) {
   };
 }
 
+
 function withCors(res: Response, request: Request, env: Env): Response {
   const headers = new Headers(res.headers);
   const cors = getCorsHeaders(request, env);
@@ -111,15 +148,33 @@ function withCors(res: Response, request: Request, env: Env): Response {
   });
 }
 
+
+
 /* ============================
    WORKER
 ============================ */
+/**
+ * WORKER ENTRYPOINT
+ *
+ * Qui vengono:
+ * - mappati gli endpoint
+ * - applicati CORS
+ * - applicati controlli di sicurezza (admin/session)
+ *
+ * NON inserire logica applicativa qui.
+ */
+
+
 export default {
+  
   async fetch(request: Request, env: Env): Promise<Response> {
     const { pathname } = new URL(request.url);
     const method = request.method;
 
-    /* ===== PREFLIGHT ===== */
+    /* ===== PREFLIGHT ===== 
+    * Gestione CORS preflight (OPTIONS)
+ * Nessuna logica applicativa qui
+ */
     if (method === "OPTIONS") {
       return new Response(null, {
         status: 204,
@@ -128,7 +183,17 @@ export default {
     }
 
     try {
+
       /* ===== AUTH ===== */
+          /**
+          * Flusso:
+          * Visitor → OAuth/Login → Session Cookie → /api/user/me
+          *
+          * PRINCIPI:
+          * - L'identità utente deriva SOLO dalla sessione
+          * - Nessun endpoint critico accetta userId dal client
+          */
+
       if (pathname === "/api/user/google/auth" && method === "GET")
         return withCors(await googleAuth(request, env), request, env);
 
@@ -136,7 +201,7 @@ export default {
         return withCors(await googleCallback(request, env), request, env);
 
       if (pathname === "/api/user/me" && method === "GET")
-        return withCors(await getCurrentUser(request, env), request, env);
+        return withCors(await getUser(request, env), request, env);
 
       if (pathname === "/api/user/register" && method === "POST")
         return withCors(await registerUser(request, env), request, env);
@@ -151,6 +216,15 @@ export default {
         return withCors(await logoutUser(request, env), request, env);
 
       /* ===== CART ===== */
+/**
+ * Il carrello è:
+ * - anonimo
+ * - basato su visitorId
+ * - salvato in KV
+ *
+ * NON dipende dall'autenticazione.
+ */
+
 if (pathname === "/api/cart" && method === "POST") {
   const cart = await saveCart(request, env);
   return withCors(
@@ -170,6 +244,15 @@ if (pathname === "/api/cart" && method === "GET") {
 }
 
       /* ===== ORDERS ===== */
+
+      /**
+ * PRECONDIZIONI (verificate nel dominio):
+ * - utente autenticato
+ * - policy accettata
+ * - carrello valido
+ *
+ * L'ordine è la prima entità "legale".
+ */
       if (pathname === "/api/order" && method === "POST")
         return withCors(await createOrder(request, env), request, env);
 
@@ -192,7 +275,9 @@ if (pathname === "/api/cart" && method === "GET") {
         return withCors(await getOrder(request, env), request, env);
       }
 
-     /* ===== PRODUCTS ===== */
+     /* ===== PRODUCTS(ACCESSORIO) ===== 
+     CATALOGO PRODOTTI 
+     NON INFLUISCE SU POLICY , PAGAMENTO O ORDINE */
 if (pathname === "/api/products" && method === "GET") {
   const products = await getProducts(env);
   return withCors(
@@ -219,16 +304,31 @@ if (pathname === "/api/products/register" && method === "PUT") {
     env
   );
 }
-
-      /* ===== POLICY ===== */
+    /*======ORDERS SETUP (ACCESSORIO)========
+    *
+ * Usato per configurazioni guidate (wizard).
+ * NON fa parte del checkout critico.
+ * */
+    if (pathname === "/api/order/setup" && method === "POST") {
+      return withCors(await saveOrderSetup(request, env), request, env);
+    }
+      /* ===== POLICY (CORE , LEGALE , BLOCCANTE ) ===== 
+      * Flusso:
+ * - GET latest
+ * - GET status (deriva dalla sessione)
+ * - POST accept
+ *
+ * Senza policy accettata:
+ * - NON si crea ordine
+ * - NON si paga
+ *
+ * La policy è SEMPRE user-bound (sessione).
+ */
       if (pathname === "/api/policy/version/register" && method === "POST")
         return withCors(await registerPolicyVersion(request, env), request, env);
 
       if (pathname === "/api/policy/version/latest" && method === "GET")
         return withCors(await getLatestPolicy(env), request, env);
-
-      if (pathname === "/api/policy/version/get" && method === "GET")
-        return withCors(await getPolicyVersion(request, env), request, env);
 
       if (pathname === "/api/policy/version/list" && method === "GET")
         return withCors(await listPolicyVersions(env), request, env);
@@ -239,7 +339,15 @@ if (pathname === "/api/products/register" && method === "PUT") {
       if (pathname === "/api/policy/status" && method === "GET")
         return withCors(await getPolicyStatus(request, env), request, env);
 
-      /* ===== PAYPAL ===== */
+      /* ===== PAYMENT / PAYPAL (CORE) =====
+ *
+ * PRECONDIZIONI:
+ * - ordine valido
+ * - policy accettata
+ *
+ * PayPal NON è fonte di verità:
+ * è solo un provider di pagamento.
+ */
       if (
         pathname === "/api/payment/paypal/create-order" &&
         method === "POST"
@@ -263,14 +371,26 @@ if (pathname === "/api/products/register" && method === "PUT") {
       }
       
 
-      /* ===== COOKIES ===== */
+     /* ===== PAYMENT / PAYPAL (CORE) =====
+ *
+ * PRECONDIZIONI:
+ * - ordine valido
+ * - policy accettata
+ *
+ * PayPal NON è fonte di verità:
+ * è solo un provider di pagamento.
+ */
       if (pathname === "/api/cookies/accept" && method === "POST")
         return withCors(await acceptCookies(request, env), request, env);
 
       if (pathname === "/api/cookies/status" && method === "GET")
         return withCors(await getCookieStatus(), request, env);
 
-      /* ===== BUSINESS ===== */
+      /* ===== BUSINESS (DOMINIO SEPARATO) =====
+ *
+ * Gestione attività, menu, onboarding partner.
+ * NON fa parte del checkout core.
+ */
       if (pathname === "/api/business/mine" && method === "GET")
         return withCors(await getMyBusiness(request, env), request, env);
 
@@ -290,6 +410,9 @@ if (pathname === "/api/products/register" && method === "PUT") {
         return withCors(await getBusiness(request, env), request, env);
 
       /* ===== 404 ===== */
+      /* ===== FALLBACK =====
+ * Qualsiasi rotta non mappata finisce qui.
+ */
       return json(
         { ok: false, error: "NOT_FOUND" },
         request,

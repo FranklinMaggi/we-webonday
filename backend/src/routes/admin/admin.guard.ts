@@ -1,4 +1,4 @@
-import { Env } from "../types/env";
+import { Env } from "../../types/env";
 
 export function requireAdmin(request: Request, env: Env): Response | null {
     const auth = request.headers.get("x-admin-token");

@@ -1,8 +1,8 @@
 // src/router/router.tsx
 import { createBrowserRouter } from "react-router-dom";
 import { MainLayout } from "../components/layouts/MainLayout";
-import AdminLayout from "../components/layouts/AdminLayout";
-
+import AdminLayout from "../components/admin/layouts/AdminLayout";
+import AdminGuard from "../components/admin/AdminGuard";
 /* =========================
    PAGES
 ========================= */
@@ -35,13 +35,6 @@ import AdminDashboard from "../pages/admin/dashboard";
 import AdminOrdersPage from "../pages/admin/orders";
 
 import AdminOrderDetails from "../pages/admin/orders/[id]";
-// SuperAdmin
-import SuperAdminLayout from "../components/superadmin/AdminLayout";
-import SuperAdminGuard from "../components/superadmin/AdminGuard";
-import SuperAdminDashboard from "../pages/superadmin/dashboard";
-import SuperAdminUsers from "../pages/superadmin/dashboard/Users";
-import SuperAdminOrders from "../pages/superadmin/dashboard/Orders";
-import SuperAdminLogs from "../pages/superadmin/dashboard/Logs";
 
 const router = createBrowserRouter([
   /* =========================
@@ -70,38 +63,36 @@ const router = createBrowserRouter([
   /* =========================
      ADMIN
   ========================= */
-  {
-    path: "/admin",
-    children: [
-      { path: "login", element: <AdminLogin /> },
-      {
-        element: <AdminLayout />,
-        children: [
-          { path: "dashboard", element: <AdminDashboard /> },
-          { path: "orders", element: <AdminOrdersPage /> },
-          { path: "orders/:id", element: <AdminOrderDetails /> },
-        ],
-      },
-    ],
-  },
+ /* =========================
+   ADMIN
+========================= */
+{
+  path: "/admin",
+  children: [
+    // 🔓 login pubblico
+    { path: "login", element: <AdminLogin /> },
+
+    // 🔒 tutto il resto protetto
+    {
+      element: <AdminGuard />,
+      children: [
+        {
+          element: <AdminLayout />,
+          children: [
+            { path: "dashboard", element: <AdminDashboard /> },
+            { path: "orders", element: <AdminOrdersPage /> },
+            { path: "orders/:id", element: <AdminOrderDetails /> },
+          ],
+        },
+      ],
+    },
+  ],
+},
 
   /* =========================
      SUPERADMIN
   ========================= */
-  {
-    path: "/superadmin",
-    element: (
-      <SuperAdminGuard>
-        <SuperAdminLayout />
-      </SuperAdminGuard>
-    ),
-    children: [
-      { path: "dashboard", element: <SuperAdminDashboard /> },
-      { path: "users", element: <SuperAdminUsers /> },
-      { path: "orders", element: <SuperAdminOrders /> },
-      { path: "logs", element: <SuperAdminLogs /> },
-    ],
-  },
+ 
   /* =========================
    BUSINESS (SaaS)
 ========================= */

@@ -4,20 +4,15 @@ import { eur } from "../../../../utils/format";
 import PaymentPaypal from "./PaymentPaypal";
 import {
   fetchLatestPolicy,
-  acceptPolicyApi,
+ acceptPolicy,
 } from "../../../../lib/policyApi";
 
 interface Props {
   cart: CartItem[];
-  userId: string;
-  email: string;
   submitOrder: (policyVersion: string) => Promise<string>;
 }
-
 export default function CartReview({
   cart,
-  userId,
-  email,
   submitOrder,
 }: Props) {
   const total = cart.reduce((s, i) => s + i.total, 0);
@@ -42,11 +37,9 @@ export default function CartReview({
       setError(undefined);
 
       // 1️⃣ accetta policy
-      await acceptPolicyApi({
-        userId,
-        email,
-        policyVersion,
-      });
+      await acceptPolicy(
+        policyVersion
+      );
 
       // 2️⃣ crea ordine (KV)
       const oid = await submitOrder(policyVersion);

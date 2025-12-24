@@ -1,8 +1,8 @@
 // backend/src/routes/products.ts
-import type { Env } from "../types/env";
+import type { Env } from "../../types/env";
 
-import { normalizeProduct } from "../normalizers/normalizeProduct";
-import { ProductSchema } from "../schemas/food/productSchema";
+import { normalizeProduct } from "../../normalizers/normalizeProduct";
+import { ProductSchema } from "../../schemas/food/productSchema";
 
 /* ============================================================
    GET ALL PRODUCTS (DOMAIN ONLY)

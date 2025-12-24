@@ -1,8 +1,8 @@
 //paymentPaypal.ts
-import type { Env } from "../types/env";
-import { OrderSchema } from "../schemas/core/orderSchema";
+import type { Env } from "../../types/env";
+import { OrderSchema } from "../../schemas/core/orderSchema";
 import { z } from "zod";
-import { assertTransition } from "./orders";
+import { assertTransition } from "../orders/orders.core";
 
 const CreatePaypalOrderBody = z.object({ orderId: z.string().uuid() });
 const CapturePaypalOrderBody = z.object({ orderId: z.string().uuid() });
