@@ -1,31 +1,36 @@
-import { Outlet } from "react-router-dom";
+import { Outlet , NavLink} from "react-router-dom";
+import { adminLogout } from "../../../lib/adminApi";
 import "./adminLayout.css";
 
 export default function AdminLayout() {
-  // protezione globale layout
-
   return (
     <div className="admin-container">
       <aside className="admin-sidebar">
         <h2 className="admin-logo">WebOnDay EP</h2>
 
-        <nav>
-          <a href="/admin/dashboard">Dashboard</a>
-          <a href="/admin/orders">Ordini</a>
-          <a href="/admin/activity">Attività</a>
-          <a href="/admin/users">Utenti</a>
-          <a href="/admin/products">Prodotti</a>
+        <nav className="admin-nav">
+          <div className="nav-section">
+            <span className="nav-title">Operations</span>
+            <NavLink to="/admin/dashboard">Dashboard</NavLink>
+            <NavLink to="/admin/orders">Ordini 
+            <span className="nav-badge">•</span></NavLink>
+          </div>
+
+          <div className="nav-section">
+            <span className="nav-title">Management</span>
+            <NavLink to="/admin/users">Utenti</NavLink>
+            <NavLink to="/admin/products">Prodotti</NavLink>
+          </div>
+
+          <div className="nav-section">
+            <span className="nav-title">System</span>
+            <NavLink to="/admin/activity">Attività</NavLink>
+          </div>
         </nav>
 
-        <button
-          className="logout-btn"
-          onClick={() => {
-            sessionStorage.removeItem("ADMIN_TOKEN");
-            window.location.href = "/admin/login";
-          }}
-        >
-          Logout
-        </button>
+        <button className="logout-btn" onClick={adminLogout}>
+  Logout
+</button>
       </aside>
 
       <main className="admin-content">

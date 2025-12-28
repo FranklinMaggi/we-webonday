@@ -1,5 +1,19 @@
-// OptionSelector.tsx
-import type { ProductOptionDTO } from "../../lib/types";
+// FE || components/catalog/OptionSelector.tsx
+// ======================================================
+// OPTION SELECTOR — PRICING TRASPARENTE
+// ======================================================
+//
+// RESPONSABILITÀ:
+// - Selezione opzioni prodotto
+// - Chiarezza su tipo costo (una tantum / anno / mese)
+//
+// NON FA:
+// - calcoli
+// - logica carrello
+//
+// ======================================================
+
+import type { ProductOptionDTO } from "../../dto/productDTO";
 import { eur } from "../../utils/format";
 
 interface Props {
@@ -9,8 +23,25 @@ interface Props {
 }
 
 export default function OptionSelector({ options, selected, onChange }: Props) {
-  const toggle = (id: string) =>
-    selected.includes(id) ? onChange(selected.filter((x) => x !== id)) : onChange([...selected, id]);
+  const toggle = (id: string) => {
+    onChange(
+      selected.includes(id)
+        ? selected.filter((x) => x !== id)
+        : [...selected, id]
+    );
+  };
+
+  const recurringLabel = (type: ProductOptionDTO["recurringType"]) => {
+    switch (type) {
+      case "monthly":
+        return "/ mese";
+      case "yearly":
+        return "/ anno";
+      case "one_time":
+      default:
+        return "una tantum";
+    }
+  };
 
   return (
     <div className="option-selector card">
@@ -21,19 +52,33 @@ export default function OptionSelector({ options, selected, onChange }: Props) {
       <div className="option-list">
         {options.map((opt) => {
           const checked = selected.includes(opt.id);
+
           return (
-            <label key={opt.id} className={`option-item ${checked ? "is-checked" : ""}`}>
+            <label
+              key={opt.id}
+              className={`option-item ${checked ? "is-checked" : ""}`}
+            >
               <input
                 type="checkbox"
                 className="option-item__checkbox"
                 checked={checked}
                 onChange={() => toggle(opt.id)}
-                aria-label={`${opt.label} ${eur.format(opt.price)}`}
+                aria-label={`${opt.label} ${eur.format(opt.price)} ${recurringLabel(
+                  opt.recurringType
+                )}`}
               />
+
               <span className="option-item__box" aria-hidden="true" />
+
               <span className="option-item__content">
                 <span className="option-label">{opt.label}</span>
-                <span className="option-price">+ {eur.format(opt.price)}</span>
+
+                <span className="option-price">
+                  + {eur.format(opt.price)}{" "}
+                  <small className="option-period">
+                    {recurringLabel(opt.recurringType)}
+                  </small>
+                </span>
               </span>
             </label>
           );

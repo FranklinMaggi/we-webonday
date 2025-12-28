@@ -65,4 +65,34 @@
     padding: 2rem;
     overflow-y: auto;
   }
+  .admin-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .nav-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .nav-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.5;
+    padding: 0 1rem;
+  }
+  .admin-sidebar nav a.active {
+    background: #0ff0fc33;
+    color: #0ff0fc;
+    font-weight: 600;
+  }
+  .nav-badge {
+    margin-left: 6px;
+    color: orange;
+    font-size: 1.2rem;
+    line-height: 1;
+  }
   

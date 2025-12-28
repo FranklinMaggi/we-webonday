@@ -1,31 +1,60 @@
-// backend/src/routes/products.ts
+// BE || routes/products/products.ts
+// ======================================================
+// PRODUCTS ROUTES — CORE DOMAIN (WebOnDay)
+// ======================================================
+//
+// CONNECT POINT (CRITICO):
+// - Espone i prodotti WebOnDay (NON tenant, NON food)
+// - Legge da PRODUCTS_KV
+// - Normalizza dati legacy
+// - Valida SEMPRE con ProductSchema (CORE = source of truth)
+//
+// NON FA:
+// - business logic
+// - pricing dinamico
+// - override tenant
+//
+// ======================================================
+
 import type { Env } from "../../types/env";
 
 import { normalizeProduct } from "../../normalizers/normalizeProduct";
-import { ProductSchema } from "../../schemas/food/productSchema";
+import { ProductSchema } from "../../schemas/core/productSchema";
 
 /* ============================================================
-   GET ALL PRODUCTS (DOMAIN ONLY)
-   ============================================================ */
+   GET ALL PRODUCTS
+   GET /api/products
+============================================================ */
 export async function getProducts(env: Env) {
   const list = await env.PRODUCTS_KV.list({ prefix: "PRODUCT:" });
 
-  const rawProducts: any[] = [];
+  const products = [];
 
   for (const item of list.keys) {
     const data = await env.PRODUCTS_KV.get(item.name);
-    if (data) rawProducts.push(JSON.parse(data));
+    if (!data) continue;
+
+    try {
+      const raw = JSON.parse(data);
+      const normalized = normalizeProduct(raw);
+
+      // PERCHE: lo schema CORE è la verità assoluta
+      const validated = ProductSchema.parse(normalized);
+
+      products.push(validated);
+    } catch (err) {
+      // PERCHE: un prodotto rotto non deve bloccare tutto il catalogo
+      console.error("[PRODUCT INVALID]", item.name, err);
+    }
   }
 
-  const normalized = rawProducts.map(normalizeProduct);
-  const validated = normalized.map((p) => ProductSchema.parse(p));
-
-  return validated;
+  return products;
 }
 
 /* ============================================================
-   GET SINGLE PRODUCT (DOMAIN ONLY)
-   ============================================================ */
+   GET SINGLE PRODUCT
+   GET /api/product?id=XXX
+============================================================ */
 export async function getProduct(request: Request, env: Env) {
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
@@ -41,18 +70,16 @@ export async function getProduct(request: Request, env: Env) {
 
   const raw = JSON.parse(data);
   const normalized = normalizeProduct(raw);
-  const validated = ProductSchema.parse(normalized);
 
-  return validated;
+  // PERCHE: singolo prodotto → errore esplicito se invalido
+  return ProductSchema.parse(normalized);
 }
 
 /* ============================================================
-   REGISTER / UPDATE PRODUCT (DOMAIN ONLY)
-   ============================================================ */
-export async function registerProduct(
-  request: Request,
-  env: Env
-) {
+   REGISTER / UPDATE PRODUCT
+   POST /api/products
+============================================================ */
+export async function registerProduct(request: Request, env: Env) {
   let body: any;
 
   try {
@@ -61,7 +88,7 @@ export async function registerProduct(
     throw new Error("Invalid JSON body");
   }
 
-  if (!body.id) {
+  if (!body?.id) {
     throw new Error("Missing product id");
   }
 

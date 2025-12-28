@@ -30,9 +30,10 @@ import BusinessDashboard from "../pages/business/Dashboard";
 import BusinessGuard from "../components/business/BusinessGuard";
 
 // Admin
-import AdminLogin from "../pages/admin/utils/login";
+import AdminLogin from "../pages/admin/login/login";
 import AdminDashboard from "../pages/admin/dashboard";
 import AdminOrdersPage from "../pages/admin/orders";
+import AdminUsersPage from "../pages/admin/users";
 
 import AdminOrderDetails from "../pages/admin/orders/[id]";
 
@@ -82,6 +83,8 @@ const router = createBrowserRouter([
             { path: "dashboard", element: <AdminDashboard /> },
             { path: "orders", element: <AdminOrdersPage /> },
             { path: "orders/:id", element: <AdminOrderDetails /> },
+            { path: "users", element: <AdminUsersPage /> }
+
           ],
         },
       ],

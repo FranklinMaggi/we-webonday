@@ -1,22 +1,26 @@
-import type { ProductDTO, ProductOptionDTO } from "../types";
+import { type ProductDTO, type ProductOptionDTO } from "../../dto/productDTO";
+
+export function normalizeOption(raw: any): ProductOptionDTO {
+  return {
+    id: raw.id,
+    label: raw.name ?? raw.label ?? "",
+    price: Number(raw.price ?? 0),
+    recurringType: raw.type,
+  };
+}
 
 export function normalizeProduct(raw: any): ProductDTO {
   return {
     id: raw.id,
-    title: raw.title ?? raw.name,
+    title: raw.name ?? raw.title ?? "",
     description: raw.description ?? "",
-    basePrice: Number(raw.basePrice ?? raw.priceMonthly ?? 0),
+    startupFee: Number(raw.startupFee ?? 0),
+    pricing: {
+      yearly: Number(raw.pricing?.yearly ?? 0),
+      monthly: Number(raw.pricing?.monthly ?? 0),
+    },
     deliveryTime: raw.deliveryTime ?? "",
     flags: raw.flags ?? [],
-    options: raw.options?.map(normalizeOption) ?? []
-  };
-}
-
-export function normalizeOption(opt: any): ProductOptionDTO {
-  return {
-    id: opt.id,
-    label: opt.label ?? opt.name,
-    price: Number(opt.price ?? opt.priceOneTime ?? opt.priceMonthly ?? opt.priceYear ?? 0),
-    recurring: !!opt.recurring
+    options: Array.isArray(raw.options) ? raw.options.map(normalizeOption) : [],
   };
 }

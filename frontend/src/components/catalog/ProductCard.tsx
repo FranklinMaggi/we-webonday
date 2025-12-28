@@ -1,4 +1,21 @@
-import type { ProductDTO } from "../../lib/types";
+// FE || components/catalog/ProductCard.tsx
+// ======================================================
+// PRODUCT CARD — ENTRY POINT PRODOTTO
+// ======================================================
+//
+// RESPONSABILITÀ:
+// - Presentare il prodotto
+// - Mostrare costo di avvio
+// - Avviare configurazione
+//
+// NON FA:
+// - calcoli
+// - sconti
+// - gestione opzioni
+//
+// ======================================================
+
+import type { ProductDTO } from "../../dto/productDTO";
 import { eur } from "../../utils/format";
 
 interface Props {
@@ -18,8 +35,14 @@ export default function ProductCard({ product, onSelect }: Props) {
           </p>
         )}
 
+        {/* PREZZO DI PARTENZA */}
         <div className="product-card__price">
-          {eur.format(product.basePrice)}
+          <span className="price-value">
+            {eur.format(product.startupFee)}
+          </span>
+          <span className="price-note">
+            avvio progetto
+          </span>
         </div>
       </div>
 

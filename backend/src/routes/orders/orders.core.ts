@@ -40,11 +40,20 @@ import type { OrderStatus } from "../../schemas/core/orderSchema";
 ========================= */
 
 const ORDER_TRANSITIONS = {
-  pending: ["confirmed", "cancelled"],
-  confirmed: [],
-  cancelled: [],
-} as const satisfies Record<OrderStatus, readonly OrderStatus[]>;
-
+    draft: ["pending", "deleted"],
+  
+    pending: ["confirmed", "deleted"],
+  
+    confirmed: ["processed", "deleted"],
+  
+    processed: ["completed"],
+  
+    completed: [],
+  
+    suspended: ["deleted"],
+  
+    deleted: [],
+  } as const satisfies Record<OrderStatus, readonly OrderStatus[]>;
 export function assertTransition(from: OrderStatus, to: OrderStatus) {
   const allowed = ORDER_TRANSITIONS[from] as readonly OrderStatus[];
   

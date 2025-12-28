@@ -84,8 +84,9 @@ export async function getAdminOrder(
   request: Request,
   env: Env
 ): Promise<Response> {
-  const id = request.url.split("/").pop();
-
+  const url = new URL(request.url);
+  const id = url.searchParams.get("id");
+  
   if (!id) {
     return json({ ok: false, error: "MISSING_ORDER_ID" }, 400);
   }

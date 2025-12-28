@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { fetchProducts } from "../../lib/productsApi";
-import type { Product } from "../../lib/types";
+import { fetchProducts } from "../../lib/products/productsApi";
+import type { ProductDTO } from "../../dto/productDTO";
 import { normalizeProduct } from "../../lib/normalizers/productNormalizer";
 import HomeHero from "../../components/hero/home/HomeHero"
 import ProductCard from "../../components/catalog/ProductCard";
@@ -11,8 +11,8 @@ import "./home.css";
 
 export default function Home() {
   
-  const [products, setProducts] = useState<Product[]>([]);
-  const [selected, setSelected] = useState<Product | null>(null);
+  const [products, setProducts] = useState<ProductDTO[]>([]);
+  const [selected, setSelected] = useState<ProductDTO | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

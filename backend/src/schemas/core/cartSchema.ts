@@ -1,4 +1,6 @@
 // backend/src/schemas/cartSchema.ts
+// DOMAIN: CORE (LEGACY CART v1 — da migrare a Cart v2)
+
 import { z } from "zod";
 
 export const CartOptionSchema = z.object({

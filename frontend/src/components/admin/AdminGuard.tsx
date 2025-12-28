@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { getAdminToken } from "../../pages/admin/utils/adminToken";
+import { getAdminToken } from "../../lib/adminApi";
 
 /**
  * AdminGuard
@@ -12,8 +12,8 @@ export default function AdminGuard() {
   const location = useLocation();
 
   if (!token) {
-    const next = encodeURIComponent(location.pathname);
-    return <Navigate to={`/admin/login?next=${next}`} replace />;
+  
+    return <Navigate to={`/admin/login?next=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
   return <Outlet />;

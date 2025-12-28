@@ -1,5 +1,20 @@
-// CartPreview.tsx
-import type { ProductDTO } from "../../lib/types";
+// FE || components/catalog/CartPreview.tsx
+// ======================================================
+// CART PREVIEW — PRICING TRASPARENTE (WEBONDAY)
+// ======================================================
+//
+// RESPONSABILITÀ:
+// - Mostrare costi REALI e separati
+// - Educare il cliente prima del checkout
+//
+// NON FA:
+// - sconti
+// - moltiplicatori
+// - magia sui prezzi
+//
+// ======================================================
+
+import type { ProductDTO, ProductOptionDTO } from "../../dto/productDTO";
 import { cartStore } from "../../lib/cartStore";
 import { getOrCreateVisitorId } from "../../utils/visitor";
 import { eur } from "../../utils/format";
@@ -11,34 +26,72 @@ interface Props {
 }
 
 export default function CartPreview({ product, selectedOptions }: Props) {
-  const selectedObjects = product.options.filter((o) => selectedOptions.includes(o.id));
-  const optionsTotal = selectedObjects.reduce((sum, o) => sum + o.price, 0);
-  const total = product.basePrice + optionsTotal;
   const previewRef = useRef<HTMLElement>(null);
+
+  // =========================
+  // OPTIONS SELEZIONATE
+  // =========================
+ const selectedObjects: ProductOptionDTO[] = product.options.filter(
+  (o): o is ProductOptionDTO => selectedOptions.includes(o.id)
+);
+
+
+  // =========================
+  // CALCOLI PREZZI
+  // =========================
+  const startupFee = product.startupFee ?? 0;
+
+  const yearlyBase = product.pricing?.yearly ?? 0;
+  const monthlyBase = product.pricing?.monthly ?? 0;
+
+  const oneTimeOptions = selectedObjects
+    .filter((o) => o.recurringType === "one_time")
+    .reduce((sum, o) => sum + o.price, 0);
+
+  const yearlyOptions = selectedObjects
+    .filter((o) => o.recurringType === "yearly")
+    .reduce((sum, o) => sum + o.price, 0);
+
+  const monthlyOptions = selectedObjects
+    .filter((o) => o.recurringType === "monthly")
+    .reduce((sum, o) => sum + o.price, 0);
+
+  const totalStartup = startupFee + oneTimeOptions;
+  const totalYearly = yearlyBase + yearlyOptions;
+  const totalMonthly = monthlyBase + monthlyOptions;
+
+  // =========================
+  // ADD TO CART (STRUTTURATO)
+  // =========================
   const addToCart = () => {
     const visitorId = getOrCreateVisitorId();
-  
+
     cartStore.getState().addItem({
       visitorId,
       productId: product.id,
       title: product.title,
-      basePrice: product.basePrice,
+
+      startupFee: totalStartup,
+      yearlyFee: totalYearly,
+      monthlyFee: totalMonthly,
+
       options: selectedObjects,
-      total,
     });
-  
-    // feedback visivo "aggiunto al carrello"
+
+    // feedback visivo
     previewRef.current?.classList.add("is-added");
     setTimeout(() => {
       previewRef.current?.classList.remove("is-added");
     }, 450);
   };
-  
 
+  // =========================
+  // RENDER
+  // =========================
   return (
     <aside ref={previewRef} className="cart-preview card">
       <div className="card__header">
-        <h3 className="card__title">Riepilogo</h3>
+        <h3 className="card__title">Riepilogo costi</h3>
       </div>
 
       <div className="cart-line">
@@ -46,26 +99,34 @@ export default function CartPreview({ product, selectedOptions }: Props) {
         <strong>{product.title}</strong>
       </div>
 
+      {/* AVVIO */}
       <div className="cart-line">
-        <span>Base</span>
-        <strong>{eur.format(product.basePrice)}</strong>
+        <span>Avvio progetto (una tantum)</span>
+        <strong>{eur.format(totalStartup)}</strong>
       </div>
 
-      {selectedObjects.length > 0 && (
-        <ul className="cart-options">
-          {selectedObjects.map((opt) => (
-            <li key={opt.id} className="cart-option">
-              <span className="cart-option__label">{opt.label}</span>
-              <span className="cart-option__price">{eur.format(opt.price)}</span>
-            </li>
-          ))}
-        </ul>
+      {/* ANNUALE */}
+      {totalYearly > 0 && (
+        <div className="cart-line">
+          <span>Costi annuali</span>
+          <strong>{eur.format(totalYearly)} / anno</strong>
+        </div>
       )}
 
-      <div className="cart-total">
-        <span>Totale</span>
-        <strong>{eur.format(total)}</strong>
-      </div>
+      {/* MENSILE */}
+      {totalMonthly > 0 && (
+        <div className="cart-line">
+          <span>Costi mensili</span>
+          <strong>{eur.format(totalMonthly)} / mese</strong>
+        </div>
+      )}
+
+      {/* NOTE */}
+      <p className="cart-note">
+        Il costo di avvio è separato dai canoni ricorrenti.
+        <br />
+        Gli aggiornamenti operativi sono a carico del cliente.
+      </p>
 
       <button className="btn btn-primary cart-add-btn" onClick={addToCart}>
         Aggiungi al Carrello

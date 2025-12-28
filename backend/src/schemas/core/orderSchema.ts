@@ -1,10 +1,17 @@
+//BE.core.orderSchema.ts
+// DOMAIN: CORE (LEGACY CART v1 — da migrare a Cart v2)
+
 import { z } from "zod";
 import { CartItemSchema } from "./cartSchema";
 
 export const OrderStatusSchema = z.enum([
+  "draft",
   "pending",
   "confirmed",
-  "cancelled",
+  "processed",
+  "completed",
+  "suspended",
+  "deleted",
 ]);
 
 export const PaymentStatusSchema = z.enum([
@@ -36,7 +43,12 @@ export const OrderBaseSchema = z.object({
 
   status: OrderStatusSchema,
   createdAt: z.string(),
-
+  cancelReason: z.enum([
+    "user",
+    "payment_failed",
+    "admin",
+  ]).optional(),
+  
   paymentProvider: z.literal("paypal").optional(),
   paymentStatus: PaymentStatusSchema.optional(),
   paypalOrderId: z.string().optional(),

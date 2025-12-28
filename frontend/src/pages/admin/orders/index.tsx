@@ -1,121 +1,89 @@
+/**
+ * ======================================================
+ * AdminOrdersPage
+ * File: frontend/src/pages/admin/orders/index.tsx
+ * ======================================================
+ */
+
 import { useEffect, useState } from "react";
-import './admin.css';
-import { API_BASE } from "../../../lib/config";
+import { useNavigate } from "react-router-dom";
 
+/* ============================
+   ADMIN API
+============================ */
+import {
+  getAdminOrders,
+  ORDER_STATUS_LABEL,
+  ORDER_CANCEL_REASON_LABEL,
+} from "../../../lib/adminApi";
 
-interface Order {
-  id: string;
-  userId: string | null;
-  email: string;
-  businessName?: string | null;
-  piva?: string | null;
-  items: any[];
-  total: number;
-  status: string;
-  createdAt: string;
-}
+/* ============================
+   TYPES
+============================ */
+import type { AdminOrder } from "../../../lib/adminApi";
+
+/* ============================
+   STYLES
+============================ */
+import "./admin.css";
 
 export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [filter, setFilter] = useState<"all" | "pending" | "confirmed" | "cancelled">("all");
-
-  const token = sessionStorage.getItem("ADMIN_TOKEN");
+  const [orders, setOrders] = useState<AdminOrder[]>([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!token) {
-      window.location.href = "/admin/login";
-      return;
-    }
+    getAdminOrders()
+      .then(setOrders)
+      .finally(() => setLoading(false));
+  }, []);
 
-    fetch(`${API_BASE}/api/admin/orders/list`, {
-      headers: {
-        "x-admin-token": token
-      }
-    })
-      .then((res) => res.json())
-      .then((out) => {
-        if (out.ok) setOrders(out.orders);
-        if (!out.ok) window.location.href = "/admin/login";
-      });
-  }, [token]);
-
-  // Applichiamo il filtro
-  const filtered = filter === "all"
-    ? orders
-    : orders.filter((o) => o.status === filter);
-
-  // KPI
-  const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
-  const pending = orders.filter((o) => o.status === "pending").length;
-  const confirmed = orders.filter((o) => o.status === "confirmed").length;
+  if (loading) return <p>Caricamento…</p>;
 
   return (
-    <div className="admin-dashboard">
-      <h1>Dashboard Amministratore WebOnDay</h1>
+    <table className="admin-table">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Totale</th>
+          <th>Stato</th>
+          <th>Azioni</th>
+        </tr>
+      </thead>
 
-      {/* KPI */}
-      <div className="kpi-grid">
-        <div className="kpi-card">
-          <h3>Ordini Totali</h3>
-          <p>{orders.length}</p>
-        </div>
+      <tbody>
+        {orders.map((o) => (
+          <tr key={o.id}>
+            {/* EMAIL */}
+            <td>{o.email}</td>
 
-        <div className="kpi-card">
-          <h3>Revenue Totale</h3>
-          <p>€ {totalRevenue.toFixed(2)}</p>
-        </div>
+            {/* TOTALE */}
+            <td>€ {o.total.toFixed(2)}</td>
 
-        <div className="kpi-card">
-          <h3>In Attesa</h3>
-          <p>{pending}</p>
-        </div>
+            {/* STATO */}
+            <td>
+              <span className={`status status-${o.status}`}>
+                {ORDER_STATUS_LABEL[o.status]}
+              </span>
 
-        <div className="kpi-card">
-          <h3>Confermati</h3>
-          <p>{confirmed}</p>
-        </div>
-      </div>
+              {o.status === "deleted" && o.cancelReason && (
+                <div className="cancel-reason">
+                  {ORDER_CANCEL_REASON_LABEL[o.cancelReason]}
+                </div>
+              )}
+            </td>
 
-      {/* Filtri */}
-      <div className="filters">
-        <button onClick={() => setFilter("all")}>Tutti</button>
-        <button onClick={() => setFilter("pending")}>In attesa</button>
-        <button onClick={() => setFilter("confirmed")}>Confermati</button>
-        <button onClick={() => setFilter("cancelled")}>Cancellati</button>
-      </div>
-
-      {/* Tabella */}
-      <table className="orders-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Email</th>
-            <th>Totale</th>
-            <th>Stato</th>
-            <th>Data</th>
-            <th></th>
+            {/* AZIONI */}
+            <td>
+              <button
+                onClick={() => navigate(`/admin/orders/${o.id}`)}
+              >
+                Dettagli
+              </button>
+            </td>
           </tr>
-        </thead>
-
-        <tbody>
-          {filtered.map((ord) => (
-            <tr key={ord.id}>
-              <td>{ord.id}</td>
-              <td>{ord.email}</td>
-              <td>€ {ord.total.toFixed(2)}</td>
-              <td>{ord.status}</td>
-              <td>{new Date(ord.createdAt).toLocaleString()}</td>
-              <td>
-                <button
-                  onClick={() => (window.location.href = `/admin/orders/${ord.id}`)}
-                >
-                  Dettagli
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
   );
 }

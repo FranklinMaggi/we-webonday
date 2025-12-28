@@ -1,13 +1,21 @@
 import { create } from "zustand";
-import type { ProductOptionDTO } from "./types";
+import type { ProductOptionDTO } from "../dto/productDTO";
+
+// ======================================================
+// CART ITEM — MODELLO CANONICO
+// ======================================================
 
 export interface CartItem {
   visitorId: string;
   productId: string;
   title: string;
-  basePrice: number;
+
+  // pricing separato e dichiarativo
+  startupFee: number;
+  yearlyFee: number;
+  monthlyFee: number;
+
   options: ProductOptionDTO[];
-  total: number;
 }
 
 interface CartState {

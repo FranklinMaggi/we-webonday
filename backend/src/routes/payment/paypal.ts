@@ -64,7 +64,7 @@ export async function createPaypalOrder(request: Request, env: Env): Promise<Res
   if (!order) return json({ ok: false, error: "Order not found" }, 404);
 
   // Guardrail status ordine
-  if (order.status === "cancelled") {
+  if (order.status === "deleted") {
     return json({ ok: false, error: "ORDER_CANCELLED" }, 409);
   }
   if (order.paymentStatus === "paid" || order.status === "confirmed") {
@@ -141,7 +141,7 @@ export async function capturePaypalOrder(request: Request, env: Env): Promise<Re
   }
 
   // Non catturare ordini cancellati
-  if (order.status === "cancelled") {
+  if (order.status === "deleted") {
     return json({ ok: false, error: "ORDER_CANCELLED" }, 409);
   }
 

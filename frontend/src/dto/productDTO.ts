@@ -1,6 +1,3 @@
-// DTO ufficiali condivisi con il frontend
-// v2 — pricing esplicito (startup / yearly / monthly)
-
 export type RecurringType = "one_time" | "yearly" | "monthly";
 
 export interface ProductOptionDTO {
@@ -19,13 +16,8 @@ export interface ProductDTO {
   id: string;
   title: string;
   description: string;
-
-  // prezzo di avvio (una tantum)
   startupFee: number;
-
-  // canoni ricorrenti del prodotto
   pricing: ProductPricingDTO;
-
   deliveryTime: string;
   flags: string[];
   options: ProductOptionDTO[];
