@@ -39,7 +39,11 @@ export default function CartPreview({ product, selectedOptions }: Props) {
   // =========================
   // OPTIONS SELEZIONATE
   // =========================
- const selectedObjects: ProductOptionDTO[] = product.options.filter(
+  const options = Array.isArray(product.options)
+  ? product.options
+  : [];
+
+const selectedObjects: ProductOptionDTO[] = options.filter(
   (o): o is ProductOptionDTO => selectedOptions.includes(o.id)
 );
 

@@ -123,4 +123,30 @@ Una card = contenitore, non una pagina.
    box-shadow:
      0 25px 60px rgba(0,0,0,.6),
      0 0 30px rgba(34,211,238,.35);
- }
+ }/* =========================
+   PRODUCT CARD — CTA CONFIGURA
+========================= */
+
+.product-card__cta {
+  margin-top: auto;
+  padding-top: 12px;
+  text-align: right;
+}
+
+.product-card__cta-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--wd-cyan-300);
+  opacity: 0.85;
+  transition: opacity .2s ease;
+}
+
+/* Hint interazione */
+.product-card:hover .product-card__cta-label {
+  opacity: 1;
+}
+
+/* Stato aperto */
+.product-card.is-active .product-card__cta-label {
+  color: #020617;
+}

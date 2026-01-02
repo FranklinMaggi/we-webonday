@@ -5,28 +5,33 @@
 //
 // RUOLO:
 // - Pagina narrativa di una Solution
-// - Marketing + orientamento utente
+// - Orienta l’utente alla scelta del prodotto
 //
 // FLUSSO:
-// - GET /api/solution?id=...
+// Home → Solution → Product → Checkout
+//
+// FA:
+// - Carica Solution + Products associati
 // - Racconta il caso d’uso
-// - CTA → anteprima / prodotti
+// - Mostra i prodotti disponibili
 //
 // NON FA:
-// - NON carica prodotti
-// - NON crea business
+// - NON gestisce carrello
 // - NON gestisce pagamento
+// - NON crea business
 // ============================================================
 
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
-import { initWhatsAppScrollWatcher } from "../../../lib/ui/scrollWatcher";
 import { API_BASE } from "../../../lib/config";
-
+import { initWhatsAppScrollWatcher } from "../../../lib/ui/scrollWatcher";
+import type { ProductDTO } from "../../../dto/productDTO";
+import ProductCard from "../../../components/catalog/ProductCard/ProductCard";
 /* =========================
    TIPI PUBLIC
 ========================= */
+
 type PublicSolutionDetail = {
   id: string;
   name: string;
@@ -36,14 +41,25 @@ type PublicSolutionDetail = {
   industries?: string[];
 };
 
+
+
 type SolutionDetailResponse =
-  | { ok: true; solution: PublicSolutionDetail }
-  | { ok: false; error: string };
+  | {
+      ok: true;
+      solution: PublicSolutionDetail;
+      products: ProductDTO[];
+    }
+  | {
+      ok: false;
+      error: string;
+    };
 
 export default function HomeSolutionPage() {
   const { id } = useParams<{ id: string }>();
 
-  const [solution, setSolution] = useState<PublicSolutionDetail | null>(null);
+  const [solution, setSolution] =
+    useState<PublicSolutionDetail | null>(null);
+  const [products, setProducts] = useState<ProductDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,7 +72,7 @@ export default function HomeSolutionPage() {
   }, []);
 
   /* ===========================
-     LOAD SOLUTION
+     LOAD SOLUTION + PRODUCTS
   =========================== */
   useEffect(() => {
     if (!id) {
@@ -70,9 +86,11 @@ export default function HomeSolutionPage() {
       .then((data: SolutionDetailResponse) => {
         if (!data.ok) {
           setError(data.error);
-        } else {
-          setSolution(data.solution);
+          return;
         }
+
+        setSolution(data.solution);
+        setProducts(data.products || []);
       })
       .catch(() => setError("FAILED_TO_LOAD_SOLUTION"))
       .finally(() => setLoading(false));
@@ -89,68 +107,75 @@ export default function HomeSolutionPage() {
      UI
   =========================== */
   return (
-    <main>
+    <main className="solution-page">
       {/* ================= HERO ================= */}
-      <section className="hero">
-        <div className="hero-content">
-          <h1>
-            {solution.icon && <span>{solution.icon} </span>}
-            {solution.name}
-          </h1>
+      <section className="solution-hero">
+        <h1>
+          {solution.icon && <span>{solution.icon} </span>}
+          {solution.name}
+        </h1>
 
-          <p>{solution.description}</p>
-        </div>
-
-       
+        <p>{solution.description}</p>
       </section>
 
       {/* ================= OVERVIEW ================= */}
       <section className="section">
         <h2>
-          WebOnDay — la tua landing, il tuo e-commerce, la tua SaaS
+          La soluzione pensata per il tuo business
         </h2>
 
         <p>
-          Digital is better.  
-          WebOnDay ti aiuta a creare il tuo sito web professionale
-          a costi accessibili, senza complessità tecniche.
+          WebOnDay ti fornisce una struttura pronta:
+          landing page, e-commerce e strumenti di gestione
+          progettati per convertire.
         </p>
 
         <p>
-          Sfoglia le soluzioni, scegli il prodotto, acquista.
-          Al resto pensa il nostro <strong>AI Configurator</strong>.
+          Tu scegli il prodotto più adatto,
+          al resto pensa il nostro <strong>AI Configurator</strong>.
         </p>
       </section>
 
       {/* ================= INDUSTRIES ================= */}
-      {solution.industries && (
+      {solution.industries && solution.industries.length > 0 && (
         <section className="section">
           <h3>Ideale per</h3>
 
           <div className="solution-industries">
-            {solution.industries.map((i) => (
-              <span key={i} className="badge">
-                {i}
+            {solution.industries.map((industry) => (
+              <span key={industry} className="badge">
+                {industry}
               </span>
             ))}
           </div>
         </section>
       )}
 
+      {/* ================= PRODUCTS ================= */}
+ {/* ================= PRODUCTS ================= */}
+{products.length > 0 && (
+  <section className="section">
+    <h3>Scegli il prodotto</h3>
+
+    <div className="wd-grid">
+      {products.map((product) => (
+        <ProductCard
+          key={product.id}
+          product={product}
+        />
+      ))}
+    </div>
+  </section>
+)}
+
+
       {/* ================= CTA ================= */}
       <section className="section cta">
         <Link
           to={`/home/preview/${solution.id}`}
-          className="primary-button"
-        >
-          Anteprima del sito
-        </Link>
-
-        <Link
-          to={`/home/solution/${solution.id}/products`}
           className="secondary-button"
         >
-          Scopri i prodotti
+          Anteprima del sito
         </Link>
       </section>
     </main>

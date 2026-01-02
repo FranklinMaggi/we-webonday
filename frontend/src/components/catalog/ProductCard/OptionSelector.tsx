@@ -44,7 +44,7 @@ export default function OptionSelector({ options, selected, onChange }: Props) {
   };
 
   return (
-    <div className="option-selector card">
+    <div className="option-selector wd-card">
       <div className="card__header">
         <h4 className="card__title">Opzioni disponibili</h4>
       </div>
