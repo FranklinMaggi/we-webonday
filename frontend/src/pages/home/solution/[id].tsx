@@ -21,7 +21,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
-import HomeHero from "../../../components/hero/home/HomeHero";
 import { initWhatsAppScrollWatcher } from "../../../lib/ui/scrollWatcher";
 import { API_BASE } from "../../../lib/config";
 
