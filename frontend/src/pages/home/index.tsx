@@ -19,7 +19,6 @@
 
 import { useEffect } from "react";
 
-import HeroBase from "../../components/hero/HeroBase";
 import SolutionsSection from "../../components/solutions/SolutionSection";
 import { initWhatsAppScrollWatcher } from "../../lib/ui/scrollWatcher";
 import HomeHero from "../../components/hero/home/HomeHero";

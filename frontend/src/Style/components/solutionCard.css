@@ -46,4 +46,19 @@
     font-size: 14px;
     color: var(--wd-cyan-300);
   }
+  /* CONTENITORE IMMAGINE */
+.wd-card__media {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
   
+    background: #000;        /* ⬅️ SFONDO NERO */
+  }
+  
+  /* IMMAGINE */
+  .wd-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
