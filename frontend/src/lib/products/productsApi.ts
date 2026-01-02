@@ -20,7 +20,7 @@ import { API_BASE } from "../config";
    FETCH ALL PRODUCTS
 ========================= */
 export async function fetchProducts(): Promise<ProductDTO[]> {
-  const res = await fetch(`${API_BASE}/api/products`, {
+  const res = await fetch(`${API_BASE}/api/products/with-options`, {
     headers: { Accept: "application/json" },
   });
 
@@ -30,13 +30,13 @@ export async function fetchProducts(): Promise<ProductDTO[]> {
 
   const data = await res.json();
 
-  // PERCHE: il backend ritorna sempre un wrapper { ok, products }
   if (!data?.ok || !Array.isArray(data.products)) {
     throw new Error("Invalid products response shape");
   }
 
   return data.products;
 }
+
 
 /* =========================
    FETCH SINGLE PRODUCT

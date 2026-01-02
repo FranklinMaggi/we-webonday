@@ -1,0 +1,55 @@
+/* =====================================================
+   LAYOUT — STRUTTURA GLOBALE
+=====================================================
+
+ORDINE ARCHITETTURALE:
+1️⃣ TOKENS
+2️⃣ BASE
+3️⃣ PRIMITIVES
+4️⃣ LAYOUT  ← QUI
+5️⃣ PAGES
+
+RESPONSABILITÀ:
+- app-layout
+- site-content
+- colonne
+- spacing strutturale
+
+DIVIETI:
+- NESSUN colore di brand
+- NESSUN componente specifico
+- NESSUN contenuto
+
+Il layout organizza, non decora.
+===================================================== */
+/* =========================
+   GLOBAL RESPONSIVE LAYOUT
+========================= */
+
+.app-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .site-content {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+  
+  /* Tablet */
+  @media (max-width: 1024px) {
+    .site-content {
+      padding: 20px;
+    }
+  }
+  
+  /* Mobile */
+  @media (max-width: 640px) {
+    .site-content {
+      padding: 16px;
+    }
+  }
+  

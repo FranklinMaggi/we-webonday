@@ -34,9 +34,14 @@ import AdminLogin from "../pages/admin/login/login";
 import AdminDashboard from "../pages/admin/dashboard";
 import AdminOrdersPage from "../pages/admin/orders";
 import AdminUsersPage from "../pages/admin/users";
-
+import AdminProductsPage from "../pages/admin/products";
+import AdminEditProductPage from "../pages/admin/products/[id]";
 import AdminOrderDetails from "../pages/admin/orders/[id]";
-
+import AdminOptionsPage from "../pages/admin/products/options";
+import AdminEditOptionPage from "../pages/admin/products/options/[id]";
+import SolutionsList from "../pages/admin/solutions";
+import SolutionEditor from "../pages/admin/solutions/[id]";
+import HomeSolutionPage from "../pages/home/solution/[id]";
 const router = createBrowserRouter([
   /* =========================
      PUBLIC + USER (MAIN LAYOUT)
@@ -49,7 +54,8 @@ const router = createBrowserRouter([
       { path: "vision", element: <Vision /> },
       { path: "mission", element: <Mission /> },
       { path: "founder", element: <FounderPage /> },
-
+      { path: "home/solution/:id" , element : <HomeSolutionPage /> },
+      
       { path: "user/login", element: <UserLogin /> },
       { path: "user/checkout", element: <CheckoutPage /> },
       { path: "user/business/dashboard", element: <UserBusinessDashboard /> },
@@ -61,12 +67,10 @@ const router = createBrowserRouter([
     ],
   },
 
-  /* =========================
-     ADMIN
-  ========================= */
- /* =========================
-   ADMIN
-========================= */
+
+        /* =========================
+          ADMIN
+        ========================= */
 {
   path: "/admin",
   children: [
@@ -81,24 +85,34 @@ const router = createBrowserRouter([
           element: <AdminLayout />,
           children: [
             { path: "dashboard", element: <AdminDashboard /> },
+
             { path: "orders", element: <AdminOrdersPage /> },
             { path: "orders/:id", element: <AdminOrderDetails /> },
-            { path: "users", element: <AdminUsersPage /> }
 
+            { path: "users", element: <AdminUsersPage /> },
+
+            // ✅ PRODUCTS
+            { path: "solutions", element: <SolutionsList /> },
+            { path: "solutions/:id", element: <SolutionEditor /> },
+            { path: "products", element: <AdminProductsPage /> },
+            { path: "products/:id", element: <AdminEditProductPage /> },
+            { path: "options", element: <AdminOptionsPage /> },
+            { path: "options/:id", element: <AdminEditOptionPage /> },
           ],
         },
       ],
     },
   ],
-},
+}
+,
 
   /* =========================
-     SUPERADMIN
+    SUPERADMIN
   ========================= */
- 
-  /* =========================
-   BUSINESS (SaaS)
-========================= */
+
+      /* =========================
+        BUSINESS (SaaS)
+      ========================= */
 {
   path: "/business",
   element: (

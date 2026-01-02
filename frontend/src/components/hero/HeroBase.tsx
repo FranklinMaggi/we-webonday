@@ -1,3 +1,17 @@
+// ============================================================
+// FE || components/hero/HeroBase.tsx
+// ============================================================
+//
+// RUOLO:
+// - Hero SaaS riutilizzabile
+// - Immagine subito sotto la navbar
+// - Headline + messaggio marketing
+//
+// NOTE:
+// - Nessun asset dinamico obbligatorio
+// - Immagine opzionale e sicura
+// ============================================================
+
 interface HeroBaseProps {
   title: string;
   subtitle?: string;
@@ -11,10 +25,18 @@ export default function HeroBase({
   image,
   referralLabel = "Invita un amico",
 }: HeroBaseProps) {
-  const referralUrl = "/referral"; // potrai renderlo dinamico in futuro
+  const referralUrl = "/referral"; // futuro: dinamico
 
   return (
     <section className="wd-hero">
+      {/* ================= IMAGE ================= */}
+      {image && (
+        <div className="wd-hero__image">
+          <img src={image} alt="" />
+        </div>
+      )}
+
+      {/* ================= CONTENT ================= */}
       <div className="wd-hero__content">
         <h1 className="wd-hero__title">{title}</h1>
 
@@ -22,19 +44,15 @@ export default function HeroBase({
           <p className="wd-hero__subtitle">{subtitle}</p>
         )}
 
-        {/* CTA Referral */}
         <div className="wd-hero__actions">
-          <a href={referralUrl} className="wd-btn wd-btn-referral">
+          <a
+            href={referralUrl}
+            className="wd-btn wd-btn-referral"
+          >
             {referralLabel}
           </a>
         </div>
       </div>
-
-      {image && (
-        <div className="wd-hero__media">
-          <img src={image} alt="" />
-        </div>
-      )}
     </section>
   );
 }

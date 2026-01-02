@@ -1,9 +1,23 @@
-/**
- * ======================================================
- * AdminOrdersPage
- * File: frontend/src/pages/admin/orders/index.tsx
- * ======================================================
- */
+// ======================================================
+// FE || pages/admin/orders/index.tsx
+// ======================================================
+// ADMIN — ORDERS LIST
+//
+// RUOLO:
+// - Visualizzare elenco ordini
+//
+// RESPONSABILITÀ:
+// - Fetch lista ordini
+// - Mostrare stato, totale, email
+// - Navigazione verso dettaglio ordine
+//
+// NON FA:
+// - NON modifica ordini
+// - NON applica transizioni di stato
+//
+// NOTE:
+// - Ogni azione è delegata alla pagina dettaglio
+// ======================================================
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -22,10 +36,7 @@ import {
 ============================ */
 import type { AdminOrder } from "../../../lib/adminApi";
 
-/* ============================
-   STYLES
-============================ */
-import "./admin.css";
+
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<AdminOrder[]>([]);

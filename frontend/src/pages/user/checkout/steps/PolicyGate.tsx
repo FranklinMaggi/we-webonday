@@ -1,3 +1,23 @@
+// ======================================================
+// FE || pages/user/checkout/steps/PolicyGate.tsx
+// ======================================================
+// CHECKOUT — POLICY GATE
+//
+// RUOLO:
+// - Blocco legale prima del pagamento
+//
+// RESPONSABILITÀ:
+// - Fetch policy
+// - Accettazione policy
+//
+// NON FA:
+// - NON gestisce ordine
+// - NON avvia pagamenti
+//
+// NOTE:
+// - Policy legata alla sessione
+// ======================================================
+
 import { useEffect, useState } from "react";
 import { fetchLatestPolicy, acceptPolicy } from "../../../../lib/policyApi";
 

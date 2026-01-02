@@ -1,13 +1,24 @@
-/**
- * ======================================================
- * AdminDashboard
- * File: frontend/src/pages/admin/dashboard/index.tsx
- *
- * Responsabilità:
- * - Visualizzare KPI globali admin
- * - Read-only
- * ======================================================
- */
+// ======================================================
+// FE || pages/admin/dashboard/index.tsx
+// ======================================================
+// ADMIN — DASHBOARD KPI
+//
+// RUOLO:
+// - Overview globale piattaforma
+//
+// RESPONSABILITÀ:
+// - Fetch KPI aggregati
+// - Visualizzazione numeri chiave
+//
+// NON FA:
+// - NON modifica dati
+// - NON applica filtri complessi
+//
+// NOTE:
+// - Read-only per definizione
+// - KPI calcolati esclusivamente dal backend
+// ======================================================
+
 
 import { useEffect, useState } from "react";
 import { getAdminKPI } from "../../../lib/adminApi";

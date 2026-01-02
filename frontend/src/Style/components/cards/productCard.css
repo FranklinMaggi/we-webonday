@@ -1,0 +1,126 @@
+/* =====================================================
+   PRIMITIVE — CARD
+=====================================================
+
+ORDINE ARCHITETTURALE:
+1️⃣ TOKENS
+2️⃣ BASE
+3️⃣ PRIMITIVES  ← QUI
+4️⃣ LAYOUT
+5️⃣ PAGES
+
+RESPONSABILITÀ:
+- struttura card generica
+- padding
+- radius
+- hover base
+
+UTILIZZO:
+- product card
+- admin card
+- info card
+- box contenuto
+
+DIVIETI:
+- NESSUN colore di brand specifico
+- NESSUN layout di griglia
+- NESSUN comportamento di pagina
+
+Una card = contenitore, non una pagina.
+===================================================== */
+.product-card{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding: 18px;
+    border-radius: 20px;
+    background:
+      radial-gradient(circle at top, rgba(34,211,238,.10), transparent 45%),
+      rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.12);
+    box-shadow:
+      0 20px 50px rgba(0,0,0,.45),
+      0 0 25px rgba(34,211,238,.12);
+  }
+/* =========================
+    CONTENT
+ ========================= */
+ .product-card {
+    gap: 12px; /* 🔧 respiro verticale coerente */
+  }
+  
+  .product-card__title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff; /* titolo sempre leggibile */
+  }
+  
+  .product-card__description {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--wd-text-muted);
+    opacity: 0.95; /* NON scendere sotto */
+  }
+  
+  .product-card__price {
+    margin-top: 8px;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--wd-accent-cyan);
+  }
+  
+  
+  .product-card__footer {
+    margin-top: 16px;
+  }
+
+/* CARD DEFAULT (scura) */
+
+.product-card {
+    background:
+      radial-gradient(circle at top, rgba(34,211,238,.10), transparent 45%),
+      rgba(255,255,255,.04);
+    color: var(--wd-text-main);
+  }
+  
+  /* CARD ATTIVA (chiara) */
+  .product-card.is-active {
+    background: rgba(255,255,255,.9);
+    color: #020617;
+  }
+  
+  /* Titolo SEMPRE coerente */
+  .product-card__title {
+    color: inherit;
+  }
+  
+  /* =========================
+   CARD BASE
+========================= */
+.product-card {
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+ 
+   padding: 18px;
+   border-radius: 20px;
+ 
+   background:
+     radial-gradient(circle at top, rgba(34,211,238,.10), transparent 45%),
+     rgba(255,255,255,.04);
+ 
+   border: 1px solid var(--wd-border);
+ 
+   box-shadow:
+     0 20px 50px rgba(0,0,0,.45),
+     0 0 25px rgba(34,211,238,.12);
+ 
+   transition: all .25s ease;
+ }
+ 
+ .product-card:hover {
+   border-color: var(--wd-cyan-300);
+   box-shadow:
+     0 25px 60px rgba(0,0,0,.6),
+     0 0 30px rgba(34,211,238,.35);
+ }

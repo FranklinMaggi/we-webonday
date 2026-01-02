@@ -1,0 +1,321 @@
+/* =====================================================
+   LAYOUT — FOOTER
+=====================================================
+
+ORDINE ARCHITETTURALE:
+1️⃣ TOKENS
+2️⃣ BASE
+3️⃣ PRIMITIVES
+4️⃣ LAYOUT  ← QUI
+5️⃣ PAGES
+
+RESPONSABILITÀ:
+- struttura footer
+- grid colonne
+- titoli e link
+- glow decorativo
+
+DIVIETI:
+- logica di pagina
+- contenuto specifico
+- comportamenti interattivi complessi
+
+Il footer chiude l’esperienza, non la guida.
+===================================================== */
+
+
+/* =========================
+   ROOT
+========================= */
+.wd-footer {
+  position: relative;
+  overflow: hidden;
+
+  padding: 48px 32px 24px;
+
+  background: var(--wd-footer-bg);
+  color: var(--wd-footer-text);
+
+  border-top: 1px solid var(--wd-footer-border);
+}
+
+
+/* =========================
+   GRID
+========================= */
+.wd-footer-grid {
+  position: relative;
+  z-index: 2;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 32px;
+}
+
+.wd-footer-col {
+  min-width: 0;
+}
+
+
+/* =========================
+   TITOLI
+========================= */
+.wd-footer-title {
+  margin-bottom: 12px;
+
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--wd-footer-title);
+
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 0.6),
+    0 0 14px rgba(34, 211, 238, 0.4);
+}
+
+
+/* =========================
+   LINK
+========================= */
+.wd-footer-link {
+  display: inline-block;
+  margin-bottom: 8px;
+
+  color: var(--wd-footer-link);
+  text-decoration: none;
+
+  position: relative;
+  transition:
+    color 0.25s ease,
+    text-shadow 0.25s ease;
+}
+
+.wd-footer-link:hover {
+  color: var(--wd-footer-link-hover);
+  text-shadow:
+    0 0 8px rgba(34, 211, 238, 0.8),
+    0 0 14px rgba(34, 211, 238, 0.6);
+}
+
+.wd-footer-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+
+  width: 0%;
+  height: 2px;
+
+  background: var(--wd-footer-link-hover);
+  transition: width 0.25s ease;
+}
+
+.wd-footer-link:hover::after {
+  width: 100%;
+}
+
+
+/* =========================
+   BOTTOM
+========================= */
+.wd-footer-bottom {
+  margin-top: 32px;
+  padding-top: 16px;
+
+  text-align: center;
+  font-size: 0.8rem;
+  opacity: 0.65;
+
+  border-top: 1px solid var(--wd-footer-border);
+}
+
+
+/* =========================
+   NEON BACKGROUND
+========================= */
+.wd-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: radial-gradient(
+    circle at top center,
+    var(--wd-footer-neon-cyan),
+    var(--wd-footer-neon-pink),
+    transparent 70%
+  );
+
+  pointer-events: none;
+  z-index: 0;
+}
+
+
+/* =========================
+   RESPONSIVE — TABLET & MOBILE
+========================= */
+@media (max-width: 768px) {
+  .wd-footer {
+    padding: 40px 20px 20px;
+  }
+
+  .wd-footer-grid {
+    gap: 24px;
+  }
+
+  .wd-footer-link {
+    padding: 6px 0;
+    font-size: 14px;
+  }
+}
+
+
+/* =========================
+   RESPONSIVE — SMALL PHONES
+========================= */
+@media (max-width: 480px) {
+  .wd-footer-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .wd-footer-title {
+    font-size: 0.95rem;
+  }
+
+  .wd-footer-bottom {
+    font-size: 0.75rem;
+  }
+}
+/* =====================================================
+   NAVBAR — FOOTER STYLE ADAPTATION
+   (links, buttons, controls)
+===================================================== */
+
+/* Ritmo comune a tutti gli item */
+.nav-right > * {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+
+  padding: 6px 10px;
+  min-height: 40px;
+
+  border-radius: 10px;
+
+  background: transparent;
+  color: var(--wd-footer-link);
+
+  transition:
+    color 0.25s ease,
+    text-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+/* Hover base (coerente, non invasivo) */
+.nav-right > *:hover {
+  color: var(--wd-footer-link-hover);
+  background: rgba(255, 255, 255, 0.04);
+  text-shadow:
+    0 0 8px rgba(34, 211, 238, 0.8),
+    0 0 14px rgba(34, 211, 238, 0.6);
+}
+
+/* =====================================================
+   UNDERLINE — come footer
+===================================================== */
+
+.wd-navbar-link::after,
+.navbar-cart-toggle::after,
+.navbar-logout-btn::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 4px;
+
+  height: 2px;
+  width: 0%;
+
+  background: var(--wd-footer-link-hover);
+  transition: width 0.25s ease;
+}
+
+.wd-navbar-link:hover::after,
+.navbar-cart-toggle:hover::after,
+.navbar-logout-btn:hover::after {
+  width: calc(100% - 20px);
+}
+
+/* Stato attivo (se applicato via NavLink in futuro) */
+.wd-navbar-link.is-active {
+  font-weight: 600;
+}
+
+.wd-navbar-link.is-active::after {
+  width: calc(100% - 20px);
+}
+
+/* =====================================================
+   CART TOGGLE — integrato, non CTA
+===================================================== */
+
+.navbar-cart-toggle {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.navbar-cart-badge {
+  margin-left: 6px;
+
+  background: var(--wd-footer-link-hover);
+  color: #020617;
+
+  padding: 2px 6px;
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* =====================================================
+   LOGOUT — stesso linguaggio, tono più soft
+===================================================== */
+
+.navbar-logout-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  color: var(--wd-footer-link);
+}
+
+.navbar-logout-btn:hover {
+  color: var(--wd-color-danger);
+  text-shadow:
+    0 0 6px rgba(248, 113, 113, 0.8),
+    0 0 14px rgba(248, 113, 113, 0.6);
+}
+
+.navbar-logout-btn::after {
+  background: var(--wd-color-danger);
+}
+
+/* =====================================================
+   MODE SWITCH — allineato visivamente
+===================================================== */
+
+.mode-switch {
+  padding: 6px 10px;
+  border-radius: 10px;
+
+  transition:
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.mode-switch:hover {
+  background: rgba(255,255,255,0.04);
+  box-shadow:
+    0 0 10px rgba(34,211,238,.2);
+}

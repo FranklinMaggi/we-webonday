@@ -1,21 +1,46 @@
-@import "./base.css";
-@import "./legacy-style.css";
+/* BASE */
+@import "../base/reset.css";
+@import "../base/typography.css";
 
-@import "./layout.css";
+/* TOKENS */
+@import "../tokens/tokens.css";
 
-/* global layout blocks */
-@import "./navbar.css";
-@import "./footer.css";
+/* PRIMITIVES */
+@import "../primitives/buttons.css";
 
-/* page sections */
-@import "./hero.css";
+@import "../primitives/badge.css";
 
-/* components */
-@import "./productCard.css";
-@import "./cart.css";
-@import "./whatsapp.css";
+@import "../primitives/cards.css";
 
-/* pages */
-@import "./home.css";
-@import "./login.css";
-@import "./checkout.css";
+
+/* LAYOUT (UNICA SORGENTE) */
+
+@import "../layout/navbar.css";
+@import "../layout/footer.css";
+@import "../layout/global.css";
+@import "../layout/grid.css";
+/* COMPONENTS */
+@import "../components/cards/productCard.css";
+@import "../components/cards/optionSelector.css";
+@import "../components/cart.css";
+@import "../components/cartSticker.css";
+
+@import "../components/hero/HeroBase.css";
+
+@import "../components/whatsapp.css";
+
+/* PAGES */
+
+@import "../pages/login.css";
+@import "../pages/checkout.css";
+
+@import "../pages/founder.css";
+@import "../pages/policy.css";
+
+/* ADMIN */
+@import "../admin/MainLayout/adminLayout.css";
+@import "../admin/orders/orders.css";
+@import "../admin/products/products.css";
+@import "../admin/products/editProducts.css";
+@import "../admin/products/select.css";
+@import "../admin/products/table.css";

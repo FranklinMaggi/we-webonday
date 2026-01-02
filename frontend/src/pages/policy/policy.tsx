@@ -1,3 +1,4 @@
+//pages/policy/policy.tsx
 import { useEffect, useState } from "react";
 import { fetchLatestPolicy } from "../../lib/policyApi";
 

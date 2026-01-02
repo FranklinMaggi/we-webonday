@@ -1,6 +1,6 @@
 import { Outlet , NavLink} from "react-router-dom";
 import { adminLogout } from "../../../lib/adminApi";
-import "./adminLayout.css";
+
 
 export default function AdminLayout() {
   return (
@@ -20,6 +20,7 @@ export default function AdminLayout() {
             <span className="nav-title">Management</span>
             <NavLink to="/admin/users">Utenti</NavLink>
             <NavLink to="/admin/products">Prodotti</NavLink>
+            <NavLink to="/admin/solutions">Solutions</NavLink>
           </div>
 
           <div className="nav-section">

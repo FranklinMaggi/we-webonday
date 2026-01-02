@@ -9,7 +9,7 @@ export const ProductOptionSchema = z.object({
 
 export const ProductSchema = z.object({
   id: z.string(),
-  title: z.string(),
+  name: z.string(),
   description: z.string(),
   basePrice: z.number(),
   deliveryTime: z.string(),

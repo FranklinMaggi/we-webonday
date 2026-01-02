@@ -1,3 +1,26 @@
+// ======================================================
+// FE || pages/user/business/RegisterBusiness.tsx
+// ======================================================
+// BUSINESS — REGISTRAZIONE GUIDATA (MVP)
+//
+// RUOLO:
+// - Creare utente + business base
+// - Avviare flusso di attivazione business
+//
+// RESPONSABILITÀ:
+// - Raccolta dati minimi
+// - Sequenza: register user → create business → upload menu
+//
+// NON FA:
+// - NON gestisce errori avanzati
+// - NON valida business rules
+// - NON è UI definitiva
+//
+// NOTE:
+// - File volutamente semplice (bootstrap)
+// - Flusso verrà raffinato in dashboard admin/business
+// ======================================================
+
 import { useState } from "react";
 
 export default function RegisterBusiness() {

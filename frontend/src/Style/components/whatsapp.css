@@ -1,0 +1,129 @@
+/* ======================================================
+   FE||Style/css/components/whatsapp.css
+   ======================================================
+
+   AI-SUPERCOMMENT — WHATSAPP FLOATING ACTION
+
+   RUOLO:
+   - Pulsante WhatsApp flottante globale
+   - Entry-point rapido al contatto business
+
+   RESPONSABILITÀ:
+   - Posizionamento fixed
+   - Visibilità e accessibilità
+   - Stile coerente con il brand
+
+   NON FA:
+   - Logica JS
+   - Gestione link o numeri (FE logic)
+   - Decisioni di business
+
+   CONNECT POINT:
+   - App root / layout globale
+   - Component montato a livello top
+
+   PERCHÉ ESISTE:
+   - Centralizzare uno strumento di contatto ricorrente
+   - Evitare duplicazioni page-level
+====================================================== */
+/* =====================================================
+   WHATSAPP BUTTON – WebOnDay
+   Standalone component (token driven)
+===================================================== */
+
+.whatsapp-btn {
+    position: fixed;
+    right: 22px;
+    bottom: 75px;
+    z-index: 200;
+  
+    width: var(--wd-whatsapp-size);
+    height: var(--wd-whatsapp-size);
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    background: var(--wd-whatsapp-bg);
+    border-radius: 50%;
+  
+    cursor: pointer;
+  
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  
+  /* ================= ICON ================= */
+  
+  .whatsapp-btn img,
+  .whatsapp-btn svg {
+    width: var(--wd-whatsapp-icon-size);
+    height: var(--wd-whatsapp-icon-size);
+  }
+  
+  /* ================= NEON VARIANT ================= */
+  
+  .wd-whatsapp-neon {
+    box-shadow:
+      0 0 10px var(--wd-whatsapp-glow-main),
+      0 0 22px var(--wd-whatsapp-glow-cyan);
+  
+    animation: wdWhatsPulse 4.5s infinite ease-in-out;
+  }
+  
+  /* ================= HOVER ================= */
+  
+  .whatsapp-btn:hover {
+    transform: scale(1.12);
+    box-shadow:
+      0 0 18px var(--wd-whatsapp-glow-main),
+      0 0 35px var(--wd-whatsapp-glow-cyan);
+  }
+  
+  /* ================= PULSE ================= */
+  
+  @keyframes wdWhatsPulse {
+    0% {
+      transform: scale(1);
+      box-shadow:
+        0 0 10px var(--wd-whatsapp-glow-main),
+        0 0 22px var(--wd-whatsapp-glow-cyan);
+    }
+    50% {
+      transform: scale(1.08);
+      box-shadow:
+        0 0 18px var(--wd-whatsapp-glow-main),
+        0 0 40px var(--wd-whatsapp-glow-cyan);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow:
+        0 0 10px var(--wd-whatsapp-glow-main),
+        0 0 22px var(--wd-whatsapp-glow-cyan);
+    }
+  }
+  @media (max-width: 640px) {
+    .whatsapp-btn {
+      left: 12px;
+      bottom: 20px;
+    }
+  
+    .cart-sticker {
+      right: 12px;
+      bottom: 20px;
+    }
+  }
+  /* =========================
+   VISIBILITY STATE
+========================= */
+
+/*
+  Stato controllato via JS (uiBus / scroll watcher)
+  - non rimuove dal DOM
+  - non rompe layout
+  - evita overlap con cart
+*/
+.whatsapp-btn.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px) scale(0.9);
+}

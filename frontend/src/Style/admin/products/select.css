@@ -1,0 +1,85 @@
+.wd-select-wrapper {
+    position: relative;
+    width: 100%;
+    display: block;
+  }
+  
+.admin-page select {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  
+    background-color: var(--admin-bg);
+    color: var(--admin-text);
+  
+    border: 1.5px solid var(--neon-cyan);
+    border-radius: 8px;
+  
+    padding: 10px 36px 10px 12px;
+    font-size: 14px;
+    font-weight: 500;
+  
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--neon-cyan) 50%),
+      linear-gradient(135deg, var(--neon-cyan) 50%, transparent 50%),
+      linear-gradient(to right, transparent, transparent);
+    background-position:
+      calc(100% - 20px) calc(50% - 3px),
+      calc(100% - 14px) calc(50% - 3px),
+      100% 0;
+    background-size:
+      6px 6px,
+      6px 6px,
+      2.5em 2.5em;
+    background-repeat: no-repeat;
+  
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
+  }
+  .admin-page select:focus {
+    outline: none;
+    border-color: var(--neon-cyan-strong);
+    box-shadow:
+      0 0 0 2px var(--neon-cyan-glow),
+      0 0 12px rgba(34, 211, 238, 0.25);
+  }
+  .admin-page select:focus {
+    outline: none;
+    border-color: var(--neon-cyan-strong);
+    box-shadow:
+      0 0 0 2px var(--neon-cyan-glow),
+      0 0 12px rgba(34, 211, 238, 0.25);
+  }
+  .admin-page select:hover {
+    background-color: #f0fdff;
+  }
+  .wd-select-wrapper::after {
+    content: "";
+    position: absolute;
+    right: 14px;
+    top: 50%;
+  
+    width: 8px;
+    height: 8px;
+  
+    border-right: 2px solid var(--neon-cyan);
+    border-bottom: 2px solid var(--neon-cyan);
+  
+    transform: translateY(-60%) rotate(45deg);
+    pointer-events: none;
+  }
+  .admin-page select:focus {
+    outline: none;
+    border-color: var(--neon-cyan-strong);
+    box-shadow:
+      0 0 0 2px var(--neon-cyan-glow),
+      0 0 12px rgba(34, 211, 238, 0.25);
+  }
+  
+  .admin-page select:hover {
+    background-color: #f0fdff;
+  }
+  

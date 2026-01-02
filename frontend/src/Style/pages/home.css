@@ -1,0 +1,150 @@
+/* ======================================================
+   FE||Style/css/pages/home.css
+   ======================================================
+
+   AI-SUPERCOMMENT — HOME PAGE COMPOSITION
+
+   RUOLO:
+   - CSS di composizione della Home page
+   - Coordina componenti già esistenti
+
+   RESPONSABILITÀ:
+   - Spaziature verticali tra sezioni
+   - Ordine visivo dei blocchi
+   - Override minimi e contestuali
+
+   NON FA:
+   - Stile dei singoli componenti
+   - Definizione token o primitive
+   - Logica responsive globale
+
+   CONNECT POINT:
+   - components/hero.css
+   - components/catalog.css
+   - components/productCard.css
+
+   PERCHÉ ESISTE:
+   - Separare la composizione di pagina dallo stile dei componenti
+   - Ridurre accoppiamento e confusione mentale
+====================================================== */
+/* =====================================================
+   HOME PAGE – WebOnDay
+   Layout + composition only
+===================================================== */
+
+.home-page {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+  
+ 
+  
+ 
+  
+
+  
+
+  
+  /* ================= CTA ================= */
+  
+  .home-cta {
+    margin: 48px 0;
+  }
+  
+  .home-cta__box {
+    padding: 32px;
+    border-radius: var(--wd-radius-lg);
+  
+    background: var(--wd-panel);
+    border: 1px solid var(--wd-border);
+  
+    text-align: center;
+  }
+  
+  .home-cta__title {
+    margin: 0 0 12px;
+    font-size: 22px;
+  }
+  
+  .home-cta__text {
+    margin: 0;
+    color: var(--wd-text-muted);
+    font-size: 15px;
+  }
+  
+  /* ================= RESPONSIVE ================= */
+  
+  @media (max-width: 640px) {
+    .home-page {
+      gap: 48px;
+    }
+  
+    .home-cta__box {
+      padding: 24px;
+    }
+  }
+  /* =====================================================
+   RESPONSIVE TUNING — HOME
+===================================================== */
+
+@media (max-width: 768px) {
+
+  .home-page {
+    gap: 48px;
+  }
+}
+ 
+
+@media (max-width: 480px) {
+
+  .home-page {
+    gap: 40px;
+  }
+
+  .home-cta {
+    margin: 32px 0;
+  }
+
+  .home-cta__box {
+    padding: 22px;
+  }
+
+  .home-cta__title {
+    font-size: 20px;
+  }
+
+  .home-cta__text {
+    font-size: 14px;
+  }
+}
+/* =====================================================
+   HOME PAGE – SOLUTIONS SECTION
+===================================================== */
+
+.home-solutions {
+  margin-top: 24px;
+}
+
+.home-solutions__grid {
+  display: grid;
+  gap: 24px;
+}
+
+@media (min-width: 640px) {
+  .home-solutions__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.solution-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+@media (min-width: 1024px) {
+  .home-solutions__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

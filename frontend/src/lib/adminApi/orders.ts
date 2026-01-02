@@ -68,7 +68,7 @@ export const ORDER_CANCEL_REASON_LABEL: Record<
 
 export interface AdminOrderItemOption {
   id: string;
-  label: string;
+  name: string;
   price: number;
 }
 

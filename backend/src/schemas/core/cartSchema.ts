@@ -12,7 +12,7 @@ export const CartOptionSchema = z.object({
 
 export const CartItemSchema = z.object({
   productId: z.string(),
-  title: z.string(),
+  name: z.string(),
   basePrice: z.number(),
   options: z.array(CartOptionSchema),
   total: z.number(),

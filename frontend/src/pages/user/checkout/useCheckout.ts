@@ -1,9 +1,30 @@
+// ======================================================
+// FE || pages/user/checkout/useCheckout.ts
+// ======================================================
+// CHECKOUT HOOK — FE ⇄ BACKEND SYNC
+//
+// RUOLO:
+// - Ponte tra carrello FE e backend
+//
+// RESPONSABILITÀ:
+// - Sync carrello in KV
+// - Creazione ordine
+// - Gestione loading / error
+//
+// NON FA:
+// - NON gestisce UI
+// - NON calcola prezzi
+//
+// NOTE:
+// - KV backend = source of truth
+// ======================================================
+
 import { useState } from "react";
-import { cartStore } from "../../../lib/cartStore";
+import { cartStore } from "../../../lib/cart/cartStore";
 import { createOrder } from "../../../lib/ordersApi";
 import { getOrCreateVisitorId } from "../../../utils/visitor";
 import { API_BASE } from "../../../lib/config";
-import type { CartItem } from "../../../lib/cartStore";
+import type { CartItem } from "../../../lib/cart/cartStore";
 
 /* ======================================================
    SYNC CART → BACKEND (KV = source of truth)

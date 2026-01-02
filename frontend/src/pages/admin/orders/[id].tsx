@@ -1,23 +1,26 @@
-/**
- * ============================================================
- * AdminOrderDetails
- * File: frontend/src/pages/admin/orders/[id].tsx
- *
- * RESPONSABILITÀ:
- * - Visualizzare il dettaglio di un ordine
- * - Consentire azioni ADMIN sullo stato
- *
- * POLISH UI:
- * - Disabilita bottoni durante azione
- * - Gestisce errore 409 (transizione non valida)
- * - Feedback visivo post-azione
- *
- * PRINCIPI:
- * - Backend = source of truth
- * - Nessuna logica di business nel FE
- * - Dopo successo → redirect (no state locale)
- * ============================================================
- */
+// ======================================================
+// FE || pages/admin/orders/[id].tsx
+// ======================================================
+// ADMIN — ORDER DETAILS & ACTIONS
+//
+// RUOLO:
+// - Dettaglio singolo ordine
+// - Esecuzione azioni amministrative
+//
+// RESPONSABILITÀ:
+// - Fetch ordine
+// - Invocare transizioni di stato
+// - Gestire delete / clone
+// - Feedback UI
+//
+// NON FA:
+// - NON calcola totale
+// - NON valida business rules
+//
+// NOTE:
+// - Backend impone transizioni valide
+// - FE gestisce solo UX e feedback
+// ======================================================
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -33,7 +36,7 @@ import {
 
 import type { AdminOrder } from "../../../lib/adminApi";
 
-import "./admin.css";
+
 
 export default function AdminOrderDetails() {
   const { id } = useParams<{ id: string }>();

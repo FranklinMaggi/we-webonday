@@ -1,0 +1,428 @@
+/* =====================================================
+   LAYOUT — NAVBAR
+=====================================================
+
+ORDINE ARCHITETTURALE:
+1️⃣ TOKENS
+2️⃣ BASE
+3️⃣ PRIMITIVES
+4️⃣ LAYOUT  ← QUI
+5️⃣ PAGES
+
+RESPONSABILITÀ:
+- struttura navbar
+- comportamento responsive
+- uso di button / badge / panel
+
+DIVIETI:
+- NESSUNA logica di pagina
+- NESSUN override nei file page
+
+La navbar è un layout globale.
+===================================================== */
+/* =====================================================
+   NAVBAR – WebOnDay
+   Single source of truth (layout + behavior)
+===================================================== */
+
+.wd-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  
+    padding: 12px 20px;
+  
+    background: var(--wd-navbar-bg);
+    color: var(--wd-navbar-text);
+  
+    border-bottom: 1px solid var(--wd-navbar-border);
+  }
+  /* Neon / glow come footer, ma più sottile */
+.wd-navbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: radial-gradient(
+    ellipse at top center,
+    var(--wd-footer-neon-cyan),
+    var(--wd-footer-neon-pink),
+    transparent 75%
+  );
+
+  opacity: 0.35;
+  filter: blur(18px);
+
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Contenuto sopra il glow */
+.wd-navbar > * {
+  position: relative;
+  z-index: 1;
+}
+  
+  /* ================= LOGO ================= */
+  
+  .wd-navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  
+    text-decoration: none;
+    color: inherit;
+    z-index: 3;
+  }
+  
+  .moka-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  
+  .logo-text .we {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--wd-navbar-text-muted);
+  }
+  
+  .logo-text .webonday {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--wd-navbar-text);
+  }
+  
+  /* ================= LINKS DESKTOP ================= */
+  
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  
+  /* =========================
+   NAVBAR LINKS — FOOTER STYLE
+========================= */
+
+.wd-navbar-link {
+  position: relative;
+
+  background: none;
+  border: none;
+  padding: 4px 0;
+
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--wd-navbar-text);
+
+  cursor: pointer;
+  text-decoration: none;
+
+  transition:
+    color 0.25s ease,
+    text-shadow 0.25s ease;
+}
+
+/* Hover identico al footer */
+.wd-navbar-link:hover {
+  color: var(--wd-navbar-text-hover);
+  text-shadow:
+    0 0 6px rgba(34, 211, 238, 0.6),
+    0 0 14px rgba(34, 211, 238, 0.4);
+}
+
+/* Underline animata */
+.wd-navbar-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+
+  width: 0%;
+  height: 2px;
+
+  background: var(--wd-cyan-300);
+  transition: width 0.25s ease;
+}
+
+.wd-navbar-link:hover::after {
+  width: 100%;
+}
+
+/* Stato attivo (opzionale ma consigliato) */
+.wd-navbar-link.is-active {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.wd-navbar-link.is-active::after {
+  width: 100%;
+}
+
+  /* ================= ACCENT (CART) ================= */
+  
+  .wd-link-accent {
+    padding: 6px 14px;
+    border-radius: 999px;
+  
+    background: var(--wd-navbar-accent-bg);
+    color: var(--wd-navbar-accent-text);
+  
+    font-weight: 600;
+  }
+  
+  .wd-link-accent:hover {
+    background: var(--wd-navbar-accent-bg-hover);
+  }
+  
+  /* Badge carrello */
+  .nav-cart-badge {
+    margin-left: 6px;
+  
+    background: var(--wd-navbar-badge-bg);
+    color: var(--wd-navbar-badge-text);
+  
+    border-radius: 999px;
+    padding: 2px 6px;
+  
+    font-size: 12px;
+    font-weight: 700;
+  }
+  
+  /* ================= MOBILE ================= */
+  
+  .menu-btn {
+    display: none;
+    background: none;
+    border: none;
+  
+    font-size: 24px;
+    color: var(--wd-navbar-text);
+  
+    cursor: pointer;
+    z-index: 3;
+  }
+  
+  @media (max-width: 768px) {
+    .menu-btn {
+      display: block;
+    }
+  
+    .nav-right {
+      position: absolute;
+      top: 100%;
+      right: 12px;
+  
+      width: min(80vw, 260px);
+  
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+  
+      padding: 14px 16px;
+  
+      background: var(--wd-navbar-bg);
+      border: 1px solid var(--wd-navbar-border);
+      border-radius: 12px;
+  
+      box-shadow:
+        0 20px 50px rgba(0,0,0,.45),
+        0 0 20px rgba(34,211,238,.15);
+  
+      display: none;
+    }
+  
+    .nav-right.open {
+      display: flex;
+    }
+  }
+  
+  /* ================= NEON EFFECT ================= */
+  
+  .wd-navbar-neon {
+    position: relative;
+  }
+  
+  .wd-navbar-neon::after {
+    content: "";
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+  
+    width: 200%;
+    height: 80px;
+  
+    background: radial-gradient(
+      ellipse,
+      var(--wd-navbar-neon-cyan),
+      var(--wd-navbar-neon-pink),
+      transparent 80%
+    );
+  
+    filter: blur(25px);
+    opacity: .4;
+    pointer-events: none;
+  }
+  /* NAVBAR */
+  .wd-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: var(--wd-navbar-bg);
+    color: var(--wd-navbar-text);
+    border-bottom: 1px solid var(--wd-navbar-border);
+    flex-wrap: wrap; /* Consente di adattare gli elementi in una nuova riga su schermi più piccoli */
+  }
+  
+  .wd-navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .nav-right {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    flex-wrap: wrap; /* Permette agli elementi di andare a capo se lo schermo è più stretto */
+  }
+  .mode-switch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .mode-switch span {
+    font-size: 0.85rem;
+    opacity: 0.6;
+  }
+  
+  .mode-switch span.active {
+    font-weight: 600;
+    opacity: 1;
+  }
+  
+  .switch {
+    width: 42px;
+    height: 22px;
+    background: #ccc;
+    border-radius: 999px;
+    position: relative;
+    transition: background 0.2s ease;
+  }
+  
+  .switch::after {
+    content: "";
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s ease;
+  }
+  
+  .switch.partner {
+    background: #111;
+  }
+  
+  .switch.partner::after {
+    transform: translateX(20px);
+  }
+  
+  /* UI CONTROL: cart toggle */
+.navbar-cart-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--wd-color-text);
+  }
+  
+  .navbar-cart-badge {
+    background: var(--wd-color-primary);
+    color: #fff;
+    border-radius: 999px;
+    padding: 2px 6px;
+    font-size: 12px;
+  }
+  
+  /* ACTION: logout */
+  .navbar-logout-btn {
+    background: none;
+    border: none;
+    color: var(--wd-color-danger);
+    cursor: pointer;
+  }
+  
+  /* MOBILE MENU TOGGLE */
+  .navbar-menu-toggle {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  /* =====================================================
+   RESPONSIVE TUNING — NAVBAR
+===================================================== */
+
+/* Small tablets & mobile */
+@media (max-width: 768px) {
+
+  .wd-navbar {
+    padding: 10px 14px;
+  }
+
+  /* Logo più compatto */
+  .logo-text .webonday {
+    font-size: 16px;
+  }
+
+  .logo-text .we {
+    font-size: 11px;
+  }
+
+  /* Area destra: menu dropdown più leggibile */
+  .nav-right {
+    width: min(92vw, 320px);
+  }
+
+  /* Bottoni più touch-friendly */
+  .wd-navbar-link,
+  .navbar-cart-toggle,
+  .navbar-logout-btn {
+    min-height: 44px;
+  }
+}
+
+/* Extra small phones */
+@media (max-width: 420px) {
+
+  /* Nasconde testo “Carrello”, resta badge */
+  .navbar-cart-toggle span:first-child {
+    display: none;
+  }
+
+  .navbar-cart-badge {
+    margin-left: 0;
+  }
+}

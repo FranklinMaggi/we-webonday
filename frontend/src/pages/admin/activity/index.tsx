@@ -1,4 +1,25 @@
-// src/pages/admin/activity/index.tsx
+// ======================================================
+// FE || pages/admin/activity/index.tsx
+// ======================================================
+// ADMIN — ACTIVITY LOG
+//
+// RUOLO:
+// - Visualizzare log di attività amministrative
+//
+// RESPONSABILITÀ:
+// - Fetch activity log dal backend
+// - Rendering tabellare read-only
+//
+// NON FA:
+// - NON filtra o interpreta i log
+// - NON modifica stato
+// - NON applica permessi
+//
+// NOTE:
+// - Backend decide cosa è loggato
+// - FE mostra dati grezzi per audit/debug
+// ======================================================
+
 import { useEffect, useState } from "react";
 import { getAdminActivity } from "../../../lib/adminApi";
 

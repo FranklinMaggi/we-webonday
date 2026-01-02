@@ -1,0 +1,66 @@
+/* =====================================================
+   BASE / RESET — WebOnDay
+=====================================================
+
+ORDINE ARCHITETTURALE:
+1️⃣ TOKENS
+2️⃣ BASE  ← QUI
+3️⃣ PRIMITIVES
+4️⃣ LAYOUT
+5️⃣ PAGES
+
+RESPONSABILITÀ:
+- reset CSS minimo
+- box-sizing globale
+- html, body affidabili
+- rimozione margini browser
+
+DIVIETI:
+- NESSUN colore
+- NESSUN background
+- NESSUN font
+- NESSUN glow
+- NESSUN componente
+===================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+/* Rimuove padding/margini inconsistente */
+h1, h2, h3, h4, h5, h6,
+p, ul, ol, li, figure {
+  margin: 0;
+  padding: 0;
+}
+
+/* Liste neutre (le pages decidono) */
+ul, ol {
+  list-style: none;
+}
+
+/* Media coerenti */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}

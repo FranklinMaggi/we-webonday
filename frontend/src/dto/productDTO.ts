@@ -1,24 +1,36 @@
-export type RecurringType = "one_time" | "yearly" | "monthly";
+// FE || dto/productDTO.ts
+// ======================================================
+// PRODUCT DTO — FRONTEND (ALIGNED WITH BACKEND CORE)
+// ======================================================
 
-export interface ProductOptionDTO {
-  id: string;
-  label: string;
-  price: number;
-  recurringType: RecurringType;
-}
+export type ProductStatus = "DRAFT" | "ACTIVE" | "ARCHIVED";
 
 export interface ProductPricingDTO {
   yearly: number;
   monthly: number;
 }
 
+export type RecurringType = "one_time" | "yearly" | "monthly";
+
+export interface ProductOptionDTO {
+  id: string;
+  label: string;
+  price: number;
+  type: RecurringType;
+}
+
 export interface ProductDTO {
   id: string;
-  title: string;
+
+  name: string;
   description: string;
+  status: ProductStatus;
+
   startupFee: number;
   pricing: ProductPricingDTO;
+
   deliveryTime: string;
   flags: string[];
+
   options: ProductOptionDTO[];
 }

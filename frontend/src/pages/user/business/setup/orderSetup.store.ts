@@ -1,4 +1,25 @@
+// ======================================================
+// FE || pages/user/business/setup/orderSetup.store.ts
+// ======================================================
+// ORDER SETUP STORE — STATO TEMPORANEO FE
+//
+// RUOLO:
+// - Mantenere i dati del wizard ordine
+//
+// RESPONSABILITÀ:
+// - Stato locale FE
+// - Mutazioni campo per campo
+//
+// NON FA:
+// - NON persiste su backend
+// - NON valida schema
+//
+// NOTE:
+// - Store effimero
+// - Reset obbligatorio post-submit
+// ======================================================
 import { create } from "zustand";
+
 
 export type OrderSetupData = {
   businessName: string;

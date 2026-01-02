@@ -1,6 +1,8 @@
 export interface Env {
     ADMIN_TOKEN: string;
+    SOLUTIONS_KV:KVNamespace;
     PRODUCTS_KV: KVNamespace;
+    OPTIONS_KV:KVNamespace;
     POLICY_KV: KVNamespace;
     COOKIES_KV: KVNamespace;
     CART_KV: KVNamespace;

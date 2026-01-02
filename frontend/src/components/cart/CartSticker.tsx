@@ -1,24 +1,29 @@
+// ======================================================
 // FE || components/cart/CartSticker.tsx
 // ======================================================
 // CART STICKER — RIEPILOGO TRASPARENTE
-// ======================================================
 //
-// RESPONSABILITÀ:
-// - Mostrare contenuto carrello
-// - Mostrare costi REALI (startup / annuale / mensile)
+// RUOLO:
+// - Visualizzare il contenuto del carrello FE
+// - Mostrare i costi reali e separati
+// - Fornire accesso al checkout
 //
 // NON FA:
-// - calcoli di business
-// - sconti
+// - NON modifica la struttura del carrello
+// - NON calcola prezzi di business
+// - NON comunica con il backend
 //
+// NOTE:
+// - È un consumer passivo di cartStore
+// - Il checkout normalizzerà i dati lato server
 // ======================================================
 
+
 import { useEffect, useMemo, useState } from "react";
-import { cartStore } from "../../lib/cartStore";
-import type { CartItem } from "../../lib/cartStore";
+import { cartStore } from "../../lib/cart/cartStore";
+import type { CartItem } from "../../lib/cart/cartStore";
 import { eur } from "../../utils/format";
-import "./cart-sticker.css";
-import { uiBus } from "../../lib/uiBus";
+import { uiBus } from "../../lib/ui/uiBus";
 
 export default function CartSticker() {
 const [items, setItems] = useState<CartItem[]>(cartStore.getState().items);
@@ -30,18 +35,18 @@ const [open, setOpen] = useState(false);
 useEffect(() => cartStore.subscribe((state) => setItems(state.items)), []);
 
 // =========================
-// UI BUS
+// UI BUS — SINGLE SOURCE
 // =========================
 useEffect(() => {
-const offOpen = uiBus.on("cart:open", () => setOpen(true));
-const offClose = uiBus.on("cart:close", () => setOpen(false));
-const offToggle = uiBus.on("cart:toggle", () => setOpen((v) => !v));
-return () => {
-    offOpen();
-    offClose();
-    offToggle();
-};
-}, []);
+    const offToggle = uiBus.on("cart:toggle", () => {
+      setOpen((v) => !v);
+    });
+  
+    return () => offToggle();
+  }, []);
+  
+
+
 
 // =========================
 // TOTALI (ESPLICITI)
@@ -75,27 +80,28 @@ window.location.href = "/user/checkout";
 // =========================
 return (
 <div className={`cart-sticker ${open ? "is-open" : ""}`} aria-live="polite">
-    <button
-    className="cart-sticker__toggle"
-    onClick={() => setOpen((v) => !v)}
-    aria-expanded={open}
-    aria-controls="mini-cart-panel"
-    title={open ? "Chiudi carrello" : "Apri carrello"}
-    >
-    <span
-        className="cart-sticker__badge"
-        aria-label={`${count} articoli in carrello`}
-    >
-        {count}
-    </span>
-    <span className="cart-sticker__label">Carrello</span>
-    <span className="cart-sticker__total">
-        {eur.format(startupTotal)}
-    </span>
-    </button>
+<button
+  className="cart-sticker__toggle"
+  onClick={() => uiBus.emit("cart:toggle")}
+  aria-label="Apri o chiudi carrello"
+>
+  <span
+    className="cart-sticker__badge"
+    aria-label={`${count} articoli in carrello`}
+  >
+    {count}
+  </span>
+
+  <span className="cart-sticker__label">Carrello</span>
+
+  <span className="cart-sticker__total">
+    {eur.format(startupTotal)}
+  </span>
+</button>
+
 
     <section
-    id="mini-cart-panel"
+    id="cart-sticker-panel"
     className="cart-sticker__panel"
     role="dialog"
     aria-modal="false"
@@ -188,7 +194,7 @@ return (
             )}
             </div>
 
-            <button className="btn btn-primary" onClick={checkout}>
+            <button className="wd-btn wd-btn--primary wd-btn--block" onClick={checkout}>
             Procedi al Checkout
             </button>
         </div>

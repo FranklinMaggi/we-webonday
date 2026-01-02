@@ -1,3 +1,27 @@
+// ======================================================
+// FE || pages/user/business/MenuUpload.tsx
+// ======================================================
+// BUSINESS — MENU UPLOAD
+//
+// RUOLO:
+// - Consentire al business di caricare il menu (PDF)
+// - Attivare il business dopo upload riuscito
+//
+// RESPONSABILITÀ:
+// - Gestione file input
+// - Chiamata API upload menu
+// - Aggiornamento stato business via callback
+//
+// NON FA:
+// - NON valida il contenuto del PDF
+// - NON gestisce permessi o ruoli
+// - NON naviga
+//
+// NOTE:
+// - Componente controllato dal padre (UserBusinessDashboard)
+// - L’attivazione business è demandata al backend
+// ======================================================
+
 import { useState } from "react";
 import { uploadBusinessMenu } from "../../../lib/businessApi";
 import type { BusinessDTO } from "../../../lib/dto/businessDTO";

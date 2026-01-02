@@ -1,0 +1,29 @@
+/* =====================================================
+   PRIMITIVE — BADGE / STATUS
+=====================================================
+
+ORDINE ARCHITETTURALE:
+1️⃣ TOKENS
+2️⃣ BASE
+3️⃣ PRIMITIVES  ← QUI
+4️⃣ LAYOUT
+5️⃣ PAGES
+
+RESPONSABILITÀ:
+- badge numerici
+- pill
+- status (pending, active, ecc.)
+
+UTILIZZO:
+- navbar
+- cart
+- admin
+- liste
+
+DIVIETI:
+- NESSUN layout
+- NESSUNA tabella
+- NESSUNA logica di pagina
+
+Uno status visivo = primitive.
+===================================================== */

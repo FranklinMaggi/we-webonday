@@ -1,3 +1,23 @@
+// ======================================================
+// FE || pages/user/business/setup/steps/<StepName>.tsx
+// ======================================================
+// ORDER SETUP — STEP
+//
+// RUOLO:
+// - Raccolta dati specifici step
+//
+// RESPONSABILITÀ:
+// - Input controllati
+// - Scrittura nello store setup
+//
+// NON FA:
+// - NON naviga globalmente
+// - NON chiama backend (tranne Review)
+//
+// NOTE:
+// - Stateless rispetto all’ordine globale
+// ======================================================
+
 import { useOrderSetupStore } from "../orderSetup.store";
 
 export default function StepDesign({

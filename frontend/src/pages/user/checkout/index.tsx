@@ -1,4 +1,24 @@
-import "./checkout.css";
+// ======================================================
+// FE || pages/user/checkout/index.tsx
+// ======================================================
+// CHECKOUT — PAGE CONTROLLER
+//
+// RUOLO:
+// - Entry point checkout autenticato
+//
+// RESPONSABILITÀ:
+// - Guard auth
+// - Guard policy
+// - Orchestrazione hook checkout
+//
+// NON FA:
+// - NON calcola prezzi
+// - NON crea ordini direttamente
+//
+// NOTE:
+// - Tutta la logica è delegata a hook e step
+// ======================================================
+
 import { useEffect, useState } from "react";
 import { useCheckout } from "./useCheckout";
 import CartReview from "./steps/CartReview";

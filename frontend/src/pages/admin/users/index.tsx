@@ -1,3 +1,23 @@
+// ======================================================
+// FE || pages/admin/users/index.tsx
+// ======================================================
+// ADMIN — USERS LIST
+//
+// RUOLO:
+// - Visualizzare utenti registrati
+//
+// RESPONSABILITÀ:
+// - Fetch utenti
+// - Rendering tabellare
+//
+// NON FA:
+// - NON modifica utenti
+// - NON gestisce ruoli
+//
+// NOTE:
+// - Stato utente interpretato dal backend
+// ======================================================
+
 import { useEffect, useState } from "react";
 import { getAdminUsers, type AdminUser } from "../../../lib/adminApi";
 export default function AdminUsersPage() {

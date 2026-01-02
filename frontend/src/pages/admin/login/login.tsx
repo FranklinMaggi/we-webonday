@@ -1,3 +1,25 @@
+// ======================================================
+// FE || pages/admin/login/login.tsx
+// ======================================================
+// ADMIN — LOGIN TOKEN BASED
+//
+// RUOLO:
+// - Autenticazione admin tramite token
+//
+// RESPONSABILITÀ:
+// - Raccolta token
+// - Salvataggio token client-side
+// - Redirect alla dashboard
+//
+// NON FA:
+// - NON valida token
+// - NON gestisce ruoli
+//
+// NOTE:
+// - Sicurezza demandata al backend
+// - Token usato solo per chiamate adminApi
+// ======================================================
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setAdminToken } from "../../../lib/adminApi";

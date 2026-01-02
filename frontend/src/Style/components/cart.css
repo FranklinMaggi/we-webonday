@@ -1,0 +1,201 @@
+/* ======================================================
+   FE || frontend/src/Style/components/cart.css
+   ======================================================
+   COMPONENT — CART (INLINE / EMBEDDED)
+
+   AI-SUPERCOMMENT (CONNECT POINT)
+   - Carrello INLINE, parte del flusso di pagina
+   - Nessun comportamento flottante
+   - Nessun toggle, nessuna animazione open/close
+
+   RESPONSABILITÀ:
+   - contenitore carrello embedded
+   - righe prodotto
+   - opzioni
+   - totali
+   - azione primaria
+
+   DIVIETI:
+   - position fixed / sticky
+   - overlay
+   - toggle
+   - dipendenze da layout esterni
+   ====================================================== */
+
+
+/* =========================
+   CONTAINER
+========================= */
+.cart {
+  width: 100%;
+  padding: 20px;
+
+  border-radius: var(--wd-radius-lg);
+  background: var(--wd-panel);
+  border: 1px solid var(--wd-border);
+
+  box-shadow: var(--wd-shadow-lg);
+}
+
+
+/* =========================
+   HEADER (opzionale)
+========================= */
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 16px;
+}
+
+.cart-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.cart-count {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+
+/* =========================
+   LISTA RIGHE
+========================= */
+.cart-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+/* =========================
+   RIGA PRODOTTO
+========================= */
+.cart-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+
+  padding: 12px;
+  border-radius: var(--wd-radius-md);
+
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--wd-border-soft);
+}
+
+.cart-line__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cart-line__title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cart-line__meta {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.cart-line__price {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+
+/* =========================
+   OPZIONI PRODOTTO
+========================= */
+.cart-options {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cart-option {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+
+/* =========================
+   RIMOZIONE
+========================= */
+.cart-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  color: #f87171;
+  font-size: 14px;
+}
+
+.cart-remove:focus-visible {
+  outline: 2px solid var(--wd-accent-cyan);
+  outline-offset: 2px;
+}
+
+
+/* =========================
+   TOTALI
+========================= */
+.cart-totals {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--wd-border-soft);
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.cart-total--grand {
+  margin-top: 6px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+
+/* =========================
+   AZIONE PRINCIPALE
+========================= */
+.cart-add-btn {
+  margin-top: 16px;
+  width: 100%;
+  min-height: 44px;
+}
+
+
+/* =========================
+   NOTE / DISCLAIMER
+========================= */
+.cart-note {
+  margin-top: 12px;
+  font-size: 12px;
+  opacity: 0.75;
+  line-height: 1.4;
+}
+
+
+/* =========================
+   FEEDBACK VISIVO
+========================= */
+.cart-preview.is-added {
+  outline: 2px solid var(--wd-accent-cyan);
+  outline-offset: 2px;
+}

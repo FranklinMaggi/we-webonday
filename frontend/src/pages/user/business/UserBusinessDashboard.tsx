@@ -1,3 +1,26 @@
+// ======================================================
+// FE || pages/user/business/UserBusinessDashboard.tsx
+// ======================================================
+// BUSINESS — DASHBOARD ENTRY POINT
+//
+// RUOLO:
+// - Entry point business lato user
+// - Smistamento stato business
+//
+// RESPONSABILITÀ:
+// - Verifica auth
+// - Fetch business associato all’utente
+// - Redirect o rendering corretto
+//
+// NON FA:
+// - NON modifica dati business
+// - NON carica menu direttamente
+//
+// NOTE:
+// - Questo file è un ORCHESTRATORE DI STATO
+// - Nessuna logica di UI complessa
+// ======================================================
+
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/auth.store";

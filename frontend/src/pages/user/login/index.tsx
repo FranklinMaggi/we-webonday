@@ -1,3 +1,25 @@
+// ======================================================
+// FE || pages/user/login/index.tsx
+// ======================================================
+// USER LOGIN — AUTH ENTRY POINT
+//
+// RUOLO:
+// - Autenticazione utente
+// - Redirect post-login
+//
+// RESPONSABILITÀ:
+// - Login email/password
+// - Login Google OAuth
+// - Redirect contestuale
+//
+// NON FA:
+// - NON gestisce sessioni
+// - NON valida token
+//
+// NOTE:
+// - Sessione HttpOnly gestita dal backend
+// ======================================================
+
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/auth.store";

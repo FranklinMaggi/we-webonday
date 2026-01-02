@@ -1,21 +1,27 @@
+// ======================================================
 // FE || pages/user/checkout/steps/CartReview.tsx
 // ======================================================
-// CHECKOUT — CART REVIEW (TRASPARENTE)
-// ======================================================
+// CHECKOUT — CART REVIEW
+//
+// RUOLO:
+// - Riepilogo finale ordine
+// - Avvio flusso pagamento
 //
 // RESPONSABILITÀ:
-// - Mostrare riepilogo ordine
-// - Accettare policy
-// - Avviare pagamento PayPal (SOLO AVVIO)
+// - Mostrare dati carrello
+// - Accettazione policy
 //
 // NON FA:
-// - calcoli di business
-// - gestione canoni
+// - NON esegue pagamenti
+// - NON modifica carrello
 //
+// NOTE:
+// - Pagamento demandato a PaymentPaypal
 // ======================================================
 
+
 import { useEffect, useState, useMemo } from "react";
-import type { CartItem } from "../../../../lib/cartStore";
+import type { CartItem } from "../../../../lib/cart/cartStore";
 import { eur } from "../../../../utils/format";
 import PaymentPaypal from "./PaymentPaypal";
 import {

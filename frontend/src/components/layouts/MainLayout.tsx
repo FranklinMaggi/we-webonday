@@ -6,7 +6,7 @@ import WhatsAppButton from "../whatsapp/WhatsAppButton";
 import { CookieBanner } from "../cookie/CookieBanner";
 import CartSticker from "../cart/CartSticker";
 import { setDocumentTitle } from "../../utils/seo";
-import "./mainLayout.css";
+
 
 /**
  * Props del layout principale dell'app

@@ -78,10 +78,29 @@ import { uploadBusinessMenu } from "./routes/business/uploadMenu";
 /* ============================================================
    PRODUCTS
 ============================================================ */
-
+import { getProductsWithOptions } from "./routes/products/products.withOptions";
 import { getProducts } from "./routes/products/products";
 import { getProduct } from "./routes/products/products";
 import { registerProduct } from "./routes/products/products";
+/* ============================================================
+   ADMIN — PRODUCTS
+============================================================ */
+import { getProductWithOptions } from "./routes/products/product.withOptions";
+
+import {
+  listAdminProducts,
+  getAdminProduct,
+} from "./routes/admin/products.admin";
+import { registerOption } from "./routes/admin/options.admin";
+import { updateProductOptions } from "./routes/admin/products.options.update";
+
+import {
+  listAdminOptions,
+  getAdminOption,
+  updateOptionStatus,
+} from "./routes/admin/options.read";
+import { getAdminProductWithOptions } from "./routes/admin/products.withOptions";
+
 
 /* ============================================================
    COOKIES — CONSENSO
@@ -119,6 +138,11 @@ import { cloneOrder } from "./routes/admin/orders.actions";
 
 import { getAdminKPI } from "./routes/admin/kpi.read";
 
+import {  listAdminSolutions,
+  getAdminSolution,
+  registerSolution, } from "./routes/admin/solutions.admin";
+import { getSolutionDetail } from "./routes/solutions/solution.detail";
+import { getSolutions } from "./routes/solutions/solutions.public";
 /* ============================================================
    HTTP HELPERS
 ============================================================ */
@@ -185,6 +209,38 @@ export default {
     }
 
     try {
+/* ======================================================
+   SOLUTIONS — PUBLIC
+====================================================== */
+
+if (pathname === "/api/solutions" && method === "GET") {
+  const result = await getSolutions(env);
+
+  return withCors(
+    json(result, request, env, 200),
+    request,
+    env
+  );
+}
+
+if (pathname === "/api/solution" && method === "GET") {
+  const result = await getSolutionDetail(request, env);
+
+  const status = result.ok
+    ? 200
+    : result.error === "SOLUTION_NOT_FOUND"
+    ? 404
+    : result.error === "SOLUTION_NOT_ACTIVE"
+    ? 403
+    : 400;
+
+  return withCors(
+    json(result, request, env, status),
+    request,
+    env
+  );
+}
+
 
       /* ======================================================
          AUTH
@@ -290,6 +346,18 @@ export default {
 
       if (pathname === "/api/products/register" && method === "PUT")
         return withCors(json({ ok: true, product: await registerProduct(request, env) }, request, env), request, env);
+      if (pathname === "/api/products/with-options" && method === "GET") {
+        return withCors( json( { ok: true, products: await getProductsWithOptions(env) },request,env),request, env );}
+        if (pathname === "/api/product/with-options" && method === "GET") {
+          return withCors(
+            await getProductWithOptions(request, env),
+            request,
+            env
+          );
+        }
+         
+       
+
 
       /* ======================================================
          ADMIN — READ
@@ -332,7 +400,19 @@ export default {
         if (denied) return withCors(denied, request, env);
         return withCors(await cloneOrder(request, env), request, env);
       }
+      /* ======================================================
+   ADMIN — SOLUTIONS (CRUD)
+   🔒 x-admin-token REQUIRED
+   🧠 Tutti gli stati (DRAFT / ACTIVE / ARCHIVED)
+====================================================== */
+      if (pathname === "/api/admin/solutions/list" && method === "GET")
+      return withCors(await listAdminSolutions(request, env), request, env);
 
+      if (pathname === "/api/admin/solution" && method === "GET")
+      return withCors(await getAdminSolution(request, env), request, env);
+
+      if (pathname === "/api/admin/solutions/register" && method === "PUT")
+      return withCors(await registerSolution(request, env), request, env);
       /* ======================================================
          ADMIN — KPI
       ====================================================== */
@@ -341,6 +421,71 @@ export default {
         if (denied) return withCors(denied, request, env);
         return withCors(await getAdminKPI(request, env), request, env);
       }
+/* ======================================================
+  ADMIN — PRODUCTS
+====================================================== */
+
+if (pathname === "/api/admin/products/list" && method === "GET") {
+  const denied = requireAdmin(request, env);
+  if (denied) return withCors(denied, request, env);
+  return withCors(await listAdminProducts(request, env), request, env);
+}
+
+
+if (pathname === "/api/admin/product" && method === "GET") {
+  const denied = requireAdmin(request, env);
+  if (denied) return withCors(denied, request, env);
+  return withCors(await getAdminProduct(request, env), request, env);
+}
+
+/* ======================================================
+   ADMIN — OPTIONS
+====================================================== */
+
+if (pathname === "/api/admin/options/register" && method === "PUT") {
+  const denied = requireAdmin(request, env);
+  if (denied) return withCors(denied, request, env);
+  return withCors(await registerOption(request, env), request, env);
+}
+
+if (pathname === "/api/admin/options/list" && method === "GET") {
+  const denied = requireAdmin(request, env);
+  if (denied) return withCors(denied, request, env);
+  return withCors(await listAdminOptions(request, env), request, env);
+}
+
+if (pathname === "/api/admin/option" && method === "GET") {
+  const denied = requireAdmin(request, env);
+  if (denied) return withCors(denied, request, env);
+  return withCors(await getAdminOption(request, env), request, env);
+}
+
+if (pathname === "/api/admin/options/status" && method === "POST") {
+  const denied = requireAdmin(request, env);
+  if (denied) return withCors(denied, request, env);
+  return withCors(await updateOptionStatus(request, env), request, env);
+}
+if (pathname === "/api/admin/product/with-options" && method === "GET") {
+  const denied = requireAdmin(request, env);
+  if (denied) return withCors(denied, request, env);
+  return withCors(
+    await getAdminProductWithOptions(request, env),
+    request,
+    env
+  );
+}
+if (
+  pathname === "/api/admin/product/options/update" &&
+  method === "POST"
+) {
+  const denied = requireAdmin(request, env);
+  if (denied) return withCors(denied, request, env);
+  return withCors(
+    await updateProductOptions(request, env),
+    request,
+    env
+  );
+}
 
       /* ===================== FALLBACK ===================== */
       return json({ ok: false, error: "NOT_FOUND" }, request, env, 404);

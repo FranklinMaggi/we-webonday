@@ -1,3 +1,23 @@
+// ======================================================
+// FE || pages/user/business/setup/OrderSetupPage.tsx
+// ======================================================
+// ORDER SETUP — MULTI STEP WIZARD
+//
+// RUOLO:
+// - Guidare l’utente nella configurazione ordine
+//
+// RESPONSABILITÀ:
+// - Gestione step
+// - Routing logico interno
+//
+// NON FA:
+// - NON salva direttamente dati
+// - NON valida business rules
+//
+// NOTE:
+// - Stato persistito in store dedicato
+// ======================================================
+
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 

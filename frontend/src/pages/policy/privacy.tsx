@@ -1,4 +1,4 @@
-import "./policy.css";
+//policy/privacy.tsx
 
 export default function Privacy() {
   return (

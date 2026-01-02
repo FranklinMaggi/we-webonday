@@ -1,0 +1,70 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { adminFetch } from "../../../../lib/adminApi/client";
+
+type AdminOptionDTO = {
+  id: string;
+  name: string;
+  price: number;
+  status: "ACTIVE" | "ARCHIVED";
+};
+
+export default function AdminOptionsPage() {
+  const [options, setOptions] = useState<AdminOptionDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    adminFetch<{ ok: true; options: AdminOptionDTO[] }>(
+      "/api/admin/options/list"
+    )
+      .then((res) => setOptions(res.options))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <p>Caricamento…</p>;
+
+  return (
+    <section className="admin-page">
+      <h1>Opzioni</h1>
+
+      <table className="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Prezzo</th>
+            <th>Stato</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {options.map((o) => (
+            <tr key={o.id}>
+              <td>{o.id}</td>
+              <td>{o.name}</td>
+              <td>€ {o.price}</td>
+              <td>
+                <span className={`status status-${o.status}`}>
+                  {o.status}
+                </span>
+              </td>
+              <td>
+                <button onClick={() => navigate(o.id)}>
+                  Modifica
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <hr />
+
+      <button onClick={() => navigate("new")}>
+        + Nuova opzione
+      </button>
+    </section>
+  );
+}

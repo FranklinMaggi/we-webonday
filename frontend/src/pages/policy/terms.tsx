@@ -1,4 +1,4 @@
-import "./policy.css";
+//pages/policy/terms.tsx
 
 export default function Terms() {
   return (

@@ -1,0 +1,286 @@
+/* ======================================================
+   FE || frontend/src/Style/components/cartSticker.css
+   ======================================================
+   COMPONENT — CART STICKER (FLOATING MINI CART)
+
+   AI-SUPERCOMMENT (CONNECT POINT)
+   - Gestisce il MINI-CART FLOTTANTE sempre accessibile
+   - Toggle + badge + pannello espandibile
+   - Vive sopra l’interfaccia, indipendente dal layout
+
+   RESPONSABILITÀ:
+   - posizionamento fixed
+   - toggle open / close
+   - panel animato
+   - lista prodotti compatta
+   - responsive del floating
+
+   DIVIETI:
+   - layout di pagina
+   - override contestuali
+   ====================================================== */
+
+
+/* =========================
+   ROOT CONTAINER
+========================= */
+.cart-sticker {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 200;
+
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+
+/* =========================
+   TOGGLE BUTTON
+========================= */
+.cart-sticker__toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 14px;
+  min-height: 44px;
+
+  border-radius: 999px;
+  cursor: pointer;
+
+  background: rgba(2, 6, 23, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f9fafb;
+
+  backdrop-filter: blur(6px);
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.45),
+    0 0 20px rgba(34, 211, 238, 0.25);
+}
+
+.cart-sticker__toggle:focus-visible {
+  outline: 2px solid var(--wd-accent-cyan);
+  outline-offset: 2px;
+}
+
+
+/* BADGE */
+.cart-sticker__badge {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+
+  background: linear-gradient(90deg, #22d3ee, #f472b6);
+  color: #020617;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cart-sticker__label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cart-sticker__total {
+  font-weight: 700;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+
+/* =========================
+   PANEL (DESKTOP POPOVER)
+========================= */
+.cart-sticker__panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  color: var(--wd-text-main);
+  width: min(92vw, 380px);
+  max-height: 70vh;
+
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+
+  padding: 14px;
+  border-radius: 20px;
+
+  background: rgba(5, 8, 22, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.55),
+    0 0 30px rgba(34, 211, 238, 0.2);
+
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cart-sticker.is-open .cart-sticker__panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+
+/* =========================
+   EMPTY STATE
+========================= */
+.cart-sticker__empty {
+  padding: 24px;
+  text-align: center;
+  opacity: 0.7;
+}
+
+
+/* =========================
+   LISTA ITEMS
+========================= */
+.cart-sticker__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cart-sticker__item {
+  padding: 12px;
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+
+/* HEADER ITEM */
+.item__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.item__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--wd-text-main);
+}
+
+.item__remove {
+  background: none;
+  border: none;
+  color: #f87171;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.item__remove:focus-visible {
+  outline: 2px solid var(--wd-accent-cyan);
+  outline-offset: 2px;
+}
+
+
+/* RIGHE PREZZI */
+.item__line,
+.item__total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  opacity: 0.9;
+  color: var(--wd-text-muted);
+}
+
+
+/* OPTIONS */
+.item__options {
+  margin-top: 6px;
+  color: var(--wd-text-muted);
+}
+
+.item__options summary {
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0.75;
+  color: var(--wd-text-muted);
+}
+
+.item__opt {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+.cart-sticker__footer {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.cart-sticker__grand {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--wd-text-main);
+}
+
+
+/* =========================
+   MOBILE — BOTTOM SHEET
+========================= */
+@media (max-width: 640px) {
+  .cart-sticker {
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .cart-sticker__label,
+  .cart-sticker__total {
+    display: none;
+  }
+
+  .cart-sticker__panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100vw;
+    max-height: 85vh;
+
+    border-radius: 20px 20px 0 0;
+
+    transform: translateY(100%);
+  }
+
+  .cart-sticker.is-open .cart-sticker__panel {
+    transform: translateY(0);
+  }
+}

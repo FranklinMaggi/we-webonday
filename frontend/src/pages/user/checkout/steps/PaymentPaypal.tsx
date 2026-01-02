@@ -1,3 +1,24 @@
+// ======================================================
+// FE || pages/user/checkout/steps/PaymentPaypal.tsx
+// ======================================================
+// PAYMENT — PAYPAL INTEGRATION
+//
+// RUOLO:
+// - Avvio e gestione pagamento PayPal
+//
+// RESPONSABILITÀ:
+// - Load SDK
+// - Create order PayPal
+// - Capture pagamento
+//
+// NON FA:
+// - NON crea ordini interni
+// - NON calcola importi
+//
+// NOTE:
+// - Backend resta source of truth
+// ======================================================
+
 import { useEffect, useRef } from "react";
 import {
   loadPaypalSdk,

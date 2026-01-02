@@ -1,0 +1,148 @@
+/* =====================================================
+   TOKENS — WebOnDay
+=====================================================
+
+ORDINE ARCHITETTURALE:
+1️⃣ TOKENS  ← QUI (VERITÀ ASSOLUTA)
+2️⃣ BASE
+3️⃣ PRIMITIVES
+4️⃣ LAYOUT
+5️⃣ PAGES
+
+RESPONSABILITÀ:
+- Variabili CSS globali
+- Colori, radius, shadow, glow
+- Token semantici (navbar, footer, buttons, ecc.)
+
+DIVIETI ASSOLUTI:
+- NESSUNA classe (.card, .btn, ecc.)
+- NESSUN layout
+- NESSUN componente
+- NESSUN media query
+
+Se serve una classe → NON è un token.
+===================================================== */
+
+:root {
+
+    /* =====================================================
+       BRAND / ACCENT
+    ===================================================== */
+    --wd-accent-cyan: #22d3ee;
+    --wd-accent-pink: #f472b6;
+  
+    /* =====================================================
+       BASE COLORS
+    ===================================================== */
+    --wd-bg: #05070a;
+    --wd-panel: rgba(255,255,255,0.06);
+    --wd-border: rgba(255,255,255,0.12);
+  
+    --wd-text-main: #e5e7eb;
+    --wd-text-muted: #9ca3af;
+  
+    /* =====================================================
+       GRAYSCALE
+    ===================================================== */
+    --wd-gray-50: #f9fafb;
+    --wd-gray-100: #f3f4f6;
+    --wd-gray-300: #d1d5db;
+    --wd-gray-600: #4b5563;
+    --wd-gray-700: #374151;
+    --wd-gray-900: #111827;
+  
+    /* =====================================================
+       CYAN / FUCHSIA / BLUE / AMBER
+    ===================================================== */
+    --wd-cyan-300: #67e8f9;
+    --wd-cyan-400: #22d3ee;
+    --wd-cyan-500: #06b6d4;
+  
+    --wd-fuchsia-300: #f9a8d4;
+    --wd-fuchsia-400: #f472b6;
+    --wd-fuchsia-500: #ec4899;
+  
+    --wd-blue-300: #93c5fd;
+    --wd-blue-600: #2563eb;
+    --wd-blue-700: #1d4ed8;
+    --wd-blue-800: #1e40af;
+  
+    --wd-amber-300: #fcd34d;
+    --wd-amber-400: #fbbf24;
+  
+    /* =====================================================
+       BACKGROUND VARIANTS
+    ===================================================== */
+    --wd-dark-1: #050509;
+    --wd-dark-2: #090912;
+  
+    /* =====================================================
+       RADIUS
+    ===================================================== */
+    --wd-radius-sm: 10px;
+    --wd-radius-md: 14px;
+    --wd-radius-lg: 22px;
+    --wd-radius-xl: 24px;
+  
+    /* =====================================================
+       SHADOWS
+    ===================================================== */
+    --wd-shadow-md: 0 5px 15px rgba(0,0,0,0.15);
+    --wd-shadow-lg: 0 10px 30px rgba(0,0,0,0.25);
+  
+    /* =====================================================
+       GLOW PRESETS
+    ===================================================== */
+    --wd-glow-cyan: 0 0 20px rgba(34,211,238,.7);
+    --wd-glow-fuchsia: 0 0 20px rgba(244,114,182,.7);
+    --wd-glow-blue: 0 0 20px rgba(37,99,235,.6);
+  
+    /* =====================================================
+       NAVBAR TOKENS
+    ===================================================== */
+    --wd-navbar-bg: #050816;
+    --wd-navbar-border: rgba(255,255,255,0.08);
+  
+    --wd-navbar-text: #e5e7eb;
+    --wd-navbar-text-muted: #a1a1aa;
+    --wd-navbar-text-hover: #ffffff;
+  
+    --wd-navbar-accent-bg: #22c55e;
+    --wd-navbar-accent-bg-hover: #16a34a;
+    --wd-navbar-accent-text: #020617;
+  
+    --wd-navbar-badge-bg: #020617;
+    --wd-navbar-badge-text: #22c55e;
+  
+    --wd-navbar-neon-cyan: rgba(34,211,238,.25);
+    --wd-navbar-neon-pink: rgba(244,114,182,.18);
+  
+    /* =====================================================
+       FOOTER TOKENS
+    ===================================================== */
+    --wd-footer-bg: var(--wd-gray-900);
+    --wd-footer-text: var(--wd-gray-300);
+    --wd-footer-title: #ffffff;
+  
+    --wd-footer-link: var(--wd-gray-300);
+    --wd-footer-link-hover: var(--wd-cyan-300);
+  
+    --wd-footer-border: rgba(255,255,255,0.08);
+  
+    --wd-footer-neon-cyan: rgba(34,211,238,0.25);
+    --wd-footer-neon-pink: rgba(244,114,182,0.25);
+  
+    /* =====================================================
+       WHATSAPP BUTTON TOKENS
+    ===================================================== */
+    --wd-whatsapp-bg: #25d366;
+    --wd-whatsapp-icon-size: 34px;
+    --wd-whatsapp-size: 62px;
+  
+    --wd-whatsapp-glow-main: rgba(37, 211, 102, 0.7);
+    --wd-whatsapp-glow-cyan: rgba(34, 211, 238, 0.25);
+  }
+  
+  
+
+

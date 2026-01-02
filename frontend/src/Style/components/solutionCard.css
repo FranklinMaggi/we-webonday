@@ -1,0 +1,49 @@
+/* ======================================================
+   FE || components/solutions/solutionCard.css
+   ======================================================
+
+   RUOLO:
+   - Card interattiva per una Solution (landing settoriale)
+
+   MOSTRA:
+   - Immagine rappresentativa
+   - Titolo
+   - Breve descrizione
+
+   COMPORTAMENTO:
+   - Hover = espansione visiva
+   - Click = navigazione verso /home/solution/:id
+
+   NON FA:
+   - NON gestisce layout di pagina
+   - NON gestisce routing
+====================================================== */
+
+/* =====================================================
+   COMPONENT — SOLUTION CARD
+===================================================== */
+
+.solution-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  
+  .solution-card__title {
+    font-size: 18px;
+    font-weight: 700;
+  }
+  
+  .solution-card__description {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--wd-text-muted);
+  }
+  
+  .solution-card__cta {
+    margin-top: auto;
+    font-size: 14px;
+    color: var(--wd-cyan-300);
+  }
+  

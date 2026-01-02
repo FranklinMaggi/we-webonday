@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const ProductTemplateSchema = z.object({
   id: z.string(),                  // "pizza-margherita"
-  title: z.string(),
+  name: z.string(),
   description: z.string().optional(),
 
   baseIngredients: z.array(z.string()), // ingredientId inclusi

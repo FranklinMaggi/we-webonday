@@ -1,3 +1,14 @@
+//components/navbar/ModeSwitch
+
+/**
+ * AI-SUPERCOMMENT
+ * COMPONENT: ModeSwitch
+ *
+ * RUOLO:
+ * - switch di stato applicativo (client / partner)
+ * - NON è un button
+ * - usa role="switch" correttamente
+ */
 import { useNavigate } from "react-router-dom";
 import { useUserMode } from "../../lib/userModeStore";
 import { getMyBusiness } from "../../lib/businessApi";
