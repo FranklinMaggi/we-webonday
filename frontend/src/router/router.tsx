@@ -5,18 +5,12 @@
 // AI-SUPERCOMMENT — APPLICATION ROUTER
 //
 // RUOLO:
-// - Definire la mappa di navigazione dell’app
-// - Separare in modo netto:
-//   - Visitor
-//   - User (buyer)
-//   - Business
-//   - Admin
+// - Mappa di navigazione globale
+// - Separazione netta Visitor / User / Business / Admin
 //
 // INVARIANTI:
 // - /user è SEMPRE protetto
-// - Nessuna pagina user accessibile a visitor
-// - Nessun auto-login implicito
-//
+// - Redirect post-login → /user/dashboard
 // ======================================================
 
 import { createBrowserRouter } from "react-router-dom";
@@ -96,8 +90,8 @@ const router = createBrowserRouter([
       { path: "home/solution/:id", element: <HomeSolutionPage /> },
 
       /* AUTH */
-      { path: "/user/login", element: <UserLogin /> },
-     
+      { path: "user/login", element: <UserLogin /> },
+
       /* POLICY */
       { path: "policy/privacy", element: <Privacy /> },
       { path: "policy/terms", element: <Terms /> },
@@ -106,29 +100,30 @@ const router = createBrowserRouter([
   },
 
   /* =====================================================
-     USER AREA (BUYER) — 🔒 PROTETTA
+     USER AREA (BUYER) — 🔒
   ===================================================== */
   {
-    path: "/user",
+    path: "user",
     element: (
       <ProtectedRoute>
         <MainLayout />
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <UserDashboardPage /> },
+      {
+        path: "dashboard",
+        element: <UserDashboardPage />,
+      },
 
-      // Checkout autenticato
-      { path: "/user/checkout", element: <CheckoutPage /> },
+      { path: "checkout", element: <CheckoutPage /> },
 
-      // Business Mode (contesto user)
       { path: "business/dashboard", element: <UserBusinessDashboard /> },
       { path: "business/register", element: <RegisterBusiness /> },
     ],
   },
 
   /* =====================================================
-     ADMIN — 🔒 PROTETTO
+     ADMIN — 🔒
   ===================================================== */
   {
     path: "/admin",
