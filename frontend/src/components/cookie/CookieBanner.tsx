@@ -1,3 +1,18 @@
+/**
+ * AI-SUPERCOMMENT — COOKIE BANNER
+ *
+ * RUOLO:
+ * - Raccogliere consenso cookie lato FE
+ *
+ * INVARIANTI:
+ * - NON usa visitorId
+ * - NON usa userId
+ * - NON persiste stato lato backend
+ *
+ * MOTIVO:
+ * - Consenso = evento GDPR, non identità
+ * - Backend salva solo statistiche aggregate
+ */
 // src/components/cookie/CookieBanner.tsx
 
 import { useEffect, useState } from "react";
@@ -36,12 +51,12 @@ export function CookieBanner() {
     try {
       setLoading(true);
 
-      const visitorId = getOrCreateVisitorId();
-
+     
       await acceptCookies(
-        visitorId,
+       
         analytics,
         marketing
+        
       );
     } catch (err) {
       console.error("[CookieBanner] sync error:", err);
