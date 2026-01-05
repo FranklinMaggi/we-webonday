@@ -77,11 +77,11 @@ cartStore.getState().removeItem(index);
 const checkout = () => {
     // Guard FE esplicito: il checkout richiede login
     if (!user) {
-      navigate("/user/login?redirect=/checkout");
+      navigate("/user/login?redirect=/user/checkout");
       return;
     }
   
-    navigate("/checkout");
+    navigate("/user/checkout");
   };
 
 // =========================

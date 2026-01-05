@@ -97,7 +97,7 @@ const router = createBrowserRouter([
 
       /* AUTH */
       { path: "/user/login", element: <UserLogin /> },
-
+     
       /* POLICY */
       { path: "policy/privacy", element: <Privacy /> },
       { path: "policy/terms", element: <Terms /> },
@@ -119,7 +119,7 @@ const router = createBrowserRouter([
       { index: true, element: <UserDashboardPage /> },
 
       // Checkout autenticato
-      { path: "checkout", element: <CheckoutPage /> },
+      { path: "/user/checkout", element: <CheckoutPage /> },
 
       // Business Mode (contesto user)
       { path: "business/dashboard", element: <UserBusinessDashboard /> },
