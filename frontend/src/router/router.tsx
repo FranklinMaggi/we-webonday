@@ -2,18 +2,20 @@
 // FE || router/router.tsx
 // ======================================================
 //
-// AI-SUPERCOMMENT — APPLICATION ROUTER
-//
+// AI-SUPERCOMMENT — APPLICATION ROUTER (FREEZE)
+// ------------------------------------------------------
 // RUOLO:
 // - Mappa di navigazione globale
 // - Separazione netta Visitor / User / Business / Admin
 //
 // INVARIANTI:
 // - /user è SEMPRE protetto
-// - Redirect post-login → /user/dashboard
+// - Dashboard canonica: /user/dashboard
+// - Redirect post-login SEMPRE esplicito
+// - Nessun path ambiguo o duplicato
 // ======================================================
 
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { MainLayout } from "../components/layouts/MainLayout";
 
 /* =========================
@@ -24,7 +26,7 @@ import AdminGuard from "../components/admin/AdminGuard";
 import BusinessGuard from "../components/business/BusinessGuard";
 
 /* =========================
-   PUBLIC PAGES
+   PUBLIC (VISITOR)
 ========================= */
 import Home from "../pages/home";
 import Vision from "../pages/vision";
@@ -32,16 +34,17 @@ import Mission from "../pages/mission";
 import FounderPage from "../pages/founder";
 import Price from "../pages/pricing";
 import HomeSolutionPage from "../pages/home/solution/[id]";
+import UserLogin from "../pages/user/login";
 
 /* =========================
-   USER PAGES
+   USER (BUYER)
 ========================= */
-import UserLogin from "../pages/user/login";
-import UserDashboardPage from "../pages/user";
+import UserDashboardHome from "../pages/user/dashboard";
+import UserDashboardDetail from "../pages/user/dashboard/[id]";
 import CheckoutPage from "../pages/user/checkout";
 
 /* =========================
-   USER BUSINESS
+   USER → BUSINESS
 ========================= */
 import UserBusinessDashboard from "../pages/user/business/UserBusinessDashboard";
 import RegisterBusiness from "../pages/user/business/RegisterBusiness";
@@ -70,13 +73,16 @@ import SolutionsList from "../pages/admin/solutions";
 import SolutionEditor from "../pages/admin/solutions/[id]";
 
 /* =========================
-   BUSINESS (SaaS)
+   BUSINESS (SaaS PURO)
 ========================= */
 import BusinessDashboard from "../pages/business/Dashboard";
 
+/* =====================================================
+   ROUTER
+===================================================== */
 const router = createBrowserRouter([
   /* =====================================================
-     PUBLIC AREA (VISITOR)
+     VISITOR (PUBBLICO)
   ===================================================== */
   {
     path: "/",
@@ -89,10 +95,10 @@ const router = createBrowserRouter([
       { path: "pricing", element: <Price /> },
       { path: "home/solution/:id", element: <HomeSolutionPage /> },
 
-      /* AUTH */
+      // AUTH
       { path: "user/login", element: <UserLogin /> },
 
-      /* POLICY */
+      // POLICY
       { path: "policy/privacy", element: <Privacy /> },
       { path: "policy/terms", element: <Terms /> },
       { path: "policy", element: <PolicyPage /> },
@@ -100,7 +106,7 @@ const router = createBrowserRouter([
   },
 
   /* =====================================================
-     USER AREA (BUYER) — 🔒
+     USER (BUYER) — 🔒
   ===================================================== */
   {
     path: "user",
@@ -110,13 +116,22 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
+      // /user → redirect tecnico
+      { index: true, element: <Navigate to="dashboard" replace /> },
+
+      // DASHBOARD CANONICA
       {
         path: "dashboard",
-        element: <UserDashboardPage />,
+        children: [
+          { index: true, element: <UserDashboardHome /> },
+          { path: ":id", element: <UserDashboardDetail /> },
+        ],
       },
 
+      // CHECKOUT AUTENTICATO
       { path: "checkout", element: <CheckoutPage /> },
 
+      // BUSINESS CONTEXT (USER)
       { path: "business/dashboard", element: <UserBusinessDashboard /> },
       { path: "business/register", element: <RegisterBusiness /> },
     ],
@@ -136,8 +151,10 @@ const router = createBrowserRouter([
             element: <AdminLayout />,
             children: [
               { path: "dashboard", element: <AdminDashboard /> },
+
               { path: "orders", element: <AdminOrdersPage /> },
               { path: "orders/:id", element: <AdminOrderDetails /> },
+
               { path: "users", element: <AdminUsersPage /> },
 
               { path: "solutions", element: <SolutionsList /> },
@@ -165,7 +182,10 @@ const router = createBrowserRouter([
         <MainLayout />
       </BusinessGuard>
     ),
-    children: [{ path: "dashboard", element: <BusinessDashboard /> }],
+    children: [
+      { index: true, element: <Navigate to="dashboard" replace /> },
+      { path: "dashboard", element: <BusinessDashboard /> },
+    ],
   },
 ]);
 

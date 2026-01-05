@@ -250,7 +250,25 @@ if (pathname === "/api/solution" && method === "GET") {
     env
   );
 }
+/* ======================================================
+   COOKIES — CONSENSO (AGGREGATO, NON BLOCCANTE)
+====================================================== */
 
+if (pathname === "/api/cookies/accept" && method === "POST") {
+  return withCors(
+    await acceptCookies(request, env),
+    request,
+    env
+  );
+}
+
+if (pathname === "/api/cookies/status" && method === "GET") {
+  return withCors(
+    await getCookieStatus(),
+    request,
+    env
+  );
+}
 
       /* ======================================================
          AUTH

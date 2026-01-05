@@ -2,77 +2,71 @@
 // FE || pages/user/login/index.tsx
 // ======================================================
 //
-// AI-SUPERCOMMENT — USER LOGIN PAGE
+// AI-SUPERCOMMENT — USER LOGIN PAGE (STABLE)
 //
 // RUOLO:
-// - Punto UNICO di ingresso per l’autenticazione utente
+// - Punto UNICO di ingresso per login / registrazione
 //
-// PRINCIPI NON NEGOZIABILI:
-// - Nessun login automatico
-// - Nessun fetch user al mount
-// - Login valido SOLO se:
-//   1) azione volontaria dell’utente
-//   2) FE marca esplicitamente il login
-//
-// FLUSSO CORRETTO:
-// - User arriva qui (?redirect=...)
-// - Sceglie metodo di login
-// - Backend crea sessione HttpOnly
-// - FE marca login intenzionale
-// - FE carica user (/api/user/me)
-// - Redirect finale
+// GARANZIE:
+// - Nessun auto-login
+// - Nessun fetch user implicito
+// - Redirect SEMPRE esplicito
 //
 // ======================================================
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/auth.store";
 import { API_BASE } from "../../../lib/config";
 
 export default function UserLoginPage() {
-  // ===========================
-  // AUTH STORE (INTENZIONALE)
-  // ===========================
+  /* ===========================
+     STORE AUTH (INTENZIONALE)
+  =========================== */
   const fetchUser = useAuthStore((s) => s.fetchUser);
   const markExplicitLogin = useAuthStore((s) => s.markExplicitLogin);
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ===========================
-  // REDIRECT TARGET
-  // ===========================
-  const params = new URLSearchParams(location.search);
-  const redirect = params.get("redirect") || "/user/dashboard";
+  /* ===========================
+     REDIRECT TARGET (SAFE)
+  =========================== */
+  const redirect = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get("redirect") || "/user/dashboard";
+  }, [location.search]);
 
-  // ===========================
-  // FORM STATE
-  // ===========================
+  /* ===========================
+     FORM STATE
+  =========================== */
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // ===========================
-  // POST-LOGIN SUCCESS (UNICO)
-  // ===========================
-  async function onLoginSuccess() {
-    // 1️⃣ marca login come intenzionale
+  /* ===========================
+     POST-LOGIN PIPELINE (UNICO)
+  =========================== */
+  async function completeLogin() {
+    // 1️⃣ login volontario
     markExplicitLogin();
 
-    // 2️⃣ carica user dalla sessione HttpOnly
+    // 2️⃣ carica utente dalla sessione HttpOnly
     await fetchUser();
 
     // 3️⃣ redirect finale
     navigate(redirect, { replace: true });
   }
 
-  // ===========================
-  // LOGIN EMAIL / PASSWORD
-  // ===========================
+  /* ===========================
+     LOGIN EMAIL / PASSWORD
+  =========================== */
   async function login() {
+    if (loading) return;
+
     setLoading(true);
-    setErrorMsg("");
+    setErrorMsg(null);
 
     try {
       const res = await fetch(`${API_BASE}/api/user/login`, {
@@ -84,25 +78,27 @@ export default function UserLoginPage() {
 
       const out = await res.json();
 
-      if (!out.ok) {
+      if (!out?.ok) {
         setErrorMsg("Email o password non validi");
         return;
       }
 
-      await onLoginSuccess();
+      await completeLogin();
     } catch {
-      setErrorMsg("Errore di rete, riprova più tardi.");
+      setErrorMsg("Errore di rete. Riprova.");
     } finally {
       setLoading(false);
     }
   }
 
-  // ===========================
-  // REGISTRAZIONE
-  // ===========================
+  /* ===========================
+     REGISTRAZIONE
+  =========================== */
   async function register() {
+    if (loading) return;
+
     setLoading(true);
-    setErrorMsg("");
+    setErrorMsg(null);
 
     try {
       const res = await fetch(`${API_BASE}/api/user/register`, {
@@ -114,33 +110,31 @@ export default function UserLoginPage() {
 
       const out = await res.json();
 
-      if (!out.ok) {
+      if (!out?.ok) {
         setErrorMsg("Registrazione fallita. Email già in uso?");
         return;
       }
 
-      await onLoginSuccess();
+      await completeLogin();
     } catch {
-      setErrorMsg("Errore di rete, riprova più tardi.");
+      setErrorMsg("Errore di rete. Riprova.");
     } finally {
       setLoading(false);
     }
   }
 
-  // ===========================
-  // LOGIN GOOGLE OAUTH
-  // ===========================
+  /* ===========================
+     GOOGLE OAUTH
+  =========================== */
   function googleLogin() {
     const url = new URL(`${API_BASE}/api/user/google/auth`);
     url.searchParams.set("redirect", redirect);
-
-    // Redirect esterno → rientro su /login
     window.location.href = url.toString();
   }
 
-  // ===========================
-  // RENDER
-  // ===========================
+  /* ===========================
+     RENDER
+  =========================== */
   return (
     <div className="login-page">
       <div className="login-card">
@@ -149,7 +143,11 @@ export default function UserLoginPage() {
           Accedi o registrati per continuare
         </p>
 
-        <button onClick={googleLogin} className="login-google-btn">
+        <button
+          onClick={googleLogin}
+          className="login-google-btn"
+          disabled={loading}
+        >
           <span className="google-icon">G</span>
           Accedi con Google
         </button>
@@ -162,6 +160,7 @@ export default function UserLoginPage() {
           <input
             className="login-input"
             placeholder="Email"
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -170,6 +169,7 @@ export default function UserLoginPage() {
             className="login-input"
             type="password"
             placeholder="Password"
+            autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
