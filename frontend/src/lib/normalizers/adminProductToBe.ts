@@ -27,7 +27,7 @@ export function adminProductToBE(
       monthly: Number(product.pricing?.monthly) || 0,
     },
 
-    deliveryTime: product.deliveryTime,
-    flags: product.flags,
+ 
+   
   };
 }

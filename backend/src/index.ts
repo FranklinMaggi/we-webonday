@@ -30,6 +30,16 @@ import { loginUser } from "./routes/auth/password";
 import { getUser } from "./routes/auth/password";
 import { logoutUser } from "./routes/auth/password";
 
+
+// import
+import { startProject } from "./routes/projects/project.start";
+import { progressProject } from "./routes/projects/project.progress";
+import { completeProject } from "./routes/projects/project.complete";
+import { addProjectOption } from "./routes/projects/project.options.add";
+import { removeProjectOption } from "./routes/projects/project.options.remove";
+import { getProject } from "./routes/projects/project.read";
+import { listProjects } from "./routes/projects/projects.read";
+
 /* ============================================================
    CART — VISITOR / USER
 ============================================================ */
@@ -90,16 +100,16 @@ import { getProductWithOptions } from "./routes/products/product.withOptions";
 import {
   listAdminProducts,
   getAdminProduct,
-} from "./routes/admin/products.admin";
-import { registerOption } from "./routes/admin/options.admin";
-import { updateProductOptions } from "./routes/admin/products.options.update";
+} from "./routes/admin/products/products.admin";
+import { registerOption } from "./routes/admin/options/options.admin";
+import { updateProductOptions } from "./routes/admin/products/products.options.update";
 
 import {
   listAdminOptions,
   getAdminOption,
   updateOptionStatus,
-} from "./routes/admin/options.read";
-import { getAdminProductWithOptions } from "./routes/admin/products.withOptions";
+} from "./routes/admin/options/options.read";
+import { getAdminProductWithOptions } from "./routes/admin/products/products.withOptions";
 
 
 /* ============================================================
@@ -119,8 +129,8 @@ import { requireAdmin } from "./routes/admin/admin.guard";
    ADMIN — READ
 ============================================================ */
 
-import { listAdminOrders } from "./routes/admin/orders.admin";
-import { getAdminOrder as getAdminOrderAdmin } from "./routes/admin/orders.admin";
+import { listAdminOrders } from "./routes/admin/orders/orders.admin";
+import { getAdminOrder as getAdminOrderAdmin } from "./routes/admin/orders/orders.admin";
 
 import { listAdminUsers } from "./routes/admin/user.read";
 
@@ -128,9 +138,9 @@ import { listAdminUsers } from "./routes/admin/user.read";
    ADMIN — WRITE (STATE MACHINE)
 ============================================================ */
 
-import { transitionOrder } from "./routes/admin/orders.actions";
-import { deleteOrder } from "./routes/admin/orders.actions";
-import { cloneOrder } from "./routes/admin/orders.actions";
+import { transitionOrder } from "./routes/admin/orders/orders.actions";
+import { deleteOrder } from "./routes/admin/orders/orders.actions";
+import { cloneOrder } from "./routes/admin/orders/orders.actions";
 
 /* ============================================================
    ADMIN — KPI
@@ -486,6 +496,28 @@ if (
     env
   );
 }
+if (pathname === "/api/project/start" && method === "POST")
+  return withCors(json({ ok: true, ...(await startProject(request, env)) }, request, env), request, env);
+
+if (pathname === "/api/project/progress" && method === "POST") {
+  const result = await progressProject(request, env);
+  return withCors(json({ ok: true, ...result }, request, env, 200), request, env);
+}
+if (pathname === "/api/project/complete" && method === "POST")
+  return withCors(json({ ok: true, ...(await completeProject(request, env)) }, request, env), request, env);
+
+if (pathname === "/api/project/options/add" && method === "POST")
+  return withCors(json({ ok: true, ...(await addProjectOption(request, env)) }, request, env), request, env);
+
+if (pathname === "/api/project/options/remove" && method === "POST")
+  return withCors(json({ ok: true, ...(await removeProjectOption(request, env)) }, request, env), request, env);
+
+if (pathname === "/api/project" && method === "GET")
+  return withCors(json(await getProject(request, env), request, env), request, env);
+
+if (pathname === "/api/projects" && method === "GET")
+  return withCors(json(await listProjects(request, env), request, env), request, env);
+
 
       /* ===================== FALLBACK ===================== */
       return json({ ok: false, error: "NOT_FOUND" }, request, env, 404);

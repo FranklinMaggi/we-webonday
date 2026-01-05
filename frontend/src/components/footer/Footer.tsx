@@ -10,6 +10,7 @@ export default function Footer() {
 
         <div className="wd-footer-col">
           <h4 className="wd-footer-title">Policy</h4>
+          <Link className="wd-footer-link" to="/pricing">Prezzi & Tariffe</Link>
           <Link className="wd-footer-link" to="/policy/terms">Termini</Link>
           <Link className="wd-footer-link" to="/policy/privacy">Privacy</Link>
         </div>

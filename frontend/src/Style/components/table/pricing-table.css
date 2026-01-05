@@ -1,0 +1,86 @@
+/* FE || components/pricing/pricing-table.css */
+/* ======================================================
+   PRICING TABLE — STILE ISOLATO
+   ====================================================== */
+
+   .pricing-wrapper {
+    margin-top: 6rem;
+  }
+  
+  .pricing-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e40af;
+    margin-bottom: 2.5rem;
+  }
+  
+  /* Scroll mobile */
+  .pricing-scroll {
+    overflow-x: auto;
+  }
+  
+  /* TABELLA */
+  .pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* HEADER */
+  .pricing-table thead {
+    background: linear-gradient(90deg, #1e40af, #1d4ed8);
+    color: white;
+  }
+  
+  .pricing-table th {
+    padding: 1.4rem;
+    font-size: 1.05rem;
+    text-align: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  
+  .pricing-table th:first-child {
+    text-align: left;
+  }
+  
+  /* PREZZI */
+  .price-note {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 400;
+    opacity: 0.9;
+    margin-top: 4px;
+  }
+  
+  /* BODY */
+  .pricing-table td {
+    padding: 1rem;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .pricing-table td:not(:first-child) {
+    text-align: center;
+    font-weight: 500;
+  }
+  
+  /* ZEBRA */
+  .pricing-table tbody tr:nth-child(even) {
+    background-color: #f9fafb;
+  }
+  
+  /* HOVER */
+  .pricing-table tbody tr:hover {
+    background-color: #eef2ff;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  /* ANCORA */
+  #tabella-servizi {
+    scroll-margin-top: 120px;
+  }
+  

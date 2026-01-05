@@ -6,7 +6,19 @@
    - Nessun accesso a Env
    - Solo naming + responsabilità
 ========================================================= */
-
+// ============================================================
+// AI-SUPERCOMMENT
+// KV KEYS — SINGLE SOURCE OF TRUTH
+//
+// PRODUCT_KEY(id)
+// OPTIONS_KEY(id)
+//
+// PERCHE:
+// - Nessun parsing manuale di stringhe
+// - Evita collisioni cross-domain
+// ============================================================
+export const OPTIONS_KEY = (optionId: string) =>
+  `OPTION:${optionId}`;
 /* =========================================================
    INGREDIENTI (CATALOGO FOOD)
    KV: PRODUCTS_KV
@@ -88,20 +100,20 @@ export const REFERRALS_KEY = (code: string) =>
  * dashboard user
  */
 export const USER_REFERRALS_INDEX = (userId: string) =>
-  `USER:REFERRALS:${userId}`;
+  `USER:REFERRAL:${userId}`;
 
 /**
  * Referral riscattato da un business
  * join business ↔ referral
  */
-export const BUSINESS_REFERRAL_KEY = (businessId: string) =>
+export const BUSINESS_REFERRALS_KEY = (businessId: string) =>
   `BUSINESS:REFERRAL:${businessId}`;
 
 /**
  * Indice admin per stato referral
  * used by admin dashboard
  */
-export const REFERRAL_STATUS_INDEX = (
+export const REFERRALS_STATUS_INDEX = (
   status: "issued" | "redeemed" | "confirmed" | "expired"
 ) =>
   `REFERRAL:STATUS:${status}`;
@@ -147,3 +159,29 @@ export const POLICY_ACCEPTANCE_KEY = (
   version: string
 ) =>
   `POLICY_ACCEPTANCE:${userId}:${version}`;
+
+  /* =========================================================
+   PROJECTS
+   KV: PROJECTS_KV
+========================================================= */
+
+/**
+ * Project = esecuzione ONE-TIME (ProjectSchema)
+ *
+ * Scelta chiave:
+ * - Deve permettere LIST per business (dashboard/admin)
+ * - Deve evitare indici duplicati
+ *
+ * Pattern:
+ * - key canonica include businessId come prefisso:
+ *   PROJECT:{businessId}:{projectKey}
+ *
+ * Così puoi:
+ * - list per business: prefix PROJECT:{businessId}:
+ * - get singolo: PROJECT_KEY(businessId, projectKey)
+ */
+export const PROJECTS_KEY = (businessId: string, projectKey: string) =>
+  `PROJECT:${businessId}:${projectKey}`;
+
+export const PROJECTS_BY_BUSINESS_PREFIX = (businessId: string) =>
+  `PROJECT:${businessId}:`;

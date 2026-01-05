@@ -23,14 +23,16 @@ export interface ProductDTO {
   id: string;
 
   name: string;
+  nameKey?:string; 
   description: string;
+  descriptionKey?:string; 
   status: ProductStatus;
 
   startupFee: number;
   pricing: ProductPricingDTO;
 
-  deliveryTime: string;
-  flags: string[];
+
+ 
 
   options: ProductOptionDTO[];
 }

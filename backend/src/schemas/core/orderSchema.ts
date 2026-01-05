@@ -1,88 +1,112 @@
-//BE.core.orderSchema.ts
-// DOMAIN: CORE (LEGACY CART v1 — da migrare a Cart v2)
+// ======================================================
+// DOMAIN || OrderSchema — ECONOMIC ACT (v2)
+// ======================================================
+//
+// Order = atto economico immutabile
+// NON è carrello
+// NON è subscription
+// NON è progetto
+//
+// Ogni pagamento reale genera UN Order
+// ======================================================
 
 import { z } from "zod";
-import { CartItemSchema } from "./cartSchema";
 
-export const OrderStatusSchema = z.enum([
-  "draft",
-  "pending",
-  "confirmed",
-  "processed",
-  "completed",
-  "suspended",
-  "deleted",
+/* =========================
+   ORDER TYPE
+========================= */
+export const OrderTypeSchema = z.enum([
+  // SaaS
+  "SUBSCRIPTION_START",
+  "SUBSCRIPTION_RENEWAL",
+  "PRODUCT_UPGRADE",
+
+  // Option (add-on)
+  "OPTION_ADD",
+  "OPTION_REMOVE",
+
+  // Project (one-time a milestone)
+  "PROJECT_START",        // milestone 1
+  "PROJECT_PROGRESS",     // milestone 2
+  "PROJECT_COMPLETE",     // milestone 3
 ]);
 
-export const PaymentStatusSchema = z.enum([
-  "pending",
-  "paid",
-]);
+/* =========================
+   PAYMENT
+========================= */
+export const PaymentSchema = z.object({
+  provider: z.literal("paypal"),
+  providerOrderId: z.string().min(1),
+  status: z.enum(["PAID", "FAILED"]),
+});
 
-/* ============================
-   BASE OBJECT (NO LOGIC)
-============================ */
-export const OrderBaseSchema = z.object({
+/* =========================
+   ORDER (DOMAIN)
+========================= */
+export const OrderSchema = z.object({
   id: z.string().uuid(),
 
-  userId: z.string().nullable(),
+  type: OrderTypeSchema,
 
-  email: z.string().email(),
-  firstName: z.string().nullable().optional(),
-  lastName: z.string().nullable().optional(),
-  phone: z.string().nullable().optional(),
-  billingAddress: z.string().nullable().optional(),
+  // soggetto economico
+  businessId: z.string().min(1),
+  userId: z.string().nullable().optional(),
 
-  piva: z.string().nullable().optional(),
-  businessName: z.string().nullable().optional(),
+  // riferimenti dominio
+  productId: z.string().optional(),   // SaaS o progetto
+  projectId: z.string().optional(),   // SOLO per PROJECT_*
+  optionIds: z.array(z.string()).optional(), // per OPTION_ADD
 
+  // importo pagato ORA
+  amount: z.number().nonnegative(),
+
+  // rimborsabilità (solo per project)
+  refundablePercent: z
+    .number()
+    .min(0)
+    .max(100)
+    .optional(),
+
+  payment: PaymentSchema,
+
+  // legale
+  policyAccepted: z.literal(true),
   policyVersion: z.string().min(1),
 
-  items: z.array(CartItemSchema),
-  total: z.number().nonnegative(),
-
-  status: OrderStatusSchema,
-  createdAt: z.string(),
-  cancelReason: z.enum([
-    "user",
-    "payment_failed",
-    "admin",
-  ]).optional(),
-  
-  paymentProvider: z.literal("paypal").optional(),
-  paymentStatus: PaymentStatusSchema.optional(),
-  paypalOrderId: z.string().optional(),
-  paypalCapture: z.unknown().optional(),
+  createdAt: z.string().datetime(),
 });
 
-/* ============================
+/* =========================
    DOMAIN INVARIANTS
-============================ */
-export const OrderSchema = OrderBaseSchema.superRefine((order, ctx) => {
-  if (order.paymentStatus && !order.paymentProvider) {
+========================= */
+export const OrderDomainSchema = OrderSchema.superRefine((order, ctx) => {
+  // PROJECT orders devono avere projectId
+  if (order.type.startsWith("PROJECT") && !order.projectId) {
     ctx.addIssue({
-      path: ["paymentProvider"],
-      message: "paymentProvider required when paymentStatus is set",
+      path: ["projectId"],
+      message: "projectId required for project orders",
       code: z.ZodIssueCode.custom,
     });
   }
 
-  if (order.paymentStatus === "paid" && order.status !== "confirmed") {
+  // OPTION_ADD deve avere optionIds
+  if (order.type === "OPTION_ADD" && !order.optionIds?.length) {
     ctx.addIssue({
-      path: ["status"],
-      message: "paid order must be confirmed",
+      path: ["optionIds"],
+      message: "optionIds required for OPTION_ADD",
       code: z.ZodIssueCode.custom,
     });
   }
 
-  if (order.paymentProvider === "paypal" && !order.paypalOrderId) {
+  // FAILED non deve esistere come ordine persistente
+  if (order.payment.status === "FAILED") {
     ctx.addIssue({
-      path: ["paypalOrderId"],
-      message: "paypalOrderId required for PayPal orders",
+      path: ["payment.status"],
+      message: "FAILED orders must not be persisted",
       code: z.ZodIssueCode.custom,
     });
   }
 });
 
-export type OrderDTO = z.infer<typeof OrderSchema>;
-export type OrderStatus = z.infer<typeof OrderStatusSchema>;
+export type Order = z.infer<typeof OrderDomainSchema>;
+export type OrderType = z.infer<typeof OrderTypeSchema>;

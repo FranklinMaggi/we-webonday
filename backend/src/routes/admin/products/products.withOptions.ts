@@ -16,11 +16,42 @@
 // - Admin dashboard
 // - Editor prodotto
 // ======================================================
+/* =========================================================
+   AI_SUPERCOMMENT — ADMIN PRODUCT WITH OPTIONS (DETAIL)
+   =========================================================
+   DOMINIO:
+   - Lettura DETTAGLIO di un singolo product
+   - Include:
+     - product
+     - option collegate (configurative)
 
-import type { Env } from "../../types/env";
-import { ProductSchema } from "../../schemas/core/productSchema";
-import { OptionSchema } from "../../schemas/core/optionSchema";
-import { requireAdmin } from "./admin.guard";
+   PERCHÉ ESISTE:
+   - UI admin → pagina dettaglio prodotto
+   - Gestione associazioni option ↔ product
+
+   CONTRATTO HTTP:
+   - GET /api/admin/product/with-options
+   - REQUIRE: ?productId=XXX
+
+   ERRORI INTENZIONALI:
+   - MISSING_PRODUCT_ID → 400
+     ❗ NON È UN BUG
+     ❗ Endpoint NON è un listing
+
+   NON FA:
+   - NON ritorna tutti i product
+   - NON applica logica project
+   - NON valuta compatibilità option
+
+   KV:
+   - PRODUCTS_KV
+   - OPTIONS_KV
+========================================================= */
+
+import type { Env } from "../../../types/env";
+import { ProductSchema } from "../../../schemas/core/productSchema";
+import { OptionSchema } from "../../../schemas/core/optionSchema";
+import { requireAdmin } from "../admin.guard";
 
 /* =========================
    JSON helper locale

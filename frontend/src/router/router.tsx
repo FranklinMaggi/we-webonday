@@ -12,7 +12,7 @@ import Home from "../pages/home";
 import Vision from "../pages/vision";
 import Mission from "../pages/mission";
 import FounderPage from "../pages/founder";
-
+import Price from "../pages/pricing";
 // User
 import UserLogin from "../pages/user/login";
 import CheckoutPage from "../pages/user/checkout";
@@ -42,6 +42,7 @@ import AdminEditOptionPage from "../pages/admin/products/options/[id]";
 import SolutionsList from "../pages/admin/solutions";
 import SolutionEditor from "../pages/admin/solutions/[id]";
 import HomeSolutionPage from "../pages/home/solution/[id]";
+import UserDashboardPage from "../pages/user";
 const router = createBrowserRouter([
   /* =========================
      PUBLIC + USER (MAIN LAYOUT)
@@ -55,9 +56,11 @@ const router = createBrowserRouter([
       { path: "mission", element: <Mission /> },
       { path: "founder", element: <FounderPage /> },
       { path: "home/solution/:id" , element : <HomeSolutionPage /> },
-      
+      { path: "pricing" , element : <Price/> },
+
       { path: "user/login", element: <UserLogin /> },
       { path: "user/checkout", element: <CheckoutPage /> },
+      { path: "/user", element: <UserDashboardPage /> },
       { path: "user/business/dashboard", element: <UserBusinessDashboard /> },
       { path: "user/business/register", element: <RegisterBusiness /> },
 

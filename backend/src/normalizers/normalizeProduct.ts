@@ -38,14 +38,16 @@ export function normalizeProduct(raw: any) {
     id: raw?.id,
     name: raw?.name ?? raw?.title ?? "",
     description: raw?.description ?? "",
+     // 🆕 CHIAVI SEMANTICHE (OPZIONALI)
+     nameKey: raw?.nameKey,
+     descriptionKey: raw?.descriptionKey,
     status: raw?.status ?? "DRAFT",
     startupFee: Number(raw?.startupFee ?? 0),
     pricing: {
       yearly: Number(raw?.pricing?.yearly ?? raw?.priceYear ?? 0),
       monthly: Number(raw?.pricing?.monthly ?? raw?.priceMonthly ?? 0),
     },
-    deliveryTime: raw?.deliveryTime ?? "",
-    flags: Array.isArray(raw?.flags) ? raw.flags : [],
+  
     createdAt: raw?.createdAt,
     updatedAt: raw?.updatedAt,
     optionIds: Array.isArray(raw?.optionIds) ? raw.optionIds : [],

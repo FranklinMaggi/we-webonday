@@ -61,7 +61,9 @@ export interface ProductPricingDTO {
 export interface ProductDTO {
   id: string;
   name: string;
+  nameKey?:string; 
   description: string;
+  descriptionKey?:string; 
 
   // prezzo di avvio (una tantum)
   startupFee: number;
@@ -69,7 +71,7 @@ export interface ProductDTO {
   // canoni ricorrenti del prodotto
   pricing: ProductPricingDTO;
 
-  deliveryTime?: string;
-  flags: string[];
+
+  
   options: ProductOptionDTO[];
 }

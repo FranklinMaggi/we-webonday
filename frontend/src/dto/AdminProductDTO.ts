@@ -2,7 +2,9 @@
 export interface AdminProductDTO {
     id: string;
     name: string;
+    nameKey?:string; 
     description: string;
+    descriptionKey?:string ; 
     status: "DRAFT" | "ACTIVE" | "ARCHIVED";
     startupFee: number;
     pricing: {
@@ -10,8 +12,8 @@ export interface AdminProductDTO {
       monthly: number;
     };
    optionIds : string[];
-    flags: string[];
-    deliveryTime: string;
+    
+
  
   }
   export 

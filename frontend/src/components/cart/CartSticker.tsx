@@ -24,11 +24,14 @@ import { cartStore } from "../../lib/cart/cartStore";
 import type { CartItem } from "../../lib/cart/cartStore";
 import { eur } from "../../utils/format";
 import { uiBus } from "../../lib/ui/uiBus";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../lib/currentUserStore";
 
 export default function CartSticker() {
 const [items, setItems] = useState<CartItem[]>(cartStore.getState().items);
 const [open, setOpen] = useState(false);
-
+const navigate = useNavigate();
+const user = useAuthStore((s) => s.user);
 // =========================
 // SYNC STORE
 // =========================
@@ -72,8 +75,14 @@ const removeItem = (index: number) =>
 cartStore.getState().removeItem(index);
 
 const checkout = () => {
-window.location.href = "/user/checkout";
-};
+    // Guard FE esplicito: il checkout richiede login
+    if (!user) {
+      navigate("/login?redirect=/checkout");
+      return;
+    }
+  
+    navigate("/checkout");
+  };
 
 // =========================
 // RENDER

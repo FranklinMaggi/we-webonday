@@ -12,7 +12,7 @@ export const ProductSchema = z.object({
   name: z.string(),
   description: z.string(),
   basePrice: z.number(),
-  deliveryTime: z.string(),
+
   flags: z.array(z.string()),
   options: z.array(ProductOptionSchema),
 });

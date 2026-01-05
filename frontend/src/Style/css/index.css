@@ -26,13 +26,14 @@
 @import "../components/cartSticker.css";
 
 @import "../components/hero/HeroBase.css";
-
+@import "../components/table/pricing-table.css";
 @import "../components/whatsapp.css";
 
 /* PAGES */
 
 @import "../pages/login.css";
 @import "../pages/checkout.css";
+@import "../pages/user.css";
 
 @import "../pages/founder.css";
 

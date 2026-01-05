@@ -1,58 +1,52 @@
 // ======================================================
 // FE || pages/user/login/index.tsx
 // ======================================================
-// USER LOGIN — AUTH ENTRY POINT
+//
+// AI-SUPERCOMMENT — USER LOGIN PAGE
 //
 // RUOLO:
-// - Autenticazione utente
-// - Redirect post-login
+// - Punto UNICO di ingresso per l’autenticazione utente
 //
-// RESPONSABILITÀ:
-// - Login email/password
-// - Login Google OAuth
-// - Redirect contestuale
+// PRINCIPI NON NEGOZIABILI:
+// - Nessun login automatico
+// - Nessun fetch user al mount
+// - Login valido SOLO se:
+//   1) azione volontaria dell’utente
+//   2) FE marca esplicitamente il login
 //
-// NON FA:
-// - NON gestisce sessioni
-// - NON valida token
+// FLUSSO CORRETTO:
+// - User arriva qui (?redirect=...)
+// - Sceglie metodo di login
+// - Backend crea sessione HttpOnly
+// - FE marca login intenzionale
+// - FE carica user (/api/user/me)
+// - Redirect finale
 //
-// NOTE:
-// - Sessione HttpOnly gestita dal backend
 // ======================================================
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/auth.store";
 import { API_BASE } from "../../../lib/config";
 
 export default function UserLoginPage() {
   // ===========================
-  // AUTH + REDIRECT LOGIC
+  // AUTH STORE (INTENZIONALE)
   // ===========================
-  const user = useAuthStore((s) => s.user);
-  const ready = useAuthStore((s) => s.ready);
   const fetchUser = useAuthStore((s) => s.fetchUser);
+  const markExplicitLogin = useAuthStore((s) => s.markExplicitLogin);
 
   const navigate = useNavigate();
   const location = useLocation();
-  // 🔁 Rileggi l'utente quando torni da Google OAuth
-useEffect(() => {
-  if (!ready) {
-    fetchUser();
-  }
-}, [ready, fetchUser]);
-  // 🔁 Redirect automatico DOPO login
-  useEffect(() => {
-    if (!ready || !user) return;
-
-    const params = new URLSearchParams(location.search);
-    const redirect = params.get("redirect");
-
-    navigate(redirect || "/", { replace: true });
-  }, [ready, user, location.search, navigate]);
 
   // ===========================
-  // STATE FORM
+  // REDIRECT TARGET
+  // ===========================
+  const params = new URLSearchParams(location.search);
+  const redirect = params.get("redirect") || "/user";
+
+  // ===========================
+  // FORM STATE
   // ===========================
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -60,9 +54,23 @@ useEffect(() => {
   const [errorMsg, setErrorMsg] = useState("");
 
   // ===========================
-  // LOGIN EMAIL/PASSWORD
+  // POST-LOGIN SUCCESS (UNICO)
   // ===========================
-  const login = async () => {
+  async function onLoginSuccess() {
+    // 1️⃣ marca login come intenzionale
+    markExplicitLogin();
+
+    // 2️⃣ carica user dalla sessione HttpOnly
+    await fetchUser();
+
+    // 3️⃣ redirect finale
+    navigate(redirect, { replace: true });
+  }
+
+  // ===========================
+  // LOGIN EMAIL / PASSWORD
+  // ===========================
+  async function login() {
     setLoading(true);
     setErrorMsg("");
 
@@ -70,7 +78,7 @@ useEffect(() => {
       const res = await fetch(`${API_BASE}/api/user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // 🔐 fondamentale
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
@@ -78,18 +86,21 @@ useEffect(() => {
 
       if (!out.ok) {
         setErrorMsg("Email o password non validi");
+        return;
       }
+
+      await onLoginSuccess();
     } catch {
       setErrorMsg("Errore di rete, riprova più tardi.");
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   // ===========================
   // REGISTRAZIONE
   // ===========================
-  const register = async () => {
+  async function register() {
     setLoading(true);
     setErrorMsg("");
 
@@ -105,26 +116,27 @@ useEffect(() => {
 
       if (!out.ok) {
         setErrorMsg("Registrazione fallita. Email già in uso?");
+        return;
       }
+
+      await onLoginSuccess();
     } catch {
       setErrorMsg("Errore di rete, riprova più tardi.");
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   // ===========================
-  // LOGIN GOOGLE
+  // LOGIN GOOGLE OAUTH
   // ===========================
-  const googleLogin = () => {
-    const params = new URLSearchParams(location.search);
-    const redirect = params.get("redirect") || "/";
-
+  function googleLogin() {
     const url = new URL(`${API_BASE}/api/user/google/auth`);
     url.searchParams.set("redirect", redirect);
 
+    // Redirect esterno → rientro su /login
     window.location.href = url.toString();
-  };
+  }
 
   // ===========================
   // RENDER

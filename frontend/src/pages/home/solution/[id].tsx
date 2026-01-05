@@ -22,7 +22,7 @@
 // ============================================================
 
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { API_BASE } from "../../../lib/config";
 import { initWhatsAppScrollWatcher } from "../../../lib/ui/scrollWatcher";
@@ -169,7 +169,7 @@ export default function HomeSolutionPage() {
 )}
 
 
-      {/* ================= CTA ================= */}
+      {/* ================= CTA ================= 
       <section className="section cta">
         <Link
           to={`/home/preview/${solution.id}`}
@@ -177,7 +177,7 @@ export default function HomeSolutionPage() {
         >
           Anteprima del sito
         </Link>
-      </section>
+      </section>*/}
     </main>
   );
 }

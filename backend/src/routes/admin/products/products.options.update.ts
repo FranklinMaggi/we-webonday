@@ -23,12 +23,37 @@
 // - Admin dashboard (editor prodotto)
 //
 // ======================================================
+// ============================================================
+// AI-SUPERCOMMENT
+// ADMIN || PRODUCT OPTIONS UPDATE
+// ============================================================
+//
+// RESPONSABILITÀ:
+// - Associare optionIds a un Product
+// - Sovrascrittura completa (source of truth = payload)
+//
+// INPUT:
+// - productId
+// - optionIds[]
+//
+// NON FA:
+// - NON valida compatibilità option/product
+// - NON filtra per status option
+//
+// PERCHE:
+// - Admin ha pieno controllo
+// - Le regole vivono nei CU (Project / Cart)
+//
+// NOTA:
+// - optionIds è un riferimento debole (string[])
+// - join avviene solo in read routes
+// ============================================================
 
-import type { Env } from "../../types/env";
+import type { Env } from "../../../types/env";
 import { z } from "zod";
-import { requireAdmin } from "./admin.guard";
-import { ProductSchema } from "../../schemas/core/productSchema";
-import { OptionSchema } from "../../schemas/core/optionSchema";
+import { requireAdmin } from "../admin.guard";
+import { ProductSchema } from "../../../schemas/core/productSchema";
+import { OptionSchema } from "../../../schemas/core/optionSchema";
 
 /* =========================
    SCHEMA INPUT

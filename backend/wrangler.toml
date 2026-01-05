@@ -30,6 +30,11 @@ id = "1b31979b27c047afb5a2663433cefab1"
 binding = "COOKIES_KV"
 id = "dd5b41e5fdfa4b84bc341353046a2fba"
 
+# Project
+[[kv_namespaces]]
+binding = "PROJECTS_KV"
+id = "ee4847b4972c4da6a8859077bbd4ec16"
+
 # Catalogo prodotti
 [[kv_namespaces]]
 binding = "PRODUCTS_KV"
@@ -71,7 +76,7 @@ id = "b6d212990044437f9720e048babab427"
 
 # Referral token → businessId
 [[kv_namespaces]]
-binding = "REFERRAL_KV"
+binding = "REFERRALS_KV"
 id = "47f5579302014b59a8167fdd2e8081de"
 
 # ============================

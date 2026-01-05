@@ -70,10 +70,10 @@ export default function AdminEditProductPage() {
         description: "",
         status: "DRAFT",
         startupFee: 0,
-        deliveryTime:"",
+        
         pricing: { yearly: 0, monthly: 0 },
         optionIds: [],
-        flags: [],
+        
       });
       return;
     }
@@ -249,22 +249,7 @@ export default function AdminEditProductPage() {
           }
         />
       </div>
-      <label>
-  Flags (comma separated)
-  <input
-    value={product.flags.join(",")}
-    onChange={(e) =>
-      setProduct({
-        ...product,
-        flags: e.target.value
-          .split(",")
-          .map((f) => f.trim())
-          .filter(Boolean),
-      })
-    }
-  />
-</label>
-
+   
       {/* ================= OPTIONS (ASSIGN ONLY) ================= */}
       {!isNew && (
         <div className="admin-card">
@@ -310,15 +295,7 @@ export default function AdminEditProductPage() {
       </select>
     </label>
     
-<label>
-  Tempi di consegna
-  <input
-    value={product.deliveryTime}
-    onChange={(e) =>
-      setProduct({ ...product, deliveryTime: e.target.value })
-    }
-  />
-</label>
+
       {/* ================= ACTIONS ================= */}
       <footer className="admin-actions">
         <button onClick={saveProduct} disabled={saving || !product.id}>

@@ -14,11 +14,52 @@
 // - KV contiene SOLO ProductSchema valido
 // - Nessun legacy write
 // ======================================================
+/* =========================================================
+   AI_SUPERCOMMENT — ADMIN PRODUCTS LIST / DETAIL
+   =========================================================
+   DOMINIO:
+   - CRUD amministrativo dei PRODUCT
+   - Product = offerta commerciale base (SaaS / Project template)
 
-import type { Env } from "../../types/env";
+   PERCHÉ ESISTE:
+   - Gestione catalogo commerciale
+   - Attivazione / archiviazione prodotti
+   - Pricing e startupFee
+
+   NON FA:
+   - NON include option runtime
+   - NON calcola prezzi finali
+   - NON crea Project
+
+   KV:
+   - PRODUCTS_KV
+
+   NOTE:
+   - optionIds qui rappresenta SOLO il binding configurativo
+     (non implica che l’option sia attiva su un Project)
+========================================================= */
+// ============================================================
+// AI-SUPERCOMMENT
+// ADMIN || PRODUCTS (READ ONLY)
+// ============================================================
+//
+// RESPONSABILITÀ:
+// - Listing prodotti
+// - Lettura singolo prodotto (flat)
+//
+// DIFFERENZA con product.withOptions:
+// - QUI: solo Product
+// - withOptions: Product + Option entities
+//
+// PERCHE:
+// - Tabelle admin (veloci)
+// - Editor dettagliato separato
+// ============================================================
+
+import type { Env } from "../../../types/env";
 import { z } from "zod";
-import { ProductSchema } from "../../schemas/core/productSchema";
-import { requireAdmin } from "./admin.guard";
+import { ProductSchema } from "../../../schemas/core/productSchema";
+import { requireAdmin } from "../admin.guard";
 
 /* =========================
    JSON HELPER

@@ -12,6 +12,38 @@
 // - NO legacy write
 //
 // ======================================================
+// ============================================================
+// AI-SUPERCOMMENT
+// ADMIN || PRODUCT + OPTIONS (READ)
+// ============================================================
+//
+// RESPONSABILITÀ:
+// - Caricare un prodotto ADMIN
+// - Risolvere le optionIds → Option entities
+//
+// INPUT:
+// - Query param: id (productId)
+//
+// OUTPUT:
+// {
+//   ok: true,
+//   product: Product,
+//   options: Option[]
+// }
+//
+// NON FA:
+// - NON muta stato
+// - NON filtra per status (ADMIN vede tutto)
+// - NON valida pricing o compatibilità
+//
+// EDGE CASES:
+// - product non trovato → 404
+// - optionId dangling → ignorata + log
+//
+// PERCHE:
+// - Admin deve vedere configurazione reale del prodotto
+// - Anche opzioni ARCHIVED servono per audit
+// ============================================================
 
 import type { Env } from "../../types/env";
 import { ProductSchema } from "../../schemas/core/productSchema";
@@ -73,11 +105,13 @@ export async function getProductWithOptions(
         id: product.id,
         name: product.name,
         description: product.description,
+        nameKey: product.nameKey,
+        descriptionKey: product.descriptionKey,
         status: product.status,
         startupFee: product.startupFee,
         pricing: product.pricing,
-        deliveryTime: product.deliveryTime,
-        flags: product.flags,
+       
+        
         options,
       },
     });

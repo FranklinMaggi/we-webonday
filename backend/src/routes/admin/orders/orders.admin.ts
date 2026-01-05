@@ -18,12 +18,11 @@
  * La sicurezza (x-admin-token) è gestita DAL ROUTER.
  */
 
-import type { Env } from "../../types/env";
+import type { Env } from "../../../types/env";
 import { z } from "zod";
 import {
   OrderSchema,
-  OrderBaseSchema,
-} from "../../schemas/core/orderSchema";
+} from "../../../schemas/core/orderSchema";
 
 /* =========================
    JSON helper locale
@@ -39,8 +38,8 @@ function json(body: unknown, status = 200): Response {
    DTO — Admin Summary
    (no paypalCapture)
 ========================= */
-const OrderSummarySchema = OrderBaseSchema.omit({
-  paypalCapture: true,
+const OrderSummarySchema = OrderSchema.omit({
+  userId: true,
 });
 
 type OrderSummaryDTO = z.infer<typeof OrderSummarySchema>;

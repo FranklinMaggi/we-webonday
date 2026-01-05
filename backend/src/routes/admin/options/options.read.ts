@@ -1,6 +1,35 @@
-import type { Env } from "../../types/env";
-import { OptionSchema } from "../../schemas/core/optionSchema";
-import { requireAdmin } from "./admin.guard";
+/* ======================================================
+   AI_SUPERCOMMENT
+   ======================================================
+   FILE ROLE:
+   - Lettura amministrativa delle OPTION
+   - Usato da dashboard admin (no mutazioni)
+
+   CONNECT POINTS:
+   - index.ts → GET /api/admin/options/list
+   - KV: OPTIONS_KV
+   - Schema: OptionSchema
+
+   SECURITY:
+   - Accesso protetto da requireAdmin (x-admin-token)
+   - Nessun accesso pubblico previsto
+
+   RUNTIME ASSUMPTIONS:
+   - Tutte le option in KV sono serializzate correttamente
+   - OptionSchema è la source of truth
+   - Le option NON vengono filtrate per status (ACTIVE/ARCHIVED)
+
+   TESTED VIA:
+   - curl GET /api/admin/options/list
+   - 2026-01-05
+
+   KNOWN LIMITS / BUG SILENTI:
+   - Nessuna paginazione (potenziale limite futuro)
+   - Nessun ordinamento esplicito (dipende da KV.list)
+====================================================== */
+import type { Env } from "../../../types/env";
+import { OptionSchema } from "../../../schemas/core/optionSchema";
+import { requireAdmin } from "../admin.guard";
 import { unknown, z } from "zod";
 
 

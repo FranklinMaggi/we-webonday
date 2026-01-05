@@ -9,7 +9,7 @@
 
 import type { Env } from "../../types/env";
 import { z } from "zod";
-import { OrderSchema, OrderBaseSchema } from "../../schemas/core/orderSchema";
+import { OrderSchema } from "../../schemas/core/orderSchema";
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -18,8 +18,8 @@ function json(body: unknown, status = 200) {
   });
 }
 
-const OrderSummarySchema = OrderBaseSchema.omit({
-  paypalCapture: true,
+const OrderSummarySchema = OrderSchema.omit({
+  policyVersion: true,
 });
 
 type OrderSummaryDTO = z.infer<typeof OrderSummarySchema>;

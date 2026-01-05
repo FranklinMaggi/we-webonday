@@ -2,7 +2,9 @@
 export interface AdminUpdateProductDTO {
   id: string;
   name: string;
+  nameKey?:string; 
   description: string;
+  descriptionKey?:string; 
   status: "DRAFT" | "ACTIVE" | "ARCHIVED";
 
   startupFee: number;
@@ -11,8 +13,7 @@ export interface AdminUpdateProductDTO {
     monthly: number;
   };
 
-  // 🔑 CORE REQUIRED
-  deliveryTime: string;
-  flags: string[];
+
+
 
 }

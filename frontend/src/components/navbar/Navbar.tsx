@@ -58,11 +58,11 @@ export default function Navbar() {
 
       {/* RIGHT AREA */}
       <div className={`nav-right ${open ? "open" : ""}`}>
-        <Link to="/vision" className="wd-navbar-link">Vision</Link>
-        <Link to="/mission" className="wd-navbar-link">Mission</Link>
-
+        
         {user && <ModeSwitch />}
-
+        <Link to="/solutions" className="wd-navbar-link">
+  Soluzioni
+</Link>
         {ready && !user && (
           <Link to="/user/login" className="wd-navbar-link">
             Accedi

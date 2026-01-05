@@ -33,6 +33,20 @@ NOTE:
   - getProducts
   - getProduct
 ====================================================== */
+// ============================================================
+// AI-SUPERCOMMENT
+// DOMAIN || PRODUCT
+// ============================================================
+//
+// optionIds:
+// - È SOLO un riferimento (string[])
+// - NON contiene logica
+// - Risolto SOLO a livello route
+//
+// PERCHE:
+// - Schema domain deve rimanere puro
+// - Join applicativi, non strutturali
+// ============================================================
 
 import { z } from "zod";
 
@@ -61,7 +75,9 @@ export const ProductSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().optional().default(""),
-
+    // 🆕 CHIAVI SEMANTICHE (NON OBBLIGATORIE)
+    nameKey: z.string().optional(),
+    descriptionKey: z.string().optional(),
   startupFee: z.number().nonnegative().default(0),
 
   pricing: ProductPricingSchema.default({
@@ -69,9 +85,7 @@ export const ProductSchema = z.object({
     monthly: 0,
   }),
 
-  deliveryTime: z.string().optional().default(""),
-  flags: z.array(z.string()).default([]),
-
+ 
   optionIds: z.array(z.string()).default([]),
 
   status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]).default("DRAFT"),

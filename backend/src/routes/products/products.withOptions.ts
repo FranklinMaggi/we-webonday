@@ -60,14 +60,13 @@ export async function getProductsWithOptions(
         id: product.id,
         name: product.name,
         description: product.description,
+        nameKey: product.nameKey,
+        descriptionKey: product.descriptionKey,
         status: product.status,
 
         startupFee: product.startupFee,
         pricing: product.pricing,
-
-        deliveryTime: product.deliveryTime,
-        flags: product.flags,
-
+        
         options,
       });
 

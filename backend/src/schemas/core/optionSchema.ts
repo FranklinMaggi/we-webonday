@@ -1,3 +1,18 @@
+//shcemas/core/optionSchema.ts 
+// ============================================================
+// AI-SUPERCOMMENT
+// DOMAIN || OPTION
+// ============================================================
+//
+// NOTE:
+// - option.status NON filtrato in admin
+// - recurring / one_time gestito altrove
+//
+// PERCHE:
+// - Admin vede tutto
+// - Le regole vivono nei CU (Project / Cart)
+// ============================================================
+
 import { z } from "zod";
 
 /**

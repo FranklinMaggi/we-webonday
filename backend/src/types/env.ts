@@ -11,6 +11,7 @@ export interface Env {
     ORDER_KV: KVNamespace;
     BUSINESS_KV:KVNamespace;
     REFERRALS_KV:KVNamespace;
+    PROJECTS_KV:KVNamespace;
     BUSINESS_MENU_BUCKET: R2Bucket; // ⬅️ QUESTO
     R2_PUBLIC_BASE_URL: string;
     GOOGLE_CLIENT_ID: string;
@@ -20,5 +21,6 @@ export interface Env {
     PAYPAL_CLIENT_ID: string;
   PAYPAL_SECRET: string;
   PAYPAL_API_BASE: string;
+  OPENAI_API_KEY:string; 
   }
   
