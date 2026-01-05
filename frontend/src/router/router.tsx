@@ -1,52 +1,89 @@
-// src/router/router.tsx
+// ======================================================
+// FE || router/router.tsx
+// ======================================================
+//
+// AI-SUPERCOMMENT — APPLICATION ROUTER
+//
+// RUOLO:
+// - Definire la mappa di navigazione dell’app
+// - Separare in modo netto:
+//   - Visitor
+//   - User (buyer)
+//   - Business
+//   - Admin
+//
+// INVARIANTI:
+// - /user è SEMPRE protetto
+// - Nessuna pagina user accessibile a visitor
+// - Nessun auto-login implicito
+//
+// ======================================================
+
 import { createBrowserRouter } from "react-router-dom";
 import { MainLayout } from "../components/layouts/MainLayout";
-import AdminLayout from "../components/admin/layouts/AdminLayout";
-import AdminGuard from "../components/admin/AdminGuard";
-/* =========================
-   PAGES
-========================= */
 
-// Public
+/* =========================
+   GUARDS
+========================= */
+import { ProtectedRoute } from "./ProtectedRoute";
+import AdminGuard from "../components/admin/AdminGuard";
+import BusinessGuard from "../components/business/BusinessGuard";
+
+/* =========================
+   PUBLIC PAGES
+========================= */
 import Home from "../pages/home";
 import Vision from "../pages/vision";
 import Mission from "../pages/mission";
 import FounderPage from "../pages/founder";
 import Price from "../pages/pricing";
-// User
+import HomeSolutionPage from "../pages/home/solution/[id]";
+
+/* =========================
+   USER PAGES
+========================= */
 import UserLogin from "../pages/user/login";
+import UserDashboardPage from "../pages/user";
 import CheckoutPage from "../pages/user/checkout";
 
-// Policy
-import Privacy from "../pages/policy/privacy";
-import Terms from "../pages/policy/terms";
-import PolicyPage from "../pages/policy/policy";
-// User Business
+/* =========================
+   USER BUSINESS
+========================= */
 import UserBusinessDashboard from "../pages/user/business/UserBusinessDashboard";
 import RegisterBusiness from "../pages/user/business/RegisterBusiness";
 
-// Business
-import BusinessDashboard from "../pages/business/Dashboard";
-import BusinessGuard from "../components/business/BusinessGuard";
+/* =========================
+   POLICY
+========================= */
+import Privacy from "../pages/policy/privacy";
+import Terms from "../pages/policy/terms";
+import PolicyPage from "../pages/policy/policy";
 
-// Admin
+/* =========================
+   ADMIN
+========================= */
 import AdminLogin from "../pages/admin/login/login";
+import AdminLayout from "../components/admin/layouts/AdminLayout";
 import AdminDashboard from "../pages/admin/dashboard";
 import AdminOrdersPage from "../pages/admin/orders";
+import AdminOrderDetails from "../pages/admin/orders/[id]";
 import AdminUsersPage from "../pages/admin/users";
 import AdminProductsPage from "../pages/admin/products";
 import AdminEditProductPage from "../pages/admin/products/[id]";
-import AdminOrderDetails from "../pages/admin/orders/[id]";
 import AdminOptionsPage from "../pages/admin/products/options";
 import AdminEditOptionPage from "../pages/admin/products/options/[id]";
 import SolutionsList from "../pages/admin/solutions";
 import SolutionEditor from "../pages/admin/solutions/[id]";
-import HomeSolutionPage from "../pages/home/solution/[id]";
-import UserDashboardPage from "../pages/user";
+
+/* =========================
+   BUSINESS (SaaS)
+========================= */
+import BusinessDashboard from "../pages/business/Dashboard";
+
 const router = createBrowserRouter([
-  /* =========================
-     PUBLIC + USER (MAIN LAYOUT)
-  ========================= */
+  /* =====================================================
+     PUBLIC AREA (VISITOR)
+  ===================================================== */
   {
     path: "/",
     element: <MainLayout />,
@@ -55,79 +92,86 @@ const router = createBrowserRouter([
       { path: "vision", element: <Vision /> },
       { path: "mission", element: <Mission /> },
       { path: "founder", element: <FounderPage /> },
-      { path: "home/solution/:id" , element : <HomeSolutionPage /> },
-      { path: "pricing" , element : <Price/> },
+      { path: "pricing", element: <Price /> },
+      { path: "home/solution/:id", element: <HomeSolutionPage /> },
 
+      /* AUTH */
       { path: "user/login", element: <UserLogin /> },
-      { path: "user/checkout", element: <CheckoutPage /> },
-      { path: "/user", element: <UserDashboardPage /> },
-      { path: "user/business/dashboard", element: <UserBusinessDashboard /> },
-      { path: "user/business/register", element: <RegisterBusiness /> },
 
+      /* POLICY */
       { path: "policy/privacy", element: <Privacy /> },
       { path: "policy/terms", element: <Terms /> },
       { path: "policy", element: <PolicyPage /> },
     ],
   },
 
+  /* =====================================================
+     USER AREA (BUYER) — 🔒 PROTETTA
+  ===================================================== */
+  {
+    path: "/user",
+    element: (
+      <ProtectedRoute>
+        <MainLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      { index: true, element: <UserDashboardPage /> },
 
-        /* =========================
-          ADMIN
-        ========================= */
-{
-  path: "/admin",
-  children: [
-    // 🔓 login pubblico
-    { path: "login", element: <AdminLogin /> },
+      // Checkout autenticato
+      { path: "checkout", element: <CheckoutPage /> },
 
-    // 🔒 tutto il resto protetto
-    {
-      element: <AdminGuard />,
-      children: [
-        {
-          element: <AdminLayout />,
-          children: [
-            { path: "dashboard", element: <AdminDashboard /> },
+      // Business Mode (contesto user)
+      { path: "business/dashboard", element: <UserBusinessDashboard /> },
+      { path: "business/register", element: <RegisterBusiness /> },
+    ],
+  },
 
-            { path: "orders", element: <AdminOrdersPage /> },
-            { path: "orders/:id", element: <AdminOrderDetails /> },
+  /* =====================================================
+     ADMIN — 🔒 PROTETTO
+  ===================================================== */
+  {
+    path: "/admin",
+    children: [
+      { path: "login", element: <AdminLogin /> },
+      {
+        element: <AdminGuard />,
+        children: [
+          {
+            element: <AdminLayout />,
+            children: [
+              { path: "dashboard", element: <AdminDashboard /> },
+              { path: "orders", element: <AdminOrdersPage /> },
+              { path: "orders/:id", element: <AdminOrderDetails /> },
+              { path: "users", element: <AdminUsersPage /> },
 
-            { path: "users", element: <AdminUsersPage /> },
+              { path: "solutions", element: <SolutionsList /> },
+              { path: "solutions/:id", element: <SolutionEditor /> },
 
-            // ✅ PRODUCTS
-            { path: "solutions", element: <SolutionsList /> },
-            { path: "solutions/:id", element: <SolutionEditor /> },
-            { path: "products", element: <AdminProductsPage /> },
-            { path: "products/:id", element: <AdminEditProductPage /> },
-            { path: "options", element: <AdminOptionsPage /> },
-            { path: "options/:id", element: <AdminEditOptionPage /> },
-          ],
-        },
-      ],
-    },
-  ],
-}
-,
+              { path: "products", element: <AdminProductsPage /> },
+              { path: "products/:id", element: <AdminEditProductPage /> },
 
-  /* =========================
-    SUPERADMIN
-  ========================= */
+              { path: "options", element: <AdminOptionsPage /> },
+              { path: "options/:id", element: <AdminEditOptionPage /> },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 
-      /* =========================
-        BUSINESS (SaaS)
-      ========================= */
-{
-  path: "/business",
-  element: (
-    <BusinessGuard>
-      <MainLayout />
-    </BusinessGuard>
-  ),
-  children: [
-    { path: "dashboard", element: <BusinessDashboard /> },
-  ],
-},
-
+  /* =====================================================
+     BUSINESS (SaaS PURO) — 🔒
+  ===================================================== */
+  {
+    path: "/business",
+    element: (
+      <BusinessGuard>
+        <MainLayout />
+      </BusinessGuard>
+    ),
+    children: [{ path: "dashboard", element: <BusinessDashboard /> }],
+  },
 ]);
 
 export default router;
