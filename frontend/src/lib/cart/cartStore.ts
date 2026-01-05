@@ -29,7 +29,7 @@ import type { ProductOptionDTO } from "../../dto/productDTO";
 // ======================================================
 
 export interface CartItem {
-  visitorId: string;
+
   productId: string;
   title: string;
 

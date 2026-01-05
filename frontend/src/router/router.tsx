@@ -2,17 +2,13 @@
 // FE || router/router.tsx
 // ======================================================
 //
-// AI-SUPERCOMMENT — APPLICATION ROUTER (FREEZE)
-// ------------------------------------------------------
-// RUOLO:
-// - Mappa di navigazione globale
-// - Separazione netta Visitor / User / Business / Admin
+// APPLICATION ROUTER — FREEZE
 //
-// INVARIANTI:
+// PRINCIPI:
+// - Separazione netta Visitor / User / Business / Admin
 // - /user è SEMPRE protetto
 // - Dashboard canonica: /user/dashboard
-// - Redirect post-login SEMPRE esplicito
-// - Nessun path ambiguo o duplicato
+// - Redirect SEMPRE esplicito
 // ======================================================
 
 import { createBrowserRouter, Navigate } from "react-router-dom";
@@ -22,7 +18,7 @@ import { MainLayout } from "../components/layouts/MainLayout";
    GUARDS
 ========================= */
 import { ProtectedRoute } from "./ProtectedRoute";
-import AdminGuard from "../components/admin/AdminGuard";
+
 import BusinessGuard from "../components/business/BusinessGuard";
 
 /* =========================
@@ -71,18 +67,15 @@ import AdminOptionsPage from "../pages/admin/products/options";
 import AdminEditOptionPage from "../pages/admin/products/options/[id]";
 import SolutionsList from "../pages/admin/solutions";
 import SolutionEditor from "../pages/admin/solutions/[id]";
-
+import AdminGuard from "../components/admin/AdminGuard";
 /* =========================
    BUSINESS (SaaS PURO)
 ========================= */
 import BusinessDashboard from "../pages/business/Dashboard";
 
-/* =====================================================
-   ROUTER
-===================================================== */
 const router = createBrowserRouter([
   /* =====================================================
-     VISITOR (PUBBLICO)
+     VISITOR
   ===================================================== */
   {
     path: "/",
@@ -95,10 +88,8 @@ const router = createBrowserRouter([
       { path: "pricing", element: <Price /> },
       { path: "home/solution/:id", element: <HomeSolutionPage /> },
 
-      // AUTH
       { path: "user/login", element: <UserLogin /> },
 
-      // POLICY
       { path: "policy/privacy", element: <Privacy /> },
       { path: "policy/terms", element: <Terms /> },
       { path: "policy", element: <PolicyPage /> },
@@ -110,32 +101,29 @@ const router = createBrowserRouter([
   ===================================================== */
   {
     path: "user",
-    element: (
-      <ProtectedRoute>
-        <MainLayout />
-      </ProtectedRoute>
-    ),
+    element: <ProtectedRoute />,
     children: [
-      // /user → redirect tecnico
-      { index: true, element: <Navigate to="dashboard" replace /> },
-
-      // DASHBOARD CANONICA
       {
-        path: "dashboard",
+        element: <MainLayout />,
         children: [
-          { index: true, element: <UserDashboardHome /> },
-          { path: ":id", element: <UserDashboardDetail /> },
+          { index: true, element: <Navigate to="dashboard" replace /> },
+  
+          {
+            path: "dashboard",
+            children: [
+              { index: true, element: <UserDashboardHome /> },
+              { path: ":id", element: <UserDashboardDetail /> },
+            ],
+          },
+  
+          { path: "checkout", element: <CheckoutPage /> },
+          { path: "business/dashboard", element: <UserBusinessDashboard /> },
+          { path: "business/register", element: <RegisterBusiness /> },
         ],
       },
-
-      // CHECKOUT AUTENTICATO
-      { path: "checkout", element: <CheckoutPage /> },
-
-      // BUSINESS CONTEXT (USER)
-      { path: "business/dashboard", element: <UserBusinessDashboard /> },
-      { path: "business/register", element: <RegisterBusiness /> },
     ],
-  },
+  }
+  ,
 
   /* =====================================================
      ADMIN — 🔒
@@ -151,18 +139,13 @@ const router = createBrowserRouter([
             element: <AdminLayout />,
             children: [
               { path: "dashboard", element: <AdminDashboard /> },
-
               { path: "orders", element: <AdminOrdersPage /> },
               { path: "orders/:id", element: <AdminOrderDetails /> },
-
               { path: "users", element: <AdminUsersPage /> },
-
               { path: "solutions", element: <SolutionsList /> },
               { path: "solutions/:id", element: <SolutionEditor /> },
-
               { path: "products", element: <AdminProductsPage /> },
               { path: "products/:id", element: <AdminEditProductPage /> },
-
               { path: "options", element: <AdminOptionsPage /> },
               { path: "options/:id", element: <AdminEditOptionPage /> },
             ],

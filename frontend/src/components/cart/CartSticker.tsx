@@ -25,13 +25,13 @@ import type { CartItem } from "../../lib/cart/cartStore";
 import { eur } from "../../utils/format";
 import { uiBus } from "../../lib/ui/uiBus";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../lib/currentUserStore";
+import { useAuthStore } from "../../store/auth.store";
 
 export default function CartSticker() {
 const [items, setItems] = useState<CartItem[]>(cartStore.getState().items);
 const [open, setOpen] = useState(false);
 const navigate = useNavigate();
-const user = useAuthStore((s) => s.user);
+const { user } = useAuthStore();
 // =========================
 // SYNC STORE
 // =========================

@@ -25,7 +25,6 @@
 // ======================================================
 import type { ProductDTO, ProductOptionDTO } from "../../../dto/productDTO";
 import { cartStore } from "../../../lib/cart/cartStore";
-import { getOrCreateVisitorId } from "../../../utils/visitor";
 import { eur } from "../../../utils/format";
 import { useRef } from "react";
 interface Props {
@@ -76,10 +75,9 @@ const selectedObjects: ProductOptionDTO[] = options.filter(
   // ADD TO CART (STRUTTURATO)
   // =========================
   const addToCart = () => {
-    const visitorId = getOrCreateVisitorId();
-
+   
     cartStore.getState().addItem({
-      visitorId,
+    
       productId: product.id,
       title: product.name,
 
