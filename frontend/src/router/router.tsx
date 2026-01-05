@@ -96,7 +96,7 @@ const router = createBrowserRouter([
       { path: "home/solution/:id", element: <HomeSolutionPage /> },
 
       /* AUTH */
-      { path: "user/login", element: <UserLogin /> },
+      { path: "/user/login", element: <UserLogin /> },
 
       /* POLICY */
       { path: "policy/privacy", element: <Privacy /> },
