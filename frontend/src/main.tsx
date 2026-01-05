@@ -5,12 +5,13 @@
 // AI-SUPERCOMMENT — APP BOOTSTRAP
 //
 // RUOLO:
-// - Avvia l'app
-// - NON forza login
-// - NON presume sessione valida
+// - Avvia l'app React
+// - Inizializza lo stato auth FE
 //
-// PRINCIPIO:
-// - fetchUser decide se esiste una sessione
+// INVARIANTE ASSOLUTO:
+// - NON chiamare fetchUser()
+// - L'utente è VISITOR finché non fa login volontario
+//
 // ======================================================
 
 import { StrictMode } from "react";
@@ -20,9 +21,14 @@ import router from "./router/router";
 import "./Style/css/index.css";
 import { useAuthStore } from "./store/auth.store";
 
-async function bootstrapAuth() {
+/**
+ * Bootstrap FE
+ * - segna solo lo stato come pronto
+ * - nessuna lettura sessione
+ */
+function bootstrapAuth() {
   const store = useAuthStore.getState();
-  await store.fetchUser(); // ✅ setta user + ready
+  store.clearUser(); // visitor iniziale
 }
 
 bootstrapAuth();

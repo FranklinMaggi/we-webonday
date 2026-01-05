@@ -11,33 +11,36 @@
 //   • è stato intenzionale
 //
 // ======================================================
-
 import { create } from "zustand";
 import { getCurrentUser } from "../lib/authApi";
 
 interface AuthState {
   user: any | null;
   ready: boolean;
-  explicitLogin: boolean;
 
-  markExplicitLogin: () => void;
+  /** 🔐 TRUE solo dopo login volontario */
+  hasExplicitLogin: boolean;
+
   fetchUser: () => Promise<void>;
+  markExplicitLogin: () => void;
   clearUser: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   ready: false,
-  explicitLogin: false,
+  hasExplicitLogin: false,
 
-  markExplicitLogin: () => {
-    set({ explicitLogin: true });
-  },
-
-  fetchUser: async () => {
+  async fetchUser() {
     try {
-      const user = await getCurrentUser();
-      set({ user });
+      const user = await getCurrentUser(); // /api/user/me
+
+      // ⚠️ USER VIENE SETTATO SOLO SE C'È LOGIN ESPLICITO
+      if (get().hasExplicitLogin) {
+        set({ user });
+      } else {
+        set({ user: null });
+      }
     } catch {
       set({ user: null });
     } finally {
@@ -45,11 +48,15 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  clearUser: () => {
+  markExplicitLogin() {
+    set({ hasExplicitLogin: true });
+  },
+
+  clearUser() {
     set({
       user: null,
+      hasExplicitLogin: false,
       ready: true,
-      explicitLogin: false,
     });
   },
 }));
