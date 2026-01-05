@@ -86,37 +86,68 @@ export default function UserLoginPage() {
     url.searchParams.set("redirect", redirect);
     window.location.href = url.toString();
   }
-
   return (
     <div className="login-page">
-      <h1>Area Cliente</h1>
-
-      <button onClick={googleLogin} disabled={loading}>
-        Accedi con Google
-      </button>
-
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-
-      {errorMsg && <p>{errorMsg}</p>}
-
-      <button onClick={login} disabled={loading}>
-        Accedi
-      </button>
-
-      <button onClick={register} disabled={loading}>
-        Registrati
-      </button>
+      <div className="login-card">
+  
+        <h1 className="login-title">Area Cliente</h1>
+        <p className="login-subtitle">
+          Accedi o crea il tuo account WebOnDay
+        </p>
+  
+        <button
+          className="login-google-btn"
+          onClick={googleLogin}
+          disabled={loading}
+        >
+          Accedi con Google
+        </button>
+  
+        <div className="login-divider">oppure</div>
+  
+        <div className="login-form">
+          <input
+            className="login-input"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+  
+          <input
+            className="login-input"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+  
+          {errorMsg && (
+            <p className="login-error">{errorMsg}</p>
+          )}
+  
+          <button
+            className="login-primary-btn"
+            onClick={login}
+            disabled={loading}
+          >
+            Accedi
+          </button>
+  
+          <button
+            className="login-secondary-btn"
+            onClick={register}
+            disabled={loading}
+          >
+            Registrati
+          </button>
+        </div>
+  
+        <p className="login-hint">
+          L’accesso crea automaticamente una sessione sicura
+        </p>
+  
+      </div>
     </div>
   );
+  
 }
