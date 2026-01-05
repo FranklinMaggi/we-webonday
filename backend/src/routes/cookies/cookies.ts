@@ -1,3 +1,26 @@
+/**
+ * AI-SUPERCOMMENT — COOKIE CONSENT (AGGREGATED)
+ *
+ * RUOLO:
+ * - Raccogliere statistiche aggregate sul consenso cookie
+ *
+ * COSA FA:
+ * - NON crea cookie
+ * - NON associa consenso a visitorId
+ * - NON influenza autenticazione o sessione
+ *
+ * PERCHÉ:
+ * - GDPR: consenso solo informativo
+ * - Nessun profiling utente
+ * - Nessun tracciamento individuale
+ *
+ * STORAGE:
+ * - KV aggregata per giorno (COOKIE_STATS:YYYY-MM-DD)
+ *
+ * NOTA CRITICA:
+ * - Questo endpoint NON deve mai bloccare il flusso utente
+ */
+
 import type { Env } from "../../types/env";
 
 /* =========================
@@ -78,6 +101,22 @@ export async function acceptCookies(
 
   return json({ ok: true });
 }
+/**
+ * AI-SUPERCOMMENT — COOKIE STATUS (DEFAULT)
+ *
+ * RUOLO:
+ * - Fornire uno stato cookie di default
+ *
+ * SCELTA ARCHITETTURALE:
+ * - Necessary: true
+ * - Analytics: false
+ * - Marketing: false
+ *
+ * MOTIVO:
+ * - Nessun consenso persistito
+ * - Banner sempre neutro
+ * - Nessun fingerprinting
+ */
 
 /* =========================
    GET /api/cookies/status
