@@ -20,7 +20,6 @@ import {
   getLocalConsent,
   saveLocalConsent,
 } from "../../utils/cookieConsent";
-import { getOrCreateVisitorId } from "../../utils/visitor";
 import { acceptCookies } from "../../lib/api";
 
 /**
