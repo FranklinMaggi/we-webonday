@@ -43,7 +43,7 @@ export default function UserLoginPage() {
   // REDIRECT TARGET
   // ===========================
   const params = new URLSearchParams(location.search);
-  const redirect = params.get("redirect") || "/user";
+  const redirect = params.get("redirect") || "/user/dashboard";
 
   // ===========================
   // FORM STATE
