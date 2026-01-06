@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Sidebar from "./Sidebar";
+import Sidebar from "../layout/Sidebar";
 import BusinessForm from "./forms/BusinessForm";
 import type { ConfigurationDTO } from "../../../../dto/configurationDTO";
 

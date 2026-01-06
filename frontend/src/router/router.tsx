@@ -38,6 +38,8 @@ import UserLogin from "../pages/user/login";
 import UserDashboardHome from "../pages/user/dashboard";
 import UserDashboardDetail from "../pages/user/dashboard/[id]";
 import CheckoutPage from "../pages/user/checkout";
+import DashboardLayout from "../pages/user/dashboard/layout/DashBoardLayout";
+import UserConfigurationWorkspace from "../pages/user/dashboard/configuration/[id]";
 
 /* =========================
    USER → BUSINESS
@@ -46,6 +48,7 @@ import UserBusinessDashboard from "../pages/user/business/UserBusinessDashboard"
 import RegisterBusiness from "../pages/user/business/RegisterBusiness";
 import UserConfiguratorIndex from "../pages/user/configurator";
 import UserConfiguratorDetail from "../pages/user/configurator/[id]";
+
 /* =========================
    POLICY
 ========================= */
@@ -111,11 +114,21 @@ const router = createBrowserRouter([
   
           {
             path: "dashboard",
+            element: <DashboardLayout />, // 👈 layout persistente con sidebar
             children: [
               { index: true, element: <UserDashboardHome /> },
+          
+              // dettaglio generico (order / project ecc.)
               { path: ":id", element: <UserDashboardDetail /> },
+          
+              // workspace configurazione
+              {
+                path: "configuration/:id",
+                element: <UserConfigurationWorkspace />,
+              },
             ],
           },
+          
 
           { path: "configurator",
             children: [

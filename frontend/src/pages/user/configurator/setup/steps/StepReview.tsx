@@ -11,7 +11,7 @@
 // - Backend = source of truth
 // ======================================================
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useConfigurationSetupStore } from "../configurationSetup.store";
 import { updateConfiguration } from "../../../../../lib/configuration/configurationApi";
 import { useState } from "react";
@@ -21,14 +21,13 @@ export default function StepReview({
 }: {
   onBack: () => void;
 }) {
-  const { id: configurationId } =
-    useParams<{ id: string }>();
+  const { id: configurationId } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   const { data } = useConfigurationSetupStore();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
 
   async function saveDraft() {
     if (!configurationId) {
@@ -38,7 +37,6 @@ export default function StepReview({
 
     setLoading(true);
     setError(null);
-    setSaved(false);
 
     try {
       await updateConfiguration(configurationId, {
@@ -46,7 +44,11 @@ export default function StepReview({
         status: "draft",
       });
 
-      setSaved(true);
+      // ✅ USCITA CANONICA DAL WIZARD
+      navigate(
+        `/user/dashboard/configuration/${configurationId}`,
+        { replace: true }
+      );
     } catch (e: any) {
       setError(e.message ?? "Errore salvataggio");
     } finally {
@@ -60,26 +62,13 @@ export default function StepReview({
 
       <pre>{JSON.stringify(data, null, 2)}</pre>
 
-      {error && (
-        <p style={{ color: "red" }}>{error}</p>
-      )}
-
-      {saved && (
-        <p style={{ color: "green" }}>
-          Bozza salvata correttamente
-        </p>
-      )}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       <div className="actions">
         <button onClick={onBack}>Indietro</button>
 
-        <button
-          onClick={saveDraft}
-          disabled={loading}
-        >
-          {loading
-            ? "Salvataggio…"
-            : "Salva bozza"}
+        <button onClick={saveDraft} disabled={loading}>
+          {loading ? "Salvataggio…" : "Salva bozza"}
         </button>
       </div>
     </div>

@@ -23,6 +23,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { fetchProducts } from "../../../lib/products/productsApi";
 
 import { API_BASE } from "../../../lib/config";
 import { initWhatsAppScrollWatcher } from "../../../lib/ui/scrollWatcher";
@@ -89,8 +90,16 @@ export default function HomeSolutionPage() {
           return;
         }
 
-        setSolution(data.solution);
-        setProducts(data.products || []);
+        (async () => {
+          const allProducts = await fetchProducts();
+        
+          const enriched = (data.products || []).map((p) => {
+            const full = allProducts.find((fp) => fp.id === p.id);
+            return full ?? p;
+          });
+        
+          setProducts(enriched);
+        })();
       })
       .catch(() => setError("FAILED_TO_LOAD_SOLUTION"))
       .finally(() => setLoading(false));

@@ -1,5 +1,5 @@
 // ======================================================
-// FE || dashboard/configuration/Sidebar.tsx
+// FE || dashboard/layout/Sidebar.tsx
 // ======================================================
 
 const SECTIONS = [
