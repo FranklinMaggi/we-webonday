@@ -15,11 +15,13 @@
 // NOTE:
 // - Editing avviene nelle singole form
 // ======================================================
+import type { ConfigurationDTO } from "../../../../dto/configurationDTO";
+
 
 export default function ReviewSection({
     configuration,
   }: {
-    configuration: any;
+    configuration: ConfigurationDTO;
   }) {
     return (
       <section>

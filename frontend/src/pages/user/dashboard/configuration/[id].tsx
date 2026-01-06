@@ -13,10 +13,11 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ConfigurationLayout from "./ConfigurationLayout";
+import { type ConfigurationDTO } from "../../../../dto/configurationDTO";
 
 export default function UserConfigurationWorkspace() {
   const { id } = useParams<{ id: string }>();
-  const [configuration, setConfiguration] = useState<any>(null);
+  const [configuration, setConfiguration] = useState<ConfigurationDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function UserConfigurationWorkspace() {
     })
       .then((r) => r.json())
       .then((res) => {
-        if (res.ok) setConfiguration(res.configuration);
+        if (res.ok) setConfiguration(res.configuration as ConfigurationDTO);
       })
       .finally(() => setLoading(false));
   }, [id]);
