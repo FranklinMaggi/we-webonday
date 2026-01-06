@@ -90,15 +90,22 @@ export default function HomeSolutionPage() {
           return;
         }
 
+        setSolution(data.solution);
         (async () => {
-          const allProducts = await fetchProducts();
+          try {
+            const full = await fetchProducts(); // prodotti completi con options[]
         
-          const enriched = (data.products || []).map((p) => {
-            const full = allProducts.find((fp) => fp.id === p.id);
-            return full ?? p;
-          });
+            const merged = (data.products || []).map((p) => {
+              const hit = full.find((fp) => fp.id === p.id);
+              return hit ?? p; // fallback safe: se non trovato, lasciamo il light
+            });
         
-          setProducts(enriched);
+            setProducts(merged);
+            console.log("[SolutionPage] merged products", merged);
+          } catch (e) {
+            // fallback: se fallisce l’arricchimento, mostriamo comunque i prodotti light
+            setProducts(data.products || []);
+          }
         })();
       })
       .catch(() => setError("FAILED_TO_LOAD_SOLUTION"))

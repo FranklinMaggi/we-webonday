@@ -31,7 +31,7 @@ export default function ProductCard({ product }: Props) {
   return (
     <div
       className={`wd-card product-card ${open ? "is-active" : ""}`}
-      onClick={(e) => e.preventDefault()} // 🔒 blocca ogni navigazione
+     
     >
       {/* ================= BODY (TOGGLE) ================= */}
       <div

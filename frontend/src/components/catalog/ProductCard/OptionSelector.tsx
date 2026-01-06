@@ -30,7 +30,7 @@ export default function OptionSelector({ options, selected, onChange }: Props) {
         : [...selected, id]
     );
   };
-
+  console.log("OPTIONS RENDER", options);
   const recurringLabel = (type: ProductOptionDTO["type"]) => {
     switch (type) {
       case "monthly":

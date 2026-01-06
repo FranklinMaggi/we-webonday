@@ -1,20 +1,59 @@
 // FE || lib/products/productsApi.ts
 // ======================================================
-// PRODUCTS API — DOMAIN PRODUCTS
+// PRODUCTS API — DOMAIN PRODUCTS (PUBLIC)
 // ======================================================
 //
-// CONNECT POINT:
-// - Consuma API CORE /api/products
-// - L’API ritorna { ok: boolean, products: ProductDTO[] }
+// RUOLO:
+// - Consuma API /api/products/with-options
+// - Normalizza i dati ADMIN → PUBLIC
 //
 // PERCHE:
-// - Il backend wrappa sempre le risposte
-// - Qui estraiamo solo ciò che serve al FE
+// - Admin e Public hanno DTO diversi (VOLUTO)
+// - Il FE pubblico NON deve conoscere:
+//   - payment.mode
+//   - payment.interval
+//   - optionIds
 //
 // ======================================================
 
-import type { ProductDTO } from "../../dto/productDTO";
+import type { ProductDTO, ProductOptionDTO } from "../../dto/productDTO";
 import { API_BASE } from "../config";
+
+/* ======================================================
+   NORMALIZER — OPTION (ADMIN → PUBLIC)
+====================================================== */
+function normalizeOption(adminOpt: any): ProductOptionDTO {
+  let type: ProductOptionDTO["type"] = "one_time";
+
+  // mapping payment → type FE
+  if (adminOpt.payment?.mode === "recurring") {
+    type =
+      adminOpt.payment.interval === "monthly"
+        ? "monthly"
+        : "yearly";
+  }
+
+  return {
+    id: adminOpt.id,
+    label: adminOpt.name,
+    price: adminOpt.price,
+    type,
+  };
+}
+
+/* ======================================================
+   NORMALIZER — PRODUCT (ADMIN → PUBLIC)
+====================================================== */
+function normalizeProduct(raw: any): ProductDTO {
+  return {
+    ...raw,
+
+    // GARANZIA: options esiste sempre nel FE
+    options: Array.isArray(raw.options)
+      ? raw.options.map(normalizeOption)
+      : [],
+  };
+}
 
 /* =========================
    FETCH ALL PRODUCTS
@@ -34,9 +73,9 @@ export async function fetchProducts(): Promise<ProductDTO[]> {
     throw new Error("Invalid products response shape");
   }
 
-  return data.products;
+  // 🔑 NORMALIZZAZIONE DOMINIO PUBLIC
+  return data.products.map(normalizeProduct);
 }
-
 
 /* =========================
    FETCH SINGLE PRODUCT
@@ -57,5 +96,6 @@ export async function fetchProduct(id: string): Promise<ProductDTO> {
     throw new Error("Invalid product response shape");
   }
 
-  return data.product;
+  // 🔑 NORMALIZZAZIONE DOMINIO PUBLIC
+  return normalizeProduct(data.product);
 }
