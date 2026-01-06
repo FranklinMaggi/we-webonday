@@ -46,6 +46,17 @@ import { listProjects } from "./routes/projects/projects.read";
 
 import { saveCart } from "./routes/cart/cart";
 import { getCart } from "./routes/cart/cart";
+/* ============================================================
+   CONFIGURATION — PRE-ORDER
+============================================================ */
+
+import {
+  listUserConfigurations,
+  getUserConfiguration,
+  createConfiguration,
+  updateConfiguration,
+} from "./routes/configuration";
+import { listAllConfigurations } from "./routes/configuration";
 
 /* ============================================================
    ORDERS — USER
@@ -73,9 +84,9 @@ import { createPaypalOrder, capturePaypalOrder } from "./routes/payment/paypal";
 
 import { registerPolicyVersion } from "./routes/policy";
 import { getLatestPolicy } from "./routes/policy";
-import { listPolicyVersions } from "./routes/policy";
 import { acceptPolicy } from "./routes/policy";
 import { getPolicyStatus } from "./routes/policy";
+import { listPolicyVersions } from "./routes/policy";
 
 /* ============================================================
    BUSINESS — USER
@@ -87,6 +98,10 @@ import { getMyBusiness } from "./routes/business/businessMine";
 import { getBusinessPublic } from "./routes/business/businessPublic";
 import { submitBusiness } from "./routes/business/businessSubmit";
 import { uploadBusinessMenu } from "./routes/business/uploadMenu";
+// ======================================================
+// BE || routes/configuration/index.ts
+// ======================================================
+
 
 /* ============================================================
    PRODUCTS
@@ -95,6 +110,7 @@ import { getProductsWithOptions } from "./routes/products/products.withOptions";
 import { getProducts } from "./routes/products/products";
 import { getProduct } from "./routes/products/products";
 import { registerProduct } from "./routes/products/products";
+
 /* ============================================================
    ADMIN — PRODUCTS
 ============================================================ */
@@ -344,8 +360,8 @@ if (pathname === "/api/cookies/status" && method === "GET") {
         return withCors(await registerPolicyVersion(request, env), request, env);
 
       if (pathname === "/api/policy/version/latest" && method === "GET")
-        return withCors(await getLatestPolicy(env), request, env);
-
+        return withCors(await getLatestPolicy(request, env), request, env);
+      
       if (pathname === "/api/policy/version/list" && method === "GET")
         return withCors(await listPolicyVersions(env), request, env);
 
@@ -375,6 +391,36 @@ if (pathname === "/api/cookies/status" && method === "GET") {
 
       if (pathname.startsWith("/api/business/") && method === "GET")
         return withCors(await getBusiness(request, env), request, env);
+      // USER
+if (pathname === "/api/configuration" && method === "GET")
+  return withCors(
+    await listUserConfigurations(request, env),
+    request,
+    env
+  );
+
+if (pathname === "/api/configuration" && method === "POST")
+  return withCors(
+    await createConfiguration(request, env),
+    request,
+    env
+  );
+
+if (pathname.startsWith("/api/configuration/")) {
+  const id = pathname.split("/").pop()!;
+  if (method === "GET")
+    return withCors(
+      await getUserConfiguration(request, env, id),
+      request,
+      env
+    );
+  if (method === "PUT")
+    return withCors(
+      await updateConfiguration(request, env, id),
+      request,
+      env
+    );
+}
 
       /* ======================================================
          PRODUCTS
@@ -420,7 +466,13 @@ if (pathname === "/api/cookies/status" && method === "GET") {
         if (denied) return withCors(denied, request, env);
         return withCors(await listAdminUsers(request, env), request, env);
       }
-
+// ADMIN
+if (pathname === "/api/admin/configuration" && method === "GET")
+  return withCors(
+    await listAllConfigurations(request, env),
+    request,
+    env
+  );
       /* ======================================================
          ADMIN — WRITE
       ====================================================== */

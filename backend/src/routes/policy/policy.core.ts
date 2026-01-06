@@ -1,79 +1,79 @@
-/**
- * ======================================================
- * POLICY — CORE
- * ======================================================
- *
- * RESPONSABILITÀ:
- * - Definizione degli schema Zod
- * - Convenzioni delle chiavi KV
- * - Helper condivisi tra admin e user
- *
- * NON CONTIENE:
- * - accesso alla sessione
- * - logica HTTP
- * - logica di permessi
- *
- * È il cuore riutilizzabile del dominio POLICY.
- */
+// ======================================================
+// POLICY — CORE
+// ======================================================
+//
+// AI-SUPERCOMMENT
+//
+// RUOLO:
+// - Single Source of Truth del dominio POLICY
+// - Definisce:
+//   - scopes supportati
+//   - schema di input
+//   - convenzioni KV
+//   - helper condivisi
+//
+// INVARIANTI:
+// - Backend = source of truth
+// - FE NON costruisce chiavi
+// - Scope obbligatorio (general | checkout)
+//
+// ======================================================
 
 import { z } from "zod";
 import type { Env } from "../../types/env";
 
 /* =========================
+   SCOPES SUPPORTATI
+========================= */
+
+export const POLICY_SCOPES = ["general", "checkout"] as const;
+export type PolicyScope = (typeof POLICY_SCOPES)[number];
+
+/* =========================
    SCHEMAS
 ========================= */
 
-/**
- * Schema per registrare una nuova policy.
- * Usato SOLO lato admin / seed.
- */
 export const RegisterPolicySchema = z.object({
+  scope: z.enum(POLICY_SCOPES),
   version: z.string().min(1),
-  content: z.string().min(1),
+  content: z.any(), // string | structured object
 });
 
-/**
- * Schema accettazione policy lato utente.
- * NON contiene userId (deriva sempre dalla sessione).
- */
 export const AcceptPolicySchema = z.object({
+  scope: z.enum(POLICY_SCOPES),
   policyVersion: z.string().min(1),
 });
 
 /* =========================
-   KV KEYS (SINGLE SOURCE)
+   KV KEYS — SINGLE SOURCE
 ========================= */
 
-/**
- * Chiave che punta SEMPRE alla policy attiva.
- */
-export const POLICY_LATEST_KEY = "POLICY_LATEST";
-
-/**
- * Chiave versione policy.
- */
-export function policyVersionKey(version: string) {
-  return `POLICY_VERSION:${version}`;
+export function policyLatestKey(scope: PolicyScope) {
+  return `POLICY_LATEST:${scope}`;
 }
 
-/**
- * Chiave accettazione user-bound.
- * Ogni accettazione è legata a:
- * - userId
- * - versione policy
- */
-export function policyAcceptanceKey(userId: string, version: string) {
-  return `POLICY_ACCEPTANCE:${userId}:${version}`;
+export function policyVersionKey(
+  scope: PolicyScope,
+  version: string
+) {
+  return `POLICY_VERSION:${scope}:${version}`;
+}
+
+export function policyAcceptanceKey(
+  userId: string,
+  scope: PolicyScope,
+  version: string
+) {
+  return `POLICY_ACCEPTANCE:${userId}:${scope}:${version}`;
 }
 
 /* =========================
    HELPERS
 ========================= */
 
-/**
- * Ritorna la versione latest della policy.
- * Usata sia da admin che da user.
- */
-export async function getLatestPolicyVersion(env: Env) {
-  return env.POLICY_KV.get(POLICY_LATEST_KEY);
+export async function getLatestPolicyVersion(
+  env: Env,
+  scope: PolicyScope
+) {
+  return env.POLICY_KV.get(policyLatestKey(scope));
 }

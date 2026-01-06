@@ -25,6 +25,11 @@ PAYPAL_SECRET="EGaXsBB1OWf2t2L-cWZ4ho5apyU3cNpIE4qBkPxEnuG27udWyl1jiaJvjNs_gacTe
 binding = "POLICY_KV"
 id = "1b31979b27c047afb5a2663433cefab1"
 
+#Product && Project Configuration
+[[kv_namespaces]]
+binding = "CONFIGURATION_KV"
+id = "87214763b1f34bcc90a2afc70dd5f123"
+
 # Cookie consent tracking
 [[kv_namespaces]]
 binding = "COOKIES_KV"

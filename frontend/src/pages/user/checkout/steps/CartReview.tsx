@@ -24,10 +24,7 @@ import { useEffect, useState, useMemo } from "react";
 import type { CartItem } from "../../../../lib/cart/cartStore";
 import { eur } from "../../../../utils/format";
 import PaymentPaypal from "./PaymentPaypal";
-import {
-  fetchLatestPolicy,
-  acceptPolicy,
-} from "../../../../lib/policyApi";
+import { fetchLatestPolicy } from "../../../../lib/policy/policyApi";
 
 interface Props {
   cart: CartItem[];
@@ -63,10 +60,11 @@ export default function CartReview({ cart, submitOrder }: Props) {
   const [error, setError] = useState<string>();
 
   useEffect(() => {
-    fetchLatestPolicy()
+    fetchLatestPolicy("checkout")
       .then((p) => setPolicyVersion(p.version))
       .catch(() => setError("Impossibile caricare la policy"));
   }, []);
+  
 
   async function acceptAndPay() {
     if (!policyVersion) return;
@@ -75,11 +73,8 @@ export default function CartReview({ cart, submitOrder }: Props) {
       setLoading(true);
       setError(undefined);
 
-      // 1️⃣ accetta policy
-      await acceptPolicy(policyVersion);
-
-      // 2️⃣ crea ordine (KV)
-      const oid = await submitOrder(policyVersion);
+// 1️⃣ crea ordine (KV) con policyVersion
+const oid = await submitOrder(policyVersion);
 
       // 3️⃣ abilita PayPal
       setOrderId(oid);
@@ -142,9 +137,12 @@ export default function CartReview({ cart, submitOrder }: Props) {
         {!accepted && (
           <div className="checkout-action">
             <p className="checkout-policy">
-              Procedendo accetti i Termini e la Privacy Policy (v.
-              {policyVersion ?? "…"}).
-            </p>
+  Procedendo accetti i{" "}
+  <a href="/terms" target="_blank" rel="noopener noreferrer">
+    Termini e la Privacy Policy
+  </a>{" "}
+  (versione {policyVersion ?? "…"}).
+</p>
 
             {error && <p className="checkout-error">{error}</p>}
 

@@ -9,7 +9,7 @@ import { buildSessionCookie } from "../../lib/auth/session";
 
 export async function googleAuth(request: Request, env: Env): Promise<Response> {
   const redirect =
-    new URL(request.url).searchParams.get("redirect") ?? "/user/checkout";
+    new URL(request.url).searchParams.get("redirect") ?? "/user/dashboard";
 
   const params = new URLSearchParams({
     client_id: env.GOOGLE_CLIENT_ID,

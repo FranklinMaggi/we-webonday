@@ -18,7 +18,7 @@
 // - Stateless rispetto all’ordine globale
 // ======================================================
 
-import { useOrderSetupStore } from "../orderSetup.store";
+import { useConfigurationSetupStore } from "../configurationSetup.store";
 
 export default function StepExtra({
   onNext,
@@ -27,7 +27,7 @@ export default function StepExtra({
   onNext: () => void;
   onBack: () => void;
 }) {
-  const { data, setField } = useOrderSetupStore();
+  const { data, setField } = useConfigurationSetupStore();
 
   const extras = data.extras ?? {
     maps: false,

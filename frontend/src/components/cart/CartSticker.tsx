@@ -75,14 +75,14 @@ const removeItem = (index: number) =>
 cartStore.getState().removeItem(index);
 
 const checkout = () => {
-    // Guard FE esplicito: il checkout richiede login
-    if (!user) {
-      navigate("/user/login?redirect=/user/checkout");
-      return;
-    }
-  
-    navigate("/user/checkout");
-  };
+  // 🔐 Guard FE: la configurazione richiede login
+  if (!user) {
+    navigate("/user/login?redirect=/user/configurator");
+    return;
+  }
+
+  navigate("/user/configurator");
+};
 
 // =========================
 // RENDER
@@ -204,7 +204,7 @@ return (
             </div>
 
             <button className="wd-btn wd-btn--primary wd-btn--block" onClick={checkout}>
-            Procedi al Checkout
+            Completa la configurazione 
             </button>
         </div>
         </>

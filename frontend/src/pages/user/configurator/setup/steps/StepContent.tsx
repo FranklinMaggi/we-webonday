@@ -18,36 +18,38 @@
 // - Stateless rispetto all’ordine globale
 // ======================================================
 
-import { useOrderSetupStore } from "../orderSetup.store";
+import { useConfigurationSetupStore } from "../configurationSetup.store";
 
-export default function StepDesign({
+export default function StepContent({
   onNext,
   onBack,
 }: {
   onNext: () => void;
   onBack: () => void;
 }) {
-  const { data, setField } = useOrderSetupStore();
+  const { data, setField } = useConfigurationSetupStore();
 
   return (
     <div className="step">
-      <h2>Stile e colori</h2>
+      <h2>Contenuti</h2>
 
-      <input
-        type="color"
-        value={data.primaryColor ?? "#000000"}
-        onChange={(e) => setField("primaryColor", e.target.value)}
+      <textarea
+        placeholder="Descrizione attività"
+        value={data.description ?? ""}
+        onChange={(e) => setField("description", e.target.value)}
       />
 
-      <select
-        value={data.style ?? "modern"}
-        onChange={(e) => setField("style", e.target.value)}
-      >
-        <option value="modern">Moderno</option>
-        <option value="elegant">Elegante</option>
-        <option value="minimal">Minimal</option>
-        <option value="bold">Bold</option>
-      </select>
+      <textarea
+        placeholder="Servizi / prodotti"
+        value={data.services ?? ""}
+        onChange={(e) => setField("services", e.target.value)}
+      />
+
+      <input
+        placeholder="Call to action (es. Contattaci ora)"
+        value={data.cta ?? ""}
+        onChange={(e) => setField("cta", e.target.value)}
+      />
 
       <div className="actions">
         <button onClick={onBack}>Indietro</button>

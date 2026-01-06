@@ -3,15 +3,16 @@
  * POLICY — USER SIDE
  * ======================================================
  *
- * RESPONSABILITÀ:
- * - Esporre la policy attiva
- * - Registrare accettazione policy
- * - Verificare stato accettazione
+ * AI-SUPERCOMMENT
  *
- * PRINCIPI:
- * - L’utente è SEMPRE derivato dalla sessione
- * - Il client NON invia userId
- * - La policy è BLOCCANTE per ordini e pagamenti
+ * RUOLO:
+ * - Lettura policy attiva (per scope)
+ * - Accettazione policy
+ * - Verifica stato accettazione
+ *
+ * INVARIANTI:
+ * - User derivato SOLO da sessione
+ * - Policy BLOCCANTE per checkout
  */
 
 import type { Env } from "../../types/env";
@@ -20,12 +21,14 @@ import {
   policyAcceptanceKey,
   policyVersionKey,
   getLatestPolicyVersion,
+  PolicyScope,
 } from "./policy.core";
-import { requireUser,getUserFromSession
- } from "../../lib/auth/session";
+import {
+  requireUser,
+  getUserFromSession,
+} from "../../lib/auth/session";
 
-
-/* JSON helper locale */
+/* JSON helper */
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -34,19 +37,25 @@ function json(body: unknown, status = 200): Response {
 }
 
 /**
- * GET /api/policy/version/latest
- *
- * Usata dal frontend per mostrare il testo policy.
+ * GET /api/policy/version/latest?scope=checkout
  */
 export async function getLatestPolicy(
+  request: Request,
   env: Env
 ): Promise<Response> {
-  const latest = await getLatestPolicyVersion(env);
+  const scope =
+    (new URL(request.url).searchParams.get("scope") as PolicyScope) ??
+    "checkout";
+
+  const latest = await getLatestPolicyVersion(env, scope);
   if (!latest) {
     return json({ ok: true, hasPolicy: false });
   }
 
-  const data = await env.POLICY_KV.get(policyVersionKey(latest));
+  const data = await env.POLICY_KV.get(
+    policyVersionKey(scope, latest)
+  );
+
   if (!data) {
     return json({ ok: false, error: "LATEST_POLICY_MISSING" }, 500);
   }
@@ -58,21 +67,15 @@ export async function getLatestPolicy(
 
 /**
  * POST /api/policy/accept
- *
- * Registra accettazione policy:
- * - solo utente loggato
- * - solo policy latest
  */
 export async function acceptPolicy(
   request: Request,
   env: Env
 ): Promise<Response> {
-   const session = await requireUser(request, env);
+  const session = await requireUser(request, env);
   if (!session) {
     return json({ ok: false, error: "UNAUTHORIZED" }, 401);
   }
-
-  const user = session.user;
 
   let body;
   try {
@@ -81,17 +84,20 @@ export async function acceptPolicy(
     return json({ ok: false, error: "INVALID_INPUT" }, 400);
   }
 
-  const latest = await getLatestPolicyVersion(env);
+  const { scope, policyVersion } = body;
+  const user = session.user;
+
+  const latest = await getLatestPolicyVersion(env, scope);
   if (!latest) {
     return json({ ok: false, error: "NO_POLICY_AVAILABLE" }, 500);
   }
 
-  if (body.policyVersion !== latest) {
+  if (policyVersion !== latest) {
     return json({ ok: false, error: "POLICY_OUTDATED" }, 409);
   }
 
   await env.POLICY_KV.put(
-    policyAcceptanceKey(user.id, latest),
+    policyAcceptanceKey(user.id, scope, latest),
     JSON.stringify({ acceptedAt: new Date().toISOString() })
   );
 
@@ -99,9 +105,7 @@ export async function acceptPolicy(
 }
 
 /**
- * GET /api/policy/status
- *
- * Ritorna se l’utente corrente ha accettato la policy latest.
+ * GET /api/policy/status?scope=checkout
  */
 export async function getPolicyStatus(
   request: Request,
@@ -112,13 +116,17 @@ export async function getPolicyStatus(
     return json({ accepted: false });
   }
 
-  const latest = await getLatestPolicyVersion(env);
+  const scope =
+    (new URL(request.url).searchParams.get("scope") as PolicyScope) ??
+    "checkout";
+
+  const latest = await getLatestPolicyVersion(env, scope);
   if (!latest) {
     return json({ accepted: false });
   }
 
   const stored = await env.POLICY_KV.get(
-    policyAcceptanceKey(user.id, latest)
+    policyAcceptanceKey(user.id, scope, latest)
   );
 
   if (!stored) {

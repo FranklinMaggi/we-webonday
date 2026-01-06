@@ -1,15 +1,17 @@
-//policy/privacy.tsx
+// ======================================================
+// FE || pages/policy/privacy.tsx
+// ======================================================
+//
+// AI-SUPERCOMMENT
+//
+// RUOLO:
+// - Pagina Privacy Policy
+//
+// ======================================================
+
+import { PolicyViewer } from "../../components/policy/policyViewer";
+
 
 export default function Privacy() {
-  return (
-    <div className="policy-container">
-      <h1>Privacy Policy</h1>
-
-      <p>
-        WebOnDay tutela i dati dei propri utenti secondo le normative vigenti.
-        I dati raccolti sono utilizzati esclusivamente per migliorare i servizi forniti
-        e non vengono ceduti a terze parti senza consenso.
-      </p>
-    </div>
-  );
+  return <PolicyViewer scope="general" />;
 }

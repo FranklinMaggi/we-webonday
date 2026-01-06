@@ -1,3 +1,19 @@
+// ======================================================
+// FE || components/footer/Footer.tsx
+// ======================================================
+//
+// AI-SUPERCOMMENT
+//
+// RUOLO:
+// - Navigazione globale
+// - Accesso a pagine legali
+//
+// INVARIANTI:
+// - Footer NON carica contenuti
+// - Linka SEMPRE pagine policy FE
+//
+// ======================================================
+
 import { Link } from "react-router-dom";
 
 
@@ -10,10 +26,10 @@ export default function Footer() {
 
         <div className="wd-footer-col">
           <h4 className="wd-footer-title">Policy</h4>
-          <Link className="wd-footer-link" to="/pricing">Prezzi & Tariffe</Link>
-          <Link className="wd-footer-link" to="/policy/terms">Termini</Link>
-          <Link className="wd-footer-link" to="/policy/privacy">Privacy</Link>
-        </div>
+          <Link className="wd-footer-link" to="/terms">Termini</Link>
+<Link className="wd-footer-link" to="/policy">Policy</Link>
+<Link className="wd-footer-link" to="/policy/privacy">Privacy</Link>
+  </div>
 
         <div className="wd-footer-col">
           <h4 className="wd-footer-title">Chi siamo</h4>
