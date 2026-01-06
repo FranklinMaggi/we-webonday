@@ -23,21 +23,13 @@ import { API_BASE } from "../config";
    NORMALIZER — OPTION (ADMIN → PUBLIC)
 ====================================================== */
 function normalizeOption(adminOpt: any): ProductOptionDTO {
-  let type: ProductOptionDTO["type"] = "one_time";
-
-  // mapping payment → type FE
-  if (adminOpt.payment?.mode === "recurring") {
-    type =
-      adminOpt.payment.interval === "monthly"
-        ? "monthly"
-        : "yearly";
-  }
-
   return {
     id: adminOpt.id,
     label: adminOpt.name,
     price: adminOpt.price,
-    type,
+
+    // 🔒 HARD-CODED: monthly only
+    type: "monthly",
   };
 }
 
