@@ -51,7 +51,7 @@
 import type { Env } from "../../../types/env";
 import { ProductSchema } from "../../../schemas/core/productSchema";
 import { OptionSchema } from "../../../schemas/core/optionSchema";
-import { requireAdmin } from "../admin.guard";
+import { requireAdmin } from "../guard/admin.guard";
 
 /* =========================
    JSON helper locale

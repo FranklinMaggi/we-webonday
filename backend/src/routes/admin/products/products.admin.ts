@@ -59,7 +59,7 @@
 import type { Env } from "../../../types/env";
 import { z } from "zod";
 import { ProductSchema } from "../../../schemas/core/productSchema";
-import { requireAdmin } from "../admin.guard";
+import { requireAdmin } from "../guard/admin.guard";
 
 /* =========================
    JSON HELPER

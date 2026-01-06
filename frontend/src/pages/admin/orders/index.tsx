@@ -1,29 +1,36 @@
 // ======================================================
 // FE || pages/admin/orders/index.tsx
 // ======================================================
-// ADMIN — ORDERS LIST
 //
-// RUOLO:
-// - Visualizzare elenco ordini
+// AI-SUPERCOMMENT — ADMIN ORDERS LIST
+//
+// SCOPO PRIMARIO:
+// - Fornire al SuperAdmin una vista rapida e affidabile
+//   degli ordini reali effettuati dai clienti.
+//
+// MODELLO MENTALE:
+// - Ogni riga = evento economico reale
+// - Nessuna azione distruttiva avviene qui
 //
 // RESPONSABILITÀ:
-// - Fetch lista ordini
-// - Mostrare stato, totale, email
+// - Fetch lista ordini (read-only)
+// - Visualizzare email, totale, stato
 // - Navigazione verso dettaglio ordine
 //
-// NON FA:
-// - NON modifica ordini
-// - NON applica transizioni di stato
+// INVARIANTI:
+// - Nessuna mutazione di stato
+// - Nessuna business logic
+// - Stato ordine = read-only snapshot
 //
-// NOTE:
-// - Ogni azione è delegata alla pagina dettaglio
+// DELEGA:
+// - Qualsiasi azione → pagina dettaglio
 // ======================================================
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 /* ============================
-   ADMIN API
+   ADMIN API (SOURCE OF TRUTH)
 ============================ */
 import {
   getAdminOrders,
@@ -36,26 +43,54 @@ import {
 ============================ */
 import type { AdminOrder } from "../../../lib/adminApi";
 
-
-
 export default function AdminOrdersPage() {
+  /* =========================
+     STATE
+  ========================= */
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
+  /* =========================
+     EFFECT — FETCH ORDERS
+     (one-shot, on mount)
+  ========================= */
   useEffect(() => {
+    let alive = true;
+
     getAdminOrders()
-      .then(setOrders)
-      .finally(() => setLoading(false));
+      .then((data) => {
+        if (alive) setOrders(data);
+      })
+      .finally(() => {
+        if (alive) setLoading(false);
+      });
+
+    return () => {
+      alive = false;
+    };
   }, []);
 
-  if (loading) return <p>Caricamento…</p>;
+  /* =========================
+     EARLY RETURNS
+  ========================= */
+  if (loading) {
+    return <p>Caricamento ordini…</p>;
+  }
 
+  if (!orders.length) {
+    return <p>Nessun ordine presente.</p>;
+  }
+
+  /* =========================
+     RENDER
+  ========================= */
   return (
     <table className="admin-table">
       <thead>
         <tr>
-          <th>Email</th>
+          <th>Email cliente</th>
           <th>Totale</th>
           <th>Stato</th>
           <th>Azioni</th>
@@ -65,13 +100,19 @@ export default function AdminOrdersPage() {
       <tbody>
         {orders.map((o) => (
           <tr key={o.id}>
-            {/* EMAIL */}
+            {/* =====================
+               EMAIL CLIENTE
+            ====================== */}
             <td>{o.email}</td>
 
-            {/* TOTALE */}
+            {/* =====================
+               TOTALE ORDINE
+            ====================== */}
             <td>€ {o.total.toFixed(2)}</td>
 
-            {/* STATO */}
+            {/* =====================
+               STATO ORDINE
+            ====================== */}
             <td>
               <span className={`status status-${o.status}`}>
                 {ORDER_STATUS_LABEL[o.status]}
@@ -84,9 +125,12 @@ export default function AdminOrdersPage() {
               )}
             </td>
 
-            {/* AZIONI */}
+            {/* =====================
+               NAVIGAZIONE
+            ====================== */}
             <td>
               <button
+                className="wd-btn wd-btn--ghost"
                 onClick={() => navigate(`/admin/orders/${o.id}`)}
               >
                 Dettagli

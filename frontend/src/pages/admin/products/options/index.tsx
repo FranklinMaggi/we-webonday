@@ -1,3 +1,22 @@
+// ======================================================
+// FE || ADMIN — OPTIONS LIST
+// File: src/pages/admin/products/options/index.tsx
+// ======================================================
+//
+// AI-SUPERCOMMENT
+//
+// RUOLO:
+// - Lista opzioni prodotto (ADMIN)
+//
+// RESPONSABILITÀ:
+// - Fetch lista
+// - Navigazione editor
+//
+// NON FA:
+// - NON modifica
+// - NON valida dominio
+// ======================================================
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminFetch } from "../../../../lib/adminApi/client";

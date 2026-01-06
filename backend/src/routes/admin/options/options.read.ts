@@ -29,7 +29,7 @@
 ====================================================== */
 import type { Env } from "../../../types/env";
 import { OptionSchema } from "../../../schemas/core/optionSchema";
-import { requireAdmin } from "../admin.guard";
+import { requireAdmin } from "../guard/admin.guard";
 import { unknown, z } from "zod";
 
 

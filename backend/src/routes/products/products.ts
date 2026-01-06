@@ -46,7 +46,7 @@ import type { Env } from "../../types/env";
 import { normalizeProduct } from "../../normalizers/normalizeProduct";
 import { ProductSchema } from "../../schemas/core/productSchema";
 import type { Product } from "../../schemas/core/productSchema";
-import { requireAdmin } from "../admin/admin.guard";
+import { requireAdmin } from "../admin/guard/admin.guard";
 import { OptionSchema } from "../../schemas/core/optionSchema";
 /* ============================================================
    GET ALL PRODUCTS (PUBLIC)

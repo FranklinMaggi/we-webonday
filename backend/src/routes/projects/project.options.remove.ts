@@ -24,7 +24,7 @@
 
 import type { Env } from "../../types/env";
 import { ProjectSchema } from "../../schemas/core/projectSchema";
-import { OrderDomainSchema } from "../../schemas/core/orderSchema";
+import { EconomicOrderSchema } from "../../schemas/orders/economicOrderSchema";
 import { PROJECTS_KEY, ORDER_KEY } from "../../lib/kv";
 
 type RemoveOptionBody = {
@@ -63,7 +63,7 @@ export async function removeProjectOption(request: Request, env: Env) {
   });
 
   // 3) audit order (no rimborso)
-  const order = OrderDomainSchema.parse({
+  const order = EconomicOrderSchema.parse({
     id: crypto.randomUUID(),
     type: "OPTION_REMOVE",
     businessId: project.businessId,

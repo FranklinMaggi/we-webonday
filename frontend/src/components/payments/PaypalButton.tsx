@@ -1,3 +1,21 @@
+// ======================================================
+// FE || components/payments/PaypalButton.tsx
+// ======================================================
+//
+// AI-SUPERCOMMENT — PAYPAL INTEGRATION
+//
+// RUOLO:
+// - Mount SDK PayPal
+// - Avvio pagamento su orderId
+//
+// INVARIANTI:
+// - orderId già creato (BE source of truth)
+// - Nessuna logica prezzi
+//
+// RISCHI:
+// - SDK esterno
+// - Side-effects globali (window.paypal)
+// ======================================================
 import { useEffect, useRef } from "react";
 import { API_BASE } from "../../lib/config";
 type Props = {

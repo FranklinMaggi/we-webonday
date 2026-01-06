@@ -40,7 +40,7 @@
 
 import type { Env } from "../../types/env";
 import { ProjectSchema } from "../../schemas/core/projectSchema";
-import { OrderDomainSchema } from "../../schemas/core/orderSchema";
+import { EconomicOrderSchema } from "../../schemas/orders/economicOrderSchema";
 import { PROJECTS_KEY, ORDER_KEY } from "../../lib/kv";
 
 /* =========================
@@ -97,7 +97,7 @@ export async function startProject(request: Request, env: Env) {
   if (!m1) throw new Error("MISSING_MILESTONE_1");
 
   // 4) Crea order milestone 1
-  const order = OrderDomainSchema.parse({
+  const order = EconomicOrderSchema.parse({
     id: crypto.randomUUID(),
     type: "PROJECT_START",
     businessId: body.businessId,

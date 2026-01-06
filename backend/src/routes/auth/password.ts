@@ -1,12 +1,33 @@
 // backend/src/routes/password.ts
+/* ============================================================
+   GET CURRENT USER
+   GET /api/user/me
+   ============================================================
 
+   AI-SUPERCOMMENT — AUTH / SESSION GUARD
+
+   RUOLO:
+   - Espone l’utente corrente autenticato
+   - Punto di verità per il frontend (bootstrap auth)
+   - Base per ProtectedRoute, navbar, checkout, dashboard
+
+   INVARIANTI:
+   - Se NON esiste sessione → 401 UNAUTHORIZED
+   - MAI rispondere 200 con user:null
+   - L’utente è SEMPRE derivato dalla sessione
+   - Il client NON passa userId
+
+   PERCHÉ:
+   - Evita sessioni fantasma
+   - Elimina ambiguità FE
+   - Rende il logout realmente invalidante
+============================================================ */
 import type { Env } from "../../types/env";
 import { logActivity } from "../../lib/logActivity";
 import { buildSessionCookie } from "../../lib/auth/session";
 import { UserSchema, UserInputSchema } from "../../schemas/core/userSchema";
-import { getUserFromSession } from "../../lib/auth/session";
 import { destroySessionCookie } from "../../lib/auth/session";
-
+import { requireUser } from "../../lib/auth/session";
 /**
  * Helper JSON response standard
  */
@@ -165,16 +186,22 @@ export async function loginUser(request: Request, env: Env) {
    (userId risolto dal middleware/session)
    ============================================================ */
    export async function getUser(request: Request, env: Env) {
-    const user = await getUserFromSession(request, env);
+    const session = await requireUser(request, env);
   
-    if (!user) {
-      return json({ ok: true, user: null });
+    if (!session) {
+      return json(
+        { ok: false, error: "UNAUTHORIZED" },
+        401
+      );
     }
   
-    const { passwordHash, ...safeUser } = user;
-    return json({ ok: true, user: safeUser });
-  }
+    const { passwordHash, ...safeUser } = session.user;
   
+    return json({
+      ok: true,
+      user: safeUser,
+    });
+  }
 /* ============================================================
    LOGOUT
    POST /api/user/logout

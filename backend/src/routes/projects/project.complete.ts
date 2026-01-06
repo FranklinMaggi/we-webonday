@@ -30,8 +30,8 @@
 
 import type { Env } from "../../types/env";
 import { ProjectSchema, Project } from "../../schemas/core/projectSchema";
-import { OrderDomainSchema } from "../../schemas/core/orderSchema";
-import { PROJECTS_KEY, ORDER_KEY } from "../../lib/kv";
+import { EconomicOrderSchema } from "../../schemas/orders/economicOrderSchema";
+    import { PROJECTS_KEY, ORDER_KEY } from "../../lib/kv";
 
 /* =========================
    GUARDS
@@ -89,7 +89,7 @@ export async function completeProject(request: Request, env: Env) {
   if (!m3) throw new Error("MISSING_MILESTONE_3");
 
   // 3️⃣ order milestone 3
-  const order = OrderDomainSchema.parse({
+  const order = EconomicOrderSchema.parse({
     id: crypto.randomUUID(),
     type: "PROJECT_COMPLETE",
     businessId: project.businessId,

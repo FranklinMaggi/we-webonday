@@ -1,33 +1,24 @@
 /**
  * ======================================================
- * BE || ADMIN || CHECKOUT ORDERS — READ SIDE (V2)
+ * CHECKOUT ORDERS — READ SIDE (V2)
+ * File: backend/src/routes/orders/checkoutOrders.read.ts
  * ======================================================
  *
- * AI-SUPERCOMMENT — RESPONSABILITÀ
- *
  * RUOLO:
- * - Espone la READ SIDE ADMIN dei CheckoutOrders
- * - Listing e dettaglio ordini
+ * - Read-only access ai CheckoutOrders
+ * - Usato da Admin e FE
  *
- * INVARIANTI:
- * - Nessuna scrittura
- * - Nessuna logica di stato
- * - Ordini corrotti NON bloccano la risposta
+ * SUPPORTA:
+ * - Filtro per status
+ * - Filtro per orderKind (product / project)
  *
  * SOURCE OF TRUTH:
  * - CheckoutOrderDomainSchema
- *
- * KV:
- * - ORDER_KV → ORDER:{orderId}
  * ======================================================
  */
 
-import type { Env } from "../../../types/env";
-import { z } from "zod";
-import {
-  CheckoutOrderDomainSchema,
-  CheckoutOrderSchema
-} from "../../../schemas/orders/checkoutOrderSchema";
+import type { Env } from "../../types/env";
+import { CheckoutOrderDomainSchema } from "../../schemas/orders/checkoutOrderSchema";
 
 /* =========================
    JSON helper
@@ -39,36 +30,34 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
-/* =========================
-   DTO — ADMIN SUMMARY
-========================= */
-const AdminOrderSummarySchema =
-  CheckoutOrderSchema.omit({
-    payment: true, // opzionale: se esiste davvero
-  });
-
-type AdminOrderSummaryDTO =
-  z.infer<typeof AdminOrderSummarySchema>;
-
 /* ======================================================
-   GET /api/admin/orders
+   GET /api/orders
+   LIST CHECKOUT ORDERS (FILTERABLE)
 ====================================================== */
-export async function listAdminOrders(
-  _request: Request,
+export async function listOrders(
+  request: Request,
   env: Env
 ): Promise<Response> {
+  const url = new URL(request.url);
+
+  const statusFilter = url.searchParams.get("status"); // draft | deleted | completed
+  const kindFilter = url.searchParams.get("orderKind"); // product | project
+
   const list = await env.ORDER_KV.list({ prefix: "ORDER:" });
 
-  const orders: AdminOrderSummaryDTO[] = [];
+  const orders = [];
 
   for (const key of list.keys) {
     const raw = await env.ORDER_KV.get(key.name);
     if (!raw) continue;
 
     try {
-      orders.push(
-        AdminOrderSummarySchema.parse(JSON.parse(raw))
-      );
+      const order = CheckoutOrderDomainSchema.parse(JSON.parse(raw));
+
+      if (statusFilter && order.status !== statusFilter) continue;
+      if (kindFilter && order.orderKind !== kindFilter) continue;
+
+      orders.push(order);
     } catch (err) {
       console.error("INVALID_CHECKOUT_ORDER:", key.name, err);
     }
@@ -84,25 +73,25 @@ export async function listAdminOrders(
 }
 
 /* ======================================================
-   GET /api/admin/orders/:id
+   GET /api/orders/:id
 ====================================================== */
-export async function getAdminOrder(
+export async function getOrder(
   request: Request,
   env: Env
 ): Promise<Response> {
   const id = new URL(request.url).searchParams.get("id");
+
   if (!id) {
-    return json({ ok: false, error: "MISSING_ORDER_ID" }, 400);
+    return json({ ok: false, error: "MISSING_ID" }, 400);
   }
 
   const raw = await env.ORDER_KV.get(`ORDER:${id}`);
   if (!raw) {
-    return json({ ok: false, error: "ORDER_NOT_FOUND" }, 404);
+    return json({ ok: false, error: "NOT_FOUND" }, 404);
   }
 
   try {
-    const order =
-      CheckoutOrderDomainSchema.parse(JSON.parse(raw));
+    const order = CheckoutOrderDomainSchema.parse(JSON.parse(raw));
     return json({ ok: true, order });
   } catch (err) {
     console.error("CORRUPTED_CHECKOUT_ORDER:", id, err);

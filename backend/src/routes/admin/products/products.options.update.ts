@@ -51,7 +51,7 @@
 
 import type { Env } from "../../../types/env";
 import { z } from "zod";
-import { requireAdmin } from "../admin.guard";
+import { requireAdmin } from "../guard/admin.guard";
 import { ProductSchema } from "../../../schemas/core/productSchema";
 import { OptionSchema } from "../../../schemas/core/optionSchema";
 

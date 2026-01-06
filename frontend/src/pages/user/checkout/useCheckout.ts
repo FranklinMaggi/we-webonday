@@ -18,6 +18,19 @@
 // NOTE:
 // - KV backend = source of truth
 // ======================================================
+/**
+ * AI-SUPERCOMMENT
+ *
+ * RUOLO:
+ * - Sincronizza FE cart → CART_KV
+ *
+ * CONNECT POINT:
+ * - /api/cart (BE)
+ *
+ * NOTA:
+ * - Best effort
+ * - Errori bloccanti per checkout
+ */
 
 import { useState } from "react";
 import { cartStore } from "../../../lib/cart/cartStore";

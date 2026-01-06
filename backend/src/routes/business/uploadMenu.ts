@@ -1,11 +1,29 @@
 // backend/src/routes/uploadBusinessMenu.ts
+/* =====================
+   1️⃣ AUTH GUARD (HARD)
+======================
+
+AI-SUPERCOMMENT — AUTH INVARIANT
+
+RUOLO:
+- Questo endpoint richiede utente autenticato
+- La sessione è l’unica fonte di verità
+
+INVARIANTI:
+- Se sessione mancante o invalida → 401
+- NON usare getUserFromSession come guard
+
+PERCHÉ:
+- Evita sessioni fantasma
+- Allinea BE e FE
+====================== */
 
 import type { Env } from "../../types/env";
 
 import { BusinessSchema } from "../../schemas/business/businessSchema";
 import { BUSINESS_KEY } from "../../lib/kv";
 
-import { getUserFromSession } from "../../lib/auth/session";
+import { requireUser } from "../../lib/auth/session";
 import { json } from "../../lib/https";
 
 /* ======================================================
@@ -19,15 +37,19 @@ export async function uploadBusinessMenu(
   /* =====================
      1️⃣ AUTH
   ====================== */
-  const user = await getUserFromSession(request, env);
-  if (!user) {
-    return json(
-      { ok: false, error: "UNAUTHORIZED" },
-      request,
-      env,
-      401
-    );
-  }
+ 
+const session = await requireUser(request, env);
+
+if (!session) {
+  return json(
+    { ok: false, error: "UNAUTHORIZED" },
+    request,
+    env,
+    401
+  );
+}
+
+const user = session.user;
 
   /* =====================
      2️⃣ EXTRACT PARAM

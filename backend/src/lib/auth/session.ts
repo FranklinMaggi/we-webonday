@@ -30,6 +30,11 @@ export function getUserIdFromSession(
 
 /**
  * MID LEVEL — carica user dal KV
+ *//**
+ * ⚠️ ATTENZIONE
+ * Questa funzione NON è una guard.
+ * NON usare per endpoint protetti.
+ * Usare requireUser() per HARD-AUTH.
  */
 export async function getUserFromSession(
   request: Request,

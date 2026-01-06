@@ -1,30 +1,35 @@
 // ======================================================
 // FE || pages/admin/orders/[id].tsx
 // ======================================================
-// ADMIN — ORDER DETAILS & ACTIONS
 //
-// RUOLO:
-// - Dettaglio singolo ordine
-// - Esecuzione azioni amministrative
+// AI-SUPERCOMMENT — ADMIN ORDER DETAILS
+//
+// SCOPO PRIMARIO:
+// - Gestire un singolo ordine come entità centrale
+// - Consentire al SuperAdmin di eseguire azioni valide
+//
+// MODELLO MENTALE:
+// - L’ordine è un evento economico
+// - Il backend è l’unica autorità sulle transizioni
 //
 // RESPONSABILITÀ:
 // - Fetch ordine
-// - Invocare transizioni di stato
-// - Gestire delete / clone
-// - Feedback UI
+// - Mostrare stato, totale, motivazioni
+// - Inviare comandi amministrativi
+// - Fornire feedback UX chiaro
 //
-// NON FA:
-// - NON calcola totale
-// - NON valida business rules
-//
-// NOTE:
-// - Backend impone transizioni valide
-// - FE gestisce solo UX e feedback
+// INVARIANTI:
+// - FE NON calcola totali
+// - FE NON valida regole business
+// - Ogni errore di stato è gestito come feedback
 // ======================================================
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+/* ============================
+   ADMIN API
+============================ */
 import {
   getAdminOrder,
   transitionAdminOrder,
@@ -34,37 +39,66 @@ import {
   ORDER_CANCEL_REASON_LABEL,
 } from "../../../lib/adminApi";
 
+/* ============================
+   TYPES
+============================ */
 import type { AdminOrder } from "../../../lib/adminApi";
 
-
-
 export default function AdminOrderDetails() {
+  /* =========================
+     ROUTING
+  ========================= */
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
+  /* =========================
+     STATE
+  ========================= */
   const [order, setOrder] = useState<AdminOrder | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // UI-only state
+  // UI-only feedback state
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
 
+  /* =========================
+     EFFECT — FETCH ORDER
+  ========================= */
   useEffect(() => {
     if (!id) return;
 
+    let alive = true;
+
     getAdminOrder(id)
-      .then(setOrder)
-      .finally(() => setLoading(false));
+      .then((data) => {
+        if (alive) setOrder(data);
+      })
+      .finally(() => {
+        if (alive) setLoading(false);
+      });
+
+    return () => {
+      alive = false;
+    };
   }, [id]);
 
-  if (loading) return <p>Caricamento…</p>;
-  if (!order) return <p>Ordine non trovato</p>;
+  /* =========================
+     EARLY RETURNS
+  ========================= */
+  if (loading) {
+    return <p>Caricamento ordine…</p>;
+  }
+
+  if (!order) {
+    return <p>Ordine non trovato.</p>;
+  }
 
   /* =========================
-     ACTION HANDLER GENERICO
+     ACTION RUNNER (GENERIC)
+     - Centralizza loading / error / success
+     - Garantisce UX consistente
   ========================= */
-
   async function runAction(
     action: () => Promise<unknown>,
     successMessage: string
@@ -77,7 +111,7 @@ export default function AdminOrderDetails() {
       await action();
       setActionSuccess(successMessage);
 
-      // piccolo delay UX prima redirect
+      // Delay UX per lettura feedback
       setTimeout(() => {
         navigate("/admin/orders", { replace: true });
       }, 800);
@@ -94,11 +128,11 @@ export default function AdminOrderDetails() {
   }
 
   /* =========================
-     HANDLERS
+     HANDLERS (INTENT-DRIVEN)
   ========================= */
-
   function handleTransition(next: "processed" | "completed") {
     if (!id) return;
+
     runAction(
       () => transitionAdminOrder(id, next),
       `Ordine aggiornato: ${ORDER_STATUS_LABEL[next]}`
@@ -131,12 +165,13 @@ export default function AdminOrderDetails() {
   /* =========================
      RENDER
   ========================= */
-
   return (
     <div className="admin-order-details">
-      <h1>Ordine {order.id}</h1>
+      <h1>Ordine #{order.id}</h1>
 
-      {/* STATUS */}
+      {/* =====================
+         STATUS
+      ====================== */}
       <div className="order-status">
         <span className={`status status-${order.status}`}>
           {ORDER_STATUS_LABEL[order.status]}
@@ -149,7 +184,9 @@ export default function AdminOrderDetails() {
         )}
       </div>
 
-      {/* FEEDBACK */}
+      {/* =====================
+         FEEDBACK
+      ====================== */}
       {actionError && (
         <div className="alert alert-error">{actionError}</div>
       )}
@@ -158,7 +195,9 @@ export default function AdminOrderDetails() {
         <div className="alert alert-success">{actionSuccess}</div>
       )}
 
-      {/* AZIONI */}
+      {/* =====================
+         AZIONI ADMIN
+      ====================== */}
       <div className="order-actions">
         <button
           disabled={actionLoading}
@@ -193,7 +232,9 @@ export default function AdminOrderDetails() {
         )}
       </div>
 
-      {/* TOTAL */}
+      {/* =====================
+         TOTAL
+      ====================== */}
       <section className="order-total">
         <strong>Totale ordine:</strong> € {order.total.toFixed(2)}
       </section>

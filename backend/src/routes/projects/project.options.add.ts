@@ -31,7 +31,7 @@
 import type { Env } from "../../types/env";
 import { ProjectSchema } from "../../schemas/core/projectSchema";
 import { OptionSchema } from "../../schemas/core/optionSchema";
-import { OrderDomainSchema } from "../../schemas/core/orderSchema";
+import { EconomicOrderSchema } from "../../schemas/orders/economicOrderSchema";
 import { PROJECTS_KEY, ORDER_KEY, OPTIONS_KEY  } from "../../lib/kv";
 
 type AddOptionBody = {
@@ -88,7 +88,7 @@ export async function addProjectOption(request: Request, env: Env) {
   });
 
   // 4) order
-  const order = OrderDomainSchema.parse({
+  const order = EconomicOrderSchema.parse({
     id: crypto.randomUUID(),
     type: "OPTION_ADD",
     businessId: project.businessId,

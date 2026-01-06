@@ -1,3 +1,16 @@
+/**
+ * AI-SUPERCOMMENT
+ *
+ * RUOLO:
+ * - Sezione dashboard (presentazionale)
+ *
+ * INVARIANTI:
+ * - Nessun fetch
+ * - Nessuna side-effect
+ *
+ * EVOLUZIONE FUTURA:
+ * - Collegamento a API dedicate
+ */
 export default function UserOrders() {
     return (
       <section>

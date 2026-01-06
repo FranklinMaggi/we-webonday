@@ -1,5 +1,5 @@
-import type { Env } from "../../types/env";
-import { UserSchema } from "../../schemas/core/userSchema";
+import type { Env } from "../../../types/env";
+import { UserSchema } from "../../../schemas/core/userSchema";
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {

@@ -1,159 +1,111 @@
 /**
- * ============================================================
- * Admin Order Actions
- * File: backend/src/routes/admin/orders.actions.ts
+ * ======================================================
+ * BE || ADMIN || CHECKOUT ORDERS — WRITE SIDE (V2)
+ * ======================================================
  *
- * Responsabilità:
- * - Consentire azioni ADMIN sugli ordini
- * - Applicare correttamente la state machine
- * - Loggare ogni mutazione (audit)
+ * AI-SUPERCOMMENT — RESPONSABILITÀ
  *
- * NOTE:
- * - "deleted" è una cancellazione LOGICA (storico preservato)
- * - Non esiste più lo stato "cancelled"
- * ============================================================
+ * RUOLO:
+ * - Espone AZIONI ADMIN sugli CheckoutOrders
+ * - Applica RIGOROSAMENTE la state machine
+ * - Registra AUDIT di ogni mutazione
+ *
+ * COSA PUÒ FARE:
+ * - delete (cancellazione logica)
+ * - transition (forzatura stato lecita)
+ * - clone (solo da deleted → nuova entità)
+ *
+ * COSA NON PUÒ FARE:
+ * - NON crea ordini
+ * - NON gestisce pagamento
+ * - NON ricalcola prezzi
+ * - NON crea Project o EconomicOrder
+ *
+ * INVARIANTI CRITICHE:
+ * - Un ordine `deleted` è IMMUTABILE
+ * - Nessuna transizione fuori dalla state machine
+ * - Ogni mutazione è AUDITATA
+ *
+ * SOURCE OF TRUTH:
+ * - CheckoutOrderDomainSchema
+ * - assertCheckoutOrderTransition()
+ *
+ * KV:
+ * - ORDER_KV → ORDER:{orderId}
+ *
+ * PERCHÉ ESISTE:
+ * - Separare il POTERE ADMIN dalla logica di checkout
+ * - Garantire tracciabilità e sicurezza
+ *
+ * FE TARGET:
+ * - Admin Dashboard (azioni manuali)
+ * ======================================================
  */
-/**
- * ============================================================
- *ADMIN — ORDER CLONE & STATE ACTIONS
-* File: backend/src/routes/admin/orders.actions.ts
-*
-* RESPONSABILITÀ:
-* - Mutazioni ADMIN sugli ordini
-* - Applicazione rigorosa della state machine
-* - Clonazione ordini cancellati (reinserimento corretto)
-*
-* PRINCIPI:
-* - Un ordine "deleted" NON viene mai riattivato
-* - La reintegrazione crea SEMPRE una nuova entità ordine
-* - Ogni mutazione è auditata
-* ============================================================
-*/
-import type { Env } from "../../../types/env";
-import { OrderSchema } from "../../../schemas/core/orderSchema";
-import { assertTransition } from "../../orders/orders.core";
-import { logActivity } from "../../../lib/logActivity";
-import { json } from "../../../lib/https";
+
 import { z } from "zod";
+import type { Env } from "../../../types/env";
+import {
+  CheckoutOrderDomainSchema,
+  OrderStatusSchema,
+  assertCheckoutOrderTransition
+} from "../../../schemas/orders/checkoutOrderSchema";
+import { json } from "../../../lib/https";
+import { logActivity } from "../../../lib/logActivity";
 
-/**
- * Payload minimo per azioni admin su ordine
- */
-const AdminOrderActionSchema = z.object({
-  id: z.string().uuid(),
+/* =========================
+   INPUT SCHEMAS
+========================= */
+
+const AdminOrderIdSchema = z.object({
+  orderId: z.string().uuid(),
 });
 
-/**
- * Mutazione stato ordine (ADMIN)
- */
-async function updateOrderStatus(
-  request: Request,
-  env: Env,
-  nextStatus: "confirmed" | "deleted"
-): Promise<Response> {
-  let body: unknown;
-
-  try {
-    body = await request.json();
-  } catch {
-    return json({ ok: false, error: "INVALID_JSON" }, request, env, 400);
-  }
-
-  const parsed = AdminOrderActionSchema.safeParse(body);
-  if (!parsed.success) {
-    return json({ ok: false, error: "INVALID_INPUT" }, request, env, 400);
-  }
-
-  const { id } = parsed.data;
-
-  const raw = await env.ORDER_KV.get(`ORDER:${id}`);
-  if (!raw) {
-    return json({ ok: false, error: "NOT_FOUND" }, request, env, 404);
-  }
-
-  const order = OrderSchema.parse(JSON.parse(raw));
-
-  // 🔒 State machine (OBBLIGATORIA)
-  assertTransition(order.status, nextStatus);
-
-  const updated = {
-    ...order,
-    status: nextStatus,
-    updatedAt: new Date().toISOString(),
-  };
-
-  await env.ORDER_KV.put(`ORDER:${id}`, JSON.stringify(updated));
-
-  await logActivity(env, "ORDER_STATUS_CHANGED", order.userId, {
-    orderId: id,
-    from: order.status,
-    to: nextStatus,
-  });
-
-  return json({ ok: true, order: updated }, request, env);
-}
-
-/**
- * ADMIN — conferma ordine
- * pending → confirmed
- */
-export function confirmOrder(request: Request, env: Env) {
-  return updateOrderStatus(request, env, "confirmed");
-}
-
-/**
- * ADMIN — elimina ordine (logico)
- * draft | pending | confirmed → deleted
- */
-export function deleteOrder(request: Request, env: Env) {
-  return updateOrderStatus(request, env, "deleted");
-}
-const AdminOrderCloneSchema = z.object({
-  id: z.string().uuid(), // orderId originale (deleted)
+const AdminOrderTransitionSchema = z.object({
+  orderId: z.string().uuid(),
+  nextStatus: OrderStatusSchema,
 });
-export async function cloneOrder(
+
+/* =========================
+   LOAD ORDER HELPER
+========================= */
+async function loadOrder(env: Env, orderId: string) {
+  const raw = await env.ORDER_KV.get(`ORDER:${orderId}`);
+  if (!raw) throw new Error("ORDER_NOT_FOUND");
+
+  return CheckoutOrderDomainSchema.parse(JSON.parse(raw));
+}
+
+/* ======================================================
+   ADMIN — DELETE ORDER (LOGICAL)
+   draft | pending | confirmed → deleted
+====================================================== */
+export async function deleteOrder(
   request: Request,
   env: Env
 ): Promise<Response> {
-  let body: unknown;
-
+  let body;
   try {
-    body = await request.json();
+    body = AdminOrderIdSchema.parse(await request.json());
   } catch {
-    return json({ ok: false, error: "INVALID_JSON" }, request, env, 400);
-  }
-
-  const parsed = AdminOrderCloneSchema.safeParse(body);
-  if (!parsed.success) {
     return json({ ok: false, error: "INVALID_INPUT" }, request, env, 400);
   }
 
-  const { id } = parsed.data;
-
-  /* =====================
-     LOAD ORIGINAL ORDER
-  ====================== */
-  const raw = await env.ORDER_KV.get(`ORDER:${id}`);
-  if (!raw) {
-    return json({ ok: false, error: "ORDER_NOT_FOUND" }, request, env, 404);
-  }
-
-  let original;
+  let order;
   try {
-    original = OrderSchema.parse(JSON.parse(raw));
-  } catch {
-    return json({ ok: false, error: "CORRUPTED_ORDER" }, request, env, 500);
+    order = await loadOrder(env, body.orderId);
+  } catch (err: any) {
+    return json({ ok: false, error: err.message }, request, env, 404);
   }
 
-  /* =====================
-     GUARD — ONLY DELETED
-  ====================== */
-  if (original.status !== "deleted") {
+  try {
+    assertCheckoutOrderTransition(order.status, "deleted");
+  } catch {
     return json(
       {
         ok: false,
-        error: "ORDER_NOT_DELETED",
-        currentStatus: original.status,
+        error: "INVALID_STATE_TRANSITION",
+        from: order.status,
+        to: "deleted",
       },
       request,
       env,
@@ -161,20 +113,134 @@ export async function cloneOrder(
     );
   }
 
-  /* =====================
-     CLONE ORDER
-  ====================== */
-  const newOrderId = crypto.randomUUID();
+  const updated = {
+    ...order,
+    status: "deleted",
+    updatedAt: new Date().toISOString(),
+  };
 
-  const cloned = OrderSchema.parse({
+  await env.ORDER_KV.put(
+    `ORDER:${order.id}`,
+    JSON.stringify(updated)
+  );
+
+  await logActivity(env, "ADMIN_ORDER_DELETED", order.businessId, {
+    orderId: order.id,
+    orderKind: order.orderKind,
+  });
+
+  return json({ ok: true, order: updated }, request, env);
+}
+
+/* ======================================================
+   ADMIN — FORCE STATE TRANSITION
+====================================================== */
+export async function transitionOrder(
+  request: Request,
+  env: Env
+): Promise<Response> {
+  let body;
+  try {
+    body = AdminOrderTransitionSchema.parse(await request.json());
+  } catch {
+    return json({ ok: false, error: "INVALID_INPUT" }, request, env, 400);
+  }
+
+  let order;
+  try {
+    order = await loadOrder(env, body.orderId);
+  } catch (err: any) {
+    return json({ ok: false, error: err.message }, request, env, 404);
+  }
+
+  try {
+    assertCheckoutOrderTransition(order.status, body.nextStatus);
+  } catch {
+    return json(
+      {
+        ok: false,
+        error: "INVALID_STATE_TRANSITION",
+        from: order.status,
+        to: body.nextStatus,
+      },
+      request,
+      env,
+      409
+    );
+  }
+
+  const updated = {
+    ...order,
+    status: body.nextStatus,
+    updatedAt: new Date().toISOString(),
+  };
+
+  await env.ORDER_KV.put(
+    `ORDER:${order.id}`,
+    JSON.stringify(updated)
+  );
+
+  await logActivity(env, "ADMIN_ORDER_STATUS_CHANGED", order.businessId, {
+    orderId: order.id,
+    from: order.status,
+    to: body.nextStatus,
+    orderKind: order.orderKind,
+  });
+
+  return json(
+    {
+      ok: true,
+      orderId: order.id,
+      status: body.nextStatus,
+    },
+    request,
+    env
+  );
+}
+
+/* ======================================================
+   ADMIN — CLONE DELETED ORDER
+====================================================== */
+export async function cloneDeletedOrder(
+  request: Request,
+  env: Env
+): Promise<Response> {
+  let body;
+  try {
+    body = AdminOrderIdSchema.parse(await request.json());
+  } catch {
+    return json({ ok: false, error: "INVALID_INPUT" }, request, env, 400);
+  }
+
+  let original;
+  try {
+    original = await loadOrder(env, body.orderId);
+  } catch (err: any) {
+    return json({ ok: false, error: err.message }, request, env, 404);
+  }
+
+  if (original.status !== "deleted") {
+    return json(
+      {
+        ok: false,
+        error: "ORDER_NOT_DELETED",
+        status: original.status,
+      },
+      request,
+      env,
+      409
+    );
+  }
+
+  const newOrderId = crypto.randomUUID();
+  const now = new Date().toISOString();
+
+  const cloned = CheckoutOrderDomainSchema.parse({
     ...original,
     id: newOrderId,
     status: "pending",
-    paypalOrderId: null,
-    paypalCapture: null,
-    paymentStatus: "pending",
-    createdAt: new Date().toISOString(),
-    updatedAt: undefined,
+    createdAt: now,
+    updatedAt: now,
   });
 
   await env.ORDER_KV.put(
@@ -182,124 +248,18 @@ export async function cloneOrder(
     JSON.stringify(cloned)
   );
 
-  /* =====================
-     AUDIT LOG
-  ====================== */
-  await logActivity(env, "ORDER_CLONED_FROM_DELETED", original.userId, {
-    fromOrderId: id,
+  await logActivity(env, "ADMIN_ORDER_CLONED", original.businessId, {
+    fromOrderId: original.id,
     toOrderId: newOrderId,
+    orderKind: original.orderKind,
   });
 
-  /* =====================
-     RESPONSE
-  ====================== */
   return json(
     {
       ok: true,
       orderId: newOrderId,
       status: "pending",
-      clonedFrom: id,
-    },
-    request,
-    env
-  );
-}
-// PERCHE: un ordine cancellato è immutabile per audit.
-// La reintegrazione crea una nuova entità pulita e pagabile.
-const AdminOrderTransitionSchema = z.object({
-  id: z.string().uuid(),
-  nextStatus: z.enum([
-    "confirmed",
-    "processed",
-    "completed",
-    "deleted",
-  ]),
-});
-export async function transitionOrder(
-  request: Request,
-  env: Env
-): Promise<Response> {
-  let body: unknown;
-
-  try {
-    body = await request.json();
-  } catch {
-    return json({ ok: false, error: "INVALID_JSON" }, request, env, 400);
-  }
-
-  const parsed = AdminOrderTransitionSchema.safeParse(body);
-  if (!parsed.success) {
-    return json({ ok: false, error: "INVALID_INPUT" }, request, env, 400);
-  }
-
-  const { id, nextStatus } = parsed.data;
-
-  /* =====================
-     LOAD ORDER
-  ====================== */
-  const raw = await env.ORDER_KV.get(`ORDER:${id}`);
-  if (!raw) {
-    return json({ ok: false, error: "ORDER_NOT_FOUND" }, request, env, 404);
-  }
-
-  let order;
-  try {
-    order = OrderSchema.parse(JSON.parse(raw));
-  } catch {
-    return json({ ok: false, error: "CORRUPTED_ORDER" }, request, env, 500);
-  }
-
-  /* =====================
-     STATE MACHINE GUARD
-  ====================== */
-  try {
-    assertTransition(order.status, nextStatus);
-  } catch (err) {
-    return json(
-      {
-        ok: false,
-        error: "INVALID_STATE_TRANSITION",
-        from: order.status,
-        to: nextStatus,
-      },
-      request,
-      env,
-      409
-    );
-  }
-
-  /* =====================
-     UPDATE ORDER
-  ====================== */
-  const updated = OrderSchema.parse({
-    ...order,
-    status: nextStatus,
-    updatedAt: new Date().toISOString(),
-  });
-
-  await env.ORDER_KV.put(
-    `ORDER:${id}`,
-    JSON.stringify(updated)
-  );
-
-  /* =====================
-     AUDIT LOG
-  ====================== */
-  await logActivity(env, "ORDER_STATUS_FORCED_BY_ADMIN", order.userId, {
-    orderId: id,
-    from: order.status,
-    to: nextStatus,
-  });
-
-  /* =====================
-     RESPONSE
-  ====================== */
-  return json(
-    {
-      ok: true,
-      orderId: id,
-      previousStatus: order.status,
-      status: nextStatus,
+      clonedFrom: original.id,
     },
     request,
     env

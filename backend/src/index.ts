@@ -51,18 +51,21 @@ import { getCart } from "./routes/cart/cart";
    ORDERS — USER
 ============================================================ */
 
-import { createOrder } from "./routes/orders";
 import { listOrders } from "./routes/orders";
 import { getOrder } from "./routes/orders";
+import {
+  createCheckoutOrderDraft,
+} from "./routes/orders/checkoutOrders.draft.write";
 
-import { saveOrderSetup } from "./routes/orders/orderSetup";
+import {
+  finalizeCheckoutOrder,
+} from "./routes/orders/checkoutOrders.write";
 
 /* ============================================================
    PAYMENT — PAYPAL
 ============================================================ */
 
-import { createPaypalOrder } from "./routes/payment/paypal";
-import { capturePaypalOrder } from "./routes/payment/paypal";
+import { createPaypalOrder, capturePaypalOrder } from "./routes/payment/paypal";
 
 /* ============================================================
    POLICY — LEGALE (BLOCCANTE)
@@ -123,7 +126,7 @@ import { getCookieStatus } from "./routes/cookies/cookies";
    ADMIN — GUARD
 ============================================================ */
 
-import { requireAdmin } from "./routes/admin/admin.guard";
+import { requireAdmin } from "./routes/admin/guard/admin.guard";
 
 /* ============================================================
    ADMIN — READ
@@ -132,25 +135,26 @@ import { requireAdmin } from "./routes/admin/admin.guard";
 import { listAdminOrders } from "./routes/admin/orders/orders.admin";
 import { getAdminOrder as getAdminOrderAdmin } from "./routes/admin/orders/orders.admin";
 
-import { listAdminUsers } from "./routes/admin/user.read";
+import { listAdminUsers } from "./routes/admin/users/user.read";
 
 /* ============================================================
    ADMIN — WRITE (STATE MACHINE)
 ============================================================ */
-
-import { transitionOrder } from "./routes/admin/orders/orders.actions";
-import { deleteOrder } from "./routes/admin/orders/orders.actions";
-import { cloneOrder } from "./routes/admin/orders/orders.actions";
+import {
+  transitionOrder,
+  deleteOrder,
+  cloneDeletedOrder,
+} from "./routes/admin/orders/orders.actions";
 
 /* ============================================================
    ADMIN — KPI
 ============================================================ */
 
-import { getAdminKPI } from "./routes/admin/kpi.read";
+import { getAdminKPI } from "./routes/admin/kpi/kpi.read";
 
 import {  listAdminSolutions,
   getAdminSolution,
-  registerSolution, } from "./routes/admin/solutions.admin";
+  registerSolution, } from "./routes/admin/solutions/solutions.admin";
 import { getSolutionDetail } from "./routes/solutions/solution.detail";
 import { getSolutions } from "./routes/solutions/solutions.public";
 /* ============================================================
@@ -303,17 +307,26 @@ if (pathname === "/api/cookies/status" && method === "GET") {
       /* ======================================================
          ORDERS — USER
       ====================================================== */
-      if (pathname === "/api/order" && method === "POST")
-        return withCors(await createOrder(request, env), request, env);
 
       if (pathname === "/api/order" && method === "GET")
         return withCors(await getOrder(request, env), request, env);
 
       if (pathname === "/api/orders/list" && method === "GET")
         return withCors(await listOrders(request, env), request, env);
-
-      if (pathname === "/api/order/setup" && method === "POST")
-        return withCors(await saveOrderSetup(request, env), request, env);
+      if (pathname === "/api/orders/checkout/draft" && method === "POST")
+        return withCors(
+          await createCheckoutOrderDraft(request, env),
+          request,
+          env
+        );
+      
+      if (pathname === "/api/orders/checkout/finalize" && method === "POST")
+        return withCors(
+          await finalizeCheckoutOrder(request, env),
+          request,
+          env
+        );
+      
 
       /* ======================================================
          PAYMENT — PAYPAL
@@ -426,7 +439,7 @@ if (pathname === "/api/cookies/status" && method === "GET") {
       if (pathname === "/api/admin/order/clone" && method === "POST") {
         const denied = requireAdmin(request, env);
         if (denied) return withCors(denied, request, env);
-        return withCors(await cloneOrder(request, env), request, env);
+        return withCors(await cloneDeletedOrder(request, env), request, env);
       }
       /* ======================================================
    ADMIN — SOLUTIONS (CRUD)

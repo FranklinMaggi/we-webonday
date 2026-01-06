@@ -21,7 +21,9 @@ import {
   policyVersionKey,
   getLatestPolicyVersion,
 } from "./policy.core";
-import { getUserFromSession } from "../../lib/auth/session";
+import { requireUser,getUserFromSession
+ } from "../../lib/auth/session";
+
 
 /* JSON helper locale */
 function json(body: unknown, status = 200): Response {
@@ -65,10 +67,12 @@ export async function acceptPolicy(
   request: Request,
   env: Env
 ): Promise<Response> {
-  const user = await getUserFromSession(request, env);
-  if (!user) {
+   const session = await requireUser(request, env);
+  if (!session) {
     return json({ ok: false, error: "UNAUTHORIZED" }, 401);
   }
+
+  const user = session.user;
 
   let body;
   try {

@@ -1,12 +1,31 @@
 // backend/src/routes/business.ts
+/* ======================================================
+   CREATE BUSINESS
+   POST /api/business/create
+======================================================
 
+AI-SUPERCOMMENT — BUSINESS AUTH GUARD
+
+RUOLO:
+- Permette la creazione di un business
+- Accessibile SOLO a utente autenticato
+
+INVARIANTI:
+- L’utente è SEMPRE derivato dalla sessione
+- Nessun userId passato dal client
+- Logout invalida immediatamente l’accesso
+
+PERCHÉ:
+- Evita spoofing
+- Coerenza con checkout / dashboard
+====================================================== */
 import type { Env } from "../../types/env";
 
 import { BusinessSchema } from "../../schemas/business/businessSchema";
 import { normalizeBusinessInput } from "../../normalizers/normalizeBusinessInput";
 
 import { BUSINESS_KEY } from "../../lib/kv";
-import { getUserFromSession } from "../../lib/auth/session";
+import { requireUser } from "../../lib/auth/session"; 
 import { json } from "../../lib/https";
 
 /* ======================================================
@@ -20,8 +39,8 @@ export async function createBusiness(
   /* =====================
      1️⃣ AUTH
   ====================== */
-  const user = await getUserFromSession(request, env);
-  if (!user) {
+  const session = await requireUser(request, env);
+  if (!session) {
     return json(
       { ok: false, error: "UNAUTHORIZED" },
       request,
@@ -29,6 +48,8 @@ export async function createBusiness(
       401
     );
   }
+
+  const { userId, user } = session;
 
   /* =====================
      2️⃣ PARSE BODY

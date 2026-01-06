@@ -1,4 +1,22 @@
 // backend/src/routes/businessSubmit.ts
+/* =====================
+   1️⃣ AUTH GUARD (HARD)
+======================
+
+AI-SUPERCOMMENT — AUTH INVARIANT
+
+RUOLO:
+- Questo endpoint richiede utente autenticato
+- La sessione è l’unica fonte di verità
+
+INVARIANTI:
+- Se sessione mancante o invalida → 401
+- NON usare getUserFromSession come guard
+
+PERCHÉ:
+- Evita sessioni fantasma
+- Allinea BE e FE
+====================== */
 
 import type { Env } from "../../types/env";
 
@@ -6,7 +24,7 @@ import { BusinessSchema } from "../../schemas/business/businessSchema";
 import { logActivity } from "../../lib/logActivity";
 
 import { BUSINESS_KEY } from "../../lib/kv";
-import { getUserFromSession } from "../../lib/auth/session";
+import { requireUser } from "../../lib/auth/session";
 import { json } from "../../lib/https";
 
 /* ======================================================
@@ -21,8 +39,9 @@ export async function submitBusiness(
   /* =====================
      1️⃣ AUTH
   ====================== */
-  const user = await getUserFromSession(request, env);
-  if (!user) {
+  const session = await requireUser(request, env);
+
+  if (!session) {
     return json(
       { ok: false, error: "UNAUTHORIZED" },
       request,
@@ -30,6 +49,8 @@ export async function submitBusiness(
       401
     );
   }
+  
+  const user = session.user;
 
   /* =====================
      2️⃣ LOOKUP USER → BUSINESS

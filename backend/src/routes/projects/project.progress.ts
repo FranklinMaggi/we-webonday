@@ -29,7 +29,7 @@
 
 import type { Env } from "../../types/env";
 import { ProjectSchema, Project } from "../../schemas/core/projectSchema";
-import { OrderDomainSchema } from "../../schemas/core/orderSchema";
+import { EconomicOrderSchema } from "../../schemas/orders/economicOrderSchema";
 import { PROJECTS_KEY, ORDER_KEY } from "../../lib/kv";
 
 /* =========================
@@ -74,7 +74,7 @@ export async function progressProject(request: Request, env: Env) {
   const m2 = project.milestones.find((m) => m.step === 2);
   if (!m2) throw new Error("MISSING_MILESTONE_2");
 
-  const order = OrderDomainSchema.parse({
+  const order = EconomicOrderSchema.parse({
     id: crypto.randomUUID(),
     type: "PROJECT_PROGRESS",
     businessId: project.businessId,

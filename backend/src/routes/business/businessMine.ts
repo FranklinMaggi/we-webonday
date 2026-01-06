@@ -1,12 +1,31 @@
 // backend/src/routes/businessMine.ts
+/* ======================================================
+   GET MY BUSINESS
+   GET /api/business/mine
+======================================================
 
+AI-SUPERCOMMENT — BUSINESS / AUTH GUARD
+
+RUOLO:
+- Ritorna il business dell’utente autenticato
+- Endpoint HARD-AUTH (no accesso anonimo)
+
+INVARIANTI:
+- Utente SEMPRE derivato dalla sessione
+- Se sessione mancante o invalida → 401
+- Mai usare getUserFromSession come guard
+
+PERCHÉ:
+- Coerenza con /api/user/me
+- Evita sessioni fantasma
+- FE può fidarsi del risultato
+====================================================== */
 import type { Env } from "../../types/env";
 
 import { BusinessSchema } from "../../schemas/business/businessSchema";
 import { normalizeBusiness } from "../../normalizers/normalizeBusiness";
-
+import { requireUser } from "../../lib/auth/session";
 import { BUSINESS_KEY } from "../../lib/kv";
-import { getUserFromSession } from "../../lib/auth/session";
 import { json } from "../../lib/https";
 
 /* ======================================================
@@ -20,8 +39,9 @@ export async function getMyBusiness(
   /* =====================
      1️⃣ AUTH
   ====================== */
-  const user = await getUserFromSession(request, env);
-  if (!user) {
+  const session = await requireUser(request, env);
+
+  if (!session) {
     return json(
       { ok: false, error: "UNAUTHORIZED" },
       request,
@@ -30,6 +50,7 @@ export async function getMyBusiness(
     );
   }
 
+  const user = session.user;
   /* =====================
      2️⃣ LOOKUP USER → BUSINESS
   ====================== */
