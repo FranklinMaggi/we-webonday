@@ -52,8 +52,13 @@ import UserDashboardDetail from "../pages/user/dashboard/[id]";
 import UserConfigurationWorkspace from "../pages/user/dashboard/configuration/[id]";
 import CheckoutPage from "../pages/user/checkout";
 import UserConfiguratorDetail from "../pages/user/configurator/[id]";
+import UserConfiguratorIndex from "../pages/user/configurator/index";
 
 /* =========================
+
+
+
+
    ADMIN — 🔒
 ========================= */
 import AdminLogin from "../pages/admin/login/login";
@@ -132,7 +137,7 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "configurator",
+            path: "/user/configurator",element:<UserConfiguratorIndex/>,
             children: [
               { path: ":id", element: <UserConfiguratorDetail /> },
             ],
