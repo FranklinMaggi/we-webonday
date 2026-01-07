@@ -212,9 +212,10 @@ export default function HomeSolutionPage() {
     <div className="wd-grid">
       {products.map((product) => (
         <ProductCard
-        solutionId="solution.id"
+        
           key={product.id}
           product={product}
+          solutionId={solution.id}
         />
       ))}
     </div>
