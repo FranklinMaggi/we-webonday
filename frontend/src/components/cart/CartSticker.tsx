@@ -204,16 +204,20 @@ export default function CartSticker() {
             <ul className="cart-sticker__list">
   {items.map((item, idx) => (
     <li key={idx} className="cart-sticker__item">
-      <div className="cart-item__header">
+      <div className="item__head">
         <strong>{item.title}</strong>
-        <button onClick={() => removeItem(idx)}>✕</button>
+        <button  className="item__remove" onClick={() => removeItem(idx)}
+          >
+            ✕
+            </button>
       </div>
 
       {/* OPTIONS */}
+
       {item.options && item.options.length > 0 && (
-        <ul className="cart-item__options">
+        <ul className="item__options">
           {item.options.map((opt) => (
-            <li key={opt.id} className="cart-item__option">
+            <li key={opt.id} className="item__opt">
               <span>{opt.label}</span>
               <span className="cart-item__option-price">
                 {eur.format(opt.price)}
