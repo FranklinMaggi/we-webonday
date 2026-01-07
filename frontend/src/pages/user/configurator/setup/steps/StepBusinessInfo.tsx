@@ -96,18 +96,12 @@ export default function StepBusinessInfo({
           - backend = source of truth
       ====================================================== */}
       <select
-        value={data.sector ?? ""}
-        onChange={(e) => setField("sector", e.target.value)}
-      >
-        <option value="">Seleziona settore</option>
-
-        {industries.map((id) => (
-          <option key={id} value={id}>
-            {id}
-          </option>
-        ))}
-      </select>
-
+  value={data.sector ?? ""}
+  onChange={(e) =>
+    setField("sector", e.target.value.trim())
+  }
+>
+</select>
       {/* ================= CITTÀ ================= */}
       <input
         placeholder="Città"
