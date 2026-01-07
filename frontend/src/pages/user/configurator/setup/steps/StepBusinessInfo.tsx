@@ -95,11 +95,9 @@ export default function StepBusinessInfo({
           - options generate dalla solution
           - backend = source of truth
       ====================================================== */}
-   <select
+ <select
   value={data.sector ?? ""}
-  onChange={(e) =>
-    setField("sector", e.target.value.trim())
-  }
+  onChange={(e) => setField("sector", e.target.value)}
 >
   <option value="">Seleziona settore</option>
 
