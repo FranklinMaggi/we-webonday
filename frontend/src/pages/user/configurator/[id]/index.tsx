@@ -29,7 +29,16 @@ export default function UserConfiguratorDetail() {
     const { id } = useParams<{ id: string }>();
     const [config, setConfig] = useState<ConfigurationDTO | null>(null);
     const [loading, setLoading] = useState(true);
-  
+    const [solution, setSolution] = useState<any>(null);
+    useEffect(() => {
+      if (!config?.solutionId) return;
+    
+      fetch(`/api/solution?id=${config.solutionId}`)
+        .then((r) => r.json())
+        .then((res) => {
+          if (res.ok) setSolution(res.solution);
+        });
+    }, [config?.solutionId]);
     useEffect(() => {
       if (!id) return;
   
@@ -60,7 +69,7 @@ export default function UserConfiguratorDetail() {
         </header>
   
         <ConfigurationSetupPage
-   configuration={config} />
+   configuration={config}  industries={solution?.industries ??[]} />
         
       </section>
     );

@@ -121,8 +121,7 @@ export default function HomeSolutionPage() {
   if (loading) return <p>Caricamento…</p>;
   if (error) return <p style={{ color: "red" }}>Errore: {error}</p>;
   if (!solution) return null;
-  console.log("SOLUTION IMAGE", solution.image);
-  /* ===========================
+ /* ===========================
      UI
   =========================== */
   const heroImage = solution.image?.fallback;
@@ -213,6 +212,7 @@ export default function HomeSolutionPage() {
     <div className="wd-grid">
       {products.map((product) => (
         <ProductCard
+        solutionId="solution.id"
           key={product.id}
           product={product}
         />

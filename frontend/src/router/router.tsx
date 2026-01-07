@@ -51,11 +51,6 @@ import UserDashboardHome from "../pages/user/dashboard";
 import UserDashboardDetail from "../pages/user/dashboard/[id]";
 import UserConfigurationWorkspace from "../pages/user/dashboard/configuration/[id]";
 import CheckoutPage from "../pages/user/checkout";
-
-import UserBusinessDashboard from "../pages/user/business/UserBusinessDashboard";
-import RegisterBusiness from "../pages/user/business/RegisterBusiness";
-
-import UserConfiguratorIndex from "../pages/user/configurator";
 import UserConfiguratorDetail from "../pages/user/configurator/[id]";
 
 /* =========================
@@ -139,14 +134,11 @@ const router = createBrowserRouter([
           {
             path: "configurator",
             children: [
-              { index: true, element: <UserConfiguratorIndex /> },
               { path: ":id", element: <UserConfiguratorDetail /> },
             ],
           },
 
           { path: "checkout", element: <CheckoutPage /> },
-          { path: "business/dashboard", element: <UserBusinessDashboard /> },
-          { path: "business/register", element: <RegisterBusiness /> },
         ],
       },
     ],

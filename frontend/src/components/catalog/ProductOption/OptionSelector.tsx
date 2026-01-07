@@ -73,7 +73,7 @@ export default function OptionSelector({
       >
         {options.map((opt) => {
           const checked = selected.includes(opt.id);
-          console.log("OPTION", opt);
+        
           return (
             <label
               key={opt.id}

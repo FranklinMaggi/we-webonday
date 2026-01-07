@@ -29,7 +29,9 @@ import type { ProductOptionDTO } from "../../dto/productDTO";
 // ======================================================
 
 export interface CartItem {
-
+  /** 🔑 CONTEXTO MARKETING / CONFIG */
+  solutionId: string;
+  
   productId: string;
   title: string;
 

@@ -28,11 +28,12 @@ import { cartStore } from "../../../lib/cart/cartStore";
 import { eur } from "../../../utils/format";
 import { useRef } from "react";
 interface Props {
+  solutionId:string; 
   product: ProductDTO;
   selectedOptions: string[];
 }
 
-export default function CartPreview({ product, selectedOptions }: Props) {
+export default function CartPreview({ solutionId ,product, selectedOptions }: Props) {
   const previewRef = useRef<HTMLElement>(null);
 
   // =========================
@@ -77,7 +78,7 @@ const selectedObjects: ProductOptionDTO[] = options.filter(
   const addToCart = () => {
    
     cartStore.getState().addItem({
-    
+      solutionId,
       productId: product.id,
       title: product.name,
 

@@ -1,8 +1,8 @@
 import { API_BASE } from "../config";
-import type { OrderSetupData } from "../../pages/user/business/setup/orderSetup.store";
+import type { ConfigurationSetupData } from "../../pages/user/configurator/setup/configurationSetup.store";
 export async function saveOrderSetup(
   orderId: string,
-  data: OrderSetupData
+  data: ConfigurationSetupData
 ) {
   const res = await fetch(
     `${API_BASE}/api/order/setup?orderId=${orderId}`,

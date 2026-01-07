@@ -21,10 +21,11 @@ import OptionSelector from "../ProductOption/OptionSelector";
 import CartPreview from "./CartPreview";
 
 interface Props {
+  solutionId:string; 
   product: ProductDTO;
 }
 
-export default function ProductCard({ product }: Props) {
+export default function ProductCard({ solutionId ,product }: Props) {
   const [open, setOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
@@ -73,6 +74,7 @@ export default function ProductCard({ product }: Props) {
         )}
 
           <CartPreview
+          solutionId={solutionId}
             product={product}
             selectedOptions={selectedOptions}
           />
