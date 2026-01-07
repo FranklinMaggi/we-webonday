@@ -33,7 +33,7 @@ export default function SolutionCard({ solution }: Props) {
     return (
       <div
         className="wd-card solution-card"
-        onClick={() => navigate(`/home/solution/${solution.id}`)}
+        onClick={() => navigate(`/solution/${solution.id}`)}
       >
         <div className="wd-card__media">
         <img
