@@ -1,46 +1,15 @@
-// ======================================================
-// FE || pages/user/checkout/index.tsx
-// ======================================================
-//
-// AI-SUPERCOMMENT — CHECKOUT ENTRY
-//
-// RUOLO:
-// - Entry point checkout autenticato
-//
-// RESPONSABILITÀ:
-// - Guard auth
-// - Orchestrazione checkout
-//
-// NOTA CRITICA:
-// - NESSUNA policy qui
-// ======================================================
-// ======================================================
-// FE || pages/user/checkout/index.tsx
-// ======================================================
-//
-// CHECKOUT ENTRY — AUTHENTICATED
-// ======================================================
-
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { useCheckout } from "./useCheckout";
 import CartReview from "./steps/CartReview";
 import { useAuthStore } from "../../../store/auth.store";
-import { cartStore } from "../../../lib/cart/cartStore";
 
 export default function CheckoutPage() {
   const { user, ready } = useAuthStore();
+  const { configurationId } = useParams<{ configurationId: string }>();
 
-  // 🧠 FE source of truth
-  const cart = cartStore((s) => s.items);
+  const checkout = useCheckout(configurationId ?? "");
 
-  // 🔑 email DERIVATA da sessione
-  const email = user?.email ?? "";
-
-  const checkout = useCheckout(email);
-
-  /* =========================
-     AUTH GUARD
-  ========================= */
   useEffect(() => {
     if (ready && !user) {
       window.location.href =
@@ -50,16 +19,12 @@ export default function CheckoutPage() {
 
   if (!ready) return <p>Caricamento…</p>;
   if (!user) return null;
+  if (!configurationId) return <p>Configurazione mancante</p>;
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <CartReview
-      cart={cart}
+      cart={[]} // ⚠️ TEMP: i prezzi li mostrerà il backend
       submitOrder={checkout.submitCheckout}
-    
-    
     />
   );
 }
