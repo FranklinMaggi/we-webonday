@@ -3,8 +3,8 @@
 // ======================================================
 
 import { useEffect, useMemo, useState } from "react";
-import { cartStore } from "../../lib/cart/cartStore";
-import type { CartItem } from "../../lib/cart/cartStore";
+import { cartStore } from "../../lib/cart/cart.store";
+import type { CartItem } from "../../lib/cart/cart.store";
 import { eur } from "../../utils/format";
 import { uiBus } from "../../lib/ui/uiBus";
 import { useNavigate } from "react-router-dom";

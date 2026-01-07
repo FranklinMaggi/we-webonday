@@ -21,10 +21,10 @@
 
 
 import { useEffect, useState, useMemo } from "react";
-import type { CartItem } from "../../../../lib/cart/cartStore";
+import type { CartItem } from "../../../../lib/cart/cart.store";
 import { eur } from "../../../../utils/format";
 import PaymentPaypal from "./PaymentPaypal";
-import { fetchLatestPolicy } from "../../../../lib/policy/policyApi";
+import { fetchLatestPolicy } from "../../../../lib/userApi/policy.user.api";
 
 interface Props {
   cart: CartItem[];

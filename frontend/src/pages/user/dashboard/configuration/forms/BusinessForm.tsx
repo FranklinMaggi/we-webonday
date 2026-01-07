@@ -19,7 +19,7 @@
 // ======================================================
 
 import { useState } from "react";
-import { updateConfiguration } from "../../../../../lib/configuration/configurationApi";
+import { updateConfiguration } from "../../../../../lib/userApi/configuration.user.api";
 import type { ConfigurationDTO } from "../../../../../dto/configurationDTO";
 
 

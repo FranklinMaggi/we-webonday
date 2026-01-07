@@ -24,7 +24,7 @@
 */
 // ======================================================
 import type { ProductDTO, ProductOptionDTO } from "../../../dto/productDTO";
-import { cartStore } from "../../../lib/cart/cartStore";
+import { cartStore } from "../../../lib/cart/cart.store";
 import { eur } from "../../../utils/format";
 import { useRef } from "react";
 interface Props {

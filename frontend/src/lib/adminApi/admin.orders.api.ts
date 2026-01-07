@@ -1,7 +1,8 @@
 /**
  * ============================================================
- * Admin Orders API
- * File: frontend/src/lib/adminApi/orders.ts
+ * ======================================================
+ * FE || src/lib/adminApi/admin.orders.api.ts
+ * ======================================================
  *
  * RESPONSABILITÀ:
  * - Tipi condivisi per ORDINI admin
@@ -14,6 +15,57 @@
  * - Questo file è usato SOLO da pagine admin
  * ============================================================
  */
+/**
+ 
+ * VERSIONE ATTUALE:
+ * - v1.0 (2026-01)
+ *
+ * STATO:
+ * - CORE
+ *
+ * RUOLO:
+ * - API FE per la gestione ORDINI in contesto ADMIN
+ *
+ * RESPONSABILITÀ:
+ * - Esporre DTO ADMIN per ordini (shape allineata al BE)
+ * - Mappare stati e motivazioni in label UI leggibili
+ * - Fornire chiamate READ (list / detail)
+ * - Fornire chiamate ACTION (transition / delete / clone)
+ *
+ * NON FA:
+ * - NON calcola prezzi
+ * - NON valida transizioni di stato
+ * - NON applica logica di business
+ * - NON decide permessi o ruoli
+ *
+ * INVARIANTI:
+ * - Gli enum di stato DEVONO combaciare con il backend
+ * - Ogni chiamata HTTP passa da adminFetch
+ * - Nessun fetch diretto ammesso
+ *
+ * RELAZIONE CON BACKEND:
+ * - Il backend è source of truth per:
+ *   • stati ordine
+ *   • transizioni valide
+ *   • side-effect (email, log, payment)
+ * - Il FE si limita a riflettere lo stato corrente
+ *
+ * RELAZIONE CON UI:
+ * - Le label sono helper di PRESENTAZIONE
+ * - La UI non deve hardcodare stringhe di stato
+ *
+ * MIGRAZIONE FUTURA:
+ * - Destinazione: src/lib/adminApi/admin.orders.api.ts
+ * - Motivo:
+ *   Uniformare naming e struttura alle altre API admin
+ *   senza cambiare responsabilità o logica.
+ *
+ * NOTE:
+ * - Backend = source of truth
+ * - Questo file è reference-quality per le altre adminApi
+ * ======================================================
+ */
+
 
 import { adminFetch } from "./client";
 

@@ -26,7 +26,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import {
   updateAdminProduct,
-} from "../../../lib/adminApi/products";
+} from "../../../lib/adminApi/admin.products.api";
 
 import { adminFetch } from "../../../lib/adminApi/client";
 import { adminProductToBE } from "../../../lib/normalizers/adminProductToBe";

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { fetchAdminSolutions } from "../../../lib/adminApi/solutions";
+import { fetchAdminSolutions } from "../../../lib/adminApi/admin.solutions.api";
 import type { AdminSolution } from "../../../dto/solution";
 
 /* =========================

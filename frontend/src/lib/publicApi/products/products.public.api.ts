@@ -1,23 +1,51 @@
-// FE || lib/products/productsApi.ts
-// ======================================================
-// PRODUCTS API — DOMAIN PRODUCTS (PUBLIC)
-// ======================================================
-//
-// RUOLO:
-// - Consuma API /api/products/with-options
-// - Normalizza i dati ADMIN → PUBLIC
-//
-// PERCHE:
-// - Admin e Public hanno DTO diversi (VOLUTO)
-// - Il FE pubblico NON deve conoscere:
-//   - payment.mode
-//   - payment.interval
-//   - optionIds
-//
-// ======================================================
+/**
+ * ======================================================
+ * FE || src/lib/products/productsApi.ts
+ * ======================================================
+ *
+ * VERSIONE ATTUALE:
+ * - v1.0 (2026-01)
+ *
+ * STATO:
+ * - CORE (PUBLIC)
+ *
+ * RUOLO:
+ * - API FE per il catalogo PRODOTTI pubblico
+ *
+ * CONTESTO:
+ * - Usata da visitor e user non admin
+ *
+ * RESPONSABILITÀ:
+ * - Recuperare prodotti con opzioni
+ * - Normalizzare dati ADMIN → PUBLIC
+ *
+ * NON FA:
+ * - NON gestisce auth
+ * - NON espone campi sensibili admin
+ * - NON calcola pricing
+ *
+ * INVARIANTI:
+ * - Nessun token
+ * - Nessun dato admin-sensitive
+ * - Backend = source of truth
+ *
+ * PROBLEMA NOTO:
+ * - Usa fetch diretto
+ *
+ * MIGRAZIONE FUTURA:
+ * - Destinazione: src/lib/publicApi/products.public.api.ts
+ * - Refactor:
+ *   • uso apiFetch
+ *   • separazione netta public/admin DTO
+ *
+ * NOTE:
+ * - Normalizzazione VOLUTA
+ * - Protezione del dominio admin
+ * ======================================================
+ */
 
-import type { ProductDTO, ProductOptionDTO } from "../../dto/productDTO";
-import { API_BASE } from "../config";
+import type { ProductDTO, ProductOptionDTO } from "../../../dto/productDTO";
+import { API_BASE } from "../../config";
 
 /* ======================================================
    NORMALIZER — OPTION (ADMIN → PUBLIC)

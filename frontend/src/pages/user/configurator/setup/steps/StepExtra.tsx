@@ -19,7 +19,6 @@
 // ======================================================
 
 import { useConfigurationSetupStore } from "../configurationSetup.store";
-
 export default function StepExtra({
   onNext,
   onBack,

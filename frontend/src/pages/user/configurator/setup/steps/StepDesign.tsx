@@ -19,7 +19,6 @@
 // ======================================================
 
 import { useConfigurationSetupStore } from "../configurationSetup.store";
-
 export default function StepDesign({
   onNext,
   onBack,
@@ -39,9 +38,11 @@ export default function StepDesign({
         onChange={(e) => setField("primaryColor", e.target.value)}
       />
 
-      <select
+<select
         value={data.style ?? "modern"}
-        onChange={(e) => setField("style", e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+          setField("style", e.target.value as any)
+        }
       >
         <option value="modern">Moderno</option>
         <option value="elegant">Elegante</option>

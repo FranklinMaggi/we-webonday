@@ -1,51 +1,43 @@
-// ======================================================
-// FE || pages/user/configurator/setup/configurationSetup.store.ts
-// ======================================================
-//
-// CONFIGURATION SETUP STORE — DRAFT FE
-//
-// RUOLO:
-// - Stato configurazione progetto
-//
-// INVARIANTI:
-// - Stato PRE-ORDER
-// - Persistenza futura lato BE
-//
-// ======================================================
+/**
+ * ======================================================
+ * FE || CONFIGURATION SETUP STORE
+ * ======================================================
+ *
+ * RUOLO:
+ * - Stato FE del wizard di configurazione
+ *
+ * INVARIANTI:
+ * - Stato SOLO frontend
+ * - Nessuna fetch
+ * - Nessuna persistenza
+ * ======================================================
+ */
 
 import { create } from "zustand";
+import type { UserConfigurationSetupDTO } from "../../../../lib/dto/userConfigurationSetup.dto";
 
-export type ConfigurationSetupData = {
-  businessName: string;
-  sector: string;
-  city: string;
-  email: string;
-  phone?: string;
+type ConfigurationSetupState = {
+  data: Partial<UserConfigurationSetupDTO>;
 
-  primaryColor: string;
-  style: "modern" | "elegant" | "minimal" | "bold";
+  setField<K extends keyof UserConfigurationSetupDTO>(
+    key: K,
+    value: UserConfigurationSetupDTO[K]
+  ): void;
 
-  description: string;
-  services: string;
-  cta: string;
-
-  extras: {
-    maps: boolean;
-    whatsapp: boolean;
-    newsletter: boolean;
-  };
+  reset(): void;
 };
 
-export const useConfigurationSetupStore = create<{
-  data: Partial<ConfigurationSetupData>;
-  setField: (
-    key: keyof ConfigurationSetupData,
-    value: any
-  ) => void;
-  reset: () => void;
-}>((set) => ({
-  data: {},
-  setField: (key, value) =>
-    set((s) => ({ data: { ...s.data, [key]: value } })),
-  reset: () => set({ data: {} }),
-}));
+export const useConfigurationSetupStore =
+  create<ConfigurationSetupState>((set) => ({
+    data: {},
+
+    setField: (key, value) =>
+      set((s) => ({
+        data: {
+          ...s.data,
+          [key]: value,
+        },
+      })),
+
+    reset: () => set({ data: {} }),
+  }));

@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAdminProducts } from "../../../lib/adminApi/products";
+import { getAdminProducts } from "../../../lib/adminApi/admin.products.api";
 import type { AdminProductDTO } from "../../../dto/AdminProductDTO";
 
 import { eur } from "../../../utils/format";

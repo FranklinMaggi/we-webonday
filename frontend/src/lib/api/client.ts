@@ -9,8 +9,49 @@
  * - Non persiste stato
  * - Non assume presenza di cookie
  */
+/**
+ * ======================================================
+ * FE || src/lib/client.ts
+ * ======================================================
+ *
+ * VERSIONE ATTUALE:
+ * - v1.0 (2026-01)
+ *
+ * STATO:
+ * - CORE
+ *
+ * RUOLO:
+ * - Wrapper fetch GENERICO per FE → Backend
+ *
+ * RESPONSABILITÀ:
+ * - Costruire richieste HTTP verso API_BASE
+ * - Impostare header JSON di default
+ * - Gestire credentials (session cookie)
+ * - Normalizzare errori HTTP in Error JS
+ *
+ * NON FA:
+ * - NON gestisce autenticazione (user o admin)
+ * - NON persiste stato
+ * - NON interpreta risposte di dominio
+ *
+ * MIGRAZIONE FUTURA:
+ * - Destinazione: src/lib/api/client.ts
+ * - Motivo:
+ *   Questo file diventerà l’UNICO entry point fetch
+ *   per TUTTE le API FE (admin, user, object).
+ *   Le varianti (adminFetch, userFetch, ecc.)
+ *   saranno adapter sopra questo client.
+ * * ⚠️ NOTA DI CONTRATTO:
+ * - apiFetch può restituire null
+ * - Le API di dominio DEVONO assorbire il null
+ *   e NON propagarlo alla UI, salvo casi espliciti
+ * NOTE:
+ * - Backend = source of truth
+ * - Questo file NON deve contenere logica di dominio
+ * ======================================================
+ */
 
-import { API_BASE } from "./config";
+import { API_BASE } from "../config";
 
 if (!API_BASE) {
   console.warn("ATTENZIONE: API_BASE non definita");
@@ -19,6 +60,7 @@ if (!API_BASE) {
 /* =========================
    FETCH WRAPPER
 ========================= */
+
 export async function apiFetch<T = unknown>(
   path: string,
   options: RequestInit = {}

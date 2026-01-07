@@ -20,7 +20,7 @@
 // Viewer unico policy (general / checkout)
 
 import { useEffect, useState } from "react";
-import { fetchLatestPolicy, type PolicyDTO, type PolicyScope } from "../../lib/policy/policyApi";
+import { fetchLatestPolicy, type PolicyDTO, type PolicyScope } from "../../lib/userApi/policy.user.api";
 
 export function PolicyViewer({ scope }: { scope: PolicyScope }) {
   const [policy, setPolicy] = useState<PolicyDTO | null>(null);

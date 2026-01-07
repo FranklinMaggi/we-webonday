@@ -13,7 +13,7 @@
  */
 
 import { uiBus } from "../../lib/ui/uiBus";
-import { cartStore } from "../../lib/cart/cartStore";
+import { cartStore } from "../../lib/cart/cart.store";
 import { useEffect, useState } from "react";
 
 export default function NavCartButton() {

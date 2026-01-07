@@ -13,7 +13,7 @@
 
 import { useParams, useNavigate } from "react-router-dom";
 import { useConfigurationSetupStore } from "../configurationSetup.store";
-import { updateConfiguration } from "../../../../../lib/configuration/configurationApi";
+import { updateConfiguration } from "../../../../../lib/userApi/configuration.user.api";
 import { useState } from "react";
 
 export default function StepReview({

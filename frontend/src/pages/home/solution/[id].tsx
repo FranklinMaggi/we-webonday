@@ -23,7 +23,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchProducts } from "../../../lib/products/productsApi";
+import { fetchProducts } from "../../../lib/publicApi/products/products.public.api";
 
 import { API_BASE } from "../../../lib/config";
 import { initWhatsAppScrollWatcher } from "../../../lib/ui/scrollWatcher";

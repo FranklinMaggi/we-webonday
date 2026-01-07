@@ -21,13 +21,13 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getAdminProducts } from "../../../lib/adminApi/products";
+import { getAdminProducts } from "../../../lib/adminApi/admin.products.api";
 import type { AdminProductDTO } from "../../../dto/AdminProductDTO";
 
 import {
   fetchAdminSolution,
   saveAdminSolution,
-} from "../../../lib/adminApi/solutionDetails";
+} from "../../../lib/adminApi/admin.solution.editor.api";
 
 import type { SolutionEditorDTO } from "../../../dto/solution";
 

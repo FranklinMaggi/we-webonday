@@ -1,6 +1,6 @@
 // ============================================================
 // FE || ADMIN API — SOLUTIONS (LIST)
-// File: frontend/src/lib/adminApi/solutions.ts
+// File: frontend/src/lib/adminApi/admin.solutions.api.ts
 // ============================================================
 //
 // RUOLO:

@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import type { AdminSolution } from "../dto/solution";
-import { fetchAdminSolutions } from "../lib/adminApi/solutions";
+import { fetchAdminSolutions } from "../lib/adminApi/admin.solutions.api";
 
 type AdminSolutionsState = {
   solutions: AdminSolution[];

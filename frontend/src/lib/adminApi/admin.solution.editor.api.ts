@@ -1,6 +1,6 @@
 // ============================================================
 // FE || ADMIN API — SOLUTION DETAIL / EDITOR
-// File: frontend/src/lib/adminApi/solutionDetails.ts
+// File: frontend/src/lib/adminApi/admin.solution.editor.api.ts
 // ============================================================
 //
 // RUOLO:

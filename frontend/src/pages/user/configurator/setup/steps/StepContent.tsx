@@ -19,7 +19,6 @@
 // ======================================================
 
 import { useConfigurationSetupStore } from "../configurationSetup.store";
-
 export default function StepContent({
   onNext,
   onBack,
