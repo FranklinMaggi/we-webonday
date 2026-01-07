@@ -14,14 +14,16 @@ import { apiFetch } from "../../lib/api";
 // =========================
 // API RESPONSE DTO
 // =========================
-type CreateConfigResponse = {
-  ok: true;
-  configurationId: string;
-  reused?: boolean;
-} | {
-  ok: false;
-  error: string;
-};
+type CreateConfigResponse =
+  | {
+      ok: true;
+      configurationId: string;
+      reused?: boolean;
+    }
+  | {
+      ok: false;
+      error: string;
+    };
 
 export default function CartSticker() {
   const [items, setItems] = useState<CartItem[]>(
@@ -58,10 +60,15 @@ export default function CartSticker() {
     [items]
   );
 
- 
+  const yearlyTotal = useMemo(
+    () => items.reduce((s, i) => s + (i.yearlyFee ?? 0), 0),
+    [items]
+  );
 
-  
- 
+  const monthlyTotal = useMemo(
+    () => items.reduce((s, i) => s + (i.monthlyFee ?? 0), 0),
+    [items]
+  );
 
   const count = items.length;
 
@@ -72,6 +79,7 @@ export default function CartSticker() {
   // CHECKOUT → CREATE CONFIG
   // =========================
   const checkout = async () => {
+    // 🔐 auth guard
     if (!user) {
       navigate("/user/login?redirect=/user/configurator");
       return;
@@ -79,7 +87,7 @@ export default function CartSticker() {
 
     if (items.length === 0) return;
 
-    const first = items[0];
+    const first = items[0]; // MVP: una config per volta
 
     try {
       const result = await apiFetch<CreateConfigResponse>(
@@ -96,25 +104,17 @@ export default function CartSticker() {
       );
 
       if (!result || !result.ok) {
-        console.error(
-          "CONFIGURATION ERROR",
-          result
-        );
+        console.error("CONFIGURATION ERROR", result);
         return;
       }
 
-      // 🔄 clear cart
+      // 🧠 clear cart
       cartStore.getState().clear();
 
-      // 🚀 go to configurator
-      navigate(
-        `/user/configurator/${result.configurationId}`
-      );
+      // 🚀 redirect configurator
+      navigate(`/user/configurator/${result.configurationId}`);
     } catch (err) {
-      console.error(
-        "CONFIGURATION CREATE FAILED",
-        err
-      );
+      console.error("CONFIGURATION CREATE FAILED", err);
     }
   };
 
@@ -127,12 +127,8 @@ export default function CartSticker() {
         className="cart-sticker__toggle"
         onClick={() => uiBus.emit("cart:toggle")}
       >
-        <span className="cart-sticker__badge">
-          {count}
-        </span>
-        <span className="cart-sticker__label">
-          Carrello
-        </span>
+        <span className="cart-sticker__badge">{count}</span>
+        <span className="cart-sticker__label">Carrello</span>
         <span className="cart-sticker__total">
           {eur.format(startupTotal)}
         </span>
@@ -143,25 +139,48 @@ export default function CartSticker() {
           <p>Il carrello è vuoto.</p>
         ) : (
           <>
-            <ul>
+            <ul className="cart-sticker__list">
               {items.map((item, idx) => (
-                <li key={idx}>
+                <li key={idx} className="cart-sticker__item">
                   <strong>{item.title}</strong>
-                  <button
-                    onClick={() => removeItem(idx)}
-                  >
-                    ✕
-                  </button>
+                  <button onClick={() => removeItem(idx)}>✕</button>
                 </li>
               ))}
             </ul>
 
-            <button
-              className="wd-btn wd-btn--primary"
-              onClick={checkout}
-            >
-              Completa la configurazione
-            </button>
+            <div className="cart-sticker__footer">
+              <div className="cart-sticker__grand">
+                <div>
+                  <span>Avvio</span>
+                  <strong>{eur.format(startupTotal)}</strong>
+                </div>
+
+                {yearlyTotal > 0 && (
+                  <div>
+                    <span>Annuale</span>
+                    <strong>
+                      {eur.format(yearlyTotal)} / anno
+                    </strong>
+                  </div>
+                )}
+
+                {monthlyTotal > 0 && (
+                  <div>
+                    <span>Mensile</span>
+                    <strong>
+                      {eur.format(monthlyTotal)} / mese
+                    </strong>
+                  </div>
+                )}
+              </div>
+
+              <button
+                className="wd-btn wd-btn--primary wd-btn--block"
+                onClick={checkout}
+              >
+                Completa la configurazione
+              </button>
+            </div>
           </>
         )}
       </section>

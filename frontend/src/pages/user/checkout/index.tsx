@@ -14,32 +14,52 @@
 // NOTA CRITICA:
 // - NESSUNA policy qui
 // ======================================================
+// ======================================================
+// FE || pages/user/checkout/index.tsx
+// ======================================================
+//
+// CHECKOUT ENTRY — AUTHENTICATED
+// ======================================================
 
 import { useEffect } from "react";
 import { useCheckout } from "./useCheckout";
 import CartReview from "./steps/CartReview";
 import { useAuthStore } from "../../../store/auth.store";
+import { cartStore } from "../../../lib/cart/cartStore";
 
 export default function CheckoutPage() {
-  const user = useAuthStore((s) => s.user);
-  const ready = useAuthStore((s) => s.ready);
+  const { user, ready } = useAuthStore();
 
-  const checkout = useCheckout(user?.email ?? "");
+  // 🧠 FE source of truth
+  const cart = cartStore((s) => s.items);
 
-  // 🔐 AUTH GUARD
+  // 🔑 email DERIVATA da sessione
+  const email = user?.email ?? "";
+
+  const checkout = useCheckout(email);
+
+  /* =========================
+     AUTH GUARD
+  ========================= */
   useEffect(() => {
     if (ready && !user) {
-      window.location.href = "/user/login?redirect=/user/checkout";
+      window.location.href =
+        "/user/login?redirect=/user/checkout";
     }
   }, [ready, user]);
 
   if (!ready) return <p>Caricamento…</p>;
   if (!user) return null;
 
+  /* =========================
+     RENDER
+  ========================= */
   return (
     <CartReview
-      cart={checkout.cart}
-      submitOrder={checkout.submitOrder}
+      cart={cart}
+      submitOrder={checkout.submitCheckout}
+    
+    
     />
   );
 }
