@@ -27,11 +27,8 @@ function Bootstrap() {
   return <RouterProvider router={router} />;
 }
 
-// DEBUG ENV — CORRETTO
-console.log("API_BASE (URL) =", import.meta.env.VITE_API_URL);
 
-// DEBUG ENV — QUESTO È QUELLO USATO DAL CODICE
-console.log("API_BASE (BASE) =", import.meta.env.VITE_API_BASE);
+console.log("[BOOT] API_BASE =", import.meta.env.VITE_API_BASE);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>
