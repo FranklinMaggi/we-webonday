@@ -22,7 +22,7 @@ PERCHÉ:
 ====================================================== */
 import type { Env } from "../../types/env";
 
-import { BusinessSchema } from "../../schemas/business/businessSchema";
+import { BusinessSchema } from "../../schemas/core/businessSchema";
 import { normalizeBusiness } from "../../normalizers/normalizeBusiness";
 import { requireUser } from "../../lib/auth/session";
 import { BUSINESS_KEY } from "../../lib/kv";

@@ -25,7 +25,7 @@ import {
   import { requireUser } from "../../lib/auth/session";
   import { json } from "../../lib/https";// ✅ helper allineato
   import { BUSINESS_KEY } from "../../lib/kv";
-  import { BusinessSchema } from "../../schemas/business/businessSchema";
+  import { BusinessSchema } from "../../schemas/core/businessSchema";
   import type { Env } from "../../types/env";
   
   /* ======================================================

@@ -26,6 +26,22 @@ import { eur } from "../../utils/format";
 import { uiBus } from "../../lib/ui/uiBus";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/auth.store";
+async function createConfigurationFromCart(item: CartItem) {
+  const res = await fetch("/api/configuration/from-cart", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      solutionId: item.solutionId,
+      productId: item.productId,
+      optionIds: item.options.map(o => o.id),
+    }),
+  });
+
+  const data = await res.json();
+  if (!data.ok) throw new Error("Configuration creation failed");
+  return data.configurationId as string;
+}
 
 export default function CartSticker() {
 const [items, setItems] = useState<CartItem[]>(cartStore.getState().items);
@@ -74,15 +90,30 @@ const count = items.length;
 const removeItem = (index: number) =>
 cartStore.getState().removeItem(index);
 
-const checkout = () => {
-  // 🔐 Guard FE: la configurazione richiede login
+const checkout = async () => {
   if (!user) {
     navigate("/user/login?redirect=/user/configurator");
     return;
   }
 
-  navigate("/user/configurator");
+  if (items.length === 0) return;
+
+  // MVP: 1 configuration alla volta
+  const first = items[0];
+
+  try {
+    const configurationId =
+      await createConfigurationFromCart(first);
+
+    cartStore.getState().clear();
+
+    navigate(`/user/configurator/${configurationId}`);
+  } catch (err) {
+    console.error(err);
+    alert("Errore nella creazione del progetto");
+  }
 };
+
 
 // =========================
 // RENDER

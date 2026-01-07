@@ -21,7 +21,7 @@ PERCHÉ:
 ====================================================== */
 import type { Env } from "../../types/env";
 
-import { BusinessSchema } from "../../schemas/business/businessSchema";
+import { BusinessSchema } from "../../schemas/core/businessSchema";
 import { normalizeBusinessInput } from "../../normalizers/normalizeBusinessInput";
 
 import { BUSINESS_KEY } from "../../lib/kv";

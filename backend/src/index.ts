@@ -130,7 +130,7 @@ import {
 } from "./routes/admin/options/options.read";
 import { getAdminProductWithOptions } from "./routes/admin/products/products.withOptions";
 
-
+import { createConfigurationFromCart } from "./routes/configuration/createFromCart";
 /* ============================================================
    COOKIES — CONSENSO
 ============================================================ */
@@ -391,7 +391,20 @@ if (pathname === "/api/cookies/status" && method === "GET") {
 
       if (pathname.startsWith("/api/business/") && method === "GET")
         return withCors(await getBusiness(request, env), request, env);
-      // USER
+/* ======================================================
+   CONFIGURATION — FROM CART (AUTH REQUIRED)
+====================================================== */
+if (
+  pathname === "/api/configuration/from-cart" &&
+  method === "POST"
+) {
+  return withCors(
+    await createConfigurationFromCart(request, env),
+    request,
+    env
+  );
+}
+
 if (pathname === "/api/configuration" && method === "GET")
   return withCors(
     await listUserConfigurations(request, env),

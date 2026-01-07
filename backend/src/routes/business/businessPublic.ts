@@ -2,7 +2,7 @@
 
 import type { Env } from "../../types/env";
 
-import { BusinessSchema } from "../../schemas/business/businessSchema";
+import { BusinessSchema } from "../../schemas/core/businessSchema";
 import { normalizeBusiness } from "../../normalizers/normalizeBusiness";
 import { normalizeBusinessPublic } from "../../normalizers/normalizeBusinessPublic";
 
