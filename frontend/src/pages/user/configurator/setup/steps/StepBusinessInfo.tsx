@@ -56,16 +56,24 @@ export default function StepBusinessInfo({
   ====================================================== */
   useEffect(() => {
     if (!configuration?.business) return;
-
+  
+    // Prefill nome attività
     if (!data.businessName) {
       setField("businessName", configuration.business.name);
     }
-
+  
+    /**
+     * SETTORE:
+     * - deve essere SEMPRE uno degli industries della solution
+     * - se il valore legacy non è valido → NON lo settiamo
+     */
     if (!data.sector && configuration.business.type) {
-      setField("sector", configuration.business.type);
+      if (industries.includes(configuration.business.type)) {
+        setField("sector", configuration.business.type);
+      }
     }
-  }, [configuration]);
-
+  }, [configuration, industries]);
+  
   /* ======================================================
      RENDER
   ====================================================== */
