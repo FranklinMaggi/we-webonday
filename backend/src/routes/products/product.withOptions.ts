@@ -88,7 +88,7 @@ export async function getProductWithOptions(
 
       options.push({
         id: opt.id,
-        label: opt.name,
+        name: opt.name,
         price: opt.price,
         type:
           opt.payment.mode === "one_time"

@@ -19,12 +19,20 @@
 import { useEffect, useState } from "react";
 
 import { fetchPublicSolutions } from "../../lib/solutions/solutionsApi";
-import type { AdminSolution } from "../../dto/solution";
 
 import SolutionCard from "./SolutionCard";
 
+
+type PublicSolutionCard = {
+  id: string;
+  name: string;
+  description: string;
+  image?: string;
+};
+
+
 export default function SolutionsSection() {
-  const [solutions, setSolutions] = useState<AdminSolution[]>([]);
+  const [solutions, setSolutions] = useState<PublicSolutionCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

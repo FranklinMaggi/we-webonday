@@ -25,7 +25,7 @@ import { API_BASE } from "../config";
 function normalizeOption(adminOpt: any): ProductOptionDTO {
   return {
     id: adminOpt.id,
-    label: adminOpt.name,
+    label: adminOpt.label,
     price: adminOpt.price,
 
     // 🔒 HARD-CODED: monthly only

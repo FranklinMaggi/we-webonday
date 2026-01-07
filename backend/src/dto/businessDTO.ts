@@ -2,7 +2,7 @@ export interface BusinessDTO {
     id: string;
     ownerUserId: string;
   
-    name: string;
+    label: string;
     address: string;
     phone: string;
     openingHours?: string | null;

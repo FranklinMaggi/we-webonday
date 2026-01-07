@@ -2,13 +2,14 @@
 // FE || router/router.tsx
 // ======================================================
 //
-// APPLICATION ROUTER — FREEZE
+// APPLICATION ROUTER — STRUCTURED & READABLE
 //
-// PRINCIPI:
-// - Separazione netta Visitor / User / Business / Admin
+// PRINCIPI (INVARIANTI):
+// - PUBLIC ≠ VISITOR (le pagine pubbliche sono accessibili anche da user)
 // - /user è SEMPRE protetto
 // - Dashboard canonica: /user/dashboard
 // - Redirect SEMPRE esplicito
+// - MainLayout condiviso tra public, user e business
 // ======================================================
 
 import { createBrowserRouter, Navigate } from "react-router-dom";
@@ -18,36 +19,22 @@ import { MainLayout } from "../components/layouts/MainLayout";
    GUARDS
 ========================= */
 import { ProtectedRoute } from "./ProtectedRoute";
-
 import BusinessGuard from "../components/business/BusinessGuard";
+import AdminGuard from "../components/admin/AdminGuard";
 
 /* =========================
-   PUBLIC (VISITOR)
+   PUBLIC PAGES (SHARED)
 ========================= */
 import Home from "../pages/home";
 import Vision from "../pages/vision";
 import Mission from "../pages/mission";
 import FounderPage from "../pages/founder";
 import Price from "../pages/pricing";
+
+import Solutions from "../pages/home/solution";        // /solution
 import HomeSolutionPage from "../pages/home/solution/[id]";
+
 import UserLogin from "../pages/user/login";
-
-/* =========================
-   USER (BUYER)
-========================= */
-import UserDashboardHome from "../pages/user/dashboard";
-import UserDashboardDetail from "../pages/user/dashboard/[id]";
-import CheckoutPage from "../pages/user/checkout";
-import DashboardLayout from "../pages/user/dashboard/layout/DashBoardLayout";
-import UserConfigurationWorkspace from "../pages/user/dashboard/configuration/[id]";
-
-/* =========================
-   USER → BUSINESS
-========================= */
-import UserBusinessDashboard from "../pages/user/business/UserBusinessDashboard";
-import RegisterBusiness from "../pages/user/business/RegisterBusiness";
-import UserConfiguratorIndex from "../pages/user/configurator";
-import UserConfiguratorDetail from "../pages/user/configurator/[id]";
 
 /* =========================
    POLICY
@@ -57,7 +44,22 @@ import Terms from "../pages/policy/terms";
 import PolicyPage from "../pages/policy/policy";
 
 /* =========================
-   ADMIN
+   USER (BUYER) — 🔒
+========================= */
+import DashboardLayout from "../pages/user/dashboard/layout/DashBoardLayout";
+import UserDashboardHome from "../pages/user/dashboard";
+import UserDashboardDetail from "../pages/user/dashboard/[id]";
+import UserConfigurationWorkspace from "../pages/user/dashboard/configuration/[id]";
+import CheckoutPage from "../pages/user/checkout";
+
+import UserBusinessDashboard from "../pages/user/business/UserBusinessDashboard";
+import RegisterBusiness from "../pages/user/business/RegisterBusiness";
+
+import UserConfiguratorIndex from "../pages/user/configurator";
+import UserConfiguratorDetail from "../pages/user/configurator/[id]";
+
+/* =========================
+   ADMIN — 🔒
 ========================= */
 import AdminLogin from "../pages/admin/login/login";
 import AdminLayout from "../components/admin/layouts/AdminLayout";
@@ -71,29 +73,38 @@ import AdminOptionsPage from "../pages/admin/products/options";
 import AdminEditOptionPage from "../pages/admin/products/options/[id]";
 import SolutionsList from "../pages/admin/solutions";
 import SolutionEditor from "../pages/admin/solutions/[id]";
-import AdminGuard from "../components/admin/AdminGuard";
+
 /* =========================
-   BUSINESS (SaaS PURO)
+   BUSINESS (SaaS PURO) — 🔒
 ========================= */
 import BusinessDashboard from "../pages/business/Dashboard";
 
+/* =====================================================
+   ROUTER
+===================================================== */
 const router = createBrowserRouter([
   /* =====================================================
-     VISITOR
+     PUBLIC (ACCESSIBILE A TUTTI)
   ===================================================== */
   {
     path: "/",
     element: <MainLayout />,
     children: [
       { index: true, element: <Home /> },
+
       { path: "vision", element: <Vision /> },
       { path: "mission", element: <Mission /> },
       { path: "founder", element: <FounderPage /> },
       { path: "pricing", element: <Price /> },
-      { path: "home/solution/:id", element: <HomeSolutionPage /> },
 
+      /* === SOLUTIONS (PUBLIC SHARED) === */
+      { path: "solution", element: <Solutions /> },
+      { path: "solution/:id", element: <HomeSolutionPage /> },
+
+      /* === AUTH === */
       { path: "user/login", element: <UserLogin /> },
 
+      /* === POLICY === */
       { path: "policy/privacy", element: <Privacy /> },
       { path: "policy/terms", element: <Terms /> },
       { path: "policy", element: <PolicyPage /> },
@@ -104,47 +115,42 @@ const router = createBrowserRouter([
      USER (BUYER) — 🔒
   ===================================================== */
   {
-    path: "user",
+    path: "/user",
     element: <ProtectedRoute />,
     children: [
       {
         element: <MainLayout />,
         children: [
           { index: true, element: <Navigate to="dashboard" replace /> },
-  
+
           {
             path: "dashboard",
-            element: <DashboardLayout />, // 👈 layout persistente con sidebar
+            element: <DashboardLayout />,
             children: [
               { index: true, element: <UserDashboardHome /> },
-          
-              // dettaglio generico (order / project ecc.)
               { path: ":id", element: <UserDashboardDetail /> },
-          
-              // workspace configurazione
               {
                 path: "configuration/:id",
                 element: <UserConfigurationWorkspace />,
               },
             ],
           },
-          
 
-          { path: "configurator",
+          {
+            path: "configurator",
             children: [
               { index: true, element: <UserConfiguratorIndex /> },
               { path: ":id", element: <UserConfiguratorDetail /> },
             ],
           },
-            
+
           { path: "checkout", element: <CheckoutPage /> },
           { path: "business/dashboard", element: <UserBusinessDashboard /> },
           { path: "business/register", element: <RegisterBusiness /> },
         ],
       },
     ],
-  }
-  ,
+  },
 
   /* =====================================================
      ADMIN — 🔒

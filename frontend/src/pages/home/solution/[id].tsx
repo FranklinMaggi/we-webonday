@@ -38,7 +38,11 @@ type PublicSolutionDetail = {
   name: string;
   description: string;
   longDescription?: string;
-  icon?: string;
+  image?: {
+    hero: string;
+    card: string;
+    fallback:string; 
+  };
   industries?: string[];
 };
 
@@ -63,6 +67,10 @@ export default function HomeSolutionPage() {
   const [products, setProducts] = useState<ProductDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+
+
+
 
   /* ===========================
      WHATSAPP VISIBILITY
@@ -94,14 +102,9 @@ export default function HomeSolutionPage() {
         (async () => {
           try {
             const full = await fetchProducts(); // prodotti completi con options[]
-        
-            const merged = (data.products || []).map((p) => {
-              const hit = full.find((fp) => fp.id === p.id);
-              return hit ?? p; // fallback safe: se non trovato, lasciamo il light
-            });
-        
-            setProducts(merged);
-            console.log("[SolutionPage] merged products", merged);
+          
+            setProducts(full);
+            
           } catch (e) {
             // fallback: se fallisce l’arricchimento, mostriamo comunque i prodotti light
             setProducts(data.products || []);
@@ -118,21 +121,47 @@ export default function HomeSolutionPage() {
   if (loading) return <p>Caricamento…</p>;
   if (error) return <p style={{ color: "red" }}>Errore: {error}</p>;
   if (!solution) return null;
-
+  console.log("SOLUTION IMAGE", solution.image);
   /* ===========================
      UI
   =========================== */
+  const heroImage = solution.image?.fallback;
   return (
     <main className="solution-page">
       {/* ================= HERO ================= */}
-      <section className="solution-hero">
-        <h1>
-          {solution.icon && <span>{solution.icon} </span>}
-          {solution.name}
-        </h1>
+      
+              <section
+          className="solution-hero"
+          style={{
+            backgroundImage: heroImage
+              ? `url(${heroImage})`
+              : undefined,
+          }}
+        >
+    <div className="solution-hero-overlay">
+    <h1>La nostra offerta per {solution.name}</h1>
+    <p>{solution.description}</p>
+  </div>
+</section>
+{/* ================= SOLUTION EXPLANATION ================= */}
+<section className="section solution-explanation">
+  <h2>Cos’è la solution {solution.name}</h2>
 
-        <p>{solution.description}</p>
-      </section>
+  {solution.longDescription ? (
+    <p className="solution-long-description">
+      {solution.longDescription}
+    </p>
+  ) : (
+    <p>
+      La solution <strong>{solution.name}</strong> è un modello
+      di sito WebOnDay progettato per rispondere a esigenze
+      specifiche di un determinato tipo di attività.
+      Fornisce una struttura già pensata, pronta per essere
+      personalizzata e messa online rapidamente.
+    </p>
+  )}
+</section>
+
 
       {/* ================= OVERVIEW ================= */}
       <section className="section">
@@ -151,23 +180,31 @@ export default function HomeSolutionPage() {
           al resto pensa il nostro <strong>AI Configurator</strong>.
         </p>
       </section>
+{/* ================= HOW IT WORKS ================= */}
+<section className="section solution-how-it-works">
+  <h2>Come funziona</h2>
 
-      {/* ================= INDUSTRIES ================= */}
-      {solution.industries && solution.industries.length > 0 && (
-        <section className="section">
-          <h3>Ideale per</h3>
+  <ol className="solution-steps">
+    <li>
+      <strong>Scegli un prodotto</strong><br />
+      Seleziona il prodotto più adatto alle tue esigenze
+      in base al livello di personalizzazione e supporto.
+    </li>
 
-          <div className="solution-industries">
-            {solution.industries.map((industry) => (
-              <span key={industry} className="badge">
-                {industry}
-              </span>
-            ))}
-          </div>
-        </section>
-      )}
+    <li>
+      <strong>Configura le informazioni principali</strong><br />
+      Dopo l’accesso, ti guideremo nella raccolta dei dati
+      necessari per costruire il sito.
+    </li>
 
-      {/* ================= PRODUCTS ================= */}
+    <li>
+      <strong>Realizziamo il tuo sito</strong><br />
+      Utilizziamo le informazioni fornite per creare
+      la tua soluzione WebOnDay pronta all’uso.
+    </li>
+  </ol>
+</section>
+
  {/* ================= PRODUCTS ================= */}
 {products.length > 0 && (
   <section className="section">

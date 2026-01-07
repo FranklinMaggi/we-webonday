@@ -23,7 +23,8 @@
 import type { Env } from "../../types/env";
 import { SolutionSchema } from "../../schemas/core/solutionSchema";
 import { ProductSchema } from "../../schemas/core/productSchema";
-
+import { getSolutionImageUrl } from "../../utils/assets";
+import { getSolutionImages } from "../../utils/assets";
 /* ======================================================
    DOMAIN OUTPUT TYPES
 ====================================================== */
@@ -35,9 +36,19 @@ export type SolutionDetailResult =
         name: string;
         description: string;
         longDescription?: string;
+      
+        /** URL pubblico hero / card */
+        image?: {
+          hero: string;
+          card: string;
+        };
+      
+        /** @deprecated */
         icon?: string;
+      
         industries?: string[];
       };
+      
       products: unknown[]; // DTO pubblico prodotto
     }
   | {
@@ -123,9 +134,13 @@ export async function getSolutionDetail(
       name: solution.name,
       description: solution.description,
       longDescription: solution.longDescription,
-      icon: solution.icon,
+    
+      image: getSolutionImages(solution.imageKey),
+    
+      icon: solution.icon, // legacy
       industries: solution.industries,
     },
+    
     products,
   };
 }

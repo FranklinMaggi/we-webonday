@@ -48,7 +48,7 @@ export type RecurringType = "one_time" | "yearly" | "monthly";
 
 export interface ProductOptionDTO {
   id: string;
-  name: string;
+  label: string;
   price: number;
   type: RecurringType;
 }

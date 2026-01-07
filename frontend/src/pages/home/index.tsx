@@ -19,7 +19,6 @@
 
 import { useEffect } from "react";
 
-import SolutionsSection from "../../components/solutions/SolutionSection";
 import { initWhatsAppScrollWatcher } from "../../lib/ui/scrollWatcher";
 import HomeHero from "../../components/hero/home/HomeHero";
 
@@ -40,8 +39,6 @@ export default function Home() {
       {/* ================= HERO ================= */}
       <HomeHero/>
 
-      {/* ================= SOLUTIONS ================= */}
-      <SolutionsSection />
     </main>
   );
 }

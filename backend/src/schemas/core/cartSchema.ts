@@ -5,7 +5,7 @@ import { z } from "zod";
 
 export const CartOptionSchema = z.object({
   id: z.string(),
-  label: z.string(),
+  name: z.string(),
   price: z.number(),
   recurring: z.boolean(),
 });

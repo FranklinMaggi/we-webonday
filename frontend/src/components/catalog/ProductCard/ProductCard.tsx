@@ -17,7 +17,7 @@
 import { useState } from "react";
 import type { ProductDTO } from "../../../dto/productDTO";
 import { eur } from "../../../utils/format";
-import OptionSelector from "./OptionSelector";
+import OptionSelector from "../ProductOption/OptionSelector";
 import CartPreview from "./CartPreview";
 
 interface Props {

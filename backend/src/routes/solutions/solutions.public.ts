@@ -22,7 +22,7 @@
 
 import type { Env } from "../../types/env";
 import { SolutionSchema } from "../../schemas/core/solutionSchema";
-import { getSolutionImageUrl } from "../../utils/assets";
+import { getSolutionImageUrl} from "../../utils/assets";
 /* ======================================================
    DOMAIN OUTPUT TYPE
 ====================================================== */
@@ -57,7 +57,7 @@ export async function getSolutions(
           name: parsed.name,
           description: parsed.description,
           icon: parsed.icon,
-          image: getSolutionImageUrl(parsed.imageKey), // ✅ QUI
+          image: getSolutionImageUrl(parsed.imageKey),
         });
       }
       

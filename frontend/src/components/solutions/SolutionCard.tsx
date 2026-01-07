@@ -17,8 +17,15 @@
 import { useNavigate } from "react-router-dom";
 import type { AdminSolution } from "../../dto/solution";
 
+type PublicSolutionCard = {
+  id: string;
+  name: string;
+  description: string;
+  image?: string; // image.card dal BE
+};
+
 type Props = {
-  solution: AdminSolution;
+  solution: PublicSolutionCard;
 };
 
 export default function SolutionCard({ solution }: Props) {
@@ -30,11 +37,11 @@ export default function SolutionCard({ solution }: Props) {
         onClick={() => navigate(`/home/solution/${solution.id}`)}
       >
         <div className="wd-card__media">
-          <img
-            src={(solution as any).image}
-            alt={solution.name}
-            loading="lazy"
-          />
+        <img
+  src={solution.image}
+  alt={solution.name}
+  loading="lazy"
+/>
         </div>
   
         <div className="solution-card__content">

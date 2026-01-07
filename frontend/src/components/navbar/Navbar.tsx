@@ -60,7 +60,7 @@ export default function Navbar() {
       <div className={`nav-right ${open ? "open" : ""}`}>
         
         {user && <ModeSwitch />}
-        <Link to="/solutions" className="wd-navbar-link">
+        <Link to="/solution" className="wd-navbar-link">
   Soluzioni
 </Link>
         {ready && !user && (
