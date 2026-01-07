@@ -67,11 +67,13 @@ export default function StepBusinessInfo({
      * - deve essere SEMPRE uno degli industries della solution
      * - se il valore legacy non è valido → NON lo settiamo
      */
-    if (!data.sector && configuration.business.type) {
-      if (industries.includes(configuration.business.type)) {
-        setField("sector", configuration.business.type);
-      }
-    }
+    const legacyType = configuration.business.type?.trim().toLowerCase();
+
+if (!data.sector && legacyType) {
+  if (industries.includes(legacyType)) {
+    setField("sector", legacyType);
+  }
+}
   }, [configuration, industries]);
   
   /* ======================================================
