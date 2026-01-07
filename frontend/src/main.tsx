@@ -28,7 +28,7 @@ function Bootstrap() {
 }
 
 
-console.log("[BOOT] API_BASE =", import.meta.env.API_BASE);
+console.log("[BOOT] API_BASE =", import.meta.env.VITE_API_BASE);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>
