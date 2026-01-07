@@ -1,5 +1,5 @@
 // ======================================================
-// FE || lib/cartStore.ts
+// FE || lib/cart/cart.store.ts
 // ======================================================
 // CART STORE — STATO LOCALE FE
 //
@@ -31,7 +31,7 @@ import type { ProductOptionDTO } from "../dto/productDTO";
 export interface CartItem {
   /** 🔑 CONTEXTO MARKETING / CONFIG */
   solutionId: string;
-  
+
   productId: string;
   title: string;
 
@@ -49,41 +49,68 @@ interface CartState {
   addItem: (item: CartItem) => void;
   removeItem: (index: number) => void;
   clear: () => void;
+
+  /** 🔁 Restore controllato post-login */
+  replace: (items: CartItem[]) => void;
+
+  /** 🔄 Restore visitor (localStorage) */
   loadFromStorage: () => void;
 }
 
 export const cartStore = create<CartState>((set, get) => ({
   items: [],
 
+  // ======================================================
+  // ADD ITEM
+  // ======================================================
   addItem: (item: CartItem) => {
     const updated = [...get().items, item];
     set({ items: updated });
     localStorage.setItem("webonday_cart", JSON.stringify(updated));
   },
 
+  // ======================================================
+  // REMOVE ITEM
+  // ======================================================
   removeItem: (index: number) => {
     const updated = get().items.filter((_, i) => i !== index);
     set({ items: updated });
     localStorage.setItem("webonday_cart", JSON.stringify(updated));
   },
 
+  // ======================================================
+  // CLEAR CART
+  // ======================================================
   clear: () => {
     set({ items: [] });
     localStorage.removeItem("webonday_cart");
   },
 
+  // ======================================================
+  // 🔁 REPLACE (POST-LOGIN)
+  // ======================================================
+  replace: (items: CartItem[]) => {
+    set({ items });
+    localStorage.setItem("webonday_cart", JSON.stringify(items));
+  },
+
+  // ======================================================
+  // 🔄 LOAD VISITOR CART
+  // ======================================================
   loadFromStorage: () => {
     const saved = localStorage.getItem("webonday_cart");
-    if (saved) {
-      try {
-        const parsed: CartItem[] = JSON.parse(saved);
-        set({ items: parsed });
-      } catch {
-        console.error("Errore nel parsing del carrello salvato.");
-      }
+    if (!saved) return;
+
+    try {
+      const parsed: CartItem[] = JSON.parse(saved);
+      set({ items: parsed });
+    } catch {
+      console.error("[CART] Errore parsing webonday_cart");
     }
   },
 }));
 
-// Carica automaticamente il carrello alla prima importazione
+// ======================================================
+// AUTO-BOOTSTRAP (VISITOR ONLY)
+// ======================================================
 cartStore.getState().loadFromStorage();

@@ -5,77 +5,91 @@
 // AI-SUPERCOMMENT — STEP BUSINESS INFO
 //
 // RUOLO:
-// - Raccolta dati base dell’attività
-// - Selezione settore (industry)
+// - Primo step del wizard di configurazione
+// - Raccolta dati anagrafici dell’attività
+// - Selezione del settore (industry)
 //
 // SOURCE OF TRUTH:
-// - industries PROVENGONO dalla Solution (backend)
+// - industries → Solution (backend)
 //
 // INVARIANTI:
-// - Il settore NON è globale
-// - Il settore dipende SEMPRE dalla solution scelta
-// - Nessuna fetch API in questo step
+// - Nessuna fetch
+// - Nessuna persistenza
+// - Solo lettura/scrittura store FE
 //
-// NON FA:
-// - NON chiama backend
-// - NON valida dominio
-// - NON crea configurazioni
-//
-// CONNECT POINT:
-// - ConfigurationSetupPage → StepBusinessInfo
-// - solution.industries (BE)
-//
+// NOTE ARCHITETTURALI:
+// - Questo step ACCETTA dati parziali
+// - Non assume MAI che la configurazione sia completa
 // ======================================================
 
-import { useConfigurationSetupStore } from "../configurationSetup.store";
 import { useEffect } from "react";
+import { useConfigurationSetupStore } from "../configurationSetup.store";
+
+/* =========================
+   PROPS
+========================= */
+type StepBusinessInfoProps = {
+  onNext: () => void;
+  industries: string[];
+
+  /**
+   * Snapshot opzionale proveniente da:
+   * - configurazione esistente
+   * - post-cart
+   * - restore sessione
+   */
+  configuration?: {
+    business?: {
+      name?: string;
+      type?: string;
+      city?: string;
+      email?: string;
+      phone?: string;
+    };
+  };
+};
 
 export default function StepBusinessInfo({
   onNext,
   configuration,
   industries,
-}: {
-  onNext: () => void;
-
-  industries: string[]; // ⬅️ dichiarate dal backend (Solution)
-
-  configuration?: {
-    business?: {
-      name: string;
-      type?: string;
-    };
-  };
-}) {
+}: StepBusinessInfoProps) {
   const { data, setField } = useConfigurationSetupStore();
 
   /* ======================================================
-     PREFILL — SOLO PRIMA ENTRATA
+     PREFILL (IDEMPOTENTE)
      PERCHE:
-     - Utente loggato
-     - Configurazione già esistente
+     - UX migliore post-login / post-cart
+     - NON sovrascrive input manuale
   ====================================================== */
   useEffect(() => {
     if (!configuration?.business) return;
-  
-    // Prefill nome attività
-    if (!data.businessName) {
+
+    if (!data.businessName && configuration.business.name) {
       setField("businessName", configuration.business.name);
     }
-  
-    /**
-     * SETTORE:
-     * - deve essere SEMPRE uno degli industries della solution
-     * - se il valore legacy non è valido → NON lo settiamo
-     */
-    const legacyType = configuration.business.type?.trim().toLowerCase();
 
-if (!data.sector && legacyType) {
-  if (industries.includes(legacyType)) {
-    setField("sector", legacyType);
-  }
-}
-  }, [configuration, industries]);
-  
+    const legacyType = configuration.business.type
+      ?.trim()
+      .toLowerCase();
+
+    if (!data.sector && legacyType && industries.includes(legacyType)) {
+      setField("sector", legacyType);
+    }
+
+    if (!data.city && configuration.business.city) {
+      setField("city", configuration.business.city);
+    }
+
+    if (!data.email && configuration.business.email) {
+      setField("email", configuration.business.email);
+    }
+
+    if (!data.phone && configuration.business.phone) {
+      setField("phone", configuration.business.phone);
+    }
+  }, [configuration, industries, data, setField]);
+
   /* ======================================================
      RENDER
   ====================================================== */
@@ -83,7 +97,7 @@ if (!data.sector && legacyType) {
     <div className="step">
       <h2>Informazioni attività</h2>
 
-      {/* ================= NOME ATTIVITÀ ================= */}
+      {/* NOME ATTIVITÀ */}
       <input
         placeholder="Nome attività"
         value={data.businessName ?? ""}
@@ -92,39 +106,34 @@ if (!data.sector && legacyType) {
         }
       />
 
-      {/* ================= SETTORE (INDUSTRY) =================
-          NOTE:
-          - options generate dalla solution
-          - backend = source of truth
-      ====================================================== */}
- <select
-  value={data.sector ?? ""}
-  onChange={(e) => setField("sector", e.target.value)}
->
-  <option value="">Seleziona settore</option>
+      {/* SETTORE */}
+      <select
+        value={data.sector ?? ""}
+        onChange={(e) => setField("sector", e.target.value)}
+      >
+        <option value="">Seleziona settore</option>
+        {industries.map((id) => (
+          <option key={id} value={id}>
+            {id}
+          </option>
+        ))}
+      </select>
 
-  {industries.map((id) => (
-    <option key={id} value={id}>
-      {id}
-    </option>
-  ))}
-</select>
-
-      {/* ================= CITTÀ ================= */}
+      {/* CITTÀ */}
       <input
         placeholder="Città"
         value={data.city ?? ""}
         onChange={(e) => setField("city", e.target.value)}
       />
 
-      {/* ================= EMAIL ================= */}
+      {/* EMAIL */}
       <input
         placeholder="Email di contatto"
         value={data.email ?? ""}
         onChange={(e) => setField("email", e.target.value)}
       />
 
-      {/* ================= AZIONE ================= */}
+      {/* AZIONE */}
       <button onClick={onNext}>
         Continua
       </button>
