@@ -151,7 +151,18 @@ export default function CartSticker() {
                 </li>
               ))}
             </ul>
-
+            <ul className="cart-sticker__options">
+  {item.options?.map((o) => (
+    <li key={o.id} className="cart-sticker__option">
+      + {o.label}
+      {o.type !== "one_time" && (
+        <span className="cart-sticker__recurring">
+          ({o.type})
+        </span>
+      )}
+    </li>
+  ))}
+</ul>
             <div className="cart-sticker__footer">
               <div className="cart-sticker__grand">
                 <div>
