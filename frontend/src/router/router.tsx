@@ -78,7 +78,6 @@ import ConfiguratorLayout from "../components/layouts/ConfiguratorLayout";
 /* =========================
    BUSINESS (SaaS PURO) — 🔒
 ========================= */
-import BusinessDashboard from "../pages/business/Dashboard";
 
 /* =====================================================
    ROUTER
@@ -195,7 +194,7 @@ const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
-      { path: "dashboard", element: <BusinessDashboard /> },
+ 
     ],
   },
 ]);

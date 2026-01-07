@@ -35,7 +35,7 @@ export default function BusinessGuard({ children }: Props) {
 
     let alive = true;
 
-    getMyBusiness(user.id)
+    getMyBusiness()
       .then((res) => {
         if (!alive) return;
 

@@ -10,6 +10,9 @@
 // INVARIANTI:
 // - Usa sempre configurationId
 // - credentials: include
+
+import { API_BASE } from "../config";
+
 // ======================================================
 
 export async function updateConfiguration(
@@ -17,7 +20,7 @@ export async function updateConfiguration(
     payload: unknown
   ) {
     const res = await fetch(
-      `/api/configuration/${configurationId}`,
+      `${API_BASE}/api/configuration/${configurationId}`,
       {
         method: "PUT",
         headers: {

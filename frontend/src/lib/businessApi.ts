@@ -4,11 +4,11 @@ import type { BusinessDTO } from "./dto/businessDTO";
 /**
  * GET /api/business/mine
  */
-export function getMyBusiness(userId: string) {
+export function getMyBusiness() {
   return apiFetch<{
     ok: boolean;
     business: BusinessDTO | null;
-  }>(`/api/business/mine?userId=${userId}`);
+  }>(`/api/business/mine`);
 }
 
 /**
@@ -48,5 +48,6 @@ export function uploadBusinessMenu(
   }>(`/api/business/menu/upload?businessId=${businessId}`, {
     method: "POST",
     body: form,
+    headers: {}, // 👈 IMPORTANTISSIMO
   });
-}
+}  

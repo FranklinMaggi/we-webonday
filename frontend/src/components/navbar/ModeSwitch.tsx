@@ -31,7 +31,7 @@ export default function ModeSwitch() {
 
   if (!user) return null;
 
-  const userId = user.id;
+  
 
   async function toggle() {
     if (loading) return;
@@ -41,7 +41,7 @@ export default function ModeSwitch() {
       if (mode === "client") {
         setMode("partner");
 
-        const res = await getMyBusiness(userId);
+        const res = await getMyBusiness();
 
         if (res?.business) {
           navigate("/user/business/dashboard");
