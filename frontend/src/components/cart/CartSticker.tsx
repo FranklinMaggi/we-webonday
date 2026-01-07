@@ -68,7 +68,7 @@ import { uiBus } from "../../lib/ui/uiBus";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/auth.store";
 import { apiFetch } from "../../lib/api";
-import { type ProductOptionDTO } from "../../lib/dto/productDTO";
+
 // =========================
 // API RESPONSE DTO
 // =========================
