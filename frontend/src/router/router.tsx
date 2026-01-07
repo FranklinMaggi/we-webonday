@@ -19,7 +19,6 @@ import { MainLayout } from "../components/layouts/MainLayout";
    GUARDS
 ========================= */
 import { ProtectedRoute } from "./ProtectedRoute";
-import BusinessGuard from "../components/business/BusinessGuard";
 import AdminGuard from "../components/admin/AdminGuard";
 
 /* =========================
@@ -182,21 +181,7 @@ const router = createBrowserRouter([
     ],
   },
 
-  /* =====================================================
-     BUSINESS (SaaS PURO) — 🔒
-  ===================================================== */
-  {
-    path: "/business",
-    element: (
-      <BusinessGuard>
-        <MainLayout />
-      </BusinessGuard>
-    ),
-    children: [
-      { index: true, element: <Navigate to="dashboard" replace /> },
  
-    ],
-  },
 ]);
 
 export default router;

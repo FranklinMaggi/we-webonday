@@ -14,7 +14,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../lib/authApi";
-import ModeSwitch from "./ModeSwitch";
 import NavCartButton from "./NavCartButton";
 import { useAuthStore } from "../../store/auth.store";
 
@@ -59,7 +58,8 @@ export default function Navbar() {
       {/* RIGHT AREA */}
       <div className={`nav-right ${open ? "open" : ""}`}>
         
-        {user && <ModeSwitch />}
+       
+      
         <Link to="/solution" className="wd-navbar-link">
   Soluzioni
 </Link>

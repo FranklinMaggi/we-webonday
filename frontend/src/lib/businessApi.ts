@@ -1,3 +1,16 @@
+// ======================================================
+// FE || lib/businessApi.ts
+// ======================================================
+//
+// STATO ATTUALE:
+// - NON USATO (fase 1)
+// - Conservato per fase 2 (business onboarding)
+//
+// INVARIANTI:
+// - User identity derivata SOLO da sessione
+// - Nessun parametro userId lato FE
+// ======================================================
+
 import { apiFetch } from "./api";
 import type { BusinessDTO } from "./dto/businessDTO";
 
