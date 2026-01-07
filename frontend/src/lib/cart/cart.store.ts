@@ -22,7 +22,7 @@
 // ======================================================
 
 import { create } from "zustand";
-import type { ProductOptionDTO } from "../../dto/productDTO";
+import type { ProductOptionDTO } from "../dto/productDTO";
 
 // ======================================================
 // CART ITEM — MODELLO CANONICO

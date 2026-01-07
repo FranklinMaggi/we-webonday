@@ -31,7 +31,7 @@ import {
 import { adminFetch } from "../../../lib/adminApi/client";
 import { adminProductToBE } from "../../../lib/normalizers/adminProductToBe";
 
-import type { AdminProductDTO } from "../../../dto/AdminProductDTO";
+import type { AdminProductDTO } from "../../../lib/dto/AdminProductDTO";
 
 /* =========================
    TIPI LOCALI (DEBUG)

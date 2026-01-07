@@ -15,7 +15,7 @@
 // ======================================================
 
 import { useState } from "react";
-import type { ProductDTO } from "../../../dto/productDTO";
+import type { ProductDTO } from "../../../lib/dto/productDTO";
 import { eur } from "../../../utils/format";
 import OptionSelector from "../ProductOption/OptionSelector";
 import CartPreview from "./CartPreview";

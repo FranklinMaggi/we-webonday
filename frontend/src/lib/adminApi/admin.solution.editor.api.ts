@@ -30,7 +30,7 @@ import { adminFetch } from "./client";
 import type {
   AdminSolutionDetailResponse,
   SolutionEditorDTO,
-} from "../../dto/solution";
+} from "../dto/solution";
 
 /* =========================
    GET SOLUTION DETAIL

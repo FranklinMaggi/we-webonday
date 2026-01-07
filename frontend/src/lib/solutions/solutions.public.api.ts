@@ -42,8 +42,8 @@
  * ======================================================
  */
 
-import { API_BASE } from "../../config";
-import type { AdminSolution } from "../../dto/solution";
+import { API_BASE } from "../config";
+import type { AdminSolution } from "../dto/solution";
 
 export type PublicSolutionsResponse = {
   ok: true;

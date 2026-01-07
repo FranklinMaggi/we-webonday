@@ -6,7 +6,7 @@
 //
 // RESPONSABILITÀ:
 // - Avviare l’app
-// - Inizializzare auth
+// - Inizializzare auth (session cookie)
 // - Montare RouterProvider
 // ======================================================
 
@@ -21,12 +21,17 @@ function Bootstrap() {
   const fetchUser = useAuthStore((s) => s.fetchUser);
 
   useEffect(() => {
-    fetchUser(); // 🔑 carica sessione (cookie)
+    fetchUser(); // 🔑 carica sessione utente (cookie-based)
   }, [fetchUser]);
 
   return <RouterProvider router={router} />;
 }
-console.log("API_BASE =", import.meta.env.VITE_API_URL);
+
+// DEBUG ENV — CORRETTO
+console.log("API_BASE (URL) =", import.meta.env.VITE_API_URL);
+
+// DEBUG ENV — QUESTO È QUELLO USATO DAL CODICE
+console.log("API_BASE (BASE) =", import.meta.env.VITE_API_BASE);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -27,7 +27,7 @@
 //
 // ======================================================
 
-import type { ProductOptionDTO } from "../../../dto/productDTO";
+import type { ProductOptionDTO } from "../../../lib/dto/productDTO";
 import { eur } from "../../../utils/format";
 import { t } from "../../../lib/translateFe/helper/i18n";
 

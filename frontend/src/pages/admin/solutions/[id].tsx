@@ -22,14 +22,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAdminProducts } from "../../../lib/adminApi/admin.products.api";
-import type { AdminProductDTO } from "../../../dto/AdminProductDTO";
+import type { AdminProductDTO } from "../../../lib/dto/AdminProductDTO";
 
 import {
   fetchAdminSolution,
   saveAdminSolution,
 } from "../../../lib/adminApi/admin.solution.editor.api";
 
-import type { SolutionEditorDTO } from "../../../dto/solution";
+import type { SolutionEditorDTO } from "../../../lib/dto/solution";
 
 /* ======================================================
    ADMIN — SOLUTION EDITOR (ROUTE-BASED)

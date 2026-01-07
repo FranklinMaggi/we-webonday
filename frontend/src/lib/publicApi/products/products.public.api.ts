@@ -44,7 +44,7 @@
  * ======================================================
  */
 
-import type { ProductDTO, ProductOptionDTO } from "../../../dto/productDTO";
+import type { ProductDTO, ProductOptionDTO } from "../../dto/productDTO";
 import { API_BASE } from "../../config";
 
 /* ======================================================

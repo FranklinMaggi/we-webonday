@@ -23,7 +23,7 @@
 * - cart-add-btn gestisce SOLO layout
 */
 // ======================================================
-import type { ProductDTO, ProductOptionDTO } from "../../../dto/productDTO";
+import type { ProductDTO, ProductOptionDTO } from "../../../lib/dto/productDTO";
 import { cartStore } from "../../../lib/cart/cart.store";
 import { eur } from "../../../utils/format";
 import { useRef } from "react";

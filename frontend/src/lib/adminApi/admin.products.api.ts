@@ -64,8 +64,8 @@
  */
 
 import { adminFetch } from "./client";
-import type { AdminProductDTO } from "../../dto/AdminProductDTO";
-import type { AdminUpdateProductDTO } from "../../dto/AdminUpdateProductDTO";
+import type { AdminProductDTO } from "../dto/AdminProductDTO";
+import type { AdminUpdateProductDTO } from "../dto/AdminUpdateProductDTO";
 
 /* =========================
    LIST PRODUCTS (ADMIN)

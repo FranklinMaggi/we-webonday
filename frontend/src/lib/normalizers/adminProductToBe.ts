@@ -8,8 +8,8 @@
 // - Questo normalizer gestisce SOLO dati prodotto
 // ======================================================
 
-import type { AdminProductDTO } from "../../dto/AdminProductDTO";
-import type { AdminUpdateProductDTO } from "../../dto/AdminUpdateProductDTO";
+import type { AdminProductDTO } from "../dto/AdminProductDTO";
+import type { AdminUpdateProductDTO } from "../dto/AdminUpdateProductDTO";
 
 export function adminProductToBE(
   product: AdminProductDTO

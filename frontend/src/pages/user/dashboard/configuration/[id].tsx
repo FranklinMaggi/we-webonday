@@ -13,7 +13,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ConfigurationLayout from "./ConfigurationLayout";
-import { type ConfigurationDTO } from "../../../../dto/configurationDTO";
+import { type ConfigurationDTO } from "../../../../lib/dto/configurationDTO";
 
 export default function UserConfigurationWorkspace() {
   const { id } = useParams<{ id: string }>();

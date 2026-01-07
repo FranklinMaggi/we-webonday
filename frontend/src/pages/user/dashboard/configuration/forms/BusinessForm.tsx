@@ -20,7 +20,7 @@
 
 import { useState } from "react";
 import { updateConfiguration } from "../../../../../lib/userApi/configuration.user.api";
-import type { ConfigurationDTO } from "../../../../../dto/configurationDTO";
+import type { ConfigurationDTO } from "../../../../../lib/dto/configurationDTO";
 
 
 export default function BusinessForm({
