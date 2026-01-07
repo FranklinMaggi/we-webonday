@@ -25,7 +25,13 @@ import { API_BASE } from "../config";
 function normalizeOption(adminOpt: any): ProductOptionDTO {
   return {
     id: adminOpt.id,
-    label: adminOpt.label,
+    // 🔑 MAPPING DOMINIO → UI
+    label:
+      adminOpt.label ??
+      adminOpt.name ??
+      adminOpt.title ??
+      adminOpt.code ??
+      "Opzione",
     price: adminOpt.price,
 
     // 🔒 HARD-CODED: monthly only
