@@ -110,46 +110,52 @@ const router = createBrowserRouter([
     ],
   },
 
-  /* =====================================================
-     USER (BUYER) — 🔒
-  ===================================================== */
-  {
-    path: "/user",
-    element: <ProtectedRoute />,
-    children: [
-      {
-        element: <MainLayout />,
-        children: [
-          { index: true, element: <Navigate to="dashboard" replace /> },
+ /* =====================================================
+   USER (BUYER) — 🔒
+===================================================== */
+{
+  path: "/user",
+  element: <ProtectedRoute />,
+  children: [
+    {
+      element: <MainLayout />,
+      children: [
+        { index: true, element: <Navigate to="dashboard" replace /> },
 
-          {
-            path: "dashboard",
-            element: <DashboardLayout />,
-            children: [
-              { index: true, element: <UserDashboardHome /> },
-              { path: ":id", element: <UserDashboardDetail /> },
-              {
-                path: "configuration/:id",
-                element: <UserConfigurationWorkspace />,
-              },
-            ],
-          },
+        /* ================= DASHBOARD ================= */
+        {
+          path: "dashboard",
+          element: <DashboardLayout />,
+          children: [
+            { index: true, element: <UserDashboardHome /> },
+            { path: ":id", element: <UserDashboardDetail /> },
+            {
+              path: "configuration/:id",
+              element: <UserConfigurationWorkspace />,
+            },
+          ],
+        },
 
-          {
-            path: "/user/configurator",
-            element: <ConfiguratorLayout />,
-            children: [
-              { index: true, element: <UserConfiguratorIndex /> },
-              { path: ":id", element: <UserConfiguratorDetail /> },
-            ],
-          },
-          
+        /* ================= CONFIGURATOR ================= */
+        {
+          path: "configurator",
+          element: <ConfiguratorLayout />,
+          children: [
+            { index: true, element: <UserConfiguratorIndex /> },
+            { path: ":id", element: <UserConfiguratorDetail /> },
+          ],
+        },
 
-          { path: "checkout", element: <CheckoutPage /> },
-        ],
-      },
-    ],
-  },
+        /* ================= CHECKOUT ================= */
+        {
+          path: "checkout",
+          element: <CheckoutPage />,
+        },
+      ],
+    },
+  ],
+},
+
 
   /* =====================================================
      ADMIN — 🔒
