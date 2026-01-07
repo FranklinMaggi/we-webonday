@@ -160,8 +160,6 @@ export default function ConfigurationSetupPage({
       return (
         <StepBusinessInfo
           onNext={next}
-          configuration={configuration}
-          industries={industries}
         />
       );
 

@@ -2,141 +2,100 @@
 // FE || pages/user/configurator/setup/steps/StepBusinessInfo.tsx
 // ======================================================
 //
-// AI-SUPERCOMMENT — STEP BUSINESS INFO
+// STEP 1 — BUSINESS INFO (FORM GREZZO)
 //
-// RUOLO:
-// - Primo step del wizard di configurazione
-// - Raccolta dati anagrafici dell’attività
-// - Selezione del settore (industry)
-//
-// SOURCE OF TRUTH:
-// - industries → Solution (backend)
-//
-// INVARIANTI:
-// - Nessuna fetch
+// NOTE:
+// - SOLO UI
+// - Nessuna logica
 // - Nessuna persistenza
-// - Solo lettura/scrittura store FE
-//
-// NOTE ARCHITETTURALI:
-// - Questo step ACCETTA dati parziali
-// - Non assume MAI che la configurazione sia completa
+// - Nessun prefill
+// - Serve SOLO a definire struttura e UX
 // ======================================================
 
-import { useEffect } from "react";
-import { useConfigurationSetupStore } from "../configurationSetup.store";
-
-/* =========================
-   PROPS
-========================= */
 type StepBusinessInfoProps = {
   onNext: () => void;
-  industries: string[];
-
-  /**
-   * Snapshot opzionale proveniente da:
-   * - configurazione esistente
-   * - post-cart
-   * - restore sessione
-   */
-  configuration?: {
-    business?: {
-      name?: string;
-      type?: string;
-      city?: string;
-      email?: string;
-      phone?: string;
-    };
-  };
 };
 
-export default function StepBusinessInfo({
-  onNext,
-  configuration,
-  industries,
-}: StepBusinessInfoProps) {
-  const { data, setField } = useConfigurationSetupStore();
-
-  /* ======================================================
-     PREFILL (IDEMPOTENTE)
-     PERCHE:
-     - UX migliore post-login / post-cart
-     - NON sovrascrive input manuale
-  ====================================================== */
-  useEffect(() => {
-    if (!configuration?.business) return;
-
-    if (!data.businessName && configuration.business.name) {
-      setField("businessName", configuration.business.name);
-    }
-
-    const legacyType = configuration.business.type
-      ?.trim()
-      .toLowerCase();
-
-    if (!data.sector && legacyType && industries.includes(legacyType)) {
-      setField("sector", legacyType);
-    }
-
-    if (!data.city && configuration.business.city) {
-      setField("city", configuration.business.city);
-    }
-
-    if (!data.email && configuration.business.email) {
-      setField("email", configuration.business.email);
-    }
-
-    if (!data.phone && configuration.business.phone) {
-      setField("phone", configuration.business.phone);
-    }
-  }, [configuration, industries, data, setField]);
-
-  /* ======================================================
-     RENDER
-  ====================================================== */
+export default function StepBusinessInfo({ onNext }: StepBusinessInfoProps) {
   return (
     <div className="step">
-      <h2>Informazioni attività</h2>
+      <h2>Dati dell’attività</h2>
 
-      {/* NOME ATTIVITÀ */}
+      {/* INTRO TESTUALE */}
+      <p style={{ opacity: 0.75, fontSize: "0.95rem" }}>
+        Queste informazioni ci servono per avviare la configurazione del tuo sito.
+        Potrai modificarle in seguito.
+      </p>
+
+      {/* =========================
+          CONTATTI
+      ========================= */}
+
       <input
-        placeholder="Nome attività"
-        value={data.businessName ?? ""}
-        onChange={(e) =>
-          setField("businessName", e.target.value)
-        }
+        type="email"
+        placeholder="Email di riferimento"
       />
 
-      {/* SETTORE */}
-      <select
-        value={data.sector ?? ""}
-        onChange={(e) => setField("sector", e.target.value)}
-      >
-        <option value="">Seleziona settore</option>
-        {industries.map((id) => (
-          <option key={id} value={id}>
-            {id}
-          </option>
-        ))}
-      </select>
-
-      {/* CITTÀ */}
       <input
-        placeholder="Città"
-        value={data.city ?? ""}
-        onChange={(e) => setField("city", e.target.value)}
+        type="tel"
+        placeholder="Numero di telefono (opzionale)"
       />
 
-      {/* EMAIL */}
+      <label>
+        <input type="checkbox" />
+        Desidero essere contattato da un consulente WebOnDay per una guida dedicata
+      </label>
+
+      <label>
+        <input type="checkbox" />
+        Autorizzo l’utilizzo del numero solo per comunicazioni legate al progetto
+      </label>
+
+      {/* =========================
+          DATI ATTIVITÀ
+      ========================= */}
+
       <input
-        placeholder="Email di contatto"
-        value={data.email ?? ""}
-        onChange={(e) => setField("email", e.target.value)}
+        type="text"
+        placeholder="Nome dell’attività"
       />
 
-      {/* AZIONE */}
-      <button onClick={onNext}>
-        Continua
-      </button>
+      <input
+        type="text"
+        placeholder="Indirizzo (via, città)"
+      />
+
+      <textarea
+        placeholder="Orari di apertura (opzionale)"
+      />
+
+      {/* =========================
+          UPLOAD
+      ========================= */}
+
+      <label>
+        Hai un logo o un documento per confermare l’attività?
+      </label>
+
+      <input
+        type="file"
+        accept="image/*,.pdf"
+      />
+
+      <p style={{ fontSize: "0.85rem", opacity: 0.65 }}>
+        Puoi caricare un logo, una foto dell’attività o un documento.
+        Serve solo a velocizzare la verifica.
+      </p>
+
+      {/* =========================
+          AZIONI
+      ========================= */}
+
+      <div className="actions">
+        <button onClick={onNext}>
+          Continua
+        </button>
+      </div>
     </div>
   );
 }
