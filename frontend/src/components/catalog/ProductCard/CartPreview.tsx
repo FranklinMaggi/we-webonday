@@ -94,6 +94,12 @@ const selectedObjects: ProductOptionDTO[] = options.filter(
     setTimeout(() => {
       previewRef.current?.classList.remove("is-added");
     }, 450);
+    console.log("ADD TO CART", {
+      solutionId,
+      productId: product.id,
+      options: selectedObjects,
+    });
+    
   };
 
   // =========================
