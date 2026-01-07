@@ -26,22 +26,7 @@ import { eur } from "../../utils/format";
 import { uiBus } from "../../lib/ui/uiBus";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/auth.store";
-async function createConfigurationFromCart(item: CartItem) {
-  const res = await fetch("/api/configuration/from-cart", {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      solutionId: item.solutionId,
-      productId: item.productId,
-      optionIds: item.options.map(o => o.id),
-    }),
-  });
 
-  const data = await res.json();
-  if (!data.ok) throw new Error("Configuration creation failed");
-  return data.configurationId as string;
-}
 
 export default function CartSticker() {
 const [items, setItems] = useState<CartItem[]>(cartStore.getState().items);
@@ -91,26 +76,50 @@ const removeItem = (index: number) =>
 cartStore.getState().removeItem(index);
 
 const checkout = async () => {
+  // 🔐 Guard FE: la configurazione richiede login
   if (!user) {
     navigate("/user/login?redirect=/user/configurator");
     return;
   }
 
+  const items = cartStore.getState().items;
+
   if (items.length === 0) return;
 
-  // MVP: 1 configuration alla volta
-  const first = items[0];
+  const first = items[0]; // MVP: 1 configuration = 1 solution
 
   try {
-    const configurationId =
-      await createConfigurationFromCart(first);
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/configuration/from-cart`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          businessName: "Nuova attività", // TEMP → verrà chiesto nello step
+          solutionId: first.solutionId,
+          productId: first.productId,
+          optionIds: first.options.map((o) => o.id),
+        }),
+      }
+    );
 
+    const json = await res.json();
+
+    if (!json.ok) {
+      console.error("CONFIGURATION ERROR", json);
+      return;
+    }
+
+    // 🧠 pulizia carrello (opzionale ma consigliata)
     cartStore.getState().clear();
 
-    navigate(`/user/configurator/${configurationId}`);
+    // 🚀 redirect configurator
+    navigate(`/user/configurator/${json.configurationId}`);
   } catch (err) {
-    console.error(err);
-    alert("Errore nella creazione del progetto");
+    console.error("CONFIGURATION CREATE FAILED", err);
   }
 };
 

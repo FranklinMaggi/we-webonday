@@ -73,6 +73,7 @@ import AdminOptionsPage from "../pages/admin/products/options";
 import AdminEditOptionPage from "../pages/admin/products/options/[id]";
 import SolutionsList from "../pages/admin/solutions";
 import SolutionEditor from "../pages/admin/solutions/[id]";
+import ConfiguratorLayout from "../components/layouts/ConfiguratorLayout";
 
 /* =========================
    BUSINESS (SaaS PURO) — 🔒
@@ -137,11 +138,14 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "/user/configurator",element:<UserConfiguratorIndex/>,
+            path: "/user/configurator",
+            element: <ConfiguratorLayout />,
             children: [
+              { index: true, element: <UserConfiguratorIndex /> },
               { path: ":id", element: <UserConfiguratorDetail /> },
             ],
           },
+          
 
           { path: "checkout", element: <CheckoutPage /> },
         ],
