@@ -26,6 +26,7 @@ function Bootstrap() {
 
   return <RouterProvider router={router} />;
 }
+console.log("API_BASE =", import.meta.env.VITE_API_URL);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>
