@@ -15,7 +15,6 @@
 // ============================================================
 
 import { useNavigate } from "react-router-dom";
-import type { AdminSolution } from "../../dto/solution";
 
 type PublicSolutionCard = {
   id: string;

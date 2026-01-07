@@ -20,8 +20,10 @@ import Sidebar from "./Sidebar";
 export default function DashboardLayout() {
   return (
     <div className="dashboard-layout">
-      <Sidebar />
-
+      <Sidebar
+  active="dashboard"
+  onSelect={() => {}}
+/>
       <main className="dashboard-main">
         <Outlet />
       </main>
