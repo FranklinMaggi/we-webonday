@@ -81,6 +81,10 @@ export default function CartSticker() {
   const checkout = async () => {
     // 🔐 auth guard
     if (!user) {
+      localStorage.setItem(
+        "PENDING_CART",
+        JSON.stringify({ items })
+      );
       navigate("/user/login?redirect=/user/configurator");
       return;
     }
