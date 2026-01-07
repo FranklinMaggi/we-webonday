@@ -68,7 +68,7 @@ import { uiBus } from "../../lib/ui/uiBus";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/auth.store";
 import { apiFetch } from "../../lib/api";
-
+import { type ProductOptionDTO } from "../../lib/dto/productDTO";
 // =========================
 // API RESPONSE DTO
 // =========================
@@ -202,14 +202,32 @@ export default function CartSticker() {
         ) : (
           <>
             <ul className="cart-sticker__list">
-              {items.map((item, idx) => (
-                <li key={idx} className="cart-sticker__item">
-                  <strong>{item.title}</strong>
-                  <button onClick={() => removeItem(idx)}>✕</button>
-                </li>
-              ))}
-            </ul>
-                
+  {items.map((item, idx) => (
+    <li key={idx} className="cart-sticker__item">
+      <div className="cart-item__header">
+        <strong>{item.title}</strong>
+        <button onClick={() => removeItem(idx)}>✕</button>
+      </div>
+
+      {/* OPTIONS */}
+      {item.options && item.options.length > 0 && (
+        <ul className="cart-item__options">
+          {item.options.map((opt) => (
+            <li key={opt.id} className="cart-item__option">
+              <span>{opt.label}</span>
+              <span className="cart-item__option-price">
+                {eur.format(opt.price)}
+                {opt.type === "monthly" && " / mese"}
+                {opt.type === "yearly" && " / anno"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </li>
+  ))}
+</ul>
+
             <div className="cart-sticker__footer">
               <div className="cart-sticker__grand">
                 <div>
