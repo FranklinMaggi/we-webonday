@@ -19,10 +19,20 @@
 
 export type UserConfigurationSetupDTO = {
   businessName: string;
+
   sector: string;
+  address :string;
   city: string;
+  state:string; 
+  zip:string; 
+  businessImage?: File|null;   
   email: string;
   phone?: string;
+  privacyAccepted:boolean, 
+  
+  
+
+
 
   primaryColor: string;
   style: "modern" | "elegant" | "minimal" | "bold";
