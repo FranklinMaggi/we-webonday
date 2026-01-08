@@ -28,7 +28,7 @@ import { useEffect, useRef, useState } from "react";
 import { useConfigurationSetupStore } from "./configurationSetup.store";
 import { useAuthStore } from "../../../../store/auth.store";
 import { cartStore } from "../../../../lib/cart/cart.store";
-
+import StepProductIntro from "./steps/StepProductIntro";
 import StepBusinessInfo from "./steps/StepBusinessInfo";
 import StepDesign from "./steps/StepDesign";
 import StepContent from "./steps/StepContent";
@@ -52,7 +52,7 @@ export type ConfigurationSetupPageProps = {
   industries?: string[];
 };
 
-const STEPS = ["business", "design", "content", "extra", "review"] as const;
+const STEPS = ["intro" , "business", "design", "content", "extra", "review"] as const;
 
 export default function ConfigurationSetupPage({
   configuration,
@@ -141,8 +141,11 @@ export default function ConfigurationSetupPage({
      STEP SWITCH
   ========================= */
   switch (STEPS[stepIndex]) {
+    case "intro":
+    return <StepProductIntro onNext={next} />;
+    
     case "business":
-      return <StepBusinessInfo onNext={next} />;
+    return <StepBusinessInfo onNext={next} />;
 
     case "design":
       return <StepDesign onNext={next} onBack={back} />;
