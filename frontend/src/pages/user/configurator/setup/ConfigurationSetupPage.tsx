@@ -6,31 +6,28 @@
 //
 // RUOLO:
 // - Orchestratore UI del wizard di configurazione
-// - Gestisce la navigazione tra gli step
-// - Precompila lo stato FE partendo da una configuration esistente
+// - Punto di aggancio tra:
+//   • carrello (commerciale)
+//   • sessione utente
+//   • configurazione FE
 //
 // SOURCE OF TRUTH:
-// - Stato wizard → Zustand (useConfigurationSetupStore)
-// - Dati iniziali → configuration (backend, post-cart / edit)
+// - cartStore                  → solution / product / options
+// - authStore                  → email utente
+// - configurationSetupStore    → dati configurazione
 //
 // INVARIANTI:
 // - Nessuna fetch
 // - Nessuna persistenza
 // - Nessuna business logic
 //
-// PRINCIPI:
-// - Questo componente NON salva dati
-// - NON valida input
-// - NON decide cosa inviare al backend
-//
-// NOTE ARCHITETTURALI:
-// - Prefill idempotente (una sola volta)
-// - Ogni Step lavora ESCLUSIVAMENTE sullo store
-// - ConfigurationSetupPage coordina, non contiene logica di dominio
 // ======================================================
+
 import { useEffect, useRef, useState } from "react";
+
 import { useConfigurationSetupStore } from "./configurationSetup.store";
 import { useAuthStore } from "../../../../store/auth.store";
+import { cartStore } from "../../../../lib/cart/cart.store";
 
 import StepBusinessInfo from "./steps/StepBusinessInfo";
 import StepDesign from "./steps/StepDesign";
@@ -38,6 +35,9 @@ import StepContent from "./steps/StepContent";
 import StepExtra from "./steps/StepExtra";
 import StepReview from "./steps/StepReview";
 
+/* =========================
+   PROPS
+========================= */
 export type ConfigurationSetupPageProps = {
   configuration?: {
     business?: {
@@ -47,8 +47,6 @@ export type ConfigurationSetupPageProps = {
       email?: string;
       phone?: string;
     };
-    productId?: string;
-    optionIds?: string[];
   };
 
   industries?: string[];
@@ -61,30 +59,50 @@ export default function ConfigurationSetupPage({
   industries = [],
 }: ConfigurationSetupPageProps) {
   /* =========================
-     HOOKS
+     STATO WIZARD
   ========================= */
   const [stepIndex, setStepIndex] = useState(0);
 
   const { data, setField } = useConfigurationSetupStore();
-  const { user } = useAuthStore(); // ✅ CORRETTO: dentro il componente
+  const { user } = useAuthStore();
 
+  /**
+   * Guard per evitare:
+   * - doppio prefill (StrictMode)
+   * - override input utente
+   */
   const prefilledRef = useRef(false);
 
   /* ======================================================
      PREFILL INIZIALE (UNA SOLA VOLTA)
-     COSA FA:
-     1. email → dalla sessione (SEMPRE)
-     2. dati business → SOLO se configuration esiste
+     ORDINE CORRETTO:
+     1. EMAIL → sessione
+     2. SOLUTION / PRODUCT / OPTIONS → carrello
+     3. BUSINESS → configuration esistente (se presente)
   ====================================================== */
   useEffect(() => {
     if (prefilledRef.current) return;
 
-    // ===== EMAIL DA LOGIN =====
+    // ===== 1. EMAIL DA LOGIN =====
     if (user?.email && !data.email) {
       setField("email", user.email);
     }
 
-    // ===== DATI DA CONFIGURATION (solo /[id]) =====
+    // ===== 2. DATI COMMERCIALI DA CARRELLO =====
+    const cart = cartStore.getState();
+
+    if (cart.items[0]) {
+      const item = cart.items[0];
+
+      setField("solutionId", item.solutionId);
+      setField("productId", item.productId);
+      setField(
+        "optionIds",
+        item.options.map((o) => o.id)
+      );
+    }
+
+    // ===== 3. DATI BUSINESS DA CONFIGURATION (/[id]) =====
     if (configuration) {
       if (configuration.business?.name && !data.businessName) {
         setField("businessName", configuration.business.name);
@@ -120,7 +138,7 @@ export default function ConfigurationSetupPage({
     setStepIndex((i) => Math.max(i - 1, 0));
 
   /* =========================
-     RENDER STEP
+     STEP SWITCH
   ========================= */
   switch (STEPS[stepIndex]) {
     case "business":

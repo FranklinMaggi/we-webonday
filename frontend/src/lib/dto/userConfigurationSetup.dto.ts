@@ -16,24 +16,39 @@
  * - NON dipende da React o Zustand
  * ======================================================
  */
-
 export type UserConfigurationSetupDTO = {
+  /* =========================
+     BUSINESS
+  ========================= */
   businessName: string;
-
   sector: string;
-  address :string;
+
+  address: string;
   city: string;
-  state:string; 
-  zip:string; 
-  businessImage?: File|null;   
+  state: string;
+  zip: string;
+
+  businessImage?: File | null;
+  placeId?: string;
+
+  /* =========================
+     CONTACT
+  ========================= */
   email: string;
   phone?: string;
-  privacyAccepted:boolean, 
-  
-  
+  privacyAccepted: boolean;
 
+  /* =========================
+     COMMERCIAL CONTEXT
+     (from cart)
+  ========================= */
+  solutionId: string;
+  productId: string;
+  optionIds: string[];
 
-
+  /* =========================
+     DESIGN / CONTENT
+  ========================= */
   primaryColor: string;
   style: "modern" | "elegant" | "minimal" | "bold";
 
@@ -47,3 +62,4 @@ export type UserConfigurationSetupDTO = {
     newsletter: boolean;
   };
 };
+
