@@ -25,8 +25,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { useConfigurationSetupStore } from "./configurationSetup.store";
-import { useAuthStore } from "../../../../store/auth.store";
+import { useConfigurationSetupStore } from "../../../../lib/store/configurationSetup.store";
+import { useAuthStore } from "../../../../lib/store/auth.store";
 import { cartStore } from "../../../../lib/cart/cart.store";
 import StepProductIntro from "./steps/StepProductIntro";
 import StepBusinessInfo from "./steps/StepBusinessInfo";

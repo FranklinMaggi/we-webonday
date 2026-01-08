@@ -18,7 +18,7 @@
 // - Stateless rispetto all’ordine globale
 // ======================================================
 
-import { useConfigurationSetupStore } from "../configurationSetup.store";
+import { useConfigurationSetupStore } from "../../../../../lib/store/configurationSetup.store";
 export default function StepContent({
   onNext,
   onBack,

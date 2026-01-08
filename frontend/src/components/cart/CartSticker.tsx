@@ -66,7 +66,7 @@ import type { CartItem } from "../../lib/cart/cart.store";
 import { eur } from "../../utils/format";
 import { uiBus } from "../../lib/ui/uiBus";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../store/auth.store";
+import { useAuthStore } from "../../lib/store/auth.store";
 import { apiFetch } from "../../lib/api";
 
 // =========================

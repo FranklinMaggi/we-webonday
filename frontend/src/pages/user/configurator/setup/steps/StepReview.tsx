@@ -12,7 +12,7 @@
 // ======================================================
 
 import { useParams, useNavigate } from "react-router-dom";
-import { useConfigurationSetupStore } from "../configurationSetup.store";
+import { useConfigurationSetupStore } from "../../../../../lib/store/configurationSetup.store";
 import { updateConfiguration } from "../../../../../lib/userApi/configuration.user.api";
 import { useState } from "react";
 

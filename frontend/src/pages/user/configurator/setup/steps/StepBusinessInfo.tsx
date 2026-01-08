@@ -24,7 +24,7 @@
 // - Il prefill è solo UX, non stato persistente
 // ======================================================
 
-import { useConfigurationSetupStore } from "../configurationSetup.store";
+import { useConfigurationSetupStore } from "../../../../../lib/store/configurationSetup.store";
 
 type StepBusinessInfoProps = {
   onNext: () => void;

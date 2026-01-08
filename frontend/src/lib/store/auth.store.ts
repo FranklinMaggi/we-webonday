@@ -8,9 +8,9 @@
 // - La sessione è determinata SOLO dal backend
 // - FE legge, non decide
 // ======================================================
-import { cartStore } from "../lib/cart/cart.store";
+import { cartStore } from "../cart/cart.store";
 import { create } from "zustand";
-import { API_BASE } from "../lib/config";
+import { API_BASE } from "../config";
 
 export interface User {
   id: string;

@@ -14,7 +14,7 @@ import { StrictMode, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import router from "./router/router";
-import { useAuthStore } from "./store/auth.store";
+import { useAuthStore } from "./lib/store/auth.store";
 import "./Style/css/index.css";
 
 function Bootstrap() {

@@ -17,8 +17,8 @@
 // NOTE:
 // - Stateless rispetto all’ordine globale
 // ======================================================
-
-import { useConfigurationSetupStore } from "../configurationSetup.store";
+import COLOR_
+import { useConfigurationSetupStore } from "../../../../../lib/store/configurationSetup.store";
 export default function StepDesign({
   onNext,
   onBack,
@@ -32,11 +32,12 @@ export default function StepDesign({
     <div className="step">
       <h2>Stile e colori</h2>
 
-      <input
-        type="color"
-        value={data.primaryColor ?? "#000000"}
-        onChange={(e) => setField("primaryColor", e.target.value)}
-      />
+      COLOR_PRESETS.map(palette => (
+  <button onClick={() => setField("colorPreset", palette.id)}>
+    {palette.label}
+  </button>
+))
+
 
 <select
         value={data.style ?? "modern"}

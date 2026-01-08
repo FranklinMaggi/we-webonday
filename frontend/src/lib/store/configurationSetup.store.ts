@@ -14,7 +14,7 @@
  */
 
 import { create } from "zustand";
-import type { UserConfigurationSetupDTO } from "../../../../lib/dto/userConfigurationSetup.dto";
+import type { UserConfigurationSetupDTO } from "../dto/userConfigurationSetup.dto";
 
 type ConfigurationSetupState = {
   data: Partial<UserConfigurationSetupDTO>;

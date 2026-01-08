@@ -1,8 +1,8 @@
 // frontend/src/stores/adminSolutions.store.ts
 
 import { create } from "zustand";
-import type { AdminSolution } from "../lib/dto/solution";
-import { fetchAdminSolutions } from "../lib/adminApi/admin.solutions.api";
+import type { AdminSolution } from "../dto/solution";
+import { fetchAdminSolutions } from "../adminApi/admin.solutions.api";
 
 type AdminSolutionsState = {
   solutions: AdminSolution[];

@@ -7,6 +7,7 @@ export interface Env {
     COOKIES_KV: KVNamespace;
     CART_KV: KVNamespace;
     CONFIGURATION_KV:KVNamespace;
+    LAYOUT_KV:KVNamespace; 
     ON_USERS_KV: KVNamespace;
     ON_ACTIVITY_USER_KV: KVNamespace;
     ORDER_KV: KVNamespace;

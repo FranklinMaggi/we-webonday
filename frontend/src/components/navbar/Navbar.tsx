@@ -15,7 +15,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../lib/userApi/auth.user.api";
 import NavCartButton from "./NavCartButton";
-import { useAuthStore } from "../../store/auth.store";
+import { useAuthStore } from "../../lib/store/auth.store";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);

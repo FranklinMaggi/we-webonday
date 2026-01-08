@@ -16,7 +16,7 @@
 // - NON richiede input
 // ======================================================
 
-import { useConfigurationSetupStore } from "../configurationSetup.store";
+import { useConfigurationSetupStore } from "../../../../../lib/store/configurationSetup.store";
 
 type StepProductIntroProps = {
   onNext: () => void;

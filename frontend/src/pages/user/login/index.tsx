@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../../store/auth.store";
+import { useAuthStore } from "../../../lib/store/auth.store";
 import { API_BASE } from "../../../lib/config";
 
 export default function UserLoginPage() {

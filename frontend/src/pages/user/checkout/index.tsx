@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useCheckout } from "./useCheckout";
 import CartReview from "./steps/CartReview";
-import { useAuthStore } from "../../../store/auth.store";
+import { useAuthStore } from "../../../lib/store/auth.store";
 
 export default function CheckoutPage() {
   const { user, ready } = useAuthStore();

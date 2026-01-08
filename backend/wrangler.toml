@@ -79,6 +79,11 @@ id = "61b8542d46fe4c809b3dfe5ebb9d852a"
 binding = "BUSINESS_KV"
 id = "b6d212990044437f9720e048babab427"
 
+# Layout moltiplicatori
+[[kv_namespaces]]
+binding = "LAYOUT_KV"
+id = "6d13e5b639264042a8839202ed4469ca"
+
 # Referral token → businessId
 [[kv_namespaces]]
 binding = "REFERRALS_KV"
