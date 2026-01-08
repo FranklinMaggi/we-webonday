@@ -10,56 +10,61 @@
  * - Zustand store (UI)
  * - userApi (order.setup)
  *
- * NON FA:
- * - NON contiene stato
- * - NON contiene logica
- * - NON dipende da React o Zustand
+ * NOTE ARCHITETTURALI:
+ * - SOLO riferimenti semantici
+ * - Nessun dettaglio di rendering (colori raw, CSS)
  * ======================================================
  */
 export type UserConfigurationSetupDTO = {
-  /* =========================
-     BUSINESS
-  ========================= */
-  businessName: string;
-  sector: string;
-
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
-
-  businessImage?: File | null;
-  placeId?: string;
-
-  /* =========================
-     CONTACT
-  ========================= */
-  email: string;
-  phone?: string;
-  privacyAccepted: boolean;
-
-  /* =========================
-     COMMERCIAL CONTEXT
-     (from cart)
-  ========================= */
-  solutionId: string;
-  productId: string;
-  optionIds: string[];
-
-  /* =========================
-     DESIGN / CONTENT
-  ========================= */
-  primaryColor: string;
-  style: "modern" | "elegant" | "minimal" | "bold";
-
-  description: string;
-  services: string;
-  cta: string;
-
-  extras: {
-    maps: boolean;
-    whatsapp: boolean;
-    newsletter: boolean;
-  };
-};
-
+   /* =========================
+      BUSINESS
+   ========================= */
+   businessName: string;
+   sector: string;
+ 
+   address: string;
+   city: string;
+   state: string;
+   zip: string;
+ 
+   businessImage?: File | null;
+   placeId?: string;
+ 
+   /* =========================
+      CONTACT
+   ========================= */
+   email: string;
+   phone?: string;
+   privacyAccepted: boolean;
+ 
+   /* =========================
+      COMMERCIAL CONTEXT
+      (from cart)
+   ========================= */
+   solutionId: string;
+   productId: string;
+   optionIds: string[];
+ 
+   /* =========================
+      DESIGN (SEMANTICO)
+   ========================= */
+   colorPreset?: string; // es. "modern_blue"
+   style?: "modern" | "elegant" | "minimal" | "bold";
+ 
+   /* =========================
+      CONTENT
+   ========================= */
+   description?: string;
+   services?: string;
+   cta?: string;
+ 
+   /* =========================
+      EXTRAS
+   ========================= */
+   extras?: {
+     maps: boolean;
+     whatsapp: boolean;
+     newsletter: boolean;
+   };
+ };
+ 

@@ -1,47 +1,69 @@
 // ======================================================
-// FE || pages/user/business/setup/steps/<StepName>.tsx
+// FE || pages/user/configurator/setup/steps/StepDesign.tsx
 // ======================================================
-// ORDER SETUP — STEP
+//
+// STEP 2 — DESIGN & STILE
 //
 // RUOLO:
-// - Raccolta dati specifici step
+// - Scelta stile visivo del sito
+// - Selezione palette colori (SEMANTICA)
 //
-// RESPONSABILITÀ:
-// - Input controllati
-// - Scrittura nello store setup
+// INVARIANTI:
+// - Nessuna fetch
+// - Nessuna persistenza backend
+// - Store FE come unica source of truth
 //
-// NON FA:
-// - NON naviga globalmente
-// - NON chiama backend (tranne Review)
-//
-// NOTE:
-// - Stateless rispetto all’ordine globale
 // ======================================================
-import COLOR_
+
 import { useConfigurationSetupStore } from "../../../../../lib/store/configurationSetup.store";
+import { COLOR_PRESETS } from "../../../../../lib/configurationLayout/palette.dto";
+
+type StepDesignProps = {
+  onNext: () => void;
+  onBack: () => void;
+};
+
 export default function StepDesign({
   onNext,
   onBack,
-}: {
-  onNext: () => void;
-  onBack: () => void;
-}) {
+}: StepDesignProps) {
   const { data, setField } = useConfigurationSetupStore();
 
   return (
     <div className="step">
       <h2>Stile e colori</h2>
 
-      COLOR_PRESETS.map(palette => (
-  <button onClick={() => setField("colorPreset", palette.id)}>
-    {palette.label}
-  </button>
-))
+      {/* ======================================================
+         PALETTE COLORI (SEMANTICA)
+         - Salviamo SOLO colorPreset (id)
+         - Nessun colore raw nello store
+      ====================================================== */}
+      <div className="palette-grid">
+        {COLOR_PRESETS.map((palette) => (
+          <button
+            key={palette.id}
+            type="button"
+            className={
+              data.colorPreset === palette.id
+                ? "palette active"
+                : "palette"
+            }
+            onClick={() =>
+              setField("colorPreset", palette.id)
+            }
+          >
+            {palette.label}
+          </button>
+        ))}
+      </div>
 
-
-<select
+      {/* ======================================================
+         STILE LAYOUT
+         - Riferimento semantico
+      ====================================================== */}
+      <select
         value={data.style ?? "modern"}
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+        onChange={(e) =>
           setField("style", e.target.value as any)
         }
       >
@@ -51,9 +73,16 @@ export default function StepDesign({
         <option value="bold">Bold</option>
       </select>
 
+      {/* ======================================================
+         AZIONI
+      ====================================================== */}
       <div className="actions">
-        <button onClick={onBack}>Indietro</button>
-        <button onClick={onNext}>Continua</button>
+        <button type="button" onClick={onBack}>
+          Indietro
+        </button>
+        <button type="button" onClick={onNext}>
+          Continua
+        </button>
       </div>
     </div>
   );
