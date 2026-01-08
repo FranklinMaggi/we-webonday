@@ -28,9 +28,9 @@
 // - Ogni Step lavora ESCLUSIVAMENTE sullo store
 // - ConfigurationSetupPage coordina, non contiene logica di dominio
 // ======================================================
-
 import { useEffect, useRef, useState } from "react";
 import { useConfigurationSetupStore } from "./configurationSetup.store";
+import { useAuthStore } from "../../../../store/auth.store";
 
 import StepBusinessInfo from "./steps/StepBusinessInfo";
 import StepDesign from "./steps/StepDesign";
@@ -38,14 +38,7 @@ import StepContent from "./steps/StepContent";
 import StepExtra from "./steps/StepExtra";
 import StepReview from "./steps/StepReview";
 
-/* ======================================================
-   PROPS
-====================================================== */
 export type ConfigurationSetupPageProps = {
-  /**
-   * Snapshot opzionale della configuration
-   * (derivata da carrello o configurazione esistente)
-   */
   configuration?: {
     business?: {
       name?: string;
@@ -58,111 +51,80 @@ export type ConfigurationSetupPageProps = {
     optionIds?: string[];
   };
 
-  /**
-   * Settori consentiti per la solution selezionata
-   * (source of truth: backend)
-   */
   industries?: string[];
 };
 
-/* ======================================================
-   COSTANTI
-====================================================== */
 const STEPS = ["business", "design", "content", "extra", "review"] as const;
 
 export default function ConfigurationSetupPage({
   configuration,
   industries = [],
 }: ConfigurationSetupPageProps) {
-  /* ======================================================
-     STATO NAVIGAZIONE WIZARD
-  ====================================================== */
+  /* =========================
+     HOOKS
+  ========================= */
   const [stepIndex, setStepIndex] = useState(0);
 
-  /* ======================================================
-     ACCESSO ALLO STORE
-     - data: stato attuale wizard
-     - setField: mutazione atomica (campo singolo)
-  ====================================================== */
   const { data, setField } = useConfigurationSetupStore();
+  const { user } = useAuthStore(); // ✅ CORRETTO: dentro il componente
 
-  /* ======================================================
-     PREFILL GUARD
-     PERCHE:
-     - React StrictMode monta due volte
-     - Evitiamo override dell’input utente
-  ====================================================== */
   const prefilledRef = useRef(false);
 
   /* ======================================================
-     PREFILL DA CONFIGURATION (POST-CART / EDIT)
-     VERBO: "prefill"
-     SIGNIFICATO:
-     - Inizializza lo stato FE
-     - NON sovrascrive campi già compilati
-     - Avviene UNA SOLA VOLTA
+     PREFILL INIZIALE (UNA SOLA VOLTA)
+     COSA FA:
+     1. email → dalla sessione (SEMPRE)
+     2. dati business → SOLO se configuration esiste
   ====================================================== */
   useEffect(() => {
-    if (!configuration) return;
     if (prefilledRef.current) return;
 
-    // ================= NOME ATTIVITÀ =================
-    if (configuration.business?.name && !data.businessName) {
-      setField("businessName", configuration.business.name);
+    // ===== EMAIL DA LOGIN =====
+    if (user?.email && !data.email) {
+      setField("email", user.email);
     }
 
-    // ================= SETTORE =================
-    if (
-      configuration.business?.type &&
-      !data.sector &&
-      industries.includes(configuration.business.type)
-    ) {
-      setField("sector", configuration.business.type);
-    }
+    // ===== DATI DA CONFIGURATION (solo /[id]) =====
+    if (configuration) {
+      if (configuration.business?.name && !data.businessName) {
+        setField("businessName", configuration.business.name);
+      }
 
-    // ================= CITTÀ =================
-    if (configuration.business?.city && !data.city) {
-      setField("city", configuration.business.city);
-    }
+      if (
+        configuration.business?.type &&
+        !data.sector &&
+        industries.includes(configuration.business.type)
+      ) {
+        setField("sector", configuration.business.type);
+      }
 
-    // ================= EMAIL =================
-    if (configuration.business?.email && !data.email) {
-      setField("email", configuration.business.email);
-    }
+      if (configuration.business?.city && !data.city) {
+        setField("city", configuration.business.city);
+      }
 
-    // ================= TELEFONO =================
-    if (configuration.business?.phone && !data.phone) {
-      setField("phone", configuration.business.phone);
+      if (configuration.business?.phone && !data.phone) {
+        setField("phone", configuration.business.phone);
+      }
     }
 
     prefilledRef.current = true;
-  }, [configuration, industries, data, setField]);
+  }, [user, configuration, industries, data, setField]);
 
-  /* ======================================================
-     NAVIGATION VERBS
-     - next  → avanza step
-     - back  → torna allo step precedente
-  ====================================================== */
+  /* =========================
+     NAVIGAZIONE
+  ========================= */
   const next = () =>
     setStepIndex((i) => Math.min(i + 1, STEPS.length - 1));
 
   const back = () =>
     setStepIndex((i) => Math.max(i - 1, 0));
 
-  /* ======================================================
-     STEP SWITCH
-     RUOLO:
-     - Decide quale STEP montare
-     - Passa SOLO le props necessarie
-  ====================================================== */
+  /* =========================
+     RENDER STEP
+  ========================= */
   switch (STEPS[stepIndex]) {
     case "business":
-      return (
-        <StepBusinessInfo
-          onNext={next}
-          
-        />
-      );
+      return <StepBusinessInfo onNext={next} />;
 
     case "design":
       return <StepDesign onNext={next} onBack={back} />;
