@@ -110,63 +110,89 @@ export default function StepBusinessInfo({ onNext }: StepBusinessInfoProps) {
         Accetto il trattamento dei dati personali
       </label>
 
-      {/* ======================================================
-         INDIRIZZO ATTIVITÀ
-         PREFILL:
-         - NO automatico
-         - POSSIBILE autocomplete (Google Places)
-         NOTE:
-         - input libero per ora
-      ====================================================== */}
-      <input
-        placeholder="Indirizzo attività"
-        value={data.address ?? ""}
-        onChange={(e) =>
-          setField("address", e.target.value)
-        }
-      />
+      /* ======================================================
+   INDIRIZZO ATTIVITÀ — ADDRESS ASSISTANT (FE-ONLY)
+   
+   AI-SUPERCOMMENT — ADDRESS INPUT BLOCK
 
-      {/* ======================================================
-         CITTÀ
-         PREFILL:
-         - NO
-         - può derivare da autocomplete indirizzo
-      ====================================================== */}
-      <input
-        placeholder="Città"
-        value={data.city ?? ""}
-        onChange={(e) =>
-          setField("city", e.target.value)
-        }
-      />
+   RUOLO:
+   - Raccolta indirizzo fisico del business
+   - Supporto UX alla corretta localizzazione
+   - Base per SEO locale, mappe e contatti
 
-      {/* ======================================================
-         STATO / PROVINCIA
-         PREFILL:
-         - NO
-         - campo informativo
-      ====================================================== */}
-      <input
-        placeholder="Stato / Provincia"
-        value={data.state ?? ""}
-        onChange={(e) =>
-          setField("state", e.target.value)
-        }
-      />
+   SOURCE OF TRUTH:
+   - Stato FE → configurationSetup.store (Zustand)
 
-      {/* ======================================================
-         CAP
-         PREFILL:
-         - NO
-         - spesso derivabile da autocomplete
-      ====================================================== */}
-      <input
-        placeholder="CAP"
-        value={data.zip ?? ""}
-        onChange={(e) =>
-          setField("zip", e.target.value)
-        }
-      />
+   PREFILL:
+   - ❌ Nessun prefill automatico lato indirizzo
+   - ✅ Compilazione manuale sempre consentita
+   - 🔮 Autocomplete futuro (Google Places)
+
+   NOTE ARCHITETTURALI:
+   - Questo blocco NON valida l’indirizzo
+   - NON fa fetch
+   - NON salva su backend
+   - Tutti i campi restano SEMPRE editabili
+   - placeId verrà valorizzato solo se autocomplete attivo
+
+   FUTURO:
+   - useAddressAssistant.search(query)
+   - dropdown suggerimenti
+   - setField multiplo (address, city, state, zip, placeId)
+====================================================== */
+
+/* Hook FE — attualmente noop, pronto per Google Places 
+{/* const { search } = useAddressAssistant();*/}
+
+/* =========================
+   INDIRIZZO (CAMPO PRINCIPALE)
+   SIGNIFICATO:
+   - Via + numero civico
+   - Punto di partenza per eventuale autocomplete
+========================= */
+<input
+  placeholder="Indirizzo attività (es. Via Roma 10)"
+  value={data.address ?? ""}
+  onChange={(e) =>
+    setField("address", e.target.value)
+  }
+/>
+
+/* =========================
+   METADATI INDIRIZZO
+   NOTE:
+   - Possono essere compilati a mano
+   - In futuro derivabili da autocomplete
+========================= */
+<div className="address-grid">
+  {/* CITTÀ */}
+  <input
+    placeholder="Città"
+    value={data.city ?? ""}
+    onChange={(e) =>
+      setField("city", e.target.value)
+    }
+  />
+
+  {/* STATO / PROVINCIA */}
+  <input
+    placeholder="Provincia / Stato"
+    value={data.state ?? ""}
+    onChange={(e) =>
+      setField("state", e.target.value)
+    }
+  />
+
+  {/* CAP */}
+  <input
+    placeholder="CAP"
+    value={data.zip ?? ""}
+    onChange={(e) =>
+      setField("zip", e.target.value)
+    }
+  />
+</div>
+
 
       {/* ======================================================
          IMMAGINE ATTIVITÀ (OPZIONALE)
