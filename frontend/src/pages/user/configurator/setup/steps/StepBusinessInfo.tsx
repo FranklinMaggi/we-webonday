@@ -2,95 +2,121 @@
 // FE || pages/user/configurator/setup/steps/StepBusinessInfo.tsx
 // ======================================================
 //
-// STEP 1 — BUSINESS INFO (FORM GREZZO)
+// STEP 1 — BUSINESS CHECKOUT
+//
+// RUOLO:
+// - Raccolta dati minimi dell’attività
+// - Primo onboarding dopo carrello/login
 //
 // NOTE:
-// - SOLO UI
-// - Nessuna logica
-// - Nessuna persistenza
-// - Nessun prefill
-// - Serve SOLO a definire struttura e UX
+// - Form volutamente semplice
+// - Nessuna validazione
+// - Nessuna persistenza backend
+// - Solo Zustand store
 // ======================================================
+
+import { useConfigurationSetupStore } from "../configurationSetup.store";
 
 type StepBusinessInfoProps = {
   onNext: () => void;
 };
 
 export default function StepBusinessInfo({ onNext }: StepBusinessInfoProps) {
+  const { data, setField } = useConfigurationSetupStore();
+
   return (
     <div className="step">
-      <h2>Dati dell’attività</h2>
+      <h2>
+        Iniziamo la configurazione per il tuo business
+      </h2>
 
-      {/* INTRO TESTUALE */}
-      <p style={{ opacity: 0.75, fontSize: "0.95rem" }}>
-        Queste informazioni ci servono per avviare la configurazione del tuo sito.
-        Potrai modificarle in seguito.
-      </p>
-
-      {/* =========================
-          CONTATTI
-      ========================= */}
-
+      {/* ================= NOME ATTIVITÀ ================= */}
       <input
-        type="email"
-        placeholder="Email di riferimento"
+        placeholder="Nome attività"
+        value={data.businessName ?? ""}
+        onChange={(e) =>
+          setField("businessName", e.target.value)
+        }
       />
 
+      {/* ================= EMAIL (PRECOMPILATA) ================= */}
       <input
-        type="tel"
-        placeholder="Numero di telefono (opzionale)"
+        placeholder="Email"
+        value={data.email ?? ""}
+        disabled
       />
 
+      {/* ================= TELEFONO ================= */}
+      <input
+        placeholder="Numero di telefono"
+        value={data.phone ?? ""}
+        onChange={(e) =>
+          setField("phone", e.target.value)
+        }
+      />
+
+      {/* ================= CONSENSO PRIVACY ================= */}
       <label>
-        <input type="checkbox" />
-        Desidero essere contattato da un consulente WebOnDay per una guida dedicata
+        <input
+          type="checkbox"
+          checked={data.privacyAccepted ?? false}
+          onChange={(e) =>
+            setField("privacyAccepted", e.target.checked)
+          }
+        />
+        Accetto il trattamento dei dati personali
       </label>
 
-      <label>
-        <input type="checkbox" />
-        Autorizzo l’utilizzo del numero solo per comunicazioni legate al progetto
-      </label>
-
-      {/* =========================
-          DATI ATTIVITÀ
-      ========================= */}
-
+      {/* ================= INDIRIZZO ================= */}
       <input
-        type="text"
-        placeholder="Nome dell’attività"
+        placeholder="Indirizzo attività"
+        value={data.address ?? ""}
+        onChange={(e) =>
+          setField("address", e.target.value)
+        }
       />
 
+      {/* ================= CITTÀ ================= */}
       <input
-        type="text"
-        placeholder="Indirizzo (via, città)"
+        placeholder="Città"
+        value={data.city ?? ""}
+        onChange={(e) =>
+          setField("city", e.target.value)
+        }
       />
 
-      <textarea
-        placeholder="Orari di apertura (opzionale)"
-      />
-
-      {/* =========================
-          UPLOAD
-      ========================= */}
-
-      <label>
-        Hai un logo o un documento per confermare l’attività?
-      </label>
-
+      {/* ================= STATO / PROVINCIA ================= */}
       <input
-        type="file"
-        accept="image/*,.pdf"
+        placeholder="Stato / Provincia"
+        value={data.state ?? ""}
+        onChange={(e) =>
+          setField("state", e.target.value)
+        }
       />
 
-      <p style={{ fontSize: "0.85rem", opacity: 0.65 }}>
-        Puoi caricare un logo, una foto dell’attività o un documento.
-        Serve solo a velocizzare la verifica.
-      </p>
-
-      {/* =========================
-          AZIONI
-      ========================= */}
-
+      {/* ================= CAP ================= */}
+      <input
+        placeholder="CAP"
+        value={data.zip ?? ""}
+        onChange={(e) =>
+          setField("zip", e.target.value)
+        }
+      />
+    {/* ================= IMMAGINE ATTIVITÀ (OPZIONALE) ================= */}
+<label>
+  Immagine dell’attività (opzionale)
+  <input
+    type="file"
+    accept="image/*"
+    onChange={(e) =>
+      setField(
+        "businessImage",
+        e.target.files?.[0] ?? null
+      )
+    }
+  />
+</label>
+      {/* ================= AZIONI ================= */}
       <div className="actions">
         <button onClick={onNext}>
           Continua
