@@ -1,55 +1,110 @@
 // ======================================================
-// FE || pages/user/business/setup/steps/<StepName>.tsx
+// FE || pages/user/configurator/setup/steps/StepContent.tsx
 // ======================================================
-// ORDER SETUP — STEP
+//
+// STEP 3 — CONTENUTI & VISIBILITÀ
 //
 // RUOLO:
-// - Raccolta dati specifici step
+// - Raccolta contenuti testuali principali
+// - Definizione di COSA mostrare nel sito
 //
-// RESPONSABILITÀ:
-// - Input controllati
-// - Scrittura nello store setup
-//
-// NON FA:
-// - NON naviga globalmente
-// - NON chiama backend (tranne Review)
-//
-// NOTE:
-// - Stateless rispetto all’ordine globale
+// CONCETTO:
+// - Questo step prepara la PREVIEW
+// - Nessun layout reale
+// - Nessuna logica AI
 // ======================================================
 
 import { useConfigurationSetupStore } from "../../../../../lib/store/configurationSetup.store";
+import { OpeningHoursDay } from "../../../../../components/openingHours/OpeningHoursDay";
+  
+const DAYS = [
+    ["monday", "Lunedì"],
+    ["tuesday", "Martedì"],
+    ["wednesday", "Mercoledì"],
+    ["thursday", "Giovedì"],
+    ["friday", "Venerdì"],
+    ["saturday", "Sabato"],
+    ["sunday", "Domenica"],
+  ] as const;
+
+type StepContentProps = {
+  onNext: () => void;
+  onBack: () => void;
+};
+
 export default function StepContent({
   onNext,
   onBack,
-}: {
-  onNext: () => void;
-  onBack: () => void;
-}) {
+}: StepContentProps) {
   const { data, setField } = useConfigurationSetupStore();
 
   return (
     <div className="step">
-      <h2>Contenuti</h2>
+      <h2>Contenuti del sito</h2>
 
+      {/* =========================
+         DESCRIZIONE ATTIVITÀ
+         → usata in HERO / ABOUT
+      ========================= */}
       <textarea
-        placeholder="Descrizione attività"
+        placeholder="Descrivi brevemente la tua attività"
         value={data.description ?? ""}
-        onChange={(e) => setField("description", e.target.value)}
+        onChange={(e) =>
+          setField("description", e.target.value)
+        }
       />
 
+      {/* =========================
+         SERVIZI / PRODOTTI
+         → usato nella sezione servizi
+      ========================= */}
       <textarea
-        placeholder="Servizi / prodotti"
+        placeholder="Elenca i servizi o prodotti principali"
         value={data.services ?? ""}
-        onChange={(e) => setField("services", e.target.value)}
+        onChange={(e) =>
+          setField("services", e.target.value)
+        }
       />
 
+      {/* =========================
+         CALL TO ACTION
+         → bottone principale
+      ========================= */}
       <input
         placeholder="Call to action (es. Contattaci ora)"
         value={data.cta ?? ""}
-        onChange={(e) => setField("cta", e.target.value)}
+        onChange={(e) =>
+          setField("cta", e.target.value)
+        }
       />
 
+     
+{/* =========================
+    ORARI DI LAVORO
+    → struttura FE-only, AI-friendly
+========================= */}
+
+              <h3>Orari di apertura</h3>
+
+              {DAYS.map(([dayKey, dayLabel]) => (
+        <OpeningHoursDay
+          key={dayKey}
+          dayKey={dayKey}
+          dayLabel={dayLabel}
+          value={data.openingHours?.[dayKey] ?? ""}
+          onChange={(value) =>
+            setField("openingHours", {
+              ...data.openingHours,
+              [dayKey]: value,
+            })
+          }
+        />
+      ))}
+
+
+      {/* =========================
+         AZIONI
+      ========================= */}
       <div className="actions">
         <button onClick={onBack}>Indietro</button>
         <button onClick={onNext}>Continua</button>

@@ -44,7 +44,22 @@ export type UserConfigurationSetupDTO = {
    solutionId: string;
    productId: string;
    optionIds: string[];
- 
+   openingHours?: {
+      monday?: string;
+      tuesday?: string;
+      wednesday?: string;
+      thursday?: string;
+      friday?: string;
+      saturday?: string;
+      sunday?: string;
+    };
+    
+    visibility: {
+      contactForm: boolean;
+      address: boolean;
+      gallery: boolean;
+      openingHours: boolean;
+    };
    /* =========================
       DESIGN (SEMANTICO)
    ========================= */
