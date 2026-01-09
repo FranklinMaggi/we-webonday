@@ -2,36 +2,62 @@
 // FE || StepReview.tsx
 // ======================================================
 //
+// STEP 4 — PREVIEW & CONFERMA
+//
 // RUOLO:
-// - Conferma configurazione
-// - Salvataggio DRAFT su backend
+// - Mostra preview layout disponibili
+// - Permette selezione layout
+// - Salva configurazione DRAFT
 //
 // INVARIANTI:
-// - configurationId da route
-// - Backend = source of truth
+// - Layout = backend (KV)
+// - Preview = FE render JSON
+// - NO AI
 // ======================================================
 
 import { useParams, useNavigate } from "react-router-dom";
 import { useConfigurationSetupStore } from "../../../../../lib/store/configurationSetup.store";
 import { updateConfiguration } from "../../../../../lib/userApi/configuration.user.api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { LayoutKVDTO } from "../../../../../lib/configurationLayout/layout.dto";
+import { LayoutPreview } from "../../../../../components/preview/LayoutPreview";
+import { fetchAvailableLayouts } from "../../../../../lib/userApi/layout.user.api";
 
-export default function StepReview({
-  onBack,
-}: {
-  onBack: () => void;
-}) {
+
+export default function StepReview({ onBack }: { onBack: () => void }) {
   const { id: configurationId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
   const { data } = useConfigurationSetupStore();
 
+  const [layouts, setLayouts] = useState<LayoutKVDTO[]>([]);
+  const [selectedLayoutId, setSelectedLayoutId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // =========================
+  // LOAD LAYOUTS FROM BE
+  // =========================
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetchAvailableLayouts({
+          solutionId: data.solutionId!,
+          productId: data.productId!,
+        });
+        setLayouts(res.layouts);
+      } catch (e: any) {
+        setError("Errore caricamento layout");
+      }
+    }
+    load();
+  }, []);
+
+  // =========================
+  // SAVE DRAFT
+  // =========================
   async function saveDraft() {
-    if (!configurationId) {
-      setError("Configuration ID mancante");
+    if (!configurationId || !selectedLayoutId) {
+      setError("Configurazione incompleta");
       return;
     }
 
@@ -41,14 +67,13 @@ export default function StepReview({
     try {
       await updateConfiguration(configurationId, {
         ...data,
+        layoutId: selectedLayoutId,
         status: "draft",
       });
 
-      // ✅ USCITA CANONICA DAL WIZARD
-      navigate(
-        `/user/dashboard/configuration/${configurationId}`,
-        { replace: true }
-      );
+      navigate(`/user/dashboard/configuration/${configurationId}`, {
+        replace: true,
+      });
     } catch (e: any) {
       setError(e.message ?? "Errore salvataggio");
     } finally {
@@ -58,17 +83,39 @@ export default function StepReview({
 
   return (
     <div className="step">
-      <h2>Riepilogo configurazione</h2>
+      <h2>Scegli il layout del tuo sito</h2>
 
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      {error && <p className="error">{error}</p>}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <div className="layout-grid">
+        {layouts.map((layout) => (
+          <div
+            key={layout.id}
+            className={
+              selectedLayoutId === layout.id
+                ? "layout-card selected"
+                : "layout-card"
+            }
+            onClick={() => setSelectedLayoutId(layout.id)}
+          >
+
+            {/* QUI VA IL RENDERER */}
+            {/* <LayoutPreview layout={layout} data={data} /> */}
+            <LayoutPreview layout={layout} data={data} />
+       
+            <h4>{layout.name}</h4>
+            <p>{layout.description}</p>
+          </div>
+        ))}
+      </div>
 
       <div className="actions">
         <button onClick={onBack}>Indietro</button>
-
-        <button onClick={saveDraft} disabled={loading}>
-          {loading ? "Salvataggio…" : "Salva bozza"}
+        <button
+          disabled={!selectedLayoutId || loading}
+          onClick={saveDraft}
+        >
+          {loading ? "Salvataggio…" : "Conferma e salva"}
         </button>
       </div>
     </div>
