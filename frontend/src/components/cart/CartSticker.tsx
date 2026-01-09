@@ -176,7 +176,7 @@ export default function CartSticker() {
       cartStore.getState().clear();
 
       // 🚀 redirect configurator
-      navigate(`/user/configurator/`);
+      navigate(`/user/configurator`);
     } catch (err) {
       console.error("CONFIGURATION CREATE FAILED", err);
     }
