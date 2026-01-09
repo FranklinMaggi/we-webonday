@@ -69,6 +69,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../lib/store/auth.store";
 import { apiFetch } from "../../lib/api";
 
+
+
 // =========================
 // API RESPONSE DTO
 // =========================
@@ -174,7 +176,7 @@ export default function CartSticker() {
       cartStore.getState().clear();
 
       // 🚀 redirect configurator
-      navigate(`/user/configurator/${result.configurationId}`);
+      navigate(`/user/configurator/`);
     } catch (err) {
       console.error("CONFIGURATION CREATE FAILED", err);
     }
