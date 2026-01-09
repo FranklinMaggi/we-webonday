@@ -140,7 +140,7 @@ export default function CartSticker() {
   // =========================
   const checkout = async () => {
     // 🔐 auth guard
-    if (!user) {
+    if (!user ) {
       localStorage.setItem(
         "PENDING_CART",
         JSON.stringify({ items })
@@ -172,11 +172,9 @@ export default function CartSticker() {
         return;
       }
 
-      // 🧠 clear cart
-      cartStore.getState().clear();
-
+     
       // 🚀 redirect configurator
-      navigate(`/user/configurator`);
+     navigate(`/user/configurator`);
     } catch (err) {
       console.error("CONFIGURATION CREATE FAILED", err);
     }
