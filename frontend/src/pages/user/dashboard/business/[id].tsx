@@ -31,8 +31,7 @@ export default function UserBusinessDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [business, setBusiness] = useState<BusinessDetail | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [business, setBusiness] = useState<BusinessDetail | null>(null);const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;

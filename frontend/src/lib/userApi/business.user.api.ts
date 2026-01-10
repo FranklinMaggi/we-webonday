@@ -137,7 +137,7 @@ export async function uploadBusinessMenu(
 export async function getBusiness(
   businessId: string
 ): Promise<{
-  ok: true;
+  ok: boolean;
   business: {
     id: string;
     name: string;
@@ -147,7 +147,7 @@ export async function getBusiness(
   };
 }> {
   const res = await apiFetch<{
-    ok: true;
+    ok: boolean;
     business: {
       id: string;
       name: string;
@@ -155,9 +155,7 @@ export async function getBusiness(
       address: string;
       phone: string;
     };
-  }>(`/api/business/${businessId}`, {
-    method: "GET",
-  });
+  }>(`/api/business/${businessId}`);
 
   if (!res) {
     throw new Error("Invalid response from GET /api/business/:id");
