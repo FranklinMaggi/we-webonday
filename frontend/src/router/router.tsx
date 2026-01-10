@@ -12,7 +12,7 @@
 // - MainLayout condiviso tra public, user e business
 // ======================================================
 
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 import { MainLayout } from "../components/layouts/MainLayout";
 
 /* =========================
@@ -134,6 +134,7 @@ const router = createBrowserRouter([
             // 👇 BUSINESS
             {
               path: "business",
+              element:<Outlet/>,
               children: [
                 { index: true, element: <UserBusinessDashboard /> },
                 { path: ":id", element: <UserBusinessDetail /> },
@@ -141,7 +142,7 @@ const router = createBrowserRouter([
             },
         
             // 👇 ALTRE ENTITÀ (future)
-            { path: ":id", element: <UserDashboardDetail /> },
+            { path: ":detail/:id", element: <UserDashboardDetail /> },
         
             {
               path: "configuration/:id",
