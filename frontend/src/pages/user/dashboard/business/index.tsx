@@ -78,7 +78,7 @@ export default function UserBusinessDashboard() {
             {/* === VISTA PASSIVA DASHBOARD === */}
             <button
               onClick={() =>
-                navigate(`/user/dashboard/${b.businessId}`)
+                navigate(`/user/dashboard/business/${b.businessId}`)
               }
             >
               👁 Visualizza

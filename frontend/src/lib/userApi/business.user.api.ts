@@ -125,3 +125,44 @@ export async function uploadBusinessMenu(
     status: "pending";
   };
 }
+/* ======================================================
+   GET BUSINESS (DETAIL — USER)
+   GET /api/business/:id
+====================================================== */
+
+/* ======================================================
+   GET BUSINESS (DETAIL — USER)
+   GET /api/business/:id
+====================================================== */
+export async function getBusiness(
+  businessId: string
+): Promise<{
+  ok: true;
+  business: {
+    id: string;
+    name: string;
+    status: string;
+    address: string;
+    phone: string;
+  };
+}> {
+  const res = await apiFetch<{
+    ok: true;
+    business: {
+      id: string;
+      name: string;
+      status: string;
+      address: string;
+      phone: string;
+    };
+  }>(`/api/business/${businessId}`, {
+    method: "GET",
+  });
+
+  if (!res) {
+    throw new Error("Invalid response from GET /api/business/:id");
+  }
+
+  return res;
+}
+

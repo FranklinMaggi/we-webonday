@@ -70,7 +70,15 @@ const activeBusinessId = localStorage.getItem("active_business_id");
 
       {/* RIGHT AREA */}
       <div className={`nav-right ${open ? "open" : ""}`}>
-        
+     
+      {ready && user && (
+  <Link
+    to="/user/dashboard"
+    className="wd-navbar-link"
+  >
+    Dashboard
+  </Link>
+)}
        
       
         <Link to="/solution" className="wd-navbar-link">

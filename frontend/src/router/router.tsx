@@ -53,6 +53,7 @@ import CheckoutPage from "../pages/user/checkout";
 import UserConfiguratorDetail from "../pages/user/configurator/[id]";
 import UserConfiguratorIndex from "../pages/user/configurator/index";
 import UserBusinessDashboard from "../pages/user/dashboard/business";
+import UserBusinessDetail from "../pages/user/dashboard/business/[id]";
 /* =========================
 
 
@@ -123,16 +124,25 @@ const router = createBrowserRouter([
         { index: true, element: <Navigate to="dashboard" replace /> },
 
         /* ================= DASHBOARD ================= */
+       
         {
           path: "dashboard",
           element: <DashboardLayout />,
           children: [
             { index: true, element: <UserDashboardHome /> },
         
-            // ✅ AGGIUNGI QUESTA
-            { path: "business", element: <UserBusinessDashboard /> },
+            // 👇 BUSINESS
+            {
+              path: "business",
+              children: [
+                { index: true, element: <UserBusinessDashboard /> },
+                { path: ":id", element: <UserBusinessDetail /> },
+              ],
+            },
         
+            // 👇 ALTRE ENTITÀ (future)
             { path: ":id", element: <UserDashboardDetail /> },
+        
             {
               path: "configuration/:id",
               element: <UserConfigurationWorkspace />,
@@ -140,7 +150,6 @@ const router = createBrowserRouter([
           ],
         },
         
-
         /* ================= CONFIGURATOR ================= */
         {
           path: "configurator",
