@@ -1,30 +1,33 @@
 // ======================================================
-// BE || routes/configuration/configuration.core.ts
+// BE || domains/configuration/configuration.schema.ts
 // ======================================================
 //
-// CONFIGURATION — CORE DOMAIN
+// CONFIGURATION — CORE DOMAIN (PRE-ORDER WORKSPACE)
 //
 // RUOLO:
-// - Single Source of Truth Configuration
-// - Definisce:
-//   - schema
-//   - stati
-//   - chiavi KV
+// - Single Source of Truth della Configuration
+// - È un workspace mutabile pre-ordine
 //
 // INVARIANTI:
 // - Configuration ≠ Order
-// - Nessuna policy richiesta
-// - User derivato da sessione
+// - user derivato da sessione
+// - KV keys deterministiche
+//
+// NOTE:
+// - Manteniamo compatibilità con flussi esistenti:
+//   • createConfigurationFromCart (che oggi non setta sempre id/userId)
+//   • createConfiguration (che aggiunge createdAt/updatedAt manualmente)
 // ======================================================
 
 import { z } from "zod";
 import type { Env } from "../../types/env";
 
 /* =========================
-   STATUS
+   STATUS (compat + step)
 ========================= */
 export const CONFIGURATION_STATUS = [
   "draft",
+  "BUSINESS_READY", // stepbusiness commit
   "preview",
   "accepted",
   "ordered",
@@ -37,17 +40,33 @@ export type ConfigurationStatus =
    SCHEMA
 ========================= */
 export const ConfigurationSchema = z.object({
-  solutionId: z.string().min(1),
+  /* ---------- Identity (BE) ---------- */
+  id: z.string().optional(),       // spesso deterministico (buildConfigurationId)
+  userId: z.string().optional(),   // derivato da sessione
+  businessId: z.string().optional(), // utile ma non sempre presente nei draft iniziali
 
+  /* ---------- Commercial origin ---------- */
+  solutionId: z.string().min(1),
   productId: z.string().optional(),
   projectId: z.string().optional(),
 
+  /* ---------- Options ---------- */
   options: z.array(z.string()).default([]),
 
-  data: z.any(), // AI + business + design (FE schema)
+  /* ---------- Workspace FE ---------- */
+  data: z.any(),
 
+  /* ---------- Status ---------- */
   status: z.enum(CONFIGURATION_STATUS).default("draft"),
+
+  /* ---------- Timestamps ---------- */
+  // NB: per compatibilità con flow legacy, restano OPTIONAL.
+  // Quando chiudiamo il refactor, li rendiamo required (datetime()).
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
 });
+
+export type ConfigurationDTO = z.infer<typeof ConfigurationSchema>;
 
 /* =========================
    KV KEYS
@@ -63,40 +82,28 @@ export function userConfigurationsKey(userId: string) {
 /* =========================
    HELPERS
 ========================= */
-export async function getConfiguration(
-  env: Env,
-  id: string
-) {
-  const raw = await env.CONFIGURATION_KV.get(
-    configurationKey(id)
-  );
-  return raw ? JSON.parse(raw) : null;
+export async function getConfiguration(env: Env, id: string) {
+  const raw = await env.CONFIGURATION_KV.get(configurationKey(id));
+  return raw ? (JSON.parse(raw) as ConfigurationDTO) : null;
 }
-// ======================================================
-// CONFIGURATION ID HELPERS
-// ======================================================
 
+/* =========================
+   ID HELPERS (DETERMINISTICO)
+========================= */
 export function slugify(input: string): string {
-    return input
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-  }
-  
-  /**
-   * ConfigurationId deterministico
-   * pattern:
-   * {businessSlug}:{solutionId}
-   *
-   * Esempio:
-   * pizzeria-da-mario:website-basic
-   */
-  export function buildConfigurationId(
-    businessName: string,
-    solutionId: string
-  ) {
-    return `${slugify(businessName)}:${slugify(solutionId)}`;
-  }
-  
+  return input
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/**
+ * ConfigurationId deterministico
+ * pattern: {businessSlug}:{solutionId}
+ * es: pizzeria-da-mario:website-basic
+ */
+export function buildConfigurationId(businessName: string, solutionId: string) {
+  return `${slugify(businessName)}:${slugify(solutionId)}`;
+}

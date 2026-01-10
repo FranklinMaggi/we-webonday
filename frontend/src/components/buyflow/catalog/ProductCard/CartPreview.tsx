@@ -51,14 +51,14 @@ import { useRef } from "react";
 import type {
   ProductVM,
   ProductOptionVM,
-} from "../../../lib/viewModels/product/Product.view-model";
+} from "../../../../lib/viewModels/product/Product.view-model";
 
 import type {
   CartOption,
-} from "../../../lib/storeModels/CartItem.store-model";
+} from "../../../../lib/storeModels/CartItem.store-model";
 
-import { cartStore } from "../../../lib/cart/cart.store";
-import { eur } from "../../../utils/format";
+import { cartStore } from "../../../../lib/cart/cart.store";
+import { eur } from "../../../../utils/format";
 
 // ======================================================
 // PROPS
@@ -135,7 +135,7 @@ export default function CartPreview({
       startupFee,
       yearlyFee,
       monthlyFee,
-
+        requiresConfiguration:product.requiresConfiguration,
       options: selectedOptionObjects.map(toCartOption),
     });
 

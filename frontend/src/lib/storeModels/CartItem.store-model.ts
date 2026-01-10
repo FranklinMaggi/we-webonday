@@ -34,5 +34,8 @@ export interface CartOption {
     monthlyFee: number;
   
     options: CartOption[];
+
+    requiresConfiguration: boolean;
+
   }
   

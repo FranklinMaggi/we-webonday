@@ -4,7 +4,7 @@ import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 import WhatsAppButton from "../whatsapp/WhatsAppButton";
 import { CookieBanner } from "../cookie/CookieBanner";
-import CartSticker from "../cart/CartSticker";
+import CartSticker from "../buyflow/cart/CartSticker";
 import { setDocumentTitle } from "../../utils/seo";
 
 

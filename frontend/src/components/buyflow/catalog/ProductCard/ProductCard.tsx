@@ -15,8 +15,8 @@
 // ======================================================
 
 import { useState } from "react";
-import type { ProductVM } from "../../../lib/viewModels/product/Product.view-model";
-import { eur } from "../../../utils/format";
+import type { ProductVM } from "../../../../lib/viewModels/product/Product.view-model";
+import { eur } from "../../../../utils/format";
 import OptionSelector from "../ProductOption/OptionSelector";
 import CartPreview from "./CartPreview";
 

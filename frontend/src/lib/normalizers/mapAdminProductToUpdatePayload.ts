@@ -27,7 +27,8 @@ export function adminProductToBE(
       monthly: Number(product.pricing?.monthly) || 0,
     },
 
- 
+    requiresConfiguration: product.requiresConfiguration ?? false,
+
    
   };
 }

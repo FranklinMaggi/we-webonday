@@ -53,6 +53,8 @@ export function normalizeAdminProductToPublic(
 
     options: Array.isArray(raw.options)
       ? raw.options.map(normalizeAdminOption)
+
       : [],
+      requiresConfiguration: raw.requiresConfiguration ?? false,
   };
 }

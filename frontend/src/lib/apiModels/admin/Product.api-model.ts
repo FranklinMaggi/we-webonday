@@ -33,6 +33,7 @@ export interface AdminProductApiModel {
     };
    optionIds : string[];
     
+   requiresConfiguration:boolean ; 
 
  
   }

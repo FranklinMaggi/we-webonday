@@ -12,4 +12,6 @@ export {
   export {
     listAllConfigurations,
   } from "./configuration.admin.read";
-  
+  export {
+    upsertConfigurationFromBusiness,
+  } from "./configuration.business.write";

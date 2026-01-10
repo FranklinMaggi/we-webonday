@@ -58,12 +58,21 @@ const SECTIONS: SidebarSection[] = [
       { to: "/user/dashboard/user", label: "Profilo", disabled: true },
     ],
   },
+
+  {
+    title: "Orders",
+    items: [
+      { to: "/user/dashboard/orders", label: "Ordini" },
+    ],
+  },
+
   {
     title: "Plans",
     items: [
       { to: "/user/dashboard/plans", label: "Abbonamenti", disabled: true },
     ],
   },
+
   {
     title: "Settings",
     items: [

@@ -5,88 +5,43 @@
 // CART STICKER — CHECKOUT ENTRY POINT (WEBONDAY)
 //
 // VERSIONE:
-// - v3.0 (2026-01)
+// - v3.1 (2026-01)
 //
 // ======================================================
-// AI-SUPERCOMMENT (v3)
+// AI-SUPERCOMMENT
 // ======================================================
 //
 // RUOLO:
-// - Entry point persistente del checkout FE
+// - Entry point persistente del flusso di acquisto
 // - Riepilogo carrello sempre accessibile
-// - Avvio flusso di configurazione progetto
+// - Decide il percorso:
+//   • configurazione
+//   • checkout diretto
 //
-// COSA MOSTRA:
-// - Prodotti selezionati (MVP: 1 solo)
-// - Opzioni aggiuntive (monthly / yearly)
-// - Costi separati e trasparenti:
-//   • avvio (one-time)
-//   • annuale
-//   • mensile
+// INVARIANTE CRITICA:
+// - LOGIN SEMPRE richiesto prima di qualsiasi step finale
+// - Il redirect post-login dipende dal CartItem
 //
-// FLUSSO:
-// 1. Visitor aggiunge prodotto dal catalogo
-// 2. CartSticker mostra riepilogo persistente
-// 3. Click "Completa configurazione":
-//    - SE visitor:
-//        • salva carrello in localStorage (PENDING_CART)
-//        • redirect a /user/login
-//    - SE user autenticato:
-//        • POST /api/configuration/from-cart
-//        • backend crea (o riusa) configuration
-//        • redirect a /user/configurator
-//
-// SOURCE OF TRUTH:
-// - Prezzi → backend (via ProductVM)
-// - Carrello → cartStore (FE, staging)
-// - Configuration → backend
-//
-// INVARIANTI:
-// - MVP: UNA configurazione alla volta (items[0])
-// - Nessun calcolo prezzi complessi qui
-// - Le option NON vengono ricalcolate, solo mostrate
-// - optionIds inviati al backend così come selezionati
-//
-// NON FA:
-// - NON gestisce pagamenti
-// - NON crea ordini
-// - NON valida business logic
-// - NON persiste carrello su backend
-//
-// NOTE ARCHITETTURALI:
-// - cartStore è volutamente semplice (sync, FE-only)
-// - apiFetch è l’unico contatto HTTP
-// - Questo componente è UI + orchestrazione, NON dominio
-//
-// BACKEND ENDPOINT:
-// - POST /api/configuration/from-cart
 // ======================================================
 
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { cartStore } from "../../lib/cart/cart.store";
-import type { CartItem } from "../../lib/cart/cart.store";
+import { cartStore } from "../../../lib/cart/cart.store";
+import type { CartItem } from "../../../lib/cart/cart.store";
 
-import { useAuthStore } from "../../lib/store/auth.store";
-import { apiFetch } from "../../lib/api";
-import { uiBus } from "../../lib/ui/uiBus";
-import { eur } from "../../utils/format";
+import { useAuthStore } from "../../../lib/store/auth.store";
+import { apiFetch } from "../../../lib/api";
+import { uiBus } from "../../../lib/ui/uiBus";
+import { eur } from "../../../utils/format";
 
 // ======================================================
 // API RESPONSE DTO
 // ======================================================
 
 type CreateConfigResponse =
-  | {
-      ok: true;
-      configurationId: string;
-      reused?: boolean;
-    }
-  | {
-      ok: false;
-      error: string;
-    };
+  | { ok: true; configurationId: string; reused?: boolean }
+  | { ok: false; error: string };
 
 // ======================================================
 // COMPONENT
@@ -104,16 +59,14 @@ export default function CartSticker() {
   // =========================
   // STORE SYNC
   // =========================
-
   useEffect(
     () => cartStore.subscribe((s) => setItems(s.items)),
     []
   );
 
   // =========================
-  // UI BUS (GLOBAL TOGGLE)
+  // UI BUS (toggle globale)
   // =========================
-
   useEffect(() => {
     const off = uiBus.on("cart:toggle", () =>
       setOpen((v) => !v)
@@ -122,9 +75,8 @@ export default function CartSticker() {
   }, []);
 
   // =========================
-  // TOTALI (DERIVATI)
+  // TOTALI DERIVATI
   // =========================
-
   const startupTotal = useMemo(
     () => items.reduce((s, i) => s + (i.startupFee ?? 0), 0),
     [items]
@@ -145,26 +97,40 @@ export default function CartSticker() {
   const removeItem = (index: number) =>
     cartStore.getState().removeItem(index);
 
-  // =========================
-  // CHECKOUT → CREATE CONFIG
-  // =========================
-
+  // ======================================================
+  // CHECKOUT ORCHESTRATION
+  // ======================================================
   const checkout = async () => {
     if (items.length === 0) return;
 
-    // 🔐 VISITOR → LOGIN
+    const first = items[0]; // MVP: 1 solo item
+    const requiresConfig = first.requiresConfiguration === true;
+
+    const redirectAfterLogin = requiresConfig
+      ? "/user/configurator"
+      : "/user/checkout";
+    // 🔐 LOGIN OBBLIGATORIO
     if (!user) {
       localStorage.setItem(
         "PENDING_CART",
         JSON.stringify({ items })
       );
-      navigate("/user/login?redirect=/user/configurator");
+
+      navigate(
+        `/user/login?redirect=${encodeURIComponent(
+          redirectAfterLogin
+        )}`
+      );
       return;
     }
 
-    // MVP: una sola configurazione
-    const first = items[0];
+    // 🟢 PRODOTTO SEMPLICE → CHECKOUT DIRETTO
+    if (!first.requiresConfiguration) {
+      navigate("/user/checkout");
+      return;
+    }
 
+    // 🔵 PRODOTTO CON CONFIGURAZIONE → CREA CONFIG
     try {
       const result = await apiFetch<CreateConfigResponse>(
         "/api/configuration/from-cart",
@@ -184,17 +150,15 @@ export default function CartSticker() {
         return;
       }
 
-      // redirect configurator (id gestito dal backend)
-      navigate("/user/configurator");
+      navigate(`/user/configurator`);
     } catch (err) {
       console.error("CONFIGURATION CREATE FAILED", err);
     }
   };
 
-  // =========================
+  // ======================================================
   // RENDER
-  // =========================
-
+  // ======================================================
   return (
     <div className={`cart-sticker ${open ? "is-open" : ""}`}>
       <button
@@ -234,7 +198,6 @@ export default function CartSticker() {
                           <span className="item__price">
                             {eur.format(opt.price)}
                             {opt.type === "monthly" && " / mese"}
-                           
                           </span>
                         </li>
                       ))}
@@ -274,7 +237,7 @@ export default function CartSticker() {
                 className="wd-btn wd-btn--primary wd-btn--block"
                 onClick={checkout}
               >
-                Completa la configurazione
+                Continua
               </button>
             </div>
           </>

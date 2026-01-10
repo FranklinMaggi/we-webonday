@@ -97,6 +97,10 @@ import { getBusiness } from "./routes/tenant/business/business.get";
 import { listBusinesses } from "./routes/tenant/business/business.list";
 import { submitBusiness } from "./routes/tenant/business/business.submit";
 import { uploadBusinessMenu } from "./routes/tenant/business/uploadMenu";
+import {
+  upsertConfigurationFromBusiness,
+} from "./routes/tenant/configuration/configuration.business.write";
+
 // ======================================================
 // BE || routes/configuration/index.ts
 // ======================================================
@@ -396,6 +400,8 @@ if (pathname === "/api/cookies/status" && method === "GET") {
 /* ======================================================
    CONFIGURATION — FROM CART (AUTH REQUIRED)
 ====================================================== */
+
+
 if (
   pathname === "/api/configuration/from-cart" &&
   method === "POST"
@@ -435,6 +441,20 @@ if (pathname.startsWith("/api/configuration/")) {
       request,
       env
     );
+}
+
+/* ======================================================
+   CONFIGURATION — FROM BUSINESS (AUTH REQUIRED)
+====================================================== */
+if (
+  pathname === "/api/configuration/from-business" &&
+  method === "POST"
+) {
+  return withCors(
+    await upsertConfigurationFromBusiness(request, env),
+    request,
+    env
+  );
 }
 
       /* ======================================================

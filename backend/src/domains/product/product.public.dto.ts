@@ -34,6 +34,7 @@ export interface ProductPublicDTO {
   pricing: {
     yearly: number;
     monthly: number;
+    requiresConfiguration: boolean;
   };
   options: ProductOptionPublicDTO[];
 }

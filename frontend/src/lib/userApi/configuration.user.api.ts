@@ -87,3 +87,20 @@ export async function updateConfiguration(
 
   return res;
 }
+// ======================================================
+// CONFIGURATION — UPSERT FROM BUSINESS
+// ======================================================
+
+export async function upsertConfigurationFromBusiness(input: {
+  businessId: string;
+  productId: string;
+  optionIds: string[];
+}) {
+  return apiFetch<{
+    ok: true;
+    configurationId: string;
+  }>("/api/configuration/from-business", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}

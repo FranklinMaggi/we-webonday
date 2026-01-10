@@ -33,6 +33,6 @@ export interface AdminUpdateProductDTO {
   };
 
 
-
+  requiresConfiguration: boolean; 
 
 }

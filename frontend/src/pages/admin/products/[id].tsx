@@ -73,7 +73,7 @@ export default function AdminEditProductPage() {
         
         pricing: { yearly: 0, monthly: 0 },
         optionIds: [],
-        
+        requiresConfiguration:false ,
       });
       return;
     }
