@@ -2,6 +2,24 @@
 // FE || pages/user/dashboard/business/[id].tsx
 // ======================================================
 //
+// USER BUSINESS DETAIL (READ-ONLY)
+//
+// RUOLO:
+// - Vista informativa attività
+// - Ponte verso configurator
+//
+// SOURCE OF TRUTH:
+// - Backend (getBusiness)
+//
+// COSA NON FA:
+// - NON modifica dati
+// - NON usa store FE
+// - NON gestisce configurazione
+// ======================================================
+// ======================================================
+// FE || pages/user/dashboard/business/[id].tsx
+// ======================================================
+//
 // USER BUSINESS DETAIL (PASSIVE VIEW)
 //
 // RUOLO:

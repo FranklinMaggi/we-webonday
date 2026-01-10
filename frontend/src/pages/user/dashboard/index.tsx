@@ -2,19 +2,15 @@
 // FE || pages/user/dashboard/index.tsx
 // ======================================================
 //
-// AI-SUPERCOMMENT — USER DASHBOARD (HOME)
+// USER DASHBOARD — HOME
 //
 // RUOLO:
-// - Landing page post-login per l’utente (buyer)
+// - Home area cliente post-login
+// - Console personale dell’utente
 //
-// OBIETTIVO:
-// - Far percepire il cambio di stato (visitor → user)
-// - Offrire continuità con ordini e progetti
-//
-// INVARIANTI:
-// - Nessun redirect automatico
-// - Nessuna logica business
-// - Solo composizione di sezioni
+// NON È:
+// - una landing marketing
+// - un wizard
 //
 // ======================================================
 
@@ -25,22 +21,39 @@ import ExploreSolutionsCTA from "./sections/ExploreSolutionsCTA";
 export default function UserDashboardHome() {
   return (
     <section className="user-dashboard-home">
-      <h1>La tua area cliente</h1>
+
+      {/* ===========================
+         HEADER CONTESTUALE
+      =========================== */}
+      <header className="dashboard-header">
+        <h1>Area Cliente</h1>
+        <p className="dashboard-subtitle">
+          Gestisci le tue attività, i progetti e gli ordini
+        </p>
+      </header>
+
+      {/* ===========================
+         AZIONE PRINCIPALE
+         (in futuro: “Riprendi configurazione”)
+      =========================== */}
+      <section className="dashboard-primary-action">
+        <ExploreSolutionsCTA />
+      </section>
+
+      {/* ===========================
+         PROGETTI / ATTIVITÀ
+      =========================== */}
+      <section className="dashboard-section">
+        <UserProjects />
+      </section>
 
       {/* ===========================
          ORDINI
       =========================== */}
-      <UserOrders />
+      <section className="dashboard-section">
+        <UserOrders />
+      </section>
 
-      {/* ===========================
-         PROGETTI
-      =========================== */}
-      <UserProjects />
-
-      {/* ===========================
-         CTA CONTINUITÀ ACQUISTO
-      =========================== */}
-      <ExploreSolutionsCTA />
     </section>
   );
 }

@@ -33,7 +33,7 @@ import Price from "../pages/pricing";
 import Solutions from "../pages/home/solution";        // /solution
 import HomeSolutionPage from "../pages/home/solution/[id]";
 
-import UserLogin from "../pages/user/login";
+import UserLogin from "../pages/user/auth";
 
 /* =========================
    POLICY
@@ -45,10 +45,10 @@ import PolicyPage from "../pages/policy/policy";
 /* =========================
    USER (BUYER) — 🔒
 ========================= */
-import DashboardLayout from "../pages/user/dashboard/layout/DashBoardLayout";
+import DashboardLayout from "../pages/user/layout/DashboardLayout";
 import UserDashboardHome from "../pages/user/dashboard";
 import UserDashboardDetail from "../pages/user/dashboard/[id]";
-import UserConfigurationWorkspace from "../pages/user/dashboard/configuration/[id]";
+import UserConfigurationWorkspace from "../pages/user/dashboard/workspace/[id]";
 import CheckoutPage from "../pages/user/checkout";
 import UserConfiguratorDetail from "../pages/user/configurator/[id]";
 import UserConfiguratorIndex from "../pages/user/configurator/index";

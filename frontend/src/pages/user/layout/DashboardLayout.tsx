@@ -13,17 +13,15 @@
 // - Nessun fetch
 //
 // ======================================================
+// FE || pages/user/dashboard/layout/DashboardLayout.tsx
 
 import { Outlet } from "react-router-dom";
-import Sidebar from "./Sidebar";
+import Sidebar from "./DashboardSideBar";
 
 export default function DashboardLayout() {
   return (
     <div className="dashboard-layout">
-      <Sidebar
-  active="dashboard"
-  onSelect={() => {}}
-/>
+      <Sidebar />
       <main className="dashboard-main">
         <Outlet />
       </main>

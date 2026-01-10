@@ -2,11 +2,22 @@
 // FE || pages/user/dashboard/business/index.tsx
 // ======================================================
 //
-// USER BUSINESS DASHBOARD
+// AI-SUPERCOMMENT — USER BUSINESS LIST
 //
 // RUOLO:
-// - Lista business dell’utente
-// - Entry point ai flussi di configurazione
+// - Elenco attività dell’utente
+//
+// SOURCE OF TRUTH:
+// - Backend API (listMyBusinesses)
+//
+// COSA FA:
+// - Navigazione verso:
+//   • vista passiva
+//   • configurator
+//
+// COSA NON FA:
+// - NON modifica business
+// - NON crea configurazioni
 //
 // ======================================================
 

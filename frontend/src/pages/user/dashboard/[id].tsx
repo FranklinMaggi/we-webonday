@@ -1,22 +1,28 @@
-// pages/user/dashboard/[id].tsx
 // ======================================================
-// FE || pages/user/dashboard/[id].tsx
+// FE || pages/user/dashboard/workspace/[id].tsx
 // ======================================================
 //
-// AI-SUPERCOMMENT — USER DASHBOARD DETAIL
+// AI-SUPERCOMMENT — CONFIGURATION WORKSPACE
 //
 // RUOLO:
-// - Vista dettaglio contestuale (ordine / progetto / risorsa)
+// - Editor persistente di una Configuration
+// - Modifica continua post-wizard
 //
-// STATO ATTUALE:
-// - Placeholder intenzionale
+// SOURCE OF TRUTH:
+// - Backend (ConfigurationDTO)
+//
+// COSA FA:
+// - Load configurazione
+// - Monta ConfigurationLayout
+//
+// COSA NON FA:
+// - NON è un wizard
+// - NON usa Zustand
+// - NON crea Business
 //
 // INVARIANTI:
-// - NON carica dati automaticamente
-// - La logica dipende dal tipo di ID
+// - Ogni modifica → persistita backend
 //
-// TODO:
-// - Switch per tipo entità (order /product/ project)
 // ======================================================
 
 import { useParams } from "react-router-dom";

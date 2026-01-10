@@ -1,4 +1,31 @@
 // FE || pages/user/login/index.tsx
+// ======================================================
+// FE || pages/user/auth/index.tsx
+// ======================================================
+//
+// AI-SUPERCOMMENT — USER AUTH ENTRY
+//
+// RUOLO:
+// - Login e registrazione utente
+// - Creazione sessione sicura (cookie httpOnly)
+//
+// SOURCE OF TRUTH:
+// - Backend auth (session-based)
+//
+// COSA FA:
+// - Login email/password
+// - Login Google OAuth
+// - Redirect post-auth
+//
+// COSA NON FA:
+// - NON gestisce profilo
+// - NON carica dati dashboard
+//
+// INVARIANTI:
+// - credentials: "include" SEMPRE
+// - redirect controllato via query
+//
+// ======================================================
 
 import { useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";

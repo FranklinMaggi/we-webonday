@@ -1,4 +1,25 @@
 // ======================================================
+// FE || pages/user/dashboard/configuration/[id].tsx
+// ======================================================
+//
+// CONFIGURATION WORKSPACE ENTRY
+//
+// RUOLO:
+// - Entry point editor configurazione persistente
+//
+// SOURCE OF TRUTH:
+// - Backend (ConfigurationDTO)
+//
+// COSA FA:
+// - Carica configurazione
+// - Monta ConfigurationLayout
+//
+// COSA NON FA:
+// - NON gestisce wizard
+// - NON usa Zustand
+// - NON crea ordini
+// ======================================================
+// ======================================================
 // FE || dashboard/configuration/[id].tsx
 // ======================================================
 //
@@ -12,7 +33,7 @@
 
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import ConfigurationLayout from "./ConfigurationLayout";
+import ConfigurationLayout from "../../layout/ConfigurationLayout";
 import { type ConfigurationDTO } from "../../../../lib/apiModels/user/Configuration.api-model";
 
 export default function UserConfigurationWorkspace() {

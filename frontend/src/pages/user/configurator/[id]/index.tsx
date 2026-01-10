@@ -2,6 +2,28 @@
 // FE || pages/user/configurator/[id]/index.tsx
 // ======================================================
 //
+// AI-SUPERCOMMENT — CONFIGURATOR DRAFT
+//
+// RUOLO:
+// - Wizard collegato a Configuration ESISTENTE
+// - Stato: draft / preview
+//
+// SOURCE OF TRUTH:
+// - Backend (ConfigurationDTO)
+//
+// COSA FA:
+// - Prefill dati
+// - Monta ConfigurationSetupPage
+//
+// COSA NON FA:
+// - NON crea ordini
+// - NON gestisce checkout
+//
+// ======================================================
+// ======================================================
+// FE || pages/user/configurator/[id]/index.tsx
+// ======================================================
+//
 // CONFIGURATOR DETAIL — PRE-ORDER
 //
 // RUOLO:
