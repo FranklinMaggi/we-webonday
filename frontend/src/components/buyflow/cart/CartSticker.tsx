@@ -115,7 +115,7 @@ export default function CartSticker() {
         "PENDING_CART",
         JSON.stringify({ items })
       );
-
+      console.log("[CART ITEM]", first);
       navigate(
         `/user/login?redirect=${encodeURIComponent(
           redirectAfterLogin
