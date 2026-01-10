@@ -32,4 +32,4 @@ export * from "./checkoutOrders.write";
 export * from "./checkoutOrders.read";
 
 // ProjectSetup (post-checkout)
-export * from "../projects/projectSetup.write";
+export * from "../tenant/projects/projectSetup.write";

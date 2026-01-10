@@ -28,7 +28,7 @@
    - Nessun ordinamento esplicito (dipende da KV.list)
 ====================================================== */
 import type { Env } from "../../../types/env";
-import { OptionSchema } from "../../../schemas/core/optionSchema";
+import { OptionSchema } from "../../../domains/option/option.schema.ts";
 import { requireAdmin } from "../guard/admin.guard";
 import { unknown, z } from "zod";
 

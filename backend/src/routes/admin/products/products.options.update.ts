@@ -52,8 +52,8 @@
 import type { Env } from "../../../types/env";
 import { z } from "zod";
 import { requireAdmin } from "../guard/admin.guard";
-import { ProductSchema } from "../../../schemas/core/productSchema";
-import { OptionSchema } from "../../../schemas/core/optionSchema";
+import { ProductSchema } from "../../../domains/product/product.schema";
+import { OptionSchema } from "../../../domains/option/option.schema.ts";
 
 /* =========================
    SCHEMA INPUT

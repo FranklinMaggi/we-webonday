@@ -27,10 +27,8 @@
 // ============================================================
 
 import { adminFetch } from "./client";
-import type {
-  AdminSolutionDetailResponse,
-  SolutionEditorDTO,
-} from "../dto/solution";
+import type { SolutionEditorDTO } from "../viewModels/solution/SolutionEditor.view-model";
+import type { AdminSolutionDetailResponse } from "../viewModels/solution/solution.responses";
 
 /* =========================
    GET SOLUTION DETAIL

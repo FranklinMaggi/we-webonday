@@ -15,7 +15,7 @@
 // NOTE:
 // - Editing avviene nelle singole form
 // ======================================================
-import type { ConfigurationDTO } from "../../../../lib/dto/configurationDTO";
+import type { ConfigurationDTO } from "../../../../lib/apiModels/user/Configuration.api-model";
 
 
 export default function ReviewSection({

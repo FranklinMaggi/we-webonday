@@ -43,8 +43,7 @@
  */
 
 import { API_BASE } from "../config";
-import type { AdminSolution } from "../dto/solution";
-
+import type { AdminSolution } from "../apiModels/admin/Solution.api-model";
 export type PublicSolutionsResponse = {
   ok: true;
   solutions: AdminSolution[];

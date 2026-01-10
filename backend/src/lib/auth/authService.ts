@@ -1,6 +1,6 @@
 import type { AuthIdentity } from "./types";
 import type { Env } from "../../types/env";
-import { UserSchema } from "../../schemas/core/userSchema";
+import { UserSchema } from "../../domains/user/user.schema";
 
 export async function resolveOrCreateUser(
   env: Env,

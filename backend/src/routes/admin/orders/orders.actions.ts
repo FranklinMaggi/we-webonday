@@ -48,7 +48,7 @@ import {
   CheckoutOrderDomainSchema,
   OrderStatusSchema,
   assertCheckoutOrderTransition
-} from "../../../schemas/orders/checkoutOrderSchema";
+} from "../../../domains/order/order.checkout.schema";
 import { json } from "../../../lib/https";
 import { logActivity } from "../../../lib/logActivity";
 

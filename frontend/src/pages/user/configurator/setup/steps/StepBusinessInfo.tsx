@@ -2,53 +2,74 @@
 // FE || pages/user/configurator/setup/steps/StepBusinessInfo.tsx
 // ======================================================
 //
-// STEP 1 — BUSINESS CHECKOUT (INFORMATIVO)
+// STEP — BUSINESS SETUP (ANAGRAFICA + CONTENUTI)
 //
 // RUOLO:
-// - Primo step del wizard di configurazione
-// - Raccolta dati minimi del business
-// - Checkout informativo post-login / post-carrello
+// - Raccolta completa dei dati del business
+// - Include:
+//   • anagrafica
+//   • contatti
+//   • indirizzo
+//   • contenuti testuali
+//   • orari di apertura
 //
-// COSA FA:
-// - Legge e scrive SOLO nello store FE (Zustand)
-// - Mostra un form semplice, progressivo
+// INVARIANTI CRITICHE:
+// - FE ONLY (Zustand store)
+// - Nessuna fetch
+// - Nessuna persistenza backend
+// - Nessuna validazione bloccante
+// - Nessuna creazione Business / Configuration
 //
-// COSA NON FA:
-// - NON salva su backend
-// - NON valida in modo bloccante
-// - NON crea Business / Configuration
+// SCOPO:
+// - Preparare TUTTI i dati necessari
+//   allo step successivo (creazione Business BE)
 //
-// CONCETTO CHIAVE:
-// - Tutti i dati qui sono EDITABILI
-// - Nulla è definitivo
-// - Il prefill è solo UX, non stato persistente
 // ======================================================
 
 import { useConfigurationSetupStore } from "../../../../../lib/store/configurationSetup.store";
+import { OpeningHoursDay } from "../../../../../components/openingHours/OpeningHoursDay";
+import { createBusiness } from "../../../../../lib/userApi/business.user.api";
+/* =========================
+   COSTANTI
+========================= */
+const DAYS = [
+  ["monday", "Lunedì"],
+  ["tuesday", "Martedì"],
+  ["wednesday", "Mercoledì"],
+  ["thursday", "Giovedì"],
+  ["friday", "Venerdì"],
+  ["saturday", "Sabato"],
+  ["sunday", "Domenica"],
+] as const;
 
+/* =========================
+   PROPS
+========================= */
 type StepBusinessInfoProps = {
   onNext: () => void;
 };
 
-export default function StepBusinessInfo({ onNext }: StepBusinessInfoProps) {
+export default function StepBusinessInfo({
+  onNext,
+}: StepBusinessInfoProps) {
   /**
    * SOURCE OF TRUTH:
    * - data     → stato corrente del wizard (FE)
    * - setField → mutazione atomica di un singolo campo
    */
-  const { data, setField } = useConfigurationSetupStore();
-
+  const {
+    data,
+    setField,
+    businessId,
+    setBusinessId,
+  } = useConfigurationSetupStore();
+  
   return (
     <div className="step">
-      <h2>Iniziamo la configurazione per il tuo business</h2>
+      <h2>Configuriamo il tuo business</h2>
 
       {/* ======================================================
-         NOME ATTIVITÀ
-         PREFILL POSSIBILE DA:
-         - configuration esistente (post-cart)
-         - input manuale utente
-         NOTE:
-         - campo centrale, sempre modificabile
+         ANAGRAFICA BUSINESS
       ====================================================== */}
       <input
         placeholder="Nome attività"
@@ -58,31 +79,12 @@ export default function StepBusinessInfo({ onNext }: StepBusinessInfoProps) {
         }
       />
 
-      {/* ======================================================
-         EMAIL
-         PREFILL AUTOMATICO DA:
-         - sessione utente (authStore)
-         MOTIVO:
-         - l’utente è loggato
-         - l’email è già nota e affidabile
-         SCELTA UX:
-         - disabilitata per evitare errori
-      ====================================================== */}
       <input
         placeholder="Email"
         value={data.email ?? ""}
         disabled
       />
 
-      {/* ======================================================
-         TELEFONO
-         PREFILL:
-         - NO (dato sensibile)
-         NOTE UX:
-         - opzionale
-         - usato solo su richiesta utente
-         - comunicazione “privacy friendly”
-      ====================================================== */}
       <input
         placeholder="Numero di telefono"
         value={data.phone ?? ""}
@@ -91,14 +93,6 @@ export default function StepBusinessInfo({ onNext }: StepBusinessInfoProps) {
         }
       />
 
-      {/* ======================================================
-         CONSENSO PRIVACY
-         PREFILL:
-         - NO (deve essere azione esplicita)
-         NOTE:
-         - booleano semplice
-         - nessuna validazione bloccante qui
-      ====================================================== */}
       <label>
         <input
           type="checkbox"
@@ -110,99 +104,45 @@ export default function StepBusinessInfo({ onNext }: StepBusinessInfoProps) {
         Accetto il trattamento dei dati personali
       </label>
 
-      /* ======================================================
-   INDIRIZZO ATTIVITÀ — ADDRESS ASSISTANT (FE-ONLY)
-   
-   AI-SUPERCOMMENT — ADDRESS INPUT BLOCK
+      {/* ======================================================
+         INDIRIZZO BUSINESS (FE-ONLY)
+      ====================================================== */}
+      <input
+        placeholder="Indirizzo attività (es. Via Roma 10)"
+        value={data.address ?? ""}
+        onChange={(e) =>
+          setField("address", e.target.value)
+        }
+      />
 
-   RUOLO:
-   - Raccolta indirizzo fisico del business
-   - Supporto UX alla corretta localizzazione
-   - Base per SEO locale, mappe e contatti
+      <div className="address-grid">
+        <input
+          placeholder="Città"
+          value={data.city ?? ""}
+          onChange={(e) =>
+            setField("city", e.target.value)
+          }
+        />
 
-   SOURCE OF TRUTH:
-   - Stato FE → configurationSetup.store (Zustand)
+        <input
+          placeholder="Provincia / Stato"
+          value={data.state ?? ""}
+          onChange={(e) =>
+            setField("state", e.target.value)
+          }
+        />
 
-   PREFILL:
-   - ❌ Nessun prefill automatico lato indirizzo
-   - ✅ Compilazione manuale sempre consentita
-   - 🔮 Autocomplete futuro (Google Places)
-
-   NOTE ARCHITETTURALI:
-   - Questo blocco NON valida l’indirizzo
-   - NON fa fetch
-   - NON salva su backend
-   - Tutti i campi restano SEMPRE editabili
-   - placeId verrà valorizzato solo se autocomplete attivo
-
-   FUTURO:
-   - useAddressAssistant.search(query)
-   - dropdown suggerimenti
-   - setField multiplo (address, city, state, zip, placeId)
-====================================================== */
-
-/* Hook FE — attualmente noop, pronto per Google Places 
-{/* const { search } = useAddressAssistant();*/}
-
-/* =========================
-   INDIRIZZO (CAMPO PRINCIPALE)
-   SIGNIFICATO:
-   - Via + numero civico
-   - Punto di partenza per eventuale autocomplete
-========================= */
-<input
-  placeholder="Indirizzo attività (es. Via Roma 10)"
-  value={data.address ?? ""}
-  onChange={(e) =>
-    setField("address", e.target.value)
-  }
-/>
-
-/* =========================
-   METADATI INDIRIZZO
-   NOTE:
-   - Possono essere compilati a mano
-   - In futuro derivabili da autocomplete
-========================= */
-<div className="address-grid">
-  {/* CITTÀ */}
-  <input
-    placeholder="Città"
-    value={data.city ?? ""}
-    onChange={(e) =>
-      setField("city", e.target.value)
-    }
-  />
-
-  {/* STATO / PROVINCIA */}
-  <input
-    placeholder="Provincia / Stato"
-    value={data.state ?? ""}
-    onChange={(e) =>
-      setField("state", e.target.value)
-    }
-  />
-
-  {/* CAP */}
-  <input
-    placeholder="CAP"
-    value={data.zip ?? ""}
-    onChange={(e) =>
-      setField("zip", e.target.value)
-    }
-  />
-</div>
-
+        <input
+          placeholder="CAP"
+          value={data.zip ?? ""}
+          onChange={(e) =>
+            setField("zip", e.target.value)
+          }
+        />
+      </div>
 
       {/* ======================================================
-         IMMAGINE ATTIVITÀ (OPZIONALE)
-         USO FUTURO:
-         - logo
-         - verifica attività
-         - materiale AI
-         NOTE:
-         - File salvato SOLO nello store FE
-         - upload backend avverrà più avanti
+         IMMAGINE BUSINESS (FE-ONLY)
       ====================================================== */}
       <label>
         Immagine dell’attività (opzionale)
@@ -219,16 +159,110 @@ export default function StepBusinessInfo({ onNext }: StepBusinessInfoProps) {
       </label>
 
       {/* ======================================================
-         AZIONE
-         SIGNIFICATO:
-         - passaggio allo step successivo
-         - nessun salvataggio
+         CONTENUTI SITO
       ====================================================== */}
-      <div className="actions">
-        <button onClick={onNext}>
-          Continua
-        </button>
-      </div>
+      <h3>Contenuti del sito</h3>
+
+      <textarea
+        placeholder="Descrivi brevemente la tua attività"
+        value={data.description ?? ""}
+        onChange={(e) =>
+          setField("description", e.target.value)
+        }
+      />
+
+      <textarea
+        placeholder="Elenca i servizi o prodotti principali"
+        value={data.services ?? ""}
+        onChange={(e) =>
+          setField("services", e.target.value)
+        }
+      />
+
+      <input
+        placeholder="Call to action (es. Contattaci ora)"
+        value={data.cta ?? ""}
+        onChange={(e) =>
+          setField("cta", e.target.value)
+        }
+      />
+
+      {/* ======================================================
+         ORARI DI APERTURA (FE-ONLY)
+      ====================================================== */}
+      <h3>Orari di apertura</h3>
+
+      {DAYS.map(([dayKey, dayLabel]) => (
+        <OpeningHoursDay
+          key={dayKey}
+          dayKey={dayKey}
+          dayLabel={dayLabel}
+          value={data.openingHours?.[dayKey] ?? ""}
+          onChange={(value) =>
+            setField("openingHours", {
+              ...data.openingHours,
+              [dayKey]: value,
+            })
+          }
+        />
+      ))}
+
+      {/* ======================================================
+         AZIONE
+      ====================================================== */}
+    <div className="actions">
+    <button
+  onClick={async () => {
+    // ============================================
+    // STEP 2 — CREATE BUSINESS (ONCE)
+    // ============================================
+
+    if (!data.businessName) {
+      alert("Inserisci il nome dell’attività");
+      return;
+    }
+    
+    if (!data.solutionId || !data.productId) {
+      alert("Configurazione commerciale mancante");
+      return;
+    }
+    
+    if (!businessId) {
+      const res = await createBusiness({
+        name: data.businessName,
+        address: [
+          data.address,
+          data.city,
+          data.state,
+          data.zip,
+        ].filter(Boolean).join(", "),
+        phone: data.phone,
+        openingHours: data.openingHours,
+    
+        solutionId: data.solutionId,
+        productId: data.productId,
+        optionIds: data.optionIds ?? [],
+      });
+    
+      if (!res || !res.ok) {
+        alert("Errore creazione attività");
+        return;
+      }
+    
+      // TECH STATE (FE-only)
+      setBusinessId(res.businessId);
+    }
+    
+    onNext();
+    
+  }}
+>
+  Continua
+</button>
+
+
+</div>
+
     </div>
   );
 }

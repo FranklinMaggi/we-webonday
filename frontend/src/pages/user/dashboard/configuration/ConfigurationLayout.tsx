@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Sidebar from "../layout/Sidebar";
 import BusinessForm from "./forms/BusinessForm";
-import type { ConfigurationDTO } from "../../../../lib/dto/configurationDTO";
+import type { ConfigurationDTO } from "../../../../lib/apiModels/user/Configuration.api-model";
 
 type Section = "business";
 

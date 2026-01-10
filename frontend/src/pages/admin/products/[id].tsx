@@ -4,7 +4,7 @@
 
 DEBUG OBIETTIVO:
 - Allineare FE al nuovo dominio:
-  AdminProductDTO → usa SOLO optionIds
+  AdminProductApiModel → usa SOLO optionIds
 - Rimuovere ogni logica legacy su product.options
 - Rendere esplicito cosa succede e dove
 
@@ -29,14 +29,14 @@ import {
 } from "../../../lib/adminApi/admin.products.api";
 
 import { adminFetch } from "../../../lib/adminApi/client";
-import { adminProductToBE } from "../../../lib/normalizers/adminProductToBe";
+import { adminProductToBE } from "../../../lib/normalizers/mapAdminProductToUpdatePayload";
 
-import type { AdminProductDTO } from "../../../lib/dto/AdminProductDTO";
+import type { AdminProductApiModel } from "../../../lib/apiModels/admin/Product.api-model";
 
 /* =========================
    TIPI LOCALI (DEBUG)
 ========================= */
-type AdminOptionDTO = {
+type AdminAssignableOption = {
   id: string;
   name: string;
   price: number;
@@ -51,8 +51,8 @@ export default function AdminEditProductPage() {
   /* =========================
      STATE
   ========================= */
-  const [product, setProduct] = useState<AdminProductDTO | null>(null);
-  const [options, setOptions] = useState<AdminOptionDTO[]>([]);
+  const [product, setProduct] = useState<AdminProductApiModel | null>(null);
+  const [options, setOptions] = useState<AdminAssignableOption[]>([]);
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -81,7 +81,7 @@ export default function AdminEditProductPage() {
     Promise.all([
       adminFetch<{
         ok: true;
-        product: AdminProductDTO;
+        product: AdminProductApiModel;
       }>(`/api/admin/product/with-options?id=${id}`),
   
       adminFetch<{

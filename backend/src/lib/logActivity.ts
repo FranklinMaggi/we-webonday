@@ -1,6 +1,24 @@
+/* ======================================================
+   AI-SUPERCOMMENT
+   LIB || ACTIVITY || PERSISTENCE ADAPTER
+======================================================
+
+RUOLO:
+- Registra eventi nel sistema
+- Valida payload tramite ActivitySchema
+
+NON È:
+- NON dominio Activity
+- NON business logic
+- NON audit policy
+
+USA:
+- domains/activity/activity.schema.ts
+====================================================== */
+
 import type { Env } from "../types/env";
 
-import { ActivitySchema } from "../schemas/core/activitySchema";
+import { ActivitySchema } from "../domains/activity/activity.schema";
 
 export async function logActivity(
   env: Env,

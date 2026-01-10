@@ -21,7 +21,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminFetch } from "../../../../lib/adminApi/client";
 
-type AdminOptionDTO = {
+type AdminOptionListItem = {
   id: string;
   name: string;
   price: number;
@@ -29,12 +29,12 @@ type AdminOptionDTO = {
 };
 
 export default function AdminOptionsPage() {
-  const [options, setOptions] = useState<AdminOptionDTO[]>([]);
+  const [options, setOptions] = useState<AdminOptionListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    adminFetch<{ ok: true; options: AdminOptionDTO[] }>(
+    adminFetch<{ ok: true; options: AdminOptionListItem[] }>(
       "/api/admin/options/list"
     )
       .then((res) => setOptions(res.options))

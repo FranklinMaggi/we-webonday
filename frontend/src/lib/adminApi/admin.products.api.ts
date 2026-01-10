@@ -64,8 +64,8 @@
  */
 
 import { adminFetch } from "./client";
-import type { AdminProductDTO } from "../dto/AdminProductDTO";
-import type { AdminUpdateProductDTO } from "../dto/AdminUpdateProductDTO";
+import type { AdminProductApiModel } from "../apiModels/admin/Product.api-model";
+import type { AdminUpdateProductDTO } from "../dto/AdminProductUpdatePayload";
 
 /* =========================
    LIST PRODUCTS (ADMIN)
@@ -73,10 +73,10 @@ import type { AdminUpdateProductDTO } from "../dto/AdminUpdateProductDTO";
 ========================= */
 type AdminProductsResponse = {
   ok: boolean;
-  products: AdminProductDTO[];
+  products: AdminProductApiModel[];
 };
 
-export async function getAdminProducts(): Promise<AdminProductDTO[]> {
+export async function getAdminProducts(): Promise<AdminProductApiModel[]> {
   const res = await adminFetch<AdminProductsResponse>(
     "/api/admin/products/list"
   );
@@ -89,12 +89,12 @@ export async function getAdminProducts(): Promise<AdminProductDTO[]> {
 ========================= */
 type AdminProductResponse = {
   ok: boolean;
-  product: AdminProductDTO;
+  product: AdminProductApiModel;
 };
 
 export async function fetchAdminProduct(
   id: string
-): Promise<AdminProductDTO> {
+): Promise<AdminProductApiModel> {
   const res = await adminFetch<AdminProductResponse>(
     `/api/admin/product?id=${id}`
   );

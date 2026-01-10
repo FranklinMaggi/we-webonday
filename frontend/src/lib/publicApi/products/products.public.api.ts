@@ -43,48 +43,14 @@
  * - Protezione del dominio admin
  * ======================================================
  */
-
-import type { ProductDTO, ProductOptionDTO } from "../../dto/productDTO";
 import { API_BASE } from "../../config";
-
-/* ======================================================
-   NORMALIZER — OPTION (ADMIN → PUBLIC)
-====================================================== */
-function normalizeOption(adminOpt: any): ProductOptionDTO {
-  return {
-    id: adminOpt.id,
-    // 🔑 MAPPING DOMINIO → UI
-    label:
-      adminOpt.label ??
-      adminOpt.name ??
-      adminOpt.title ??
-      adminOpt.code ??
-      "Opzione",
-    price: adminOpt.price,
-
-    // 🔒 HARD-CODED: monthly only
-    type: "monthly",
-  };
-}
-
-/* ======================================================
-   NORMALIZER — PRODUCT (ADMIN → PUBLIC)
-====================================================== */
-function normalizeProduct(raw: any): ProductDTO {
-  return {
-    ...raw,
-
-    // GARANZIA: options esiste sempre nel FE
-    options: Array.isArray(raw.options)
-      ? raw.options.map(normalizeOption)
-      : [],
-  };
-}
+import type { ProductVM } from "../../viewModels/product/Product.view-model";
+import { normalizeAdminProductToPublic } from "../../normalizers/product.admin-to-public";
 
 /* =========================
-   FETCH ALL PRODUCTS
+   FETCH ALL PRODUCTS (PUBLIC)
 ========================= */
-export async function fetchProducts(): Promise<ProductDTO[]> {
+export async function fetchProducts(): Promise<ProductVM[]> {
   const res = await fetch(`${API_BASE}/api/products/with-options`, {
     headers: { Accept: "application/json" },
   });
@@ -99,14 +65,15 @@ export async function fetchProducts(): Promise<ProductDTO[]> {
     throw new Error("Invalid products response shape");
   }
 
-  // 🔑 NORMALIZZAZIONE DOMINIO PUBLIC
-  return data.products.map(normalizeProduct);
+  return data.products.map(normalizeAdminProductToPublic);
 }
 
 /* =========================
-   FETCH SINGLE PRODUCT
+   FETCH SINGLE PRODUCT (PUBLIC)
 ========================= */
-export async function fetchProduct(id: string): Promise<ProductDTO> {
+export async function fetchProduct(
+  id: string
+): Promise<ProductVM> {
   const res = await fetch(
     `${API_BASE}/api/product?id=${encodeURIComponent(id)}`,
     { headers: { Accept: "application/json" } }
@@ -122,6 +89,5 @@ export async function fetchProduct(id: string): Promise<ProductDTO> {
     throw new Error("Invalid product response shape");
   }
 
-  // 🔑 NORMALIZZAZIONE DOMINIO PUBLIC
-  return normalizeProduct(data.product);
+  return normalizeAdminProductToPublic(data.product);
 }

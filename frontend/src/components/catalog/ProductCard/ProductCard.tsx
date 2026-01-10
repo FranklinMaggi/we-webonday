@@ -15,14 +15,14 @@
 // ======================================================
 
 import { useState } from "react";
-import type { ProductDTO } from "../../../lib/dto/productDTO";
+import type { ProductVM } from "../../../lib/viewModels/product/Product.view-model";
 import { eur } from "../../../utils/format";
 import OptionSelector from "../ProductOption/OptionSelector";
 import CartPreview from "./CartPreview";
 
 interface Props {
   solutionId:string; 
-  product: ProductDTO;
+  product: ProductVM;
 }
 
 export default function ProductCard({ solutionId ,product }: Props) {

@@ -21,8 +21,7 @@
 // ============================================================
 
 import { adminFetch } from "./client";
-import type { AdminSolutionsResponse } from "../dto/solution";
-
+import type { AdminSolutionsResponse } from "../apiModels/admin/Solution.api-model";
 /* =========================
    LIST SOLUTIONS (ADMIN)
 ========================= */

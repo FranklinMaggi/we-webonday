@@ -22,15 +22,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAdminProducts } from "../../../lib/adminApi/admin.products.api";
-import type { AdminProductDTO } from "../../../lib/dto/AdminProductDTO";
+import type { AdminProductApiModel } from "../../../lib/apiModels/admin/Product.api-model";
 
 import {
   fetchAdminSolution,
   saveAdminSolution,
 } from "../../../lib/adminApi/admin.solution.editor.api";
 
-import type { SolutionEditorDTO } from "../../../lib/dto/solution";
-
+import type { SolutionEditorDTO } from "../../../lib/viewModels/solution/SolutionEditor.view-model";
 /* ======================================================
    ADMIN — SOLUTION EDITOR (ROUTE-BASED)
 ====================================================== */
@@ -47,7 +46,7 @@ export default function SolutionEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [products, setProducts] = useState<AdminProductDTO[]>([]);
+  const [products, setProducts] = useState<AdminProductApiModel[]>([]);
 
   /* =========================
      LOAD
@@ -180,7 +179,7 @@ export default function SolutionEditor() {
               productIds: e.target.checked
                 ? [...solution.productIds, p.id]
                 : solution.productIds.filter(
-                    (id) => id !== p.id
+                    (id:string) => id !== p.id
                   ),
             });
           }}

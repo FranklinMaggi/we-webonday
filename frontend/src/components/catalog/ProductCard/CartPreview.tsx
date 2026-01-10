@@ -1,92 +1,142 @@
+// ======================================================
 // FE || components/catalog/CartPreview.tsx
 // ======================================================
+//
 // CART PREVIEW — PRICING TRASPARENTE (WEBONDAY)
+//
+// VERSIONE:
+// - v3.0 (2026-01)
+//
 // ======================================================
+// AI-SUPERCOMMENT (v3)
+// ======================================================
+//
+// RUOLO:
+// - Riepilogo costi di un prodotto PUBLIC
+// - Preparazione dati per inserimento nel carrello FE
 //
 // RESPONSABILITÀ:
-// - Mostrare costi REALI e separati
-// - Educare il cliente prima del checkout
+// - Mostrare pricing separato e comprensibile
+//   • startup (una tantum)
+//   • annuale (prodotto)
+//   • mensile (prodotto + option)
+// - Educare l’utente PRIMA del checkout
 //
 // NON FA:
-// - sconti
-// - moltiplicatori
-// - magia sui prezzi
-/* AI-SUPERCOMMENT
- * COMPONENT: CartPreview
-*
-* RUOLO:
-* - Riepilogo costi configurazione prodotto
-* - Inserimento strutturato nel carrello
-*
-* NOTE:
-* - Il bottone usa primitive wd-btn (aspetto)
-* - cart-add-btn gestisce SOLO layout
-*/
+// - NON applica sconti
+// - NON moltiplica canoni
+// - NON conosce dominio admin
+// - NON valida regole business
+//
+// INVARIANTI DI DOMINIO (PUBLIC):
+// - Le option sono SEMPRE:
+//   • recurring
+//   • monthly
+// - Il prodotto può avere:
+//   • startupFee (una tantum)
+//   • pricing.yearly
+//   • pricing.monthly
+//
+// OUTPUT:
+// - Inserisce nel carrello un CartItem
+// - Il backend ricalcolerà e validerà tutto
+//
+// NOTE ARCHITETTURALI:
+// - Questo componente NON è source of truth
+// - Il carrello è uno staging FE
 // ======================================================
-import type { ProductDTO, ProductOptionDTO } from "../../../lib/dto/productDTO";
+
+import { useRef } from "react";
+
+import type {
+  ProductVM,
+  ProductOptionVM,
+} from "../../../lib/viewModels/product/Product.view-model";
+
+import type {
+  CartOption,
+} from "../../../lib/storeModels/CartItem.store-model";
+
 import { cartStore } from "../../../lib/cart/cart.store";
 import { eur } from "../../../utils/format";
-import { useRef } from "react";
+
+// ======================================================
+// PROPS
+// ======================================================
+
 interface Props {
-  solutionId:string; 
-  product: ProductDTO;
-  selectedOptions: string[];
+  solutionId: string;
+  product: ProductVM;
+  selectedOptions: string[]; // optionId[]
 }
 
-export default function CartPreview({ solutionId ,product, selectedOptions }: Props) {
+// ======================================================
+// NORMALIZER LOCALE — OPTION → CART
+// ======================================================
+// (temporaneo, verrà estratto in normalizer dedicato)
+
+function toCartOption(o: ProductOptionVM): CartOption {
+  return {
+    id: o.id,
+    label: o.label,
+    price: o.price,
+    type: "monthly", // dominio PUBLIC
+  };
+}
+
+// ======================================================
+// COMPONENT
+// ======================================================
+
+export default function CartPreview({
+  solutionId,
+  product,
+  selectedOptions,
+}: Props) {
   const previewRef = useRef<HTMLElement>(null);
 
   // =========================
-  // OPTIONS SELEZIONATE
+  // OPTION SELEZIONATE
   // =========================
-  const options = Array.isArray(product.options)
-  ? product.options
-  : [];
 
-const selectedObjects: ProductOptionDTO[] = options.filter(
-  (o): o is ProductOptionDTO => selectedOptions.includes(o.id)
-);
-
+  const selectedOptionObjects = product.options.filter(
+    (o) => selectedOptions.includes(o.id)
+  );
 
   // =========================
-  // CALCOLI PREZZI
+  // CALCOLO PREZZI (PUBLIC)
   // =========================
+
+  // una tantum (solo prodotto)
   const startupFee = product.startupFee ?? 0;
 
-  const yearlyBase = product.pricing?.yearly ?? 0;
-  const monthlyBase = product.pricing?.monthly ?? 0;
+  // annuale (solo prodotto)
+  const yearlyFee = product.pricing.yearly ?? 0;
 
-  const oneTimeOptions = selectedObjects
-    .filter((o) => o.type === "one_time")
-    .reduce((sum, o) => sum + o.price, 0);
+  // mensile = prodotto + option
+  const monthlyOptionsTotal = selectedOptionObjects.reduce(
+    (sum, o) => sum + o.price,
+    0
+  );
 
-  const yearlyOptions = selectedObjects
-    .filter((o) => o.type === "yearly")
-    .reduce((sum, o) => sum + o.price, 0);
-
-  const monthlyOptions = selectedObjects
-    .filter((o) => o.type === "monthly")
-    .reduce((sum, o) => sum + o.price, 0);
-
-  const totalStartup = startupFee + oneTimeOptions;
-  const totalYearly = yearlyBase + yearlyOptions;
-  const totalMonthly = monthlyBase + monthlyOptions;
+  const monthlyFee =
+    (product.pricing.monthly ?? 0) + monthlyOptionsTotal;
 
   // =========================
-  // ADD TO CART (STRUTTURATO)
+  // ADD TO CART
   // =========================
+
   const addToCart = () => {
-   
     cartStore.getState().addItem({
       solutionId,
       productId: product.id,
       title: product.name,
 
-      startupFee: totalStartup,
-      yearlyFee: totalYearly,
-      monthlyFee: totalMonthly,
+      startupFee,
+      yearlyFee,
+      monthlyFee,
 
-      options: selectedObjects,
+      options: selectedOptionObjects.map(toCartOption),
     });
 
     // feedback visivo
@@ -94,19 +144,18 @@ const selectedObjects: ProductOptionDTO[] = options.filter(
     setTimeout(() => {
       previewRef.current?.classList.remove("is-added");
     }, 450);
-    console.log("ADD TO CART", {
-      solutionId,
-      productId: product.id,
-      options: selectedObjects,
-    });
-    
   };
 
   // =========================
   // RENDER
   // =========================
+
   return (
-    <aside ref={previewRef} className="cart-preview" aria-live="polite">
+    <aside
+      ref={previewRef}
+      className="cart-preview"
+      aria-live="polite"
+    >
       <div className="card__header">
         <h3 className="card__title">Riepilogo costi</h3>
       </div>
@@ -119,22 +168,22 @@ const selectedObjects: ProductOptionDTO[] = options.filter(
       {/* AVVIO */}
       <div className="cart-line">
         <span>Avvio progetto (una tantum)</span>
-        <strong>{eur.format(totalStartup)}</strong>
+        <strong>{eur.format(startupFee)}</strong>
       </div>
 
       {/* ANNUALE */}
-      {totalYearly > 0 && (
+      {yearlyFee > 0 && (
         <div className="cart-line">
           <span>Costi annuali</span>
-          <strong>{eur.format(totalYearly)} / anno</strong>
+          <strong>{eur.format(yearlyFee)} / anno</strong>
         </div>
       )}
 
       {/* MENSILE */}
-      {totalMonthly > 0 && (
+      {monthlyFee > 0 && (
         <div className="cart-line">
           <span>Costi mensili</span>
-          <strong>{eur.format(totalMonthly)} / mese</strong>
+          <strong>{eur.format(monthlyFee)} / mese</strong>
         </div>
       )}
 
@@ -142,18 +191,15 @@ const selectedObjects: ProductOptionDTO[] = options.filter(
       <p className="cart-note">
         Il costo di avvio è separato dai canoni ricorrenti.
         <br />
-        Gli aggiornamenti operativi sono a carico del cliente.
+        Tutti i prezzi saranno confermati in fase di checkout.
       </p>
 
-
-
-
-<button
-  className="wd-btn wd-btn--primary cart-add-btn"
-  onClick={addToCart}
->
-  Aggiungi al Carrello
-</button>
+      <button
+        className="wd-btn wd-btn--primary cart-add-btn"
+        onClick={addToCart}
+      >
+        Aggiungi al Carrello
+      </button>
     </aside>
   );
 }

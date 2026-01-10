@@ -7,12 +7,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAdminProducts } from "../../../lib/adminApi/admin.products.api";
-import type { AdminProductDTO } from "../../../lib/dto/AdminProductDTO";
+import type { AdminProductApiModel } from "../../../lib/apiModels/admin/Product.api-model";
 
 import { eur } from "../../../utils/format";
 
 export default function AdminProductsPage() {
-  const [products, setProducts] = useState<AdminProductDTO[]>([]);
+  const [products, setProducts] = useState<AdminProductApiModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showOptionsFor, setShowOptionsFor] = useState<string | null>(null);

@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { fetchAdminSolutions } from "../../../lib/adminApi/admin.solutions.api";
-import type { AdminSolution } from "../../../lib/dto/solution";
-
+import type { AdminSolution } from "../../../lib/apiModels/admin/Solution.api-model";
 /* =========================
    STATUS BADGE
 ========================= */

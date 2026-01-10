@@ -32,20 +32,20 @@ import { logoutUser } from "./routes/auth/password";
 
 
 // import
-import { startProject } from "./routes/projects/project.start";
-import { progressProject } from "./routes/projects/project.progress";
-import { completeProject } from "./routes/projects/project.complete";
-import { addProjectOption } from "./routes/projects/project.options.add";
-import { removeProjectOption } from "./routes/projects/project.options.remove";
-import { getProject } from "./routes/projects/project.read";
-import { listProjects } from "./routes/projects/projects.read";
+import { startProject } from "./routes/tenant/projects/project.start";
+import { progressProject } from "./routes/tenant/projects/project.progress";
+import { completeProject } from "./routes/tenant/projects/project.complete";
+import { addProjectOption } from "./routes/tenant/projects/project.options.add";
+import { removeProjectOption } from "./routes/tenant/projects/project.options.remove";
+import { getProject } from "./routes/tenant/projects/project.read";
+import { listProjects } from "./routes/tenant/projects/projects.read";
 
 /* ============================================================
    CART — VISITOR / USER
 ============================================================ */
 
-import { saveCart } from "./routes/cart/cart";
-import { getCart } from "./routes/cart/cart";
+import { saveCart } from "./routes/tenant/user/cart/cart";
+import { getCart } from "./routes/tenant/user/cart/cart";
 /* ============================================================
    CONFIGURATION — PRE-ORDER
 ============================================================ */
@@ -55,8 +55,8 @@ import {
   getUserConfiguration,
   createConfiguration,
   updateConfiguration,
-} from "./routes/configuration";
-import { listAllConfigurations } from "./routes/configuration";
+} from "./routes/tenant/configuration";
+import { listAllConfigurations } from "./routes/tenant/configuration";
 
 /* ============================================================
    ORDERS — USER
@@ -92,12 +92,11 @@ import { listPolicyVersions } from "./routes/policy";
    BUSINESS — USER
 ============================================================ */
 
-import { createBusiness } from "./routes/business/business";
-import { getBusiness } from "./routes/business/business";
-import { getMyBusiness } from "./routes/business/businessMine";
-import { getBusinessPublic } from "./routes/business/businessPublic";
-import { submitBusiness } from "./routes/business/businessSubmit";
-import { uploadBusinessMenu } from "./routes/business/uploadMenu";
+import { createBusiness } from "./routes/tenant/business/business.create";
+import { getBusiness } from "./routes/tenant/business/business.get";
+import { listBusinesses } from "./routes/tenant/business/business.list";
+import { submitBusiness } from "./routes/tenant/business/business.submit";
+import { uploadBusinessMenu } from "./routes/tenant/business/uploadMenu";
 // ======================================================
 // BE || routes/configuration/index.ts
 // ======================================================
@@ -106,15 +105,15 @@ import { uploadBusinessMenu } from "./routes/business/uploadMenu";
 /* ============================================================
    PRODUCTS
 ============================================================ */
-import { getProductsWithOptions } from "./routes/products/products.withOptions";
-import { getProducts } from "./routes/products/products";
-import { getProduct } from "./routes/products/products";
-import { registerProduct } from "./routes/products/products";
+import { getProductsWithOptions } from "./routes/public/products/products.withOptions";
+import { getProducts } from "./routes/public/products/products";
+import { getProduct } from "./routes/public/products/products";
+import { registerAdminProduct } from "./routes/admin/products/products.admin.register";
 
 /* ============================================================
    ADMIN — PRODUCTS
 ============================================================ */
-import { getProductWithOptions } from "./routes/products/product.withOptions";
+import { getProductWithOptions } from "./routes/public/products/product.withOptions";
 
 import {
   listAdminProducts,
@@ -130,13 +129,13 @@ import {
 } from "./routes/admin/options/options.read";
 import { getAdminProductWithOptions } from "./routes/admin/products/products.withOptions";
 
-import { createConfigurationFromCart } from "./routes/configuration/createFromCart";
+import { createConfigurationFromCart } from "./routes/tenant/configuration/configuration.product.write.ts";
 /* ============================================================
    COOKIES — CONSENSO
 ============================================================ */
 
-import { acceptCookies } from "./routes/cookies/cookies";
-import { getCookieStatus } from "./routes/cookies/cookies";
+import { acceptCookies } from "./routes/system/cookies/cookies";
+import { getCookieStatus } from "./routes/system/cookies/cookies";
 
 /* ============================================================
    ADMIN — GUARD
@@ -171,8 +170,8 @@ import { getAdminKPI } from "./routes/admin/kpi/kpi.read";
 import {  listAdminSolutions,
   getAdminSolution,
   registerSolution, } from "./routes/admin/solutions/solutions.admin";
-import { getSolutionDetail } from "./routes/solutions/solution.detail";
-import { getSolutions } from "./routes/solutions/solutions.public";
+import { getSolutionDetail } from "./routes/public/solutions/solutions.public.detail";
+import { getSolutions } from "./routes/public/solutions/solutions.public.list";
 /* ============================================================
    HTTP HELPERS
 ============================================================ */
@@ -374,23 +373,23 @@ if (pathname === "/api/cookies/status" && method === "GET") {
       /* ======================================================
          BUSINESS
       ====================================================== */
-      if (pathname === "/api/business/mine" && method === "GET")
-        return withCors(await getMyBusiness(request, env), request, env);
 
       if (pathname === "/api/business/create" && method === "POST")
         return withCors(await createBusiness(request, env), request, env);
+      
+      if (pathname === "/api/business" && method === "GET")
+        return withCors(await listBusinesses(request, env), request, env);
 
+      if (pathname.startsWith("/api/business/") && method === "GET")
+        return withCors(await getBusiness(request, env), request, env);
+      
       if (pathname === "/api/business/submit" && method === "POST")
         return withCors(await submitBusiness(request, env), request, env);
 
       if (pathname === "/api/business/menu/upload" && method === "POST")
         return withCors(await uploadBusinessMenu(request, env), request, env);
 
-      if (pathname.startsWith("/api/business/public/") && method === "GET")
-        return withCors(await getBusinessPublic(request, env), request, env);
 
-      if (pathname.startsWith("/api/business/") && method === "GET")
-        return withCors(await getBusiness(request, env), request, env);
 /* ======================================================
    CONFIGURATION — FROM CART (AUTH REQUIRED)
 ====================================================== */
@@ -445,7 +444,9 @@ if (pathname.startsWith("/api/configuration/")) {
         return withCors(json({ ok: true, product: await getProduct(request, env) }, request, env), request, env);
 
       if (pathname === "/api/products/register" && method === "PUT")
-        return withCors(json({ ok: true, product: await registerProduct(request, env) }, request, env), request, env);
+        return withCors(json({ ok: true, product: await registerAdminProduct(request, env) }, request, env), request, env);
+
+
       if (pathname === "/api/products/with-options" && method === "GET") {
         return withCors( json( { ok: true, products: await getProductsWithOptions(env) },request,env),request, env );}
         if (pathname === "/api/product/with-options" && method === "GET") {

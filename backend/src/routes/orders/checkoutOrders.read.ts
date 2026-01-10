@@ -18,7 +18,7 @@
  */
 
 import type { Env } from "../../types/env";
-import { CheckoutOrderDomainSchema } from "../../schemas/orders/checkoutOrderSchema";
+import { CheckoutOrderDomainSchema } from "../../domains/order/order.checkout.schema";
 
 /* =========================
    JSON helper

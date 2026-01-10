@@ -26,7 +26,7 @@ import type { Env } from "../../../types/env";
 import { json } from "../../../lib/https";
 import {
   CheckoutOrderDomainSchema,
-} from "../../../schemas/orders/checkoutOrderSchema";
+} from "../../../domains/order/order.checkout.schema";
 
 export async function getAdminKPI(
   request: Request,

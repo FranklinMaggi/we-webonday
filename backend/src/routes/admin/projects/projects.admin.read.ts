@@ -13,7 +13,7 @@
 // ======================================================
 
 import type { Env } from "../../../types/env";
-import { ProjectSchema } from "../../../schemas/core/projectSchema";
+import { ProjectSchema } from "../../../domains/project/project.schema";
 import { requireAdmin } from "../guard/admin.guard";
 
 /* =========================

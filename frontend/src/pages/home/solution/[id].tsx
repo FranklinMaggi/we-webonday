@@ -27,7 +27,7 @@ import { fetchProducts } from "../../../lib/publicApi/products/products.public.a
 
 import { API_BASE } from "../../../lib/config";
 import { initWhatsAppScrollWatcher } from "../../../lib/ui/scrollWatcher";
-import type { ProductDTO } from "../../../lib/dto/productDTO";
+import type { ProductVM } from "../../../lib/viewModels/product/Product.view-model";
 import ProductCard from "../../../components/catalog/ProductCard/ProductCard";
 /* =========================
    TIPI PUBLIC
@@ -52,7 +52,7 @@ type SolutionDetailResponse =
   | {
       ok: true;
       solution: PublicSolutionDetail;
-      products: ProductDTO[];
+      products: ProductVM[];
     }
   | {
       ok: false;
@@ -64,7 +64,7 @@ export default function HomeSolutionPage() {
 
   const [solution, setSolution] =
     useState<PublicSolutionDetail | null>(null);
-  const [products, setProducts] = useState<ProductDTO[]>([]);
+  const [products, setProducts] = useState<ProductVM[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

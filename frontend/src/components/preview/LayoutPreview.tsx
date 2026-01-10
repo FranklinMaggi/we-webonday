@@ -16,7 +16,7 @@
 // ======================================================
 
 import type { LayoutKVDTO } from "../../lib/configurationLayout/layout.dto";
-import type { UserConfigurationSetupDTO } from "../../lib/dto/userConfigurationSetup.dto";
+import type { UserConfigurationSetupDTO } from "../../lib/storeModels/ConfigurationSetup.store-model";
 
 type LayoutPreviewProps = {
   layout: LayoutKVDTO;

@@ -27,7 +27,7 @@ import { z } from "zod";
 import {
   CheckoutOrderDomainSchema,
   CheckoutOrderSchema
-} from "../../../schemas/orders/checkoutOrderSchema";
+} from "../../../domains/order/order.checkout.schema";
 
 /* =========================
    JSON helper

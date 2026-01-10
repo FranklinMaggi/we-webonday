@@ -52,7 +52,7 @@ import UserConfigurationWorkspace from "../pages/user/dashboard/configuration/[i
 import CheckoutPage from "../pages/user/checkout";
 import UserConfiguratorDetail from "../pages/user/configurator/[id]";
 import UserConfiguratorIndex from "../pages/user/configurator/index";
-
+import UserBusinessDashboard from "../pages/user/dashboard/business";
 /* =========================
 
 
@@ -128,13 +128,21 @@ const router = createBrowserRouter([
           element: <DashboardLayout />,
           children: [
             { index: true, element: <UserDashboardHome /> },
+        
+            // 👇 DASHBOARD BUSINESS (ENTRY POINT REALE)
+            { path: "business", element: <UserBusinessDashboard /> },
+        
+            // Dettagli generici (futuro)
             { path: ":id", element: <UserDashboardDetail /> },
+        
+            // Workspace configurazione (solo DOPO start)
             {
               path: "configuration/:id",
               element: <UserConfigurationWorkspace />,
             },
           ],
         },
+        
 
         /* ================= CONFIGURATOR ================= */
         {

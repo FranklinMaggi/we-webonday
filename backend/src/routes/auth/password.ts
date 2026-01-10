@@ -25,7 +25,7 @@
 import type { Env } from "../../types/env";
 import { logActivity } from "../../lib/logActivity";
 import { buildSessionCookie } from "../../lib/auth/session";
-import { UserSchema, UserInputSchema } from "../../schemas/core/userSchema";
+import { UserSchema, UserInputSchema } from "../../domains/user/user.schema";
 import { destroySessionCookie } from "../../lib/auth/session";
 import { requireUser } from "../../lib/auth/session";
 /**

@@ -38,29 +38,16 @@ REGOLE:
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { adminFetch } from "../../../../lib/adminApi/client";
+import type { AdminOptionApiModel }
+  from "../../../../lib/apiModels/admin/Option.api-model.ts";
 
-/* =========================
-   DTO ADMIN — OPTION
-   (MONTHLY ONLY)
-========================= */
-type AdminOptionDTO = {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  payment: {
-    mode: "recurring";
-    interval: "monthly";
-  };
-  status: "ACTIVE" | "ARCHIVED";
-};
 
 export default function AdminEditOptionPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const isNew = id === "new";
 
-  const [option, setOption] = useState<AdminOptionDTO | null>(null);
+  const [option, setOption] = useState<AdminOptionApiModel | null>(null);
   const [saving, setSaving] = useState(false);
 
   /* =========================
@@ -84,7 +71,7 @@ export default function AdminEditOptionPage() {
     }
 
     // MODIFICA OPZIONE ESISTENTE
-    adminFetch<{ ok: true; option: AdminOptionDTO }>(
+    adminFetch<{ ok: true; option: AdminOptionApiModel }>(
       `/api/admin/option?id=${id}`
     ).then((res) =>
       // HARD OVERRIDE payment → monthly (safety)

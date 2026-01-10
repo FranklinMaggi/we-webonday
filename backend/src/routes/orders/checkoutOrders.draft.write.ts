@@ -24,7 +24,7 @@ import type { Env } from "../../types/env";
 import {
   CheckoutOrderDomainSchema,
   OrderKindSchema,
-} from "../../schemas/orders/checkoutOrderSchema";
+} from "../../domains/order/order.checkout.schema";
 import { json } from "../../lib/https";
 
 /* =========================

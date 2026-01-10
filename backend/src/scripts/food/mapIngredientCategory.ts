@@ -1,4 +1,4 @@
-import { IngredientCategorySchema } from "../../schemas/food/ingredientCatalogSchema";
+import { IngredientCategorySchema } from "../../domains/schemas/legacy/schemas/food/ingredientCatalogSchema";
 
 export function mapIngredientCategory(raw: string) {
   const key = raw.toLowerCase();
