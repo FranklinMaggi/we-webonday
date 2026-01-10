@@ -376,13 +376,16 @@ if (pathname === "/api/cookies/status" && method === "GET") {
 
       if (pathname === "/api/business/create" && method === "POST")
         return withCors(await createBusiness(request, env), request, env);
-      
+       
       if (pathname === "/api/business" && method === "GET")
         return withCors(await listBusinesses(request, env), request, env);
 
+      
       if (pathname.startsWith("/api/business/") && method === "GET")
         return withCors(await getBusiness(request, env), request, env);
+     
       
+
       if (pathname === "/api/business/submit" && method === "POST")
         return withCors(await submitBusiness(request, env), request, env);
 
