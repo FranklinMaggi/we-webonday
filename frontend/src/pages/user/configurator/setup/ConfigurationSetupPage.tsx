@@ -96,6 +96,8 @@ export default function ConfigurationSetupPage({
      3. BUSINESS → configuration esistente (se presente)
   ====================================================== */
   useEffect(() => {
+    localStorage.setItem("user_mode", "configurator");
+
     if (prefilledRef.current) return;
 
     /* ===== 1. EMAIL DA SESSIONE ===== */

@@ -11,8 +11,12 @@
 // ======================================================
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { listMyBusinesses } from "../../../../lib/userApi/business.user.api";
 
+/* =========================
+   TYPES
+========================= */
 type BusinessSummary = {
   businessId: string;
   publicId: string;
@@ -22,9 +26,20 @@ type BusinessSummary = {
 };
 
 export default function UserBusinessDashboard() {
+  /* =====================
+     NAVIGATION
+  ====================== */
+  const navigate = useNavigate();
+
+  /* =====================
+     STATE
+  ====================== */
   const [items, setItems] = useState<BusinessSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
+  /* =====================
+     LOAD BUSINESSES
+  ====================== */
   useEffect(() => {
     listMyBusinesses()
       .then((res) => {
@@ -33,9 +48,15 @@ export default function UserBusinessDashboard() {
       .finally(() => setLoading(false));
   }, []);
 
+  /* =====================
+     UI STATES
+  ====================== */
   if (loading) return <p>Caricamento…</p>;
   if (items.length === 0) return <p>Nessuna attività creata.</p>;
 
+  /* =====================
+     RENDER
+  ====================== */
   return (
     <section>
       <h2>Le tue attività</h2>
@@ -54,8 +75,13 @@ export default function UserBusinessDashboard() {
               ✍️ Contenuti
             </button>
 
-            <button onClick={() => startConfig(b.businessId, "preview")}>
-              👁 Preview
+            {/* === VISTA PASSIVA DASHBOARD === */}
+            <button
+              onClick={() =>
+                navigate(`/user/dashboard/${b.businessId}`)
+              }
+            >
+              👁 Visualizza
             </button>
           </div>
         </div>
@@ -64,10 +90,13 @@ export default function UserBusinessDashboard() {
   );
 }
 
+/* =====================
+   TEMP CONFIG NAV
+===================== */
 function startConfig(
   businessId: string,
   mode: "design" | "content" | "preview"
 ) {
-  // per ora navigazione semplice
+  // TODO: sostituire con router interno quando pronto
   window.location.href = `/configurator/start?businessId=${businessId}&mode=${mode}`;
 }

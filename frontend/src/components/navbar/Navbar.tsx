@@ -23,6 +23,19 @@ export default function Navbar() {
   const user = useAuthStore((s) => s.user);
   const ready = useAuthStore((s) => s.ready);
   const clearUser = useAuthStore((s) => s.clearUser);
+  const userMode = localStorage.getItem("user_mode"); 
+// es: "configurator" | "dashboard" | null
+
+const activeBusinessId = localStorage.getItem("active_business_id");
+// questo lo setti nel configurator (1 riga)
+{userMode === "configurator" && activeBusinessId && (
+  <Link
+    to={`/user/dashboard/${activeBusinessId}`}
+    className="wd-navbar-link"
+  >
+    👁 Dashboard attività
+  </Link>
+)}
 
   const navigate = useNavigate();
 

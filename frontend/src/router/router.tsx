@@ -129,13 +129,10 @@ const router = createBrowserRouter([
           children: [
             { index: true, element: <UserDashboardHome /> },
         
-            // 👇 DASHBOARD BUSINESS (ENTRY POINT REALE)
+            // ✅ AGGIUNGI QUESTA
             { path: "business", element: <UserBusinessDashboard /> },
         
-            // Dettagli generici (futuro)
             { path: ":id", element: <UserDashboardDetail /> },
-        
-            // Workspace configurazione (solo DOPO start)
             {
               path: "configuration/:id",
               element: <UserConfigurationWorkspace />,
