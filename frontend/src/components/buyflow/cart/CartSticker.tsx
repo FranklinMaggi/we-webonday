@@ -105,7 +105,10 @@ export default function CartSticker() {
 
     const first = items[0]; // MVP: 1 solo item
     const requiresConfig = first.requiresConfiguration === true;
-
+    console.log("[CART FLOW DECISION]", {
+      requiresConfiguration: first.requiresConfiguration,
+      item: first,
+    });
     const redirectAfterLogin = requiresConfig
       ? "/user/configurator"
       : "/user/checkout";

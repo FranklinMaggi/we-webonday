@@ -200,6 +200,7 @@ export default function CartPreview({
       >
         Aggiungi al Carrello
       </button>
+      
     </aside>
   );
 }
