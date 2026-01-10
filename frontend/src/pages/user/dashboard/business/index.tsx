@@ -43,11 +43,11 @@ export default function UserBusinessDashboard() {
   useEffect(() => {
     listMyBusinesses()
       .then((res) => {
-        if (!res || !res.ok) {
+        if (!res?.ok || !Array.isArray(res.items)) {
           setItems([]);
           return;
         }
-        setItems(res.businesses ?? []);
+        setItems(res.items);
       })
       .finally(() => setLoading(false));
   }, []);

@@ -38,24 +38,40 @@ export type CreateBusinessPayload = {
 /* ======================================================
    API — USER BUSINESS
 ====================================================== */
-
 /**
+ * ======================================================
+ * API — LIST MY BUSINESSES (USER)
  * GET /api/business
+ *
+ * RUOLO:
+ * - Recupera tutti i business associati all’utente loggato
+ *
+ * BACKEND CONTRACT (SOURCE OF TRUTH):
+ * {
+ *   ok: true,
+ *   items: BusinessSummaryDTO[]
+ * }
+ * ======================================================
  */
+
 export async function listMyBusinesses(): Promise<{
   ok: true;
-  businesses: BusinessSummaryDTO[];
+  items: BusinessSummaryDTO[];
 }> {
   const res = await apiFetch<{
-    ok: boolean;
-    businesses: BusinessSummaryDTO[];
-  }>("/api/business");
+    ok: true;
+    items: BusinessSummaryDTO[];
+  }>("/api/business", {
+    method: "GET",
+  });
 
+  // SAFETY GUARD — apiFetch non dovrebbe mai tornare null,
+  // ma questa guardia evita crash silenziosi
   if (!res) {
-    throw new Error("API /api/business returned null");
+    throw new Error("API /api/business returned null response");
   }
 
-  return res as { ok: true; businesses: BusinessSummaryDTO[] };
+  return res;
 }
 
 /**
