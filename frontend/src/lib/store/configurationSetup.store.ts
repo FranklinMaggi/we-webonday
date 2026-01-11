@@ -20,21 +20,54 @@
 import { create } from "zustand";
 import type { UserConfigurationSetupDTO } from "../storeModels/ConfigurationSetup.store-model";
 
+/* =========================
+   INITIAL DATA (STABILE)
+========================= */
+const initialData: Partial<UserConfigurationSetupDTO> = {
+  /* BUSINESS */
+  businessName: "",
+  sector: "",
+
+  address: "",
+  city: "",
+  state: "",
+  zip: "",
+
+  /* CONTACT */
+  email: "",
+  phone: "",
+  privacyAccepted: false,
+
+  /* TAGS */
+  solutionTags: [],   // 🔴 CRITICO
+  businessTags: [],   // 🔴 CRITICO
+
+  /* COMMERCIAL */
+  solutionId: "",
+  productId: "",
+  optionIds: [],
+
+  /* VISIBILITY */
+  visibility: {
+    contactForm: true,
+    address: true,
+    gallery: true,
+    openingHours: true,
+    businessTags: [],
+  },
+
+  openingHours: {},
+};
+
+/* =========================
+   STATE TYPE
+========================= */
 type ConfigurationSetupState = {
-  // =========================
-  // DATI WIZARD (DTO FE)
-  // =========================
   data: Partial<UserConfigurationSetupDTO>;
 
-  // =========================
-  // STATO TECNICO
-  // =========================
   businessId?: string;
   configurationId?: string;
 
-  // =========================
-  // MUTATORS
-  // =========================
   setField<K extends keyof UserConfigurationSetupDTO>(
     key: K,
     value: UserConfigurationSetupDTO[K]
@@ -46,18 +79,17 @@ type ConfigurationSetupState = {
   reset(): void;
 };
 
+/* =========================
+   STORE
+========================= */
 export const useConfigurationSetupStore =
   create<ConfigurationSetupState>((set) => ({
-    // =========================
-    // STATE
-    // =========================
-    data: {},
+    /* STATE */
+    data: initialData,
     businessId: undefined,
     configurationId: undefined,
 
-    // =========================
-    // MUTATORS
-    // =========================
+    /* MUTATORS */
     setField: (key, value) =>
       set((state) => ({
         data: {
@@ -74,7 +106,7 @@ export const useConfigurationSetupStore =
 
     reset: () =>
       set({
-        data: {},
+        data: initialData,
         businessId: undefined,
         configurationId: undefined,
       }),
