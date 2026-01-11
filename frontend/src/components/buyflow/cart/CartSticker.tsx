@@ -95,42 +95,97 @@ export default function CartSticker() {
   // ======================================================
   // FLOW DECISION (CORE)
   // ======================================================
-  const checkout = () => {
-    if (items.length === 0) return;
+// ======================================================
+// FLOW DECISION (CORE)
+// ======================================================
+const checkout = async () => {
+  if (items.length === 0) return;
 
-    // MVP: 1 item
-    const first = items[0];
-    const requiresConfiguration =
-      first.requiresConfiguration === true;
+  // MVP: 1 item
+  const first = items[0];
+  const requiresConfiguration =
+    first.requiresConfiguration === true;
 
-    const targetPath = requiresConfiguration
-      ? "/user/configurator"
-      : "/user/checkout";
+  // 🔐 LOGIN REQUIRED
+  if (!user) {
+    localStorage.setItem(
+      "PENDING_CART",
+      JSON.stringify({ items })
+    );
 
-    console.log("[CART FLOW]", {
-      requiresConfiguration,
-      targetPath,
-      item: first,
-    });
+    navigate(
+      `/user/login?redirect=${encodeURIComponent(
+        requiresConfiguration
+          ? "/user/configurator"
+          : "/user/checkout"
+      )}`
+    );
+    return;
+  }
 
-    // 🔐 LOGIN REQUIRED
-    if (!user) {
-      localStorage.setItem(
-        "PENDING_CART",
-        JSON.stringify({ items })
+  // ======================================================
+  // 🧠 CONFIGURATION REQUIRED → CREATE VIA BE
+  // ======================================================
+  if (requiresConfiguration) {
+    try {
+      const res = await fetch(
+        "/api/configuration/from-cart",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            // ⚠️ placeholder TEMPORANEO
+            // verrà sovrascritto nello StepBusiness
+            businessName: "nuovo-progetto",
+
+            solutionId: first.solutionId,
+            productId: first.productId,
+            optionIds: first.options.map(
+              (o) => o.id
+            ),
+          }),
+        }
       );
 
+      const json = await res.json();
+
+      if (!json?.ok || !json.configurationId) {
+        console.error(
+          "[CART → CONFIGURATION ERROR]",
+          json
+        );
+        alert(
+          "Errore nella creazione della configurazione"
+        );
+        return;
+      }
+
+      // ✅ REDIRECT CANONICO
       navigate(
-        `/user/login?redirect=${encodeURIComponent(
-          targetPath
-        )}`
+        `/user/configurator/${json.configurationId}`
+      );
+      return;
+    } catch (err) {
+      console.error(
+        "[CART → CONFIGURATION EXCEPTION]",
+        err
+      );
+      alert(
+        "Errore di rete nella creazione della configurazione"
       );
       return;
     }
+  }
 
-    // 🟢 USER LOGGATO → ROUTE DIRETTA
-    navigate(targetPath);
-  };
+  // ======================================================
+  // 🟢 NO CONFIGURATION → CHECKOUT
+  // ======================================================
+  navigate("/user/checkout");
+};
+
 
   // ======================================================
   // RENDER
