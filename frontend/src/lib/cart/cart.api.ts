@@ -41,7 +41,7 @@ export type CartPointer = {
       method: "PUT",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({cart:payload,}),
     });
   
     if (!res.ok) {
