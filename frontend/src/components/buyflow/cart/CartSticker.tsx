@@ -104,7 +104,7 @@ export default function CartSticker() {
       first.requiresConfiguration === true;
 
     const targetPath = requiresConfiguration
-      ? "/user/configurator/${configurationId}"
+      ? "/user/configurator"
       : "/user/checkout";
 
     console.log("[CART FLOW]", {

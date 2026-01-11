@@ -51,7 +51,7 @@ import UserDashboardDetail from "../pages/user/dashboard/[id]";
 import UserConfigurationWorkspace from "../pages/user/dashboard/workspace/[id]";
 import CheckoutPage from "../pages/user/checkout";
 import UserConfiguratorDetail from "../pages/user/configurator/configuration/[id]/edit";
-import UserConfiguratorIndex from "../pages/user/configurator/configuration/index";
+import UserConfiguratorIndex from "../pages/user/configurator/index";
 import UserBusinessDashboard from "../pages/user/dashboard/business";
 import UserBusinessDetail from "../pages/user/dashboard/business/[id]";
 /* =========================
