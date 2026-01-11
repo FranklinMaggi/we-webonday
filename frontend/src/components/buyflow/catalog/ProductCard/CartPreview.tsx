@@ -47,11 +47,12 @@ export default function CartPreview({
       /* =========================
          1) CREATE CONFIGURATION
       ========================= */
-      const res = await fetch(`${API_BASE}/api/configuration`, {
+      const res = await fetch(`${API_BASE}/api/configuration/from-cart`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          businessName:"progetto",
           solutionId,
           productId: product.id,
           optionIds: selectedOptions,

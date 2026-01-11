@@ -1,3 +1,20 @@
+/**
+ * ======================================================
+ * AUTH TYPES — INTERNAL PIPELINE
+ * ======================================================
+ *
+ * AI-SUPERCOMMENT
+ *
+ * QUESTI TIPI:
+ * - Vivono SOLO nel backend
+ * - NON attraversano il confine HTTP
+ * - NON rappresentano una sessione
+ *
+ * PERCHÉ:
+ * - Disaccoppiare identità da autenticazione
+ * - Supportare più provider senza duplicare logica
+ * ======================================================
+ */
 // backend/src/lib/auth/types.ts
 
 /**

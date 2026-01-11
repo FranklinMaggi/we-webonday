@@ -1,3 +1,37 @@
+/**
+ * ======================================================
+ * SESSION — USER AUTH (HARD)
+ * ======================================================
+ *
+ * AI-SUPERCOMMENT
+ *
+ * RUOLO:
+ * - Gestire ESCLUSIVAMENTE la sessione utente autenticata
+ *
+ * SOURCE OF TRUTH:
+ * - Cookie: webonday_session
+ * - KV: ON_USERS_KV
+ *
+ * INVARIANTI:
+ * - webonday_session contiene SOLO userId
+ * - Se il cookie è presente ma l’utente non esiste → sessione invalida
+ * - Tutti gli endpoint protetti DEVONO usare requireUser()
+ *
+ * NON FA:
+ * - NON gestisce visitor
+ * - NON crea sessioni anonime
+ * - NON fa fallback automatici
+ *
+ * PERCHÉ:
+ * - Separare HARD AUTH (user) da SOFT SESSION (visitor)
+ * - Evitare sessioni fantasma
+ * - Rendere l’autenticazione auditabile
+ *
+ * NOTA CRITICA:
+ * - Qualsiasi flusso visitor NON deve MAI passare da questo file
+ * ======================================================
+ */
+
 import type { Env } from "../../types/env";
 
 export function buildSessionCookie(
@@ -50,8 +84,27 @@ export async function getUserFromSession(
 }
 
 /**
- * HIGH LEVEL — guard standard
+ * ======================================================
+ * HARD AUTH GUARD
+ * ======================================================
+ *
+ * ⚠️ USARE SOLO PER:
+ * - checkout
+ * - orders
+ * - business
+ * - configurazioni user-owned
+ *
+ * ❌ NON USARE PER:
+ * - cart
+ * - configuration-from-cart
+ * - browsing pubblico
+ *
+ * PERCHÉ:
+ * - Blocca esplicitamente i visitor
+ * - Evita side-effect impliciti
+ * ======================================================
  */
+
 export async function requireUser(
   request: Request,
   env: Env
