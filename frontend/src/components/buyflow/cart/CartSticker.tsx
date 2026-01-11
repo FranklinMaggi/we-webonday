@@ -113,7 +113,7 @@ const checkout = async () => {
     );
 
     navigate(
-      `/user/login?redirect=/user/configurator`
+      `/user/login?redirect=/user/configurator?fromCart=1`
     );
     return;
   }

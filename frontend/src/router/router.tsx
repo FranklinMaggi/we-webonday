@@ -14,7 +14,7 @@
 
 import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 import { MainLayout } from "../components/layouts/MainLayout";
-
+import ConfigurationIndex from "../pages/user/configurator/index";
 /* =========================
    GUARDS
 ========================= */
@@ -159,7 +159,7 @@ const router = createBrowserRouter([
             { index: true, element: <UserConfiguratorIndex /> },
             {
               path: ":id",
-              element: <UserConfiguratorIndex />,
+              element: <ConfigurationIndex />,
             },
           ],
         },

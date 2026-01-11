@@ -75,7 +75,7 @@ export default function ConfigurationIndex() {
   ====================================================== */
   useEffect(() => {
     if (!configurationId) {
-      navigate("/user");
+      navigate("/user/dashboard", { replace: true });
     }
   }, [configurationId, navigate]);
 
