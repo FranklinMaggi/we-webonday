@@ -20,7 +20,7 @@ import {
     userConfigurationsKey,
     getConfiguration,
     buildConfigurationId,
-  } from "../../../domains/configuration/configuration.schema";
+  } from "./configuration/configuration.schema";
   
   import { requireUser } from "../../../lib/auth/session";
   import { json } from "../../../lib/https";// ✅ helper allineato
@@ -292,10 +292,33 @@ import {
         400
       );
     }
-  
+    function normalizeBusinessTags(input: unknown): string[] {
+      if (!Array.isArray(input)) return [];
+    
+      return Array.from(
+        new Set(
+          input
+            .filter((t) => typeof t === "string")
+            .map((t) =>
+              t
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-+|-+$/g, "")
+            )
+            .filter(Boolean)
+        )
+      );
+    }
+    
     const updated = {
       ...existing,
       ...patch,
+      // 🔒 normalizzazione tag
+  businessTags: patch.businessTags
+  ? normalizeBusinessTags(patch.businessTags)
+  : existing.businessTags,
       updatedAt: new Date().toISOString(),
     };
   

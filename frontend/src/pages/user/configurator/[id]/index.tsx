@@ -2,41 +2,33 @@
 // FE || pages/user/configurator/[id]/index.tsx
 // ======================================================
 //
-// AI-SUPERCOMMENT — CONFIGURATOR DRAFT
+// AI-SUPERCOMMENT — CONFIGURATOR DETAIL (PRE-ORDER)
 //
 // RUOLO:
-// - Wizard collegato a Configuration ESISTENTE
-// - Stato: draft / preview
+// - Entry point del wizard di configurazione ESISTENTE
+// - Coordina:
+//   • fetch Configuration (workspace)
+//   • fetch Solution (seed semantico)
+// - Deriva i dati necessari al wizard
 //
 // SOURCE OF TRUTH:
-// - Backend (ConfigurationDTO)
+// - Backend (ConfigurationDTO, SolutionDTO)
 //
-// COSA FA:
-// - Prefill dati
-// - Monta ConfigurationSetupPage
-//
-// COSA NON FA:
+// INVARIANTI:
 // - NON crea ordini
 // - NON gestisce checkout
+// - NON muta dati backend
 //
-// ======================================================
-// ======================================================
-// FE || pages/user/configurator/[id]/index.tsx
-// ======================================================
-//
-// CONFIGURATOR DETAIL — PRE-ORDER
-//
-// RUOLO:
-// - Wizard di configurazione progetto
-// - Stato = draft / preview
-//
-// NOTA:
-// - NON esiste ancora orderId
 // ======================================================
 
 import { useParams } from "react-router-dom";
-import { useState,useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ConfigurationSetupPage from "../setup/ConfigurationSetupPage";
+
+/* ======================================================
+   TYPES (LOCAL, READ-ONLY)
+====================================================== */
+
 type ConfigurationDTO = {
   id: string;
   solutionId: string;
@@ -47,52 +39,104 @@ type ConfigurationDTO = {
     type?: string;
   };
 };
+
+type SolutionDTO = {
+  id: string;
+  tags?: string[];
+  userGeneratedTags?: string[];
+  industries?: string[];
+};
+
+/* ======================================================
+   COMPONENT
+====================================================== */
+
 export default function UserConfiguratorDetail() {
-    const { id } = useParams<{ id: string }>();
-    const [config, setConfig] = useState<ConfigurationDTO | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [solution, setSolution] = useState<any>(null);
-    useEffect(() => {
-      if (!config?.solutionId) return;
-    
-      fetch(`/api/solution?id=${config.solutionId}`)
-        .then((r) => r.json())
-        .then((res) => {
-          if (res.ok) setSolution(res.solution);
-        });
-    }, [config?.solutionId]);
-    useEffect(() => {
-      if (!id) return;
-  
-      fetch(`/api/configuration/${id}`, {
-        credentials: "include",
+  const { id: configurationId } = useParams<{ id: string }>();
+
+  const [config, setConfig] = useState<ConfigurationDTO | null>(null);
+  const [solution, setSolution] = useState<SolutionDTO | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  /* ======================================================
+     FETCH CONFIGURATION (WORKSPACE)
+  ====================================================== */
+  useEffect(() => {
+    if (!configurationId) return;
+
+    fetch(`/api/configuration/${configurationId}`, {
+      credentials: "include",
+    })
+      .then((r) => r.json())
+      .then((res) => {
+        if (res?.ok) setConfig(res.configuration);
       })
-        .then((r) => r.json())
-        .then((res) => {
-          if (res.ok) setConfig(res.configuration);
-        })
-        .finally(() => setLoading(false));
-    }, [id]);
-  
-    if (!id) return <p>Configurazione non valida</p>;
-    if (loading) return <p>Caricamento configurazione…</p>;
-    if (!config) return <p>Configurazione non trovata</p>;
-  
-    return (
-      <section className="configuration-page">
-        {/* HEADER MINIMO */}
-        <header className="configuration-header">
-          <div>
-            <h1>{config.business?.name ?? "Il tuo progetto"}</h1>
-            <p className="configuration-subtitle">
-              Configurazione progetto — stato: {config.status}
-            </p>
-          </div>
-        </header>
-  
-        <ConfigurationSetupPage
-   configuration={config}  industries={solution?.industries ??[]} />
-        
-      </section>
-    );
+      .finally(() => setLoading(false));
+  }, [configurationId]);
+
+  /* ======================================================
+     FETCH SOLUTION (SEMANTIC SEED)
+     Dipende da config.solutionId
+  ====================================================== */
+  useEffect(() => {
+    if (!config?.solutionId) return;
+
+    fetch(`/api/solution?id=${config.solutionId}`)
+      .then((r) => r.json())
+      .then((res) => {
+        if (res?.ok) setSolution(res.solution);
+      });
+  }, [config?.solutionId]);
+
+  /* ======================================================
+     DERIVED DATA (ADHD-SAFE)
+     - merge seed + user tags
+     - dedupe
+  ====================================================== */
+  const solutionTags = useMemo(() => {
+    if (!solution) return [];
+
+    const seed = solution.tags ?? [];
+    const user = solution.userGeneratedTags ?? [];
+
+    return Array.from(new Set([...seed, ...user]));
+  }, [solution]);
+
+  /* ======================================================
+     GUARDS
+  ====================================================== */
+  if (!configurationId) {
+    return <p>Configurazione non valida</p>;
   }
+
+  if (loading) {
+    return <p>Caricamento configurazione…</p>;
+  }
+
+  if (!config) {
+    return <p>Configurazione non trovata</p>;
+  }
+
+  /* ======================================================
+     RENDER
+  ====================================================== */
+  return (
+    <section className="configuration-page">
+      {/* HEADER MINIMO */}
+      <header className="configuration-header">
+        <div>
+          <h1>{config.business?.name ?? "Il tuo progetto"}</h1>
+          <p className="configuration-subtitle">
+            Configurazione progetto — stato: {config.status}
+          </p>
+        </div>
+      </header>
+
+      <ConfigurationSetupPage
+        configuration={config}
+        industries={solution?.industries ?? []}
+        solutionTags={solutionTags}
+      />
+    </section>
+  );
+}

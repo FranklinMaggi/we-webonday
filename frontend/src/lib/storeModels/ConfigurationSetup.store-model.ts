@@ -37,12 +37,13 @@ export type UserConfigurationSetupDTO = {
    email: string;
    phone?: string;
    privacyAccepted: boolean;
- 
+   businessTags?: string[];
    /* =========================
       COMMERCIAL CONTEXT
       (from cart)
    ========================= */
    solutionId: string;
+   solutionTags?: string[];
    productId: string;
    optionIds: string[];
    openingHours?: {
@@ -60,6 +61,7 @@ export type UserConfigurationSetupDTO = {
       address: boolean;
       gallery: boolean;
       openingHours: boolean;
+      businessTags?: string[];
     };
    /* =========================
       DESIGN (SEMANTICO)

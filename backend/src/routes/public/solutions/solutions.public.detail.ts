@@ -34,13 +34,15 @@ export type SolutionDetailResult =
       solution: {
         id: string;
         name: string;
-        description: string;
+        description?: string;
         longDescription?: string;
-      
+        tags: string[];
+        userGeneratedTags?: string[];
         /** URL pubblico hero / card */
         image?: {
           hero: string;
           card: string;
+          
         };
       
         /** @deprecated */
@@ -139,6 +141,8 @@ export async function getSolutionDetail(
     
       icon: solution.icon, // legacy
       industries: solution.industries,
+      tags: solution.tags?? [],
+      userGeneratedTags: solution.userGeneratedTags ?? [],
     },
     
     products,

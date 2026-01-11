@@ -29,6 +29,8 @@ import { upsertConfigurationFromBusiness } from "../../lib/userApi/configuration
 import { useConfigurationSetupStore } from "../../lib/store/configurationSetup.store";
 import { OpeningHoursDay } from "../openingHours/OpeningHoursDay";
 import { createBusiness } from "../../lib/userApi/business.user.api";
+import { normalizeBusinessTags } from "../../utils/businessTags";
+
 /* =========================
    COSTANTI
 ========================= */
@@ -41,6 +43,15 @@ const DAYS = [
   ["saturday", "Sabato"],
   ["sunday", "Domenica"],
 ] as const;
+
+function toggleTag(
+  current: string[] = [],
+  tag: string
+): string[] {
+  return current.includes(tag)
+    ? current.filter((t) => t !== tag)
+    : [...current, tag];
+}
 
 /* =========================
    PROPS
@@ -163,13 +174,73 @@ export default function StepBusinessInfo({
       ====================================================== */}
       <h3>Contenuti del sito</h3>
 
-      <textarea
-        placeholder="Descrivi brevemente la tua attività"
-        value={data.description ?? ""}
-        onChange={(e) =>
-          setField("description", e.target.value)
+{/* ======================================================
+   TAG SUGGERITI (DA SOLUTION)
+====================================================== */}
+{data.solutionTags && data.solutionTags.length > 0 && (
+  <>
+    <h4>Tag suggeriti</h4>
+
+    <div className="tag-pills">
+      {data.solutionTags.map((tag) => {
+        const active = data.businessTags?.includes(tag);
+
+        return (
+          <button
+            key={tag}
+            type="button"
+            className={`pill ${active ? "active" : ""}`}
+            onClick={() =>
+              setField(
+                "businessTags",
+                toggleTag(data.businessTags, tag)
+              )
+            }
+          >
+            {tag}
+          </button>
+        );
+      })}
+    </div>
+  </>
+)}
+<input
+  type="text"
+  placeholder="Aggiungi tag (es. camere sul mare)"
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const next = normalizeBusinessTags([
+        ...(data.businessTags ?? []),
+        e.currentTarget.value,
+      ]);
+
+      setField("businessTags", next);
+      e.currentTarget.value = "";
+    }
+  }}
+/>
+
+<div className="tag-pills">
+  {(data.businessTags ?? []).slice(0, 6).map((tag) => (
+    <span key={tag} className="pill">
+      {tag}
+      <button
+        onClick={() =>
+          setField(
+            "businessTags",
+            normalizeBusinessTags(
+              (data.businessTags ?? []).filter((t) => t !== tag)
+            )
+          )
         }
-      />
+      >
+        ×
+      </button>
+    </span>
+  ))}
+</div>
+
 
       <textarea
         placeholder="Elenca i servizi o prodotti principali"

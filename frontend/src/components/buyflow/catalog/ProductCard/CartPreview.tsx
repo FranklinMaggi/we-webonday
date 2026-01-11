@@ -135,7 +135,7 @@ export default function CartPreview({
       startupFee,
       yearlyFee,
       monthlyFee,
-        requiresConfiguration:product.requiresConfiguration === true ,
+        requiresConfiguration:true ,
       options: selectedOptionObjects.map(toCartOption),
     });
 

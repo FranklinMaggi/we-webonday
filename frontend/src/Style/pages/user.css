@@ -92,3 +92,23 @@
     opacity: 0.4;
     cursor: not-allowed;
   }
+  .pill {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid #ccc;
+    background: #f7f7f7;
+    cursor: pointer;
+  }
+  
+  .pill.active {
+    background: #111;
+    color: white;
+    border-color: #111;
+  }
+  
+  .tag-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  

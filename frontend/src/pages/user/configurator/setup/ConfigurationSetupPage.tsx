@@ -51,6 +51,8 @@ export type ConfigurationSetupPageProps = {
   };
 
   industries?: string[];
+  solutionTags?: string[];
+  
 };
 
 /**
@@ -72,6 +74,9 @@ const STEPS = [
 export default function ConfigurationSetupPage({
   configuration,
   industries = [],
+  solutionTags=[],
+
+
 }: ConfigurationSetupPageProps) {
   /* =========================
      STATO WIZARD
@@ -149,7 +154,12 @@ export default function ConfigurationSetupPage({
         setField("phone", b.phone);
       }
     }
-
+    if (
+      solutionTags.length > 0 &&
+      (!data.solutionTags || data.solutionTags.length === 0)
+    ) {
+      setField("solutionTags", solutionTags);
+    }
     prefilledRef.current = true;
   }, [user, configuration, industries, data, setField]);
 

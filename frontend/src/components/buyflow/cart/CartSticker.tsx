@@ -2,25 +2,27 @@
 // FE || components/cart/CartSticker.tsx
 // ======================================================
 //
-// CART STICKER — CHECKOUT ENTRY POINT (WEBONDAY)
+// CART STICKER — FLOW ORCHESTRATOR (WEBONDAY)
 //
 // VERSIONE:
-// - v3.1 (2026-01)
+// - v4.0 (2026-01)
 //
 // ======================================================
 // AI-SUPERCOMMENT
 // ======================================================
 //
 // RUOLO:
-// - Entry point persistente del flusso di acquisto
-// - Riepilogo carrello sempre accessibile
-// - Decide il percorso:
-//   • configurazione
-//   • checkout diretto
+// - Entry point del flusso di acquisto
+// - Decide il percorso in BASE AL CARRELLO
 //
-// INVARIANTE CRITICA:
-// - LOGIN SEMPRE richiesto prima di qualsiasi step finale
-// - Il redirect post-login dipende dal CartItem
+// REGOLE CHIAVE:
+// - Il carrello FE è source of truth pre-login
+// - Il BE NON viene chiamato qui
+// - Login SEMPRE richiesto prima di uscire
+//
+// DECISIONI:
+// - requiresConfiguration === true  → /user/configurator
+// - requiresConfiguration === false → /user/checkout
 //
 // ======================================================
 
@@ -31,17 +33,8 @@ import { cartStore } from "../../../lib/cart/cart.store";
 import type { CartItem } from "../../../lib/cart/cart.store";
 
 import { useAuthStore } from "../../../lib/store/auth.store";
-import { apiFetch } from "../../../lib/api";
 import { uiBus } from "../../../lib/ui/uiBus";
 import { eur } from "../../../utils/format";
-
-// ======================================================
-// API RESPONSE DTO
-// ======================================================
-
-type CreateConfigResponse =
-  | { ok: true; configurationId: string; reused?: boolean }
-  | { ok: false; error: string };
 
 // ======================================================
 // COMPONENT
@@ -57,15 +50,14 @@ export default function CartSticker() {
   const { user } = useAuthStore();
 
   // =========================
-  // STORE SYNC
+  // SYNC STORE → STATE
   // =========================
-  useEffect(
-    () => cartStore.subscribe((s) => setItems(s.items)),
-    []
-  );
+  useEffect(() => {
+    return cartStore.subscribe((s) => setItems(s.items));
+  }, []);
 
   // =========================
-  // UI BUS (toggle globale)
+  // UI BUS
   // =========================
   useEffect(() => {
     const off = uiBus.on("cart:toggle", () =>
@@ -75,7 +67,7 @@ export default function CartSticker() {
   }, []);
 
   // =========================
-  // TOTALI DERIVATI
+  // TOTALI
   // =========================
   const startupTotal = useMemo(
     () => items.reduce((s, i) => s + (i.startupFee ?? 0), 0),
@@ -98,65 +90,43 @@ export default function CartSticker() {
     cartStore.getState().removeItem(index);
 
   // ======================================================
-  // CHECKOUT ORCHESTRATION
+  // FLOW DECISION (CORE)
   // ======================================================
-  const checkout = async () => {
+  const checkout = () => {
     if (items.length === 0) return;
 
-    const first = items[0]; // MVP: 1 solo item
-    const requiresConfig = first.requiresConfiguration === true;
-    console.log("[CART FLOW DECISION]", {
-      requiresConfiguration: first.requiresConfiguration,
-      item: first,
-    });
-    const redirectAfterLogin = requiresConfig
+    // MVP: 1 item
+    const first = items[0];
+    const requiresConfiguration =
+      first.requiresConfiguration === true;
+
+    const targetPath = requiresConfiguration
       ? "/user/configurator"
       : "/user/checkout";
-    // 🔐 LOGIN OBBLIGATORIO
+
+    console.log("[CART FLOW]", {
+      requiresConfiguration,
+      targetPath,
+      item: first,
+    });
+
+    // 🔐 LOGIN REQUIRED
     if (!user) {
       localStorage.setItem(
         "PENDING_CART",
         JSON.stringify({ items })
       );
-      console.log("[CART ITEM]", first);
+
       navigate(
         `/user/login?redirect=${encodeURIComponent(
-          redirectAfterLogin
+          targetPath
         )}`
       );
       return;
     }
 
-    // 🟢 PRODOTTO SEMPLICE → CHECKOUT DIRETTO
-    if (!first.requiresConfiguration) {
-      navigate("/user/checkout");
-      return;
-    }
-
-    // 🔵 PRODOTTO CON CONFIGURAZIONE → CREA CONFIG
-    try {
-      const result = await apiFetch<CreateConfigResponse>(
-        "/api/configuration/from-cart",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            businessName: "Nuova attività",
-            solutionId: first.solutionId,
-            productId: first.productId,
-            optionIds: first.options.map((o) => o.id),
-          }),
-        }
-      );
-
-      if (!result || !result.ok) {
-        console.error("CONFIGURATION CREATE ERROR", result);
-        return;
-      }
-
-      navigate(`/user/configurator`);
-    } catch (err) {
-      console.error("CONFIGURATION CREATE FAILED", err);
-    }
+    // 🟢 USER LOGGATO → ROUTE DIRETTA
+    navigate(targetPath);
   };
 
   // ======================================================

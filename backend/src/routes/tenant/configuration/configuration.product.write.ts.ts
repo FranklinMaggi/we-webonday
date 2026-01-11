@@ -17,10 +17,10 @@
         import { SolutionSchema } from "../../../domains/solution/solution.schema";
         import { ProductSchema } from "../../../domains/product/product.schema";
         import { OptionSchema } from "../../../domains/option/option.schema.ts";
-        import { ConfigurationSchema } from "../../../domains/configuration/configuration.schema";
+        import { ConfigurationSchema } from "./configuration/configuration.schema";
         import { configurationKey,
             userConfigurationsKey, buildConfigurationId
-        } from "../../../domains/configuration/configuration.schema";
+        } from "./configuration/configuration.schema";
         import { requireUser } from "../../../lib/auth/session";
         const InputSchema = z.object({
         businessName: z.string().min(2),

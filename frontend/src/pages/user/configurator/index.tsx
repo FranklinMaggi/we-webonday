@@ -45,9 +45,19 @@
 // - NON gestisce ordini
 //
 // ======================================================
-
+import { useNavigate } from "react-router-dom";
 import ConfigurationSetupPage from "./setup/ConfigurationSetupPage";
+import { useEffect } from "react";
+
 
 export default function UserConfiguratorIndex() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const pending = localStorage.getItem("PENDING_CART");
+    if (!pending) {
+      navigate("/user/configurator");
+      return;
+    }
+  }, []);
   return <ConfigurationSetupPage />;
 }

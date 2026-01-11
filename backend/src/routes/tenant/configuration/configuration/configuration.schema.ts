@@ -20,8 +20,13 @@
 // ======================================================
 
 import { z } from "zod";
-import type { Env } from "../../types/env";
-
+import type { Env } from "../../../../types/env";
+const BusinessTagSchema = z
+  .string()
+  .min(1)
+  .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, {
+    message: "businessTag must be kebab-case lowercase",
+  });
 /* =========================
    STATUS (compat + step)
 ========================= */
@@ -41,14 +46,22 @@ export type ConfigurationStatus =
 ========================= */
 export const ConfigurationSchema = z.object({
   /* ---------- Identity (BE) ---------- */
-  id: z.string().optional(),       // spesso deterministico (buildConfigurationId)
-  userId: z.string().optional(),   // derivato da sessione
-  businessId: z.string().optional(), // utile ma non sempre presente nei draft iniziali
+  id: z.string().optional(),
+  userId: z.string().optional(),
+  businessId: z.string().optional(),
 
   /* ---------- Commercial origin ---------- */
   solutionId: z.string().min(1),
   productId: z.string().optional(),
   projectId: z.string().optional(),
+
+  /**
+   * TAG BUSINESS (SCELTA UTENTE)
+   * - derivano da Solution.tags + input user
+   * - persistenti in KV
+   * - SEO / AI / Preview
+   */
+  businessTags: z.array(BusinessTagSchema).default([]),
 
   /* ---------- Options ---------- */
   options: z.array(z.string()).default([]),
@@ -60,8 +73,6 @@ export const ConfigurationSchema = z.object({
   status: z.enum(CONFIGURATION_STATUS).default("draft"),
 
   /* ---------- Timestamps ---------- */
-  // NB: per compatibilità con flow legacy, restano OPTIONAL.
-  // Quando chiudiamo il refactor, li rendiamo required (datetime()).
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 });

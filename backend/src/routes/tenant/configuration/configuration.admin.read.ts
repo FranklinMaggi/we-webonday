@@ -18,7 +18,7 @@
 
 import type { Env } from "../../../types/env";
 import { requireAdmin } from "../../admin/guard/admin.guard";
-import { configurationKey } from "../../../domains/configuration/configuration.schema";
+import { configurationKey } from "./configuration/configuration.schema";
 import { json } from "../../../lib/https";
 /* ======================================================
    GET /api/admin/configuration

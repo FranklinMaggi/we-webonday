@@ -12,10 +12,10 @@ import type { Env } from "../../../types/env";
 import { requireUser } from "../../../lib/auth/session";
 import { json } from "../../../lib/https";
 
-import {configurationKey,userConfigurationsKey,buildConfigurationId,} from "../../../domains/configuration/configuration.schema";
+import {configurationKey,userConfigurationsKey,buildConfigurationId,} from "./configuration/configuration.schema";
 import { BusinessSchema } from "../../../domains/business/business.schema";
 import { ProductSchema } from "../../../domains/product/product.schema";
-import type { ConfigurationDTO } from "../../../domains/configuration/configuration.schema";
+import type { ConfigurationDTO } from "./configuration/configuration.schema";
 
 // =========================
 // INPUT

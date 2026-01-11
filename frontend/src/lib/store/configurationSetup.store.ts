@@ -10,21 +10,10 @@
  * - Stato SOLO frontend
  * - Nessuna fetch
  * - Nessuna persistenza
- * ======================================================
- */
-/**
- * ======================================================
- * FE || CONFIGURATION SETUP STORE
- * ======================================================
  *
- * RUOLO:
- * - Stato FE del wizard di configurazione
- *
- * INVARIANTI:
- * - Stato SOLO frontend
- * - Nessuna fetch
- * - Nessuna persistenza
- * - businessId è STATO TECNICO (non DTO)
+ * NOTE:
+ * - businessId e configurationId sono STATO TECNICO
+ * - NON fanno parte del DTO
  * ======================================================
  */
 
@@ -41,6 +30,7 @@ type ConfigurationSetupState = {
   // STATO TECNICO
   // =========================
   businessId?: string;
+  configurationId?: string;
 
   // =========================
   // MUTATORS
@@ -51,19 +41,27 @@ type ConfigurationSetupState = {
   ): void;
 
   setBusinessId(id: string): void;
+  setConfigurationId(id: string): void;
 
   reset(): void;
 };
 
 export const useConfigurationSetupStore =
   create<ConfigurationSetupState>((set) => ({
+    // =========================
+    // STATE
+    // =========================
     data: {},
     businessId: undefined,
+    configurationId: undefined,
 
+    // =========================
+    // MUTATORS
+    // =========================
     setField: (key, value) =>
-      set((s) => ({
+      set((state) => ({
         data: {
-          ...s.data,
+          ...state.data,
           [key]: value,
         },
       })),
@@ -71,9 +69,13 @@ export const useConfigurationSetupStore =
     setBusinessId: (id) =>
       set(() => ({ businessId: id })),
 
+    setConfigurationId: (id) =>
+      set(() => ({ configurationId: id })),
+
     reset: () =>
       set({
         data: {},
         businessId: undefined,
+        configurationId: undefined,
       }),
   }));
