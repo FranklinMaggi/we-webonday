@@ -2,7 +2,7 @@
 // FE || pages/user/configurator/[id]/index.tsx
 // ======================================================
 //
-// CONFIGURATOR DETAIL — CANONICAL ENTRY
+// CONFIGURATOR DETAIL — CANONICAL ENTRY - entry point per modificare 
 //
 // RUOLO:
 // - Garantisce ESISTENZA Configuration
@@ -23,8 +23,8 @@
 
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import ConfigurationSetupPage from "../setup/ConfigurationSetupPage";
-import { cartStore } from "../../../../lib/cart/cart.store";
+import ConfigurationSetupPage from "../../setup/ConfigurationSetupPage";
+import { cartStore } from "../../../../../lib/cart/cart.store";
 
 /* ======================================================
    TYPES (READ-ONLY)
