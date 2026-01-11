@@ -13,7 +13,7 @@
 // ======================================================
 
 import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
-import { MainLayout } from "../components/layouts/MainLayout";
+import { MainLayout } from "../pages/user/configurator/layouts/MainLayout";
 import ConfigurationIndex from "../pages/user/configurator/index";
 /* =========================
    GUARDS
@@ -73,7 +73,7 @@ import AdminOptionsPage from "../pages/admin/products/options";
 import AdminEditOptionPage from "../pages/admin/products/options/[id]";
 import SolutionsList from "../pages/admin/solutions";
 import SolutionEditor from "../pages/admin/solutions/[id]";
-import ConfiguratorLayout from "../components/layouts/ConfiguratorLayout";
+import ConfiguratorLayout from "../pages/user/configurator/layouts/ConfiguratorLayout";
 
 /* =========================
    BUSINESS (SaaS PURO) — 🔒

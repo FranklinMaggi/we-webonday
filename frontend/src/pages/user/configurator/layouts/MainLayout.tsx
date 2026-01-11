@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
-import Navbar from "../navbar/Navbar";
-import Footer from "../footer/Footer";
-import WhatsAppButton from "../whatsapp/WhatsAppButton";
-import { CookieBanner } from "../cookie/CookieBanner";
-import CartSticker from "../buyflow/cart/CartSticker";
-import { setDocumentTitle } from "../../utils/seo";
+import Navbar from "../../../../components/navbar/Navbar";
+import Footer from "../../../../components/footer/Footer";
+import WhatsAppButton from "../../../../components/whatsapp/WhatsAppButton";
+import { CookieBanner } from "../../../../components/cookie/CookieBanner";
+import CartSticker from "../../../../components/buyflow/cart/CartSticker";
+import { setDocumentTitle } from "../../../../utils/seo";
 
 
 /**
