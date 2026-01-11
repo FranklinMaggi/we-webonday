@@ -157,7 +157,10 @@ const router = createBrowserRouter([
           element: <ConfiguratorLayout />,
           children: [
             { index: true, element: <UserConfiguratorIndex /> },
-
+            {
+              path: ":id",
+              element: <UserConfiguratorIndex />,
+            },
           ],
         },
 
