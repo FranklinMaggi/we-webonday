@@ -133,7 +133,7 @@ import {
 } from "./routes/admin/options/options.read";
 import { getAdminProductWithOptions } from "./routes/admin/products/products.withOptions";
 
-import { createConfigurationFromCart } from "./routes/tenant/configuration/configuration.product.write.ts";
+import { createConfigurationFromCart } from "./routes/tenant/configuration";
 /* ============================================================
    COOKIES — CONSENSO
 ============================================================ */

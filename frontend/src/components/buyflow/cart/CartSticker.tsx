@@ -101,7 +101,6 @@ export default function CartSticker() {
 const checkout = async () => {
   if (items.length === 0) return;
 
-  // MVP: 1 item
   const first = items[0];
   const requiresConfiguration =
     first.requiresConfiguration === true;
@@ -114,18 +113,14 @@ const checkout = async () => {
     );
 
     navigate(
-      `/user/login?redirect=${encodeURIComponent(
-        requiresConfiguration
-          ? "/user/configurator"
-          : "/user/checkout"
-      )}`
+      `/user/login?redirect=/user/configurator`
     );
     return;
   }
 
-  // ======================================================
-  // 🧠 CONFIGURATION REQUIRED → CREATE VIA BE
-  // ======================================================
+  // =========================
+  // STEP 1 — CREATE CONFIGURATION
+  // =========================
   if (requiresConfiguration) {
     try {
       const res = await fetch(
@@ -137,52 +132,34 @@ const checkout = async () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            // ⚠️ placeholder TEMPORANEO
-            // verrà sovrascritto nello StepBusiness
-            businessName: "nuovo-progetto",
-
+            businessName: first.businessName ?? "nuovo-progetto",
             solutionId: first.solutionId,
             productId: first.productId,
-            optionIds: first.options.map(
-              (o) => o.id
-            ),
+            optionIds: first.options.map((o) => o.id),
           }),
         }
       );
 
       const json = await res.json();
 
-      if (!json?.ok || !json.configurationId) {
-        console.error(
-          "[CART → CONFIGURATION ERROR]",
-          json
-        );
-        alert(
-          "Errore nella creazione della configurazione"
-        );
+      if (!json.ok || !json.configurationId) {
+        console.error("[CART] createConfiguration failed", json);
         return;
       }
 
-      // ✅ REDIRECT CANONICO
       navigate(
         `/user/configurator/${json.configurationId}`
       );
-      return;
-    } catch (err) {
-      console.error(
-        "[CART → CONFIGURATION EXCEPTION]",
-        err
-      );
-      alert(
-        "Errore di rete nella creazione della configurazione"
-      );
-      return;
+    } catch (e) {
+      console.error("[CART] error", e);
     }
+
+    return;
   }
 
-  // ======================================================
-  // 🟢 NO CONFIGURATION → CHECKOUT
-  // ======================================================
+  // =========================
+  // NO CONFIGURATION → CHECKOUT
+  // =========================
   navigate("/user/checkout");
 };
 

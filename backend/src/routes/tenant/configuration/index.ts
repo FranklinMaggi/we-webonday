@@ -15,3 +15,6 @@ export {
   export {
     upsertConfigurationFromBusiness,
   } from "./configuration.business.write";
+  export {
+    createConfigurationFromCart,
+  } from "./configuration.product.write";
