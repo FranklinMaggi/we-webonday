@@ -40,12 +40,12 @@ import { removeProjectOption } from "./routes/tenant/projects/project.options.re
 import { getProject } from "./routes/tenant/projects/project.read";
 import { listProjects } from "./routes/tenant/projects/projects.read";
 
-/* ============================================================
-   CART — VISITOR / USER
-============================================================ */
+/*===================================================================
+CART OPERATIONS REVIEWD VERSION V2  
+=========================================================================*/
 
-import { saveCart } from "./routes/tenant/user/cart/cart";
-import { getCart } from "./routes/tenant/user/cart/cart";
+import { getCart ,putCart ,deleteCart} from "./routes/tenant/user/cart/cart.routes";
+
 /* ============================================================
    CONFIGURATION — PRE-ORDER
 ============================================================ */
@@ -317,11 +317,14 @@ if (pathname === "/api/cookies/status" && method === "GET") {
       /* ======================================================
          CART
       ====================================================== */
-      if (pathname === "/api/cart" && method === "POST")
-        return withCors(json({ ok: true, cart: await saveCart(request, env) }, request, env), request, env);
-
       if (pathname === "/api/cart" && method === "GET")
-        return withCors(json({ ok: true, cart: await getCart(request, env) }, request, env), request, env);
+        return getCart(request, env);
+      
+      if (pathname === "/api/cart" && method === "PUT")
+        return putCart(request, env);
+      
+      if (pathname === "/api/cart" && method === "DELETE")
+        return deleteCart(request, env);
 
       /* ======================================================
          ORDERS — USER

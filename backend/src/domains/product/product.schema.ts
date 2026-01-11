@@ -64,7 +64,7 @@ export const ProductSchema = z.object({
   optionIds: z.array(z.string()).default([]),
 
   status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]).default("DRAFT"),
-  configuration: z.boolean(),
+  configuration: z.boolean().default(false),
   // ✅ TIMESTAMPS DI DOMINIO
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),

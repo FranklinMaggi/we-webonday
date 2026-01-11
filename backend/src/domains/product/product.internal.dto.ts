@@ -29,6 +29,7 @@ export interface ProductInternalDTO {
     };
     optionIds: string[];
     status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+    configuration: boolean; 
     createdAt: string;
     updatedAt: string;
   }

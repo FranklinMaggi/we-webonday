@@ -1,157 +1,169 @@
 // ======================================================
-// FE || pages/user/checkout/steps/CartReview.tsx
+// FE || Checkout — CartReview (FINAL, CLEAN)
 // ======================================================
-// CHECKOUT — CART REVIEW
 //
 // RUOLO:
 // - Riepilogo finale ordine
-// - Avvio flusso pagamento
-//
-// RESPONSABILITÀ:
-// - Mostrare dati carrello
 // - Accettazione policy
+// - Avvio pagamento PayPal
 //
-// NON FA:
-// - NON esegue pagamenti
-// - NON modifica carrello
+// SOURCE OF TRUTH:
+// - configuration + pricing (BE)
 //
-// NOTE:
-// - Pagamento demandato a PaymentPaypal
 // ======================================================
 
-
-import { useEffect, useState, useMemo } from "react";
-import type { CartItem } from "../../../../lib/cart/cart.store";
+import { useEffect, useState } from "react";
 import { eur } from "../../../../utils/format";
 import PaymentPaypal from "./PaymentPaypal";
 import { fetchLatestPolicy } from "../../../../lib/userApi/policy.user.api";
 
-interface Props {
-  cart: CartItem[];
-  submitOrder: (policyVersion: string) => Promise<string>;
+interface PricingLine {
+  label: string;
+  amount: number;
+  type: "startup" | "monthly" | "yearly";
 }
 
-export default function CartReview({ cart, submitOrder }: Props) {
-  // =========================
-  // TOTALI (ESPLICITI)
-  // =========================
-  const startupTotal = useMemo(
-    () => cart.reduce((s, i) => s + (i.startupFee ?? 0), 0),
-    [cart]
-  );
+interface Pricing {
+  startupTotal: number;
+  yearlyTotal: number;
+  monthlyTotal: number;
+  lines: PricingLine[];
+}
 
-  const yearlyTotal = useMemo(
-    () => cart.reduce((s, i) => s + (i.yearlyFee ?? 0), 0),
-    [cart]
-  );
+interface Configuration {
+  solutionName: string;
+  productName: string;
+}
 
-  const monthlyTotal = useMemo(
-    () => cart.reduce((s, i) => s + (i.monthlyFee ?? 0), 0),
-    [cart]
-  );
+interface Props {
+  submitOrder: (policyVersion: string) => Promise<string>;
+  configuration: Configuration;
+  pricing: Pricing;
+  loading?: boolean;
+}
 
-  // =========================
-  // POLICY & PAY
-  // =========================
+export default function CartReview({
+  submitOrder,
+  configuration,
+  pricing,
+  loading = false,
+}: Props) {
   const [policyVersion, setPolicyVersion] = useState<string>();
   const [accepted, setAccepted] = useState(false);
   const [orderId, setOrderId] = useState<string>();
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
+  const [paying, setPaying] = useState(false);
 
+  /* =========================
+     LOAD POLICY
+  ========================= */
   useEffect(() => {
     fetchLatestPolicy("checkout")
       .then((p) => setPolicyVersion(p.version))
-      .catch(() => setError("Impossibile caricare la policy"));
+      .catch(() =>
+        setError("Impossibile caricare la policy")
+      );
   }, []);
-  
 
+  /* =========================
+     CREATE ORDER
+  ========================= */
   async function acceptAndPay() {
     if (!policyVersion) return;
 
     try {
-      setLoading(true);
+      setPaying(true);
       setError(undefined);
 
-// 1️⃣ crea ordine (KV) con policyVersion
-const oid = await submitOrder(policyVersion);
+      const oid = await submitOrder(policyVersion);
 
-      // 3️⃣ abilita PayPal
       setOrderId(oid);
       setAccepted(true);
     } catch (e: any) {
       setError(e.message ?? "Errore checkout");
     } finally {
-      setLoading(false);
+      setPaying(false);
     }
   }
 
-  if (cart.length === 0) {
-    return <p>Il carrello è vuoto</p>;
-  }
+  if (loading) return <p>Preparazione checkout…</p>;
+  if (!configuration || !pricing)
+    return <p>Dati checkout non disponibili</p>;
 
-  // =========================
-  // RENDER
-  // =========================
+  /* =========================
+     RENDER
+  ========================= */
   return (
     <div className="checkout-page">
       <section className="checkout-card">
         <h2 className="checkout-title">Checkout</h2>
 
+        {/* CONFIGURATION */}
         <ul className="checkout-list">
-          {cart.map((item, idx) => (
-            <li key={idx} className="checkout-item">
-              <span className="checkout-item-title">{item.title}</span>
+          <li className="checkout-item">
+            <strong>{configuration.solutionName}</strong>
+            <span>{configuration.productName}</span>
+          </li>
 
-              {item.startupFee > 0 && (
-                <span>{eur.format(item.startupFee)} avvio</span>
-              )}
-
-              {item.yearlyFee > 0 && (
-                <span>{eur.format(item.yearlyFee)} / anno</span>
-              )}
-
-              {item.monthlyFee > 0 && (
-                <span>{eur.format(item.monthlyFee)} / mese</span>
-              )}
+          {pricing.lines.map((l, i) => (
+            <li key={i} className="checkout-item">
+              <span>{l.label}</span>
+              <span>
+                {eur.format(l.amount)}
+                {l.type === "monthly" && " / mese"}
+                {l.type === "yearly" && " / anno"}
+              </span>
             </li>
           ))}
         </ul>
 
-        {/* PAGAMENTO IMMEDIATO */}
+        {/* PAY NOW */}
         <div className="checkout-total">
           Da pagare ora{" "}
-          <strong>{eur.format(startupTotal)}</strong>
+          <strong>
+            {eur.format(pricing.startupTotal)}
+          </strong>
         </div>
 
-        {/* NOTE CANONI */}
-        {(yearlyTotal > 0 || monthlyTotal > 0) && (
+        {/* RECURRING NOTE */}
+        {(pricing.yearlyTotal > 0 ||
+          pricing.monthlyTotal > 0) && (
           <p className="checkout-note">
             I canoni ricorrenti non vengono addebitati ora.
             <br />
-            Annuale: {eur.format(yearlyTotal)} / anno — Mensile:{" "}
-            {eur.format(monthlyTotal)} / mese
+            Annuale:{" "}
+            {eur.format(pricing.yearlyTotal)} / anno
+            — Mensile:{" "}
+            {eur.format(pricing.monthlyTotal)} / mese
           </p>
         )}
 
         {!accepted && (
           <div className="checkout-action">
             <p className="checkout-policy">
-  Procedendo accetti i{" "}
-  <a href="/terms" target="_blank" rel="noopener noreferrer">
-    Termini e la Privacy Policy
-  </a>{" "}
-  (versione {policyVersion ?? "…"}).
-</p>
+              Procedendo accetti i{" "}
+              <a
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Termini e la Privacy Policy
+              </a>{" "}
+              (versione {policyVersion ?? "…"}).
+            </p>
 
-            {error && <p className="checkout-error">{error}</p>}
+            {error && (
+              <p className="checkout-error">{error}</p>
+            )}
 
             <button
               onClick={acceptAndPay}
-              disabled={loading || !policyVersion}
+              disabled={paying || !policyVersion}
               className="checkout-pay-btn"
             >
-              {loading ? "Preparazione pagamento…" : "Paga con PayPal"}
+              {paying
+                ? "Preparazione pagamento…"
+                : "Paga con PayPal"}
             </button>
           </div>
         )}

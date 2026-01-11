@@ -5,29 +5,46 @@
 // CHECKOUT HOOK — CONFIGURATION-FIRST
 //
 // RUOLO:
-// - Avvia il checkout partendo da una Configuration
+// - Carica dati checkout da Configuration
+// - Crea ordine (post policy)
 //
-// RESPONSABILITÀ:
-// - Creare un ordine dal backend
-// - Gestire loading / error
+// SOURCE OF TRUTH:
+// - Backend
 //
-// INVARIANTI:
-// - User autenticato (cookie session)
-// - ConfigurationId = source of truth
-// - Il backend calcola tutto
-//
-// NON FA:
-// - NON usa cartStore
-// - NON usa visitorId
-// - NON sincronizza KV manualmente
 // ======================================================
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { apiFetch } from "../../../lib/api";
 
 /* =========================
    TYPES
 ========================= */
+export interface PricingLine {
+  label: string;
+  amount: number;
+  type: "startup" | "monthly" | "yearly";
+}
+
+export interface Pricing {
+  startupTotal: number;
+  yearlyTotal: number;
+  monthlyTotal: number;
+  lines: PricingLine[];
+}
+
+export interface Configuration {
+  solutionName: string;
+  productName: string;
+}
+
+type CheckoutDataResponse =
+  | {
+      ok: true;
+      configuration: Configuration;
+      pricing: Pricing;
+    }
+  | { ok: false; error: string };
+
 type CreateOrderResponse =
   | { ok: true; orderId: string }
   | { ok: false; error: string };
@@ -36,49 +53,81 @@ type CreateOrderResponse =
    HOOK
 ========================= */
 export function useCheckout(configurationId: string) {
+  const [configuration, setConfiguration] =
+    useState<Configuration | null>(null);
+  const [pricing, setPricing] = useState<Pricing | null>(null);
+
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  /* =========================
+     LOAD CHECKOUT DATA
+  ========================= */
+  useEffect(() => {
+    if (!configurationId) return;
+
+    setLoading(true);
+
+    apiFetch<CheckoutDataResponse>(
+      "/api/checkout/from-configuration",
+      {
+        method: "POST",
+        body: JSON.stringify({ configurationId }),
+      }
+    )
+      .then((res) => {
+        if (!res || !res.ok) {
+          throw new Error(
+            res?.error ?? "Errore caricamento checkout"
+          );
+        }
+
+        setConfiguration(res.configuration);
+        setPricing(res.pricing);
+      })
+      .catch((err: any) => {
+        setError(err.message ?? "Errore checkout");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [configurationId]);
 
   /* =========================
      SUBMIT CHECKOUT
   ========================= */
-  async function submitCheckout(policyVersion: string): Promise<string> {
+  async function submitCheckout(
+    policyVersion: string
+  ): Promise<string> {
     if (!configurationId) {
       throw new Error("ConfigurationId mancante");
     }
 
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await apiFetch<CreateOrderResponse>(
-        "/api/order/from-configuration",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            configurationId,
-            policyVersion,
-          }),
-        }
-      );
-
-      if (!res || !res.ok) {
-        throw new Error(res?.error ?? "Errore creazione ordine");
+    const res = await apiFetch<CreateOrderResponse>(
+      "/api/order/from-configuration",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          configurationId,
+          policyVersion,
+        }),
       }
+    );
 
-      setOrderId(res.orderId);
-      return res.orderId;
-    } catch (err: any) {
-      const msg = err?.message ?? "Errore checkout";
-      setError(msg);
-      throw err;
-    } finally {
-      setLoading(false);
+    if (!res || !res.ok) {
+      throw new Error(
+        res?.error ?? "Errore creazione ordine"
+      );
     }
+
+    setOrderId(res.orderId);
+    return res.orderId;
   }
 
   return {
+    configuration,
+    pricing,
     orderId,
     loading,
     error,

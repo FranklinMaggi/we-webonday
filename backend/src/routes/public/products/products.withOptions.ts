@@ -74,7 +74,7 @@ export async function getProductsWithOptions(
         nameKey: product.nameKey,
         descriptionKey: product.descriptionKey,
         status: product.status,
-
+        configuration: product.configuration,
         startupFee: product.startupFee,
         pricing: product.pricing,
         

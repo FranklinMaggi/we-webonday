@@ -3,14 +3,12 @@
 // ======================================================
 //
 // AUTH STORE — SOURCE OF TRUTH FE
-//
-// PRINCIPIO:
-// - La sessione è determinata SOLO dal backend
-// - FE legge, non decide
 // ======================================================
-import { cartStore } from "../cart/cart.store";
+
 import { create } from "zustand";
 import { API_BASE } from "../config";
+import { cartStore } from "../cart/cart.store";
+import { putCart } from "../cart/cart.api";
 
 export interface User {
   id: string;
@@ -34,19 +32,18 @@ export const useAuthStore = create<AuthState>((set) => ({
       const res = await fetch(`${API_BASE}/api/user/me`, {
         credentials: "include",
       });
-  
+
       if (!res.ok) {
         set({ user: null, ready: true });
         return;
       }
-  
+
       const data = await res.json();
-  
-      // ✅ BLIND: user ESISTE solo se data.user è oggetto
+
       if (data && data.user && typeof data.user === "object") {
         set({ user: data.user, ready: true });
 
-  // ============================================
+        // ============================================
         // 🔁 RESTORE PENDING CART (UNA SOLA VOLTA)
         // ============================================
         const raw = localStorage.getItem("PENDING_CART");
@@ -54,8 +51,18 @@ export const useAuthStore = create<AuthState>((set) => ({
           try {
             const parsed = JSON.parse(raw);
 
-            if (parsed?.items?.length) {
-              cartStore.getState().replace(parsed.items);
+            /**
+             * REGOLA:
+             * - PENDING_CART può contenere SOLO configurationId
+             * - Niente items, niente pricing
+             */
+            const configurationId =
+              parsed?.configurationId ??
+              parsed?.items?.[0]?.configurationId;
+
+            if (configurationId) {
+              // 👉 ripristino slot cart BE + FE
+              await putCart({ configurationId });
             }
           } catch (err) {
             console.warn(
@@ -67,7 +74,6 @@ export const useAuthStore = create<AuthState>((set) => ({
             localStorage.removeItem("PENDING_CART");
           }
         }
-
       } else {
         set({ user: null, ready: true });
       }
@@ -78,5 +84,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   clearUser() {
     set({ user: null, ready: true });
+    cartStore.getState().clear();
   },
 }));

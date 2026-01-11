@@ -17,10 +17,13 @@ import { cartStore } from "../../lib/cart/cart.store";
 import { useEffect, useState } from "react";
 
 export default function NavCartButton() {
-  const [count, setCount] = useState(cartStore.getState().items.length);
-
+  const [count, setCount] = useState(
+    cartStore.getState().item ? 1 : 0
+  );
+  
   useEffect(() => {
-    return cartStore.subscribe((s) => setCount(s.items.length));
+    return cartStore.subscribe((s) =>
+      setCount(s.item ? 1 : 0));
   }, []);
 
   return (

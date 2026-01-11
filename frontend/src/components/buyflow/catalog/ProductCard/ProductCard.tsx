@@ -1,17 +1,5 @@
-// FE || components/catalog/ProductCard.tsx
 // ======================================================
-// PRODUCT CARD — INLINE CONFIGURATOR
-// ======================================================
-//
-// RUOLO:
-// - Entry point prodotto
-// - Toggle apertura / chiusura configurazione INLINE
-//
-// FLUSSO:
-// Solution/[id]
-//   → ProductCard
-//     → OptionSelector
-//     → CartPreview
+// FE || ProductCard — INLINE CONFIGURATOR (CLEAN)
 // ======================================================
 
 import { useState } from "react";
@@ -21,20 +9,17 @@ import OptionSelector from "../ProductOption/OptionSelector";
 import CartPreview from "./CartPreview";
 
 interface Props {
-  solutionId:string; 
+  solutionId: string;
   product: ProductVM;
 }
 
-export default function ProductCard({ solutionId ,product }: Props) {
+export default function ProductCard({ solutionId, product }: Props) {
   const [open, setOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   return (
-    <div
-      className={`wd-card product-card ${open ? "is-active" : ""}`}
-     
-    >
-      {/* ================= BODY (TOGGLE) ================= */}
+    <div className={`wd-card product-card ${open ? "is-active" : ""}`}>
+      {/* ================= HEADER ================= */}
       <div
         className="product-card__body"
         onClick={(e) => {
@@ -58,23 +43,22 @@ export default function ProductCard({ solutionId ,product }: Props) {
         </div>
       </div>
 
-      {/* ================= CONFIGURATORE INLINE ================= */}
+      {/* ================= INLINE CONFIG ================= */}
       {open && (
         <div
           className="product-card__panel"
           onClick={(e) => e.stopPropagation()}
         >
-          
-          {product.options && product.options.length > 0 && (
-          <OptionSelector
-            options={product.options}
-            selected={selectedOptions}
-            onChange={setSelectedOptions}
-          />
-        )}
+          {product.options.length > 0 && (
+            <OptionSelector
+              options={product.options}
+              selected={selectedOptions}
+              onChange={setSelectedOptions}
+            />
+          )}
 
           <CartPreview
-          solutionId={solutionId}
+            solutionId={solutionId}
             product={product}
             selectedOptions={selectedOptions}
           />

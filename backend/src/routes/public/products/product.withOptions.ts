@@ -97,6 +97,7 @@ export async function getProductWithOptions(
         description: product.description,
         nameKey: product.nameKey,
         descriptionKey: product.descriptionKey,
+        configuration: product.configuration,
         status: product.status,
         startupFee: product.startupFee,
         pricing: product.pricing,

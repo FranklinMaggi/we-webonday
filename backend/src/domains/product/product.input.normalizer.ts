@@ -47,7 +47,7 @@ export function normalizeProductInput(raw: any) {
       yearly: Number(raw?.pricing?.yearly ?? raw?.priceYear ?? 0),
       monthly: Number(raw?.pricing?.monthly ?? raw?.priceMonthly ?? 0),
     },
-  
+    configuration:Boolean(raw?.configuration ?? false),
     createdAt: raw?.createdAt,
     updatedAt: raw?.updatedAt,
     optionIds: Array.isArray(raw?.optionIds) ? raw.optionIds : [],

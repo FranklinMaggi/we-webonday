@@ -1,10 +1,10 @@
 
 import { useParams } from "react-router-dom";
-import { useCheckout } from "./useCheckout";
+
 import CartReview from "./steps/CartReview";
 import { useAuthStore } from "../../../lib/store/auth.store";
 import BusinessForm from "../../../components/business/BusinessForm";
-
+import { useCheckout } from "./useCheckout";
 import { useEffect ,useState } from "react";
 export default function CheckoutPage() {
   const { user, ready } = useAuthStore();
@@ -32,12 +32,21 @@ export default function CheckoutPage() {
       />
     );
   }
+  if (checkout.loading) {
+    return <p>Preparazione checkout…</p>;
+  }
   
+  if (!checkout.configuration || !checkout.pricing) {
+    return <p>Dati checkout non disponibili</p>;
+  }
   return (
     <CartReview
-      cart={[]}
-      submitOrder={checkout.submitCheckout}
-    />
+    submitOrder={checkout.submitCheckout}
+    configuration={checkout.configuration}
+    pricing={checkout.pricing}
+    loading={checkout.loading}
+  />
+  
   );
   
 }
