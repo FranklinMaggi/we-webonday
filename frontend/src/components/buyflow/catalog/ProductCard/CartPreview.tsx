@@ -45,7 +45,7 @@ export default function CartPreview({
 
   const continueFlow = async () => {
     try {
-      const res = await fetch("/api/configuration/create", {
+      const res = await fetch("/api/configuration", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
