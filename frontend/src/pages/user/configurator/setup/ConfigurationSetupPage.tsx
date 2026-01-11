@@ -11,11 +11,6 @@
 //   • sessione utente
 //   • configurazione FE (Zustand)
 //
-// SOURCE OF TRUTH:
-// - cartStore                  → solution / product / options
-// - authStore                  → email utente
-// - configurationSetupStore    → dati configurazione (FE)
-//
 // INVARIANTI:
 // - FE ONLY
 // - Nessuna fetch
@@ -51,18 +46,17 @@ export type ConfigurationSetupPageProps = {
   };
 
   industries?: string[];
+
+  /**
+   * TAG SUGGERITI DALLA SOLUTION
+   * (merge seed + userGenerated)
+   */
   solutionTags?: string[];
-  
 };
 
-/**
- * ORDINE STEP:
- * - intro    → contesto prodotto
- * - business → anagrafica + contenuti + orari (UNIFICATO)
- * - design   → stile visivo
- * - extra    → extra / opzioni
- * - review   → riepilogo finale
- */
+/* =========================
+   STEPS
+========================= */
 const STEPS = [
   "intro",
   "business",
@@ -74,9 +68,7 @@ const STEPS = [
 export default function ConfigurationSetupPage({
   configuration,
   industries = [],
-  solutionTags=[],
-
-
+  solutionTags = [],
 }: ConfigurationSetupPageProps) {
   /* =========================
      STATO WIZARD
@@ -87,30 +79,29 @@ export default function ConfigurationSetupPage({
   const { user } = useAuthStore();
 
   /**
-   * Guard per evitare:
-   * - doppio prefill (React StrictMode)
-   * - override di input già modificati dall’utente
+   * Guard SEPARATI
+   * - basePrefill → dati sync
+   * - solutionTagsPrefill → dati async
    */
-  const prefilledRef = useRef(false);
+  const basePrefilledRef = useRef(false);
+  const solutionTagsPrefilledRef = useRef(false);
 
   /* ======================================================
-     PREFILL INIZIALE (UNA SOLA VOLTA)
-     ORDINE GARANTITO:
-     1. EMAIL → sessione
-     2. SOLUTION / PRODUCT / OPTIONS → carrello
-     3. BUSINESS → configuration esistente (se presente)
+     PREFILL BASE (SYNC)
+     - email
+     - carrello
+     - configuration business
   ====================================================== */
   useEffect(() => {
-    if (prefilledRef.current) return;
+    if (basePrefilledRef.current) return;
 
-    /* ===== 1. EMAIL DA SESSIONE ===== */
+    /* ===== EMAIL ===== */
     if (user?.email && !data.email) {
       setField("email", user.email);
     }
 
-    /* ===== 2. DATI COMMERCIALI DA CARRELLO ===== */
+    /* ===== CARRELLO ===== */
     const cart = cartStore.getState();
-
     if (cart.items[0]) {
       const item = cart.items[0];
 
@@ -130,7 +121,7 @@ export default function ConfigurationSetupPage({
       }
     }
 
-    /* ===== 3. DATI BUSINESS DA CONFIGURATION ESISTENTE ===== */
+    /* ===== BUSINESS DA CONFIGURATION ===== */
     if (configuration?.business) {
       const b = configuration.business;
 
@@ -154,27 +145,31 @@ export default function ConfigurationSetupPage({
         setField("phone", b.phone);
       }
     }
-    if (
-      solutionTags.length > 0 &&
-      (!data.solutionTags || data.solutionTags.length === 0)
-    ) {
-      setField("solutionTags", solutionTags);
-    }
-    prefilledRef.current = true;
+
+    basePrefilledRef.current = true;
   }, [user, configuration, industries, data, setField]);
+
+  /* ======================================================
+     PREFILL TAG SOLUTION (ASYNC)
+     - entra SOLO quando solutionTags sono pronti
+     - UNA SOLA VOLTA
+  ====================================================== */
+  useEffect(() => {
+    if (solutionTagsPrefilledRef.current) return;
+    if (!solutionTags || solutionTags.length === 0) return;
+
+    setField("solutionTags", solutionTags);
+    solutionTagsPrefilledRef.current = true;
+  }, [solutionTags, setField]);
 
   /* =========================
      NAVIGAZIONE
   ========================= */
   const next = () =>
-    setStepIndex((i) =>
-      Math.min(i + 1, STEPS.length - 1)
-    );
+    setStepIndex((i) => Math.min(i + 1, STEPS.length - 1));
 
   const back = () =>
-    setStepIndex((i) =>
-      Math.max(i - 1, 0)
-    );
+    setStepIndex((i) => Math.max(i - 1, 0));
 
   /* =========================
      STEP SWITCH
