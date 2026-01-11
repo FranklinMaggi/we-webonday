@@ -53,12 +53,6 @@ type ConfigurationDTO = {
   status: string;
 };
 
-type SolutionDTO = {
-  id: string;
-  tags?: string[];
-  userGeneratedTags?: string[];
-  industries?: string[];
-};
 
 /* ======================================================
    COMPONENT
@@ -73,8 +67,6 @@ export default function ConfigurationIndex() {
   const [configuration, setConfiguration] =
     useState<ConfigurationDTO | null>(null);
 
-  const [solution, setSolution] =
-    useState<SolutionDTO | null>(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -153,34 +145,34 @@ export default function ConfigurationIndex() {
      STEP 2 — LOAD SOLUTION (SEED TAGS / INDUSTRIES)
   ====================================================== */
   useEffect(() => {
-    if (!configuration?.solutionId) return;
-
+    if (!configuration) return;
+  
+    const solutionId = configuration.solutionId;
+    if (!solutionId) return;
+  
     async function loadSolution() {
       const res = await fetch(
-        `/api/solution?id=${configuration.solutionId}`
+        `/api/solution?id=${solutionId}`
       );
-
+  
       const json = await res.json();
-
+  
       if (json?.ok && json.solution) {
-        setSolution(json.solution);
+        const mergedTags = Array.from(
+          new Set([
+            ...(json.solution.tags ?? []),
+            ...(json.solution.userGeneratedTags ?? []),
+          ])
+        );
+      
+        setField("solutionTags", mergedTags);
       }
+      
     }
-
+  
     loadSolution();
-  }, [configuration?.solutionId]);
-
-  /* ======================================================
-     DERIVED — SOLUTION TAGS (SEED + USER)
-  ====================================================== */
-  const solutionTags = solution
-    ? Array.from(
-        new Set([
-          ...(solution.tags ?? []),
-          ...(solution.userGeneratedTags ?? []),
-        ])
-      )
-    : [];
+  }, [configuration, setField]);
+  
 
   /* ======================================================
      GUARDS UI
