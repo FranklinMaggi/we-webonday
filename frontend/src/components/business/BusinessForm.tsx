@@ -43,7 +43,7 @@ const DAYS = [
   ["saturday", "Sabato"],
   ["sunday", "Domenica"],
 ] as const;
-
+    
 function toggleTag(
   current: string[] = [],
   tag: string
@@ -262,8 +262,7 @@ export default function StepBusinessInfo({
          ORARI DI APERTURA (FE-ONLY)
       ====================================================== */}
       <h3>Orari di apertura</h3>
-
-      {DAYS.map(([dayKey, dayLabel]) => (
+     {DAYS.map(([dayKey, dayLabel]) => (
         <OpeningHoursDay
           key={dayKey}
           dayKey={dayKey}

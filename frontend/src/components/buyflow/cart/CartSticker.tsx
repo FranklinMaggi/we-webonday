@@ -47,6 +47,9 @@ export default function CartSticker() {
   const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
+
+
+
   const { user } = useAuthStore();
 
   // =========================
@@ -101,7 +104,7 @@ export default function CartSticker() {
       first.requiresConfiguration === true;
 
     const targetPath = requiresConfiguration
-      ? "/user/configurator"
+      ? "/user/configurator/${configurationId}"
       : "/user/checkout";
 
     console.log("[CART FLOW]", {
