@@ -1,3 +1,17 @@
+/**
+ * ======================================================
+ * CART DOMAIN — POINTER ONLY
+ * ======================================================
+ *
+ * - Il cart contiene SOLO configurationId
+ * - Nessun productId
+ * - Nessun prezzo
+ * - Nessuna logica commerciale
+ *
+ * Source of truth:
+ * - Configuration
+ * - Checkout
+ */
 // backend/src/domains/cart/cart.schema.ts
 import { z } from "zod";
 
@@ -5,9 +19,7 @@ import { z } from "zod";
    CART ITEM (INTENTO)
 ========================= */
 export const CartItemSchema = z.object({
-  productId: z.string(),
-  configurationRequired: z.boolean(),
-  configurationId: z.string().optional(), // solo se già creata
+configurationId: z.string().min(1), // solo se già creata
 });
 
 /* =========================
@@ -17,7 +29,7 @@ export const CartSchema = z.object({
   sessionId: z.string(),
   item: CartItemSchema.optional(),
   updatedAt: z.string().datetime(),
-  quantity: z.literal(1), 
+ 
 });
 
 export type Cart = z.infer<typeof CartSchema>;
