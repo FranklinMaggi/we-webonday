@@ -93,13 +93,10 @@ export default function CartPreview({
       /* =========================
          4) FLOW DECISION
       ========================= */
-      if (json.requiresConfiguration === true) {
-        navigate(`/user/configurator/${json.configurationId}`);
-      } else {
-        navigate("/user/checkout");
-      }
-    } catch (err) {
-      console.error("[CART PREVIEW] error", err);
+    navigate(`/user/configurator/${json.configurationId}`);}
+    catch
+    (err) {
+      console.error("[CART_PREVIEW] continueFlow failed", err);
     }
   };
   
