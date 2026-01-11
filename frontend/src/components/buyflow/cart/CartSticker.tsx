@@ -132,7 +132,7 @@ const checkout = async () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            businessName: first.businessName ?? "nuovo-progetto",
+            businessName: "nuovo-progetto",
             solutionId: first.solutionId,
             productId: first.productId,
             optionIds: first.options.map((o) => o.id),
