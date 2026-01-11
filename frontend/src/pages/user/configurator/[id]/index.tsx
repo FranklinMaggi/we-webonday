@@ -2,31 +2,32 @@
 // FE || pages/user/configurator/[id]/index.tsx
 // ======================================================
 //
-// AI-SUPERCOMMENT — CONFIGURATOR DETAIL (PRE-ORDER)
+// CONFIGURATOR DETAIL — CANONICAL ENTRY
 //
 // RUOLO:
-// - Entry point del wizard di configurazione ESISTENTE
-// - Coordina:
-//   • fetch Configuration (workspace)
-//   • fetch Solution (seed semantico)
-// - Deriva i dati necessari al wizard
+// - Garantisce ESISTENZA Configuration
+// - Bootstrap da cartStore se mancante
+// - Usa SEMPRE /user/configurator/:id
 //
-// SOURCE OF TRUTH:
-// - Backend (ConfigurationDTO, SolutionDTO)
+// FLOW:
+// 1. Se configurationId NON esiste → bootstrap BE
+// 2. Fetch Configuration
+// 3. Fetch Solution
+// 4. Passa solutionTags al wizard
 //
 // INVARIANTI:
-// - NON crea ordini
-// - NON gestisce checkout
-// - NON muta dati backend
-//
+// - NO wizard FE-only
+// - NO stato fantasma
+// - Configuration è SEMPRE source of truth
 // ======================================================
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import ConfigurationSetupPage from "../setup/ConfigurationSetupPage";
+import { cartStore } from "../../../../lib/cart/cart.store";
 
 /* ======================================================
-   TYPES (LOCAL, READ-ONLY)
+   TYPES (READ-ONLY)
 ====================================================== */
 
 type ConfigurationDTO = {
@@ -52,14 +53,58 @@ type SolutionDTO = {
 ====================================================== */
 
 export default function UserConfiguratorDetail() {
-  const { id: configurationId } = useParams<{ id: string }>();
+  const { id } = useParams<{ id?: string }>();
+  const navigate = useNavigate();
 
+  const [configurationId, setConfigurationId] = useState<string | null>(
+    id ?? null
+  );
   const [config, setConfig] = useState<ConfigurationDTO | null>(null);
   const [solution, setSolution] = useState<SolutionDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
   /* ======================================================
-     FETCH CONFIGURATION (WORKSPACE)
+     STEP 1 — BOOTSTRAP CONFIGURATION (SE NECESSARIO)
+  ====================================================== */
+  useEffect(() => {
+    if (configurationId) return;
+
+    async function bootstrap() {
+      const cart = cartStore.getState();
+      const item = cart.items[0];
+
+      if (!item) {
+        navigate("/user");
+        return;
+      }
+
+      const res = await fetch("/api/configuration/bootstrap", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          solutionId: item.solutionId,
+          productId: item.productId,
+          optionIds: item.options.map((o) => o.id),
+        }),
+      }).then((r) => r.json());
+
+      if (!res?.ok || !res.configurationId) {
+        navigate("/user");
+        return;
+      }
+
+      setConfigurationId(res.configurationId);
+      navigate(`/user/configurator/${res.configurationId}`, {
+        replace: true,
+      });
+    }
+
+    bootstrap();
+  }, [configurationId, navigate]);
+
+  /* ======================================================
+     STEP 2 — FETCH CONFIGURATION
   ====================================================== */
   useEffect(() => {
     if (!configurationId) return;
@@ -75,8 +120,7 @@ export default function UserConfiguratorDetail() {
   }, [configurationId]);
 
   /* ======================================================
-     FETCH SOLUTION (SEMANTIC SEED)
-     Dipende da config.solutionId
+     STEP 3 — FETCH SOLUTION (SEED TAGS)
   ====================================================== */
   useEffect(() => {
     if (!config?.solutionId) return;
@@ -89,40 +133,29 @@ export default function UserConfiguratorDetail() {
   }, [config?.solutionId]);
 
   /* ======================================================
-     DERIVED DATA (ADHD-SAFE)
-     - merge seed + user tags
-     - dedupe
+     DERIVED — SOLUTION TAGS (SEED + USER)
   ====================================================== */
   const solutionTags = useMemo(() => {
     if (!solution) return [];
-
-    const seed = solution.tags ?? [];
-    const user = solution.userGeneratedTags ?? [];
-
-    return Array.from(new Set([...seed, ...user]));
+    return Array.from(
+      new Set([
+        ...(solution.tags ?? []),
+        ...(solution.userGeneratedTags ?? []),
+      ])
+    );
   }, [solution]);
 
   /* ======================================================
      GUARDS
   ====================================================== */
-  if (!configurationId) {
-    return <p>Configurazione non valida</p>;
-  }
-
-  if (loading) {
-    return <p>Caricamento configurazione…</p>;
-  }
-
-  if (!config) {
-    return <p>Configurazione non trovata</p>;
-  }
+  if (loading) return <p>Preparazione configurazione…</p>;
+  if (!config) return <p>Configurazione non trovata</p>;
 
   /* ======================================================
      RENDER
   ====================================================== */
   return (
     <section className="configuration-page">
-      {/* HEADER MINIMO */}
       <header className="configuration-header">
         <div>
           <h1>{config.business?.name ?? "Il tuo progetto"}</h1>
