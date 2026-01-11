@@ -165,7 +165,7 @@ export default function CartSticker() {
         }
 
         // 🔒 HANDOFF COMPLETO → il carrello non serve più
-        cartStore.getState().clear();
+      
 
         navigate(
           `/user/configurator/${json.configurationId}`
@@ -173,7 +173,7 @@ export default function CartSticker() {
       } catch (err) {
         console.error("[CART] error", err);
       }
-
+      cartStore.getState().clear();
       return;
     }
 

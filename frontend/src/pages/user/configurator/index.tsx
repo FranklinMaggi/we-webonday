@@ -34,7 +34,7 @@
 // ======================================================
 
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams ,useLocation} from "react-router-dom";
 
 import ConfigurationSetupPage from "./setup/ConfigurationSetupPage";
 import { useConfigurationSetupStore } from "../../../lib/store/configurationSetup.store";
@@ -61,7 +61,8 @@ type ConfigurationDTO = {
 export default function ConfigurationIndex() {
   const navigate = useNavigate();
   const { id: configurationId } = useParams<{ id: string }>();
-
+  const location = useLocation() ; 
+  const fromCart = new URLSearchParams(location.search).get("fromCart");
   const { setField, reset } = useConfigurationSetupStore();
 
   const [configuration, setConfiguration] =
@@ -70,9 +71,20 @@ export default function ConfigurationIndex() {
 
   const [loading, setLoading] = useState(true);
 
+ 
+ 
+ 
   /* ======================================================
      GUARD — CONFIGURATION ID OBBLIGATORIO
   ====================================================== */
+  
+  useEffect(() => {
+    if (!fromCart) return;
+    // qui NON devi stare
+    navigate("/user/dashboard");
+  }, [fromCart]);
+  
+  
   useEffect(() => {
     if (!configurationId) {
       navigate("/user/dashboard", { replace: true });

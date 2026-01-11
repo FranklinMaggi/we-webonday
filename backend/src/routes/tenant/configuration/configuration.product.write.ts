@@ -111,6 +111,8 @@
             BUILD CONFIGURATION
         ========================= */
         const configuration = ConfigurationSchema.parse({
+            id:configurationId,
+            UserId: userId , 
         solutionId: solution.id,
         productId: product.id,
         options: body.optionIds,
