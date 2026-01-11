@@ -8,8 +8,7 @@ import { useNavigate } from "react-router-dom";
 import type { ProductVM } from "../../../../lib/viewModels/product/Product.view-model";
 import { eur } from "../../../../utils/format";
 import { putCart } from "../../../../lib/cart/cart.api";
-
-
+import { API_BASE } from "../../../../lib/config";
 interface Props {
   solutionId: string;
   product: ProductVM;
@@ -45,7 +44,10 @@ export default function CartPreview({
 
   const continueFlow = async () => {
     try {
-      const res = await fetch("/api/configuration", {
+      /* =========================
+         1) CREATE CONFIGURATION
+      ========================= */
+      const res = await fetch(`${API_BASE}/api/configuration`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -55,29 +57,41 @@ export default function CartPreview({
           optionIds: selectedOptions,
         }),
       });
-
-      const json = await res.json();
-
-      if (!json?.ok || !json.configurationId) {
-        console.error("[CONFIG] creation failed", json);
+  
+      if (!res.ok) {
+        console.error("[CONFIG] creation failed", res.status);
         return;
       }
-
-      // 🔑 CART = pointer only
+  
+      const json: {
+        configurationId: string;
+        requiresConfiguration?: boolean;
+      } = await res.json();
+  
+      if (!json.configurationId) {
+        console.error("[CONFIG] invalid response", json);
+        return;
+      }
+  
+      /* =========================
+         2) PUT CART (POINTER ONLY)
+      ========================= */
       await putCart({
-       
         configurationId: json.configurationId,
-        
       });
-      
-      // feedback visivo
+  
+      /* =========================
+         3) FEEDBACK UI
+      ========================= */
       ref.current?.classList.add("is-added");
       setTimeout(
         () => ref.current?.classList.remove("is-added"),
         400
       );
-
-      // 🔒 FLOW DECISION FROM BE
+  
+      /* =========================
+         4) FLOW DECISION
+      ========================= */
       if (json.requiresConfiguration === true) {
         navigate(`/user/configurator/${json.configurationId}`);
       } else {
@@ -87,6 +101,7 @@ export default function CartPreview({
       console.error("[CART PREVIEW] error", err);
     }
   };
+  
 
   /* =========================
      RENDER
