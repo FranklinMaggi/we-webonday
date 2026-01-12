@@ -24,25 +24,7 @@ export default function CartPreview({
   const navigate = useNavigate();
   const location = useLocation();
   const user = useAuthStore((s) => s.user);
-  function handleContinue() {
-    // ======================================================
-    // VISITOR → LOGIN
-    // ======================================================
-    if (!user) {
-      navigate(
-        `/user/login?redirect=${encodeURIComponent(
-          location.pathname
-        )}`
-      );
-      return;
-    }
-  
-    // ======================================================
-    // USER → CONFIGURATOR
-    // ======================================================
-    navigate(`/user/configurator/${solutionId}`);
-  }
-  
+
   /* =========================
      PREVIEW PRICING (UI ONLY)
   ========================= */
@@ -64,20 +46,35 @@ export default function CartPreview({
 
   const continueFlow = async () => {
     try {
+      // ======================================================
+      // 0) VISITOR → LOGIN
+      // ======================================================
+      if (!user) {
+        navigate(
+          `/user/login?redirect=${encodeURIComponent(
+            location.pathname
+          )}`
+        );
+        return;
+      }
+  
       /* =========================
          1) CREATE CONFIGURATION
       ========================= */
-      const res = await fetch(`${API_BASE}/api/configuration/from-cart`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          businessName:"progetto",
-          solutionId,
-          productId: product.id,
-          optionIds: selectedOptions,
-        }),
-      });
+      const res = await fetch(
+        `${API_BASE}/api/configuration/from-cart`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            businessName: "progetto",
+            solutionId,
+            productId: product.id,
+            optionIds: selectedOptions,
+          }),
+        }
+      );
   
       if (!res.ok) {
         console.error("[CONFIG] creation failed", res.status);
@@ -111,11 +108,10 @@ export default function CartPreview({
       );
   
       /* =========================
-         4) FLOW DECISION
+         4) USER → CONFIGURATOR
       ========================= */
-    navigate(`/user/configurator/${json.configurationId}`);}
-    catch
-    (err) {
+      navigate(`/user/configurator/${json.configurationId}`);
+    } catch (err) {
       console.error("[CART_PREVIEW] continueFlow failed", err);
     }
   };
@@ -160,7 +156,7 @@ export default function CartPreview({
 
       <button
   className="wd-btn wd-btn--primary"
-  onClick={handleContinue}
+  onClick={continueFlow}
 >
   Configura 
 </button>
