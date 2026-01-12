@@ -30,58 +30,32 @@ type Props = {
   onBack: () => void;
 };
 
-export default function StepLayoutGenerator({
-  onNext,
-  onBack,
-}: Props) {
+// FE || StepLayoutGenerator — CANONICAL
+export default function StepLayoutGenerator({ onNext, onBack }: Props) {
   const { data, setField } = useConfigurationSetupStore();
-
-  /* ======================================================
-     DERIVAZIONE VISIBILITÀ (DETERMINISTICA)
-     - Layout userà questi flag
-  ====================================================== */
 
   const derivedVisibility = {
     ...DEFAULT_VISIBILITY,
-
     contactForm: !!data.email,
     address: !!data.address,
     openingHours: !!data.openingHours,
-    gallery: false, // attivabile post-vendita
+    gallery: false,
   };
-
-  /* ======================================================
-     VALIDAZIONE STEP
-  ====================================================== */
 
   const isComplete =
     !!data.businessName &&
     (!!data.description || !!data.services);
 
-  /* ======================================================
-     SCRITTURA STORE (ON MOUNT)
-  ====================================================== */
-
   useEffect(() => {
     setField("visibility", derivedVisibility);
-  }, [
-    setField,
-    data.email,
-    data.address,
-    data.openingHours,
-  ]);
-
-  /* ======================================================
-     UI
-  ====================================================== */
+  }, [setField, data.email, data.address, data.openingHours]);
 
   return (
     <div className="step">
       <h2>Preparazione layout</h2>
 
       <p style={{ opacity: 0.7 }}>
-        In base ai dati inseriti, abbiamo preparato la
-        configurazione per la selezione del layout.
+        Stiamo preparando la configurazione per la scelta del layout.
       </p>
 
       <ul>
@@ -92,12 +66,9 @@ export default function StepLayoutGenerator({
 
       {!isComplete && (
         <p className="error">
-          Inserisci almeno una descrizione o un servizio per
-          continuare.
+          Inserisci almeno una descrizione o un servizio per continuare.
         </p>
       )}
- 
-
 
       <div className="actions">
         <button type="button" onClick={onBack}>
