@@ -32,7 +32,6 @@ import { upsertConfigurationFromBusiness } from "../../lib/userApi/configuration
 import { useConfigurationSetupStore } from "../../lib/store/configurationSetup.store";
 import { OpeningHoursDay } from "../openingHours/OpeningHoursDay";
 import { createBusiness } from "../../lib/userApi/business.user.api";
-import { normalizeTags } from "../../utils/tags";
 import { useAuthStore } from "../../lib/store/auth.store";
 import { useEffect } from "react";
 
