@@ -10,7 +10,11 @@
 //
 // SOURCE OF TRUTH:
 // - Backend (getBusiness)
-//
+////Il configurator è l’unica interfaccia
+//che modifica una Configuration.
+
+//La modalità (wizard / workspace)
+//dipende esclusivamente dallo status backend.
 // COSA NON FA (VINCOLANTE):
 // - ❌ NON modifica dati
 // - ❌ NON naviga al configurator

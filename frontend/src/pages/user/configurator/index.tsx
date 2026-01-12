@@ -94,7 +94,11 @@
 // INVARIANTI:
 // - Nessun accesso al checkout da configurazioni incomplete
 // - La validazione NON vive nel checkout
-//
+////Il configurator è l’unica interfaccia
+//che modifica una Configuration.
+
+//La modalità (wizard / workspace)
+//dipende esclusivamente dallo status backend.
 // ======================================================
 
 import { useEffect, useState } from "react";

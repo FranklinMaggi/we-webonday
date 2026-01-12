@@ -6,14 +6,15 @@
 //
 // RUOLO:
 // - Elenco attività dell’utente
-// - Entry point UNIFICATO verso il configurator
-//
-// SOURCE OF TRUTH:
-// - Backend API (listMyBusinesses)
+// - HUB di navigazione (NON editor)
 //
 // INVARIANTE CRITICA:
-// - Tutte le azioni di editing
-//   portano a /user/configurator/:configurationId
+// - Ogni editing porta SEMPRE a:
+//   /user/configurator/:configurationId
+//
+// NOTE:
+// - businessId ≠ configurationId
+// - Editing ≠ Visualizzazione
 //
 // ======================================================
 
@@ -22,14 +23,16 @@ import { useNavigate } from "react-router-dom";
 import { listMyBusinesses } from "../../../../lib/userApi/business.user.api";
 
 /* =========================
-   TYPES
+   TYPES (VIEW MODEL)
 ========================= */
 type BusinessSummary = {
   businessId: string;
-  publicId: string;
   name: string;
   status: string;
   createdAt: string;
+
+  // ⚠️ PROVVISORIO MA OBBLIGATORIO
+  configurationId: string;
 };
 
 export default function UserBusinessDashboard() {
@@ -38,6 +41,9 @@ export default function UserBusinessDashboard() {
   const [items, setItems] = useState<BusinessSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
+  /* =====================
+     LOAD BUSINESSES
+  ====================== */
   useEffect(() => {
     listMyBusinesses()
       .then((res) => {
@@ -45,18 +51,44 @@ export default function UserBusinessDashboard() {
           setItems([]);
           return;
         }
-        setItems(res.items);
+
+        // 🔧 MAPPING DIFENSIVO (PROVVISORIO)
+        const mapped: BusinessSummary[] = res.items
+          .filter((b: any) => b.configurationId || b.configId)
+          .map((b: any) => ({
+            businessId: b.businessId ?? b.id,
+            name: b.name,
+            status: b.status,
+            createdAt: b.createdAt,
+            configurationId: b.configurationId ?? b.configId,
+          }));
+
+        setItems(mapped);
       })
       .finally(() => setLoading(false));
   }, []);
 
+  /* =====================
+     UI STATES
+  ====================== */
   if (loading) return <p>Caricamento…</p>;
   if (items.length === 0) return <p>Nessuna attività creata.</p>;
 
+  /* =====================
+     HANDLERS
+  ====================== */
   function goToConfigurator(configurationId: string) {
+    // 🎯 ENTRY POINT CANONICO
     navigate(`/user/configurator/${configurationId}`);
   }
 
+  function goToBusinessView(businessId: string) {
+    navigate(`/user/dashboard/business/${businessId}`);
+  }
+
+  /* =====================
+     RENDER
+  ====================== */
   return (
     <section>
       <h2>Le tue attività</h2>
@@ -67,18 +99,16 @@ export default function UserBusinessDashboard() {
           <p>Stato: {b.status}</p>
 
           <div className="actions">
-            <button onClick={() => goToConfigurator(b.businessId)}>
-              🎨 Design
-            </button>
-
-            <button onClick={() => goToConfigurator(b.businessId)}>
-              ✍️ Contenuti
-            </button>
-
+            {/* === EDITING → CONFIGURATOR === */}
             <button
-              onClick={() =>
-                navigate(`/user/dashboard/business/${b.businessId}`)
-              }
+              onClick={() => goToConfigurator(b.configurationId)}
+            >
+              ✏️ Modifica sito
+            </button>
+
+            {/* === VISTA PASSIVA === */}
+            <button
+              onClick={() => goToBusinessView(b.businessId)}
             >
               👁 Visualizza
             </button>

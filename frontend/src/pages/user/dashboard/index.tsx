@@ -10,7 +10,11 @@
 // - ❌ NON è il configurator canonico
 // - ❌ NON è il workspace canonico post-wizard
 // - ❌ NON rappresenta un dominio funzionale chiaro
-//
+////Il configurator è l’unica interfaccia
+//che modifica una Configuration.
+
+//La modalità (wizard / workspace)
+//dipende esclusivamente dallo status backend.
 // RUOLO ATTUALE:
 // - Catch-all legacy per route ambigue di dashboard
 // - Placeholder storico NON più in uso attivo

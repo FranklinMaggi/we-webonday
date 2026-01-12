@@ -28,7 +28,11 @@
 //  Persistenza incrementale su backend
 //
 // ======================================================
-//
+////Il configurator è l’unica interfaccia
+//che modifica una Configuration.
+
+//La modalità (wizard / workspace)
+//dipende esclusivamente dallo status backend.
 // RUOLO:
 // - Workspace persistente di una Configuration ESISTENTE
 // - Modifica libera post-wizard (no step, no flusso guidato)
