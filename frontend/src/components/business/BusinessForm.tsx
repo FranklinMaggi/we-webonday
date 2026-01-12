@@ -30,7 +30,8 @@ import { useConfigurationSetupStore } from "../../lib/store/configurationSetup.s
 import { OpeningHoursDay } from "../openingHours/OpeningHoursDay";
 import { createBusiness } from "../../lib/userApi/business.user.api";
 import { normalizeBusinessTags } from "../../utils/businessTags";
-
+import { useAuthStore } from "../../lib/store/auth.store";
+import { useEffect } from "react";
 /* =========================
    COSTANTI
 ========================= */
@@ -74,7 +75,14 @@ export default function StepBusinessInfo({
     businessId,
     setBusinessId,
   } = useConfigurationSetupStore();
-  
+  const user = useAuthStore((s) => s.user);
+
+useEffect(() => {
+  if (user?.email && !data.email) {
+    setField("email", user.email);
+  }
+}, [user?.email]);
+
   return (
     <div className="step">
       <h2>Configuriamo il tuo business</h2>

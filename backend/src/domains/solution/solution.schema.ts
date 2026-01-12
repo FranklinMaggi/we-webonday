@@ -19,7 +19,7 @@ import { z } from "zod";
  * SEO TAG (BASE)
  * ======================================================
  */
-export const SeoTagSchema = z
+export const TagSchema = z
   .string()
   .min(1)
   .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, {
@@ -27,22 +27,35 @@ export const SeoTagSchema = z
   });
 
 /**
+/**
  * ======================================================
- * USER GENERATED TAGS — MODERATION
+ * USER SERVICE TAGS — LEARNING PIPELINE
  * ======================================================
+ *
+ * RUOLO:
+ * - Servizi inseriti dagli utenti
+ * - Usati per:
+ *   • suggerimenti futuri
+ *   • clustering AI
+ *   • arricchimento seed
+ *
+ * NON SONO:
+ * - canonici
+ * - immediatamente riutilizzabili
  */
-const UserTagStatusSchema = z.enum([
+const UserServiceTagStatusSchema = z.enum([
   "PENDING",
   "APPROVED",
   "REJECTED",
 ]);
 
-export const UserGeneratedTagMetaSchema = z.object({
-  tag: SeoTagSchema,
-  status: UserTagStatusSchema.default("PENDING"),
-  createdBy: z.string().optional(), // userId (futuro)
+export const UserServiceTagMetaSchema = z.object({
+  tag: TagSchema,
+  status: UserServiceTagStatusSchema.default("PENDING"),
+  createdBy: z.string().optional(), // userId
   createdAt: z.string().datetime(),
 });
+
 
 /**
  * ======================================================
@@ -65,7 +78,7 @@ export const SolutionSchema = z.object({
    * - definiti da admin / seed
    * - suggeriti al FE
    */
-  tags: z.array(SeoTagSchema).default([]),
+  tags: z.array(TagSchema).default([]),
 
   /**
    * TAG GENERATI DAGLI UTENTI (FLAT)
@@ -73,7 +86,7 @@ export const SolutionSchema = z.object({
    * - solo stringhe
    * - UX / FE friendly
    */
-  userGeneratedTags: z.array(SeoTagSchema).default([]),
+  userGeneratedTags: z.array(TagSchema).default([]),
 
   /**
    * META COMPLETA DI MODERAZIONE
@@ -81,7 +94,7 @@ export const SolutionSchema = z.object({
    * - admin-ready
    */
   userGeneratedTagsMeta: z
-    .array(UserGeneratedTagMetaSchema)
+    .array(UserServiceTagMetaSchema)
     .default([]),
 
   /**
@@ -93,9 +106,37 @@ export const SolutionSchema = z.object({
    * Relazione dichiarativa Solution → Product
    */
   productIds: z.array(z.string()).default([]),
+ /**
+ * ======================================================
+ * SERVICE TAGS — BUSINESS SEMANTICS
+ * ======================================================
+ */
+
+// canonici (seed)
+serviceTags: z.array(TagSchema).default([]),
+
+// flat user input (UX-friendly)
+userServiceTags: z.array(TagSchema).default([]),
+
+// source of truth + moderation
+userServiceTagsMeta: z
+  .array(UserServiceTagMetaSchema)
+  .default([]),
+
 
   status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   createdAt: z.string().datetime(),
 });
 
 export type Solution = z.infer<typeof SolutionSchema>;
+/**
+ * INVARIANTI SERVICE TAGS:
+ *
+ * 1. serviceTags = SOLO admin / seed
+ * 2. userServiceTags = append-only
+ * 3. userServiceTags NON influiscono direttamente su layout
+ * 4. solo serviceTags APPROVATI possono:
+ *    - guidare layout
+ *    - influenzare AI
+ *    - diventare seed
+ */
