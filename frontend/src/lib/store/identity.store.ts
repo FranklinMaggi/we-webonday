@@ -20,7 +20,25 @@
 // - future multi-device
 //
 // ======================================================
-
+/**
+ * NOTA TERMINOLOGICA (VINCOLANTE):
+ *
+ * - Identity ≠ User
+ * - Identity ≠ Auth
+ * - Identity è un concetto applicativo FE
+ * - User esiste SOLO se autenticato
+ *
+ * Vietato usare `identityId` come `userId`.
+ */
+// ======================================================
+// IDENTITY — PERSISTED SHAPE (NO METHODS)
+// ======================================================
+interface PersistedIdentity {
+    identityId: string;
+    mode: IdentityMode;
+    userId?: string;
+  }
+  
 import { create } from "zustand";
 
 const IDENTITY_STORAGE_KEY = "WOD_IDENTITY_V1";
@@ -58,28 +76,29 @@ function generateIdentityId(): string {
 /**
  * Bootstrap identity dal localStorage
  */
-function loadInitialIdentity(): IdentityState {
-  try {
-    const raw = localStorage.getItem(IDENTITY_STORAGE_KEY);
-    if (raw) {
-      return JSON.parse(raw);
+function loadInitialIdentity(): PersistedIdentity {
+    try {
+      const raw = localStorage.getItem(IDENTITY_STORAGE_KEY);
+      if (raw) {
+        return JSON.parse(raw) as PersistedIdentity;
+      }
+    } catch {
+      // ignore
     }
-  } catch {
-    // ignore
+  
+    const identity: PersistedIdentity = {
+      identityId: generateIdentityId(),
+      mode: "visitor",
+    };
+  
+    localStorage.setItem(
+      IDENTITY_STORAGE_KEY,
+      JSON.stringify(identity)
+    );
+  
+    return identity;
   }
-
-  const identity: IdentityState = {
-    identityId: generateIdentityId(),
-    mode: "visitor",
-  };
-
-  localStorage.setItem(
-    IDENTITY_STORAGE_KEY,
-    JSON.stringify(identity)
-  );
-
-  return identity;
-}
+  
 
 export const useIdentityStore = create<IdentityState>((set) => {
   const initial = loadInitialIdentity();
