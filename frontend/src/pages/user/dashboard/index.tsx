@@ -105,7 +105,7 @@ export default function UserDashboardHome() {
     <button
       className="user-cta primary"
       onClick={() =>
-        navigate(`/user/dashboard/configuration/${resumeConfig.id}`)
+        navigate(`/user/configurator/${resumeConfig.id}`)
       }
     >
       🔁 Riprendi configurazione

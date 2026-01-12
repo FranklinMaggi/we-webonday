@@ -2,22 +2,18 @@
 // FE || pages/user/dashboard/business/index.tsx
 // ======================================================
 //
-// AI-SUPERCOMMENT — USER BUSINESS LIST
+// AI-SUPERCOMMENT — USER BUSINESS LIST (CANONICAL)
 //
 // RUOLO:
 // - Elenco attività dell’utente
+// - Entry point UNIFICATO verso il configurator
 //
 // SOURCE OF TRUTH:
 // - Backend API (listMyBusinesses)
 //
-// COSA FA:
-// - Navigazione verso:
-//   • vista passiva
-//   • configurator
-//
-// COSA NON FA:
-// - NON modifica business
-// - NON crea configurazioni
+// INVARIANTE CRITICA:
+// - Tutte le azioni di editing
+//   portano a /user/configurator/:configurationId
 //
 // ======================================================
 
@@ -37,20 +33,11 @@ type BusinessSummary = {
 };
 
 export default function UserBusinessDashboard() {
-  /* =====================
-     NAVIGATION
-  ====================== */
   const navigate = useNavigate();
 
-  /* =====================
-     STATE
-  ====================== */
   const [items, setItems] = useState<BusinessSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
-  /* =====================
-     LOAD BUSINESSES
-  ====================== */
   useEffect(() => {
     listMyBusinesses()
       .then((res) => {
@@ -62,17 +49,14 @@ export default function UserBusinessDashboard() {
       })
       .finally(() => setLoading(false));
   }, []);
-  
 
-  /* =====================
-     UI STATES
-  ====================== */
   if (loading) return <p>Caricamento…</p>;
   if (items.length === 0) return <p>Nessuna attività creata.</p>;
 
-  /* =====================
-     RENDER
-  ====================== */
+  function goToConfigurator(configurationId: string) {
+    navigate(`/user/configurator/${configurationId}`);
+  }
+
   return (
     <section>
       <h2>Le tue attività</h2>
@@ -83,15 +67,14 @@ export default function UserBusinessDashboard() {
           <p>Stato: {b.status}</p>
 
           <div className="actions">
-            <button onClick={startConfig}>
+            <button onClick={() => goToConfigurator(b.businessId)}>
               🎨 Design
             </button>
 
-            <button onClick={startConfig}>
+            <button onClick={() => goToConfigurator(b.businessId)}>
               ✍️ Contenuti
             </button>
 
-            {/* === VISTA PASSIVA DASHBOARD === */}
             <button
               onClick={() =>
                 navigate(`/user/dashboard/business/${b.businessId}`)
@@ -104,11 +87,4 @@ export default function UserBusinessDashboard() {
       ))}
     </section>
   );
-}
-
-/* =====================
-   TEMP CONFIG NAV
-===================== */
-function startConfig() {
-  alert("Flusso configurazione in aggiornamento");
 }
