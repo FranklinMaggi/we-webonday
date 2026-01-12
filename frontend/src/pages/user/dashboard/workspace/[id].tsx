@@ -1,39 +1,78 @@
 // ======================================================
-// FE || pages/user/dashboard/configuration/[id].tsx
+// FE || pages/user/dashboard/workspace/[id].tsx
 // ======================================================
 //
-// CONFIGURATION WORKSPACE ENTRY
+// AI-SUPERCOMMENT — CONFIGURATION WORKSPACE (POST-WIZARD)
+//
+// 🧭 MAPPA CONCETTUALE (CICLO DI VITA CONFIGURATION)
+//
+// ┌────────────────────────────────────────────┐
+// │  CONFIGURATOR (WIZARD)                     │
+// │  /user/configurator/:id                   │
+// └──────────────┬─────────────────────────────┘
+//                │
+//                │  Salvataggio finale (draft)
+//                ▼
+// ┌────────────────────────────────────────────┐
+// │  DASHBOARD WORKSPACE (QUESTO FILE)         │
+// │  /user/dashboard/workspace/:id             │
+// └────────────────────────────────────────────┘
+//                │
+//                ▼
+//  Fetch Configuration (BE = source of truth)
+//                │
+//                ▼
+//  Editing CONTINUO e NON guidato
+//                │
+//                ▼
+//  Persistenza incrementale su backend
+//
+// ======================================================
 //
 // RUOLO:
-// - Entry point editor configurazione persistente
+// - Workspace persistente di una Configuration ESISTENTE
+// - Modifica libera post-wizard (no step, no flusso guidato)
 //
 // SOURCE OF TRUTH:
 // - Backend (ConfigurationDTO)
+// - Stato locale FE SOLO per UI
 //
 // COSA FA:
-// - Carica configurazione
-// - Monta ConfigurationLayout
+// - Legge :id dalla URL
+// - Fetcha /api/configuration/:id
+// - Monta ConfigurationLayout (sidebar + sezioni)
 //
-// COSA NON FA:
-// - NON gestisce wizard
-// - NON usa Zustand
-// - NON crea ordini
-// ======================================================
-// ======================================================
-// FE || dashboard/configuration/[id].tsx
-// ======================================================
+// COSA NON FA (VINCOLANTE):
+// - ❌ NON è un wizard
+// - ❌ NON inizializza Zustand setup
+// - ❌ NON dipende dal carrello
+// - ❌ NON crea configuration
+// - ❌ NON decide pricing o checkout
 //
-// CONFIGURATION WORKSPACE — USER
+// DIFFERENZA CHIAVE vs CONFIGURATOR:
+// - Configurator = onboarding guidato (wizard)
+// - Workspace = editor persistente e continuo
 //
-// RUOLO:
-// - Editor continuo configurazione
-// - Stato = draft / preview / ordered
+// INVARIANTI CRITICI:
+// 1. Accede SOLO a Configuration già esistenti
+// 2. Ogni modifica è immediatamente persistita
+// 3. Nessuna logica di navigazione a step
+// 4. Nessun accoppiamento con /user/configurator
+//
+// COLLISIONI NOTE / FILE SOSPETTI:
+// - ❌ pages/user/dashboard/[id].tsx (legacy catch-all)
+// - ❌ qualsiasi reuse del wizard qui dentro
+//
+// STATO:
+// - ATTIVO
+// - POST-WIZARD
+// - STRUTTURALMENTE SEPARATO DAL CONFIGURATOR
 //
 // ======================================================
 
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import ConfigurationLayout from "../../layout/ConfigurationLayout";
+import ConfigurationLayout from "../ConfigurationLayout";
 import { type ConfigurationDTO } from "../../../../lib/apiModels/user/Configuration.api-model";
 
 export default function UserConfigurationWorkspace() {

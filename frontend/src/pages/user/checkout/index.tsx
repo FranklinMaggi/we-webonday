@@ -1,3 +1,44 @@
+// ======================================================
+// FE || pages/user/checkout/index.tsx
+// ======================================================
+//
+// AI-SUPERCOMMENT — CHECKOUT ENTRY (ROUTE / PARAM ALIGNMENT)
+//
+// STATO ATTUALE (INTENZIONALE):
+// ------------------------------------------------------
+// Questo componente legge:
+//   const { configurationId } = useParams<{ configurationId: string }>();
+//
+// Tuttavia, il router espone attualmente:
+//   path: "checkout"
+//
+// Quindi:
+// - configurationId NON è garantito dalla route
+// - Il flusso funziona solo se configurationId
+//   arriva da redirect controllato o contesto esterno
+//
+// ------------------------------------------------------
+// DECISIONE ARCHITETTURALE:
+// - ❌ NON modificare ora la route
+// - ❌ NON cambiare la firma del componente
+// - ❌ NON introdurre fallback impliciti
+//
+// ------------------------------------------------------
+// MOTIVO:
+// - La scelta corretta dipende dal dominio Orders
+// - Checkout è una FASE, non una risorsa autonoma
+//
+// ------------------------------------------------------
+// STEP FUTURO DEDICATO (ORDERS):
+// - Valutare una delle seguenti:
+//   A) /user/checkout/:configurationId
+//   B) /user/checkout + configurationId via store
+//
+// FINO AD ALLORA:
+// - Questo file è BLOCCATO STRUTTURALMENTE
+// - Qualsiasi refactor qui è VIETATO
+//
+// ======================================================
 
 import { useParams } from "react-router-dom";
 

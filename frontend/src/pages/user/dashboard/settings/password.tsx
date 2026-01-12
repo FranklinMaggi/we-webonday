@@ -19,10 +19,8 @@
 //
 // INVARIANTI:
 // - Accessibile solo da dashboard autenticata
-//Backend = source of truth
-
-
+//
 // NOTE:
 // - Implementazione futura
-//Nessun fetch ora
+//
 // ======================================================

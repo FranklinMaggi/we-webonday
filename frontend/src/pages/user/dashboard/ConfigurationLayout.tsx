@@ -24,7 +24,7 @@
 // ======================================================
 import { useState } from "react";
 import ConfiguratorSidebar, { type StepId } from "./ConfiguratorSidebar";
-import BusinessForm from "../dashboard/workspace/forms/BusinessForm";
+import BusinessForm from "./workspace/forms/BusinessForm";
 import type { ConfigurationDTO } from "../../../lib/apiModels/user/Configuration.api-model";
 
 export default function ConfigurationLayout({

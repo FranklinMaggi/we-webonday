@@ -16,7 +16,7 @@
 // FE || pages/user/dashboard/layout/DashboardLayout.tsx
 
 import { Outlet } from "react-router-dom";
-import Sidebar from "./DashboardSideBar";
+import Sidebar from "../layout/DashboardSideBar";
 
 export default function DashboardLayout() {
   return (

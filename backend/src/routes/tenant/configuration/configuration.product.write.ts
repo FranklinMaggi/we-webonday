@@ -38,7 +38,7 @@ import { requireUser } from "../../../lib/auth/session";
 
 import { SolutionSchema } from "../../../domains/solution/solution.schema";
 import { ProductSchema } from "../../../domains/product/product.schema";
-import { OptionSchema } from "../../../domains/option/option.schema";
+import { OptionSchema } from "../../../domains/option/option.schema.ts";
 
 import {
   ConfigurationSchema,

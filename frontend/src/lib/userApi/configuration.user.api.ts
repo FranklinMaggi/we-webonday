@@ -65,6 +65,8 @@
 // ======================================================
 
 import { apiFetch } from "../api/client";
+import type { ConfigurationDTO} from "../apiModels/user/Configuration.api-model";
+
 
 /**
  * PUT /api/configuration/:configurationId
@@ -103,4 +105,30 @@ export async function upsertConfigurationFromBusiness(input: {
     method: "POST",
     body: JSON.stringify(input),
   });
+}
+
+// ======================================================
+// FE || lib/userApi/configuration.user.api.ts
+// ======================================================
+//
+// Backend = source of truth
+// Configuration = workspace persistente
+// ======================================================
+
+export async function listMyConfigurations(): Promise<{
+  ok: true;
+  items: ConfigurationDTO[];
+}> {
+  const res = await apiFetch<{
+    ok: true;
+    items: ConfigurationDTO[];
+  }>("/api/configuration", {
+    method: "GET",
+  });
+
+  if (!res) {
+    throw new Error("API /api/configuration returned null");
+  }
+
+  return res;
 }

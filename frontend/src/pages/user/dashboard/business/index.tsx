@@ -83,11 +83,11 @@ export default function UserBusinessDashboard() {
           <p>Stato: {b.status}</p>
 
           <div className="actions">
-            <button onClick={() => startConfig(b.businessId, "design")}>
+            <button onClick={startConfig}>
               🎨 Design
             </button>
 
-            <button onClick={() => startConfig(b.businessId, "content")}>
+            <button onClick={startConfig}>
               ✍️ Contenuti
             </button>
 
@@ -109,10 +109,6 @@ export default function UserBusinessDashboard() {
 /* =====================
    TEMP CONFIG NAV
 ===================== */
-function startConfig(
-  businessId: string,
-  mode: "design" | "content" | "preview"
-) {
-  // TODO: sostituire con router interno quando pronto
-  window.location.href = `/configurator/start?businessId=${businessId}&mode=${mode}`;
+function startConfig() {
+  alert("Flusso configurazione in aggiornamento");
 }

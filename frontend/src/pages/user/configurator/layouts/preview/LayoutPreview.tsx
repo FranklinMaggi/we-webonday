@@ -1,22 +1,26 @@
 // ======================================================
-// FE || components/layoutPreview/LayoutPreview.tsx
-// ======================================================
-//
-// AI-SUPERCOMMENT — LAYOUT PREVIEW RENDERER
+// AI-SUPERCOMMENT — LAYOUT PREVIEW (VENDITA)
 //
 // RUOLO:
-// - Renderizza una preview FE di un LayoutKV
-// - Usa SOLO dati JSON
-// - Nessuna logica AI
+// - Visualizzare il layout che verrà ACQUISTATO
+//
+// ATTENZIONE:
+// - Questa preview NON è decorativa
+// - Rappresenta il layout incluso nel prodotto venduto
 //
 // INVARIANTI:
-// - Deterministico
-// - Stateless
-// - No fetch
+// - Deve riflettere fedelmente layoutId
+// - Nessuna logica di prezzo qui
+// - Nessuna mutazione di Configuration
+//
+// RELAZIONE:
+// - StepReview seleziona
+// - Configuration persiste
+// - Checkout/Order leggono
 // ======================================================
 
-import type { LayoutKVDTO } from "../../lib/configurationLayout/layout.dto";
-import type { UserConfigurationSetupDTO } from "../../lib/storeModels/ConfigurationSetup.store-model";
+import type { LayoutKVDTO } from "../../../../../lib/configurationLayout/layout.dto";
+import type { UserConfigurationSetupDTO } from "../../../../../lib/storeModels/ConfigurationSetup.store-model";
 
 type LayoutPreviewProps = {
   layout: LayoutKVDTO;

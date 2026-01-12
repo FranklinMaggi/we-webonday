@@ -1,35 +1,99 @@
-// ======================================================
-// FE || pages/user/configurator/configuration/index.tsx
+// FE || pages/user/configurator/index.tsx
 // ======================================================
 //
-// AI-SUPERCOMMENT — CONFIGURATION CANONICAL ENTRY
+// AI-SUPERCOMMENT — CONFIGURATOR CANONICAL ENTRY
+//
+// 🧭 MAPPA CONCETTUALE (SOURCE OF TRUTH)
+//
+// ┌──────────────────────────────┐
+// │  DASHBOARD / SOLUTION FLOW   │
+// └──────────────┬───────────────┘
+//                │
+//                ▼
+//      Configuration ESISTENTE (BE)
+//                │
+//                ▼
+// ┌────────────────────────────────────────────┐
+// │ /user/configurator/:id                     │
+// │  → ConfigurationIndex (QUESTO FILE)        │
+// └────────────────────────────────────────────┘
+//                │
+//                ▼
+//  Fetch Configuration (BE = truth)
+//                │
+//                ▼
+//  Prefill Zustand Store (FE only)
+//                │
+//                ▼
+//  ConfigurationSetupPage (Wizard UI)
+//                │
+//                ▼
+//  Salvataggio finale → status: draft
+//                │
+//                ▼
+// ┌────────────────────────────────────────────┐
+// │ /user/dashboard/configuration/:id          │
+// │  → Workspace persistente post-wizard       │
+// └────────────────────────────────────────────┘
+//
+// ======================================================
 //
 // RUOLO:
-// - Entry point CANONICO del configuratore
-// - Punto di verità UNICO dopo il login
-// - Inizializza lo stato FE partendo ESCLUSIVAMENTE dal backend
-//
-// INVARIANTI FONDAMENTALI (NON NEGOZIABILI):
-// 1. Il configurator NON dipende MAI dal carrello dopo il login
-// 2. La Configuration BE è la SINGLE SOURCE OF TRUTH
-// 3. Senza configurationId valido → il flusso NON parte
-// 4. Nessuno step legge direttamente da cartStore
-//
-// COSA FA:
-// - Legge :id dalla URL
-// - Fetcha /api/configuration/:id
-// - Popola configurationSetupStore con dati BE
-// - Fetcha la Solution per ottenere solutionTags / industries
-// - Monta il wizard (ConfigurationSetupPage)
-//
-// COSA NON FA:
-// - ❌ NON crea configuration
-// - ❌ NON modifica lo status
-// - ❌ NON gestisce step / navigazione interna
-// - ❌ NON legge il carrello
+// - Entry point CANONICO e UNICO del configurator
+// - Ponte tra Backend Configuration e Wizard UI
 //
 // SOURCE OF TRUTH:
-// - Backend Configuration (CONFIGURATION_KV)
+// - Backend (ConfigurationDTO)
+// - Zustand è SOLO una proiezione temporanea FE
+//
+// COSA FA:
+// - Legge configurationId dalla URL
+// - Fetcha /api/configuration/:id
+// - Inizializza configurationSetupStore (BE → FE)
+// - Fetcha Solution per seed tags / industries
+// - Monta ConfigurationSetupPage (wizard UI)
+//
+// COSA NON FA (VINCOLANTE):
+// - ❌ NON crea configuration
+// - ❌ NON legge carrello
+// - ❌ NON decide pricing
+// - ❌ NON persiste dati (tranne via StepReview)
+// - ❌ NON gestisce auth (delegato al layout)
+//
+// INVARIANTI CRITICI (NON NEGOZIABILI):
+// 1. Questo è l’UNICO entry point del configurator
+// 2. Senza configurationId valido → redirect dashboard
+// 3. Nessun flusso può entrare da /configurator/start
+// 4. Il wizard NON vive senza una Configuration BE
+// 5. Zustand NON è mai source of truth
+//
+// COLLISIONI NOTE:
+// - ❌ /configurator/start (legacy, NON usare)
+// - ❌ /user/dashboard/[id] (catch-all legacy)
+//
+// STATO:
+// - CANONICO
+// - STABILE
+// - BLOCCATO STRUTTURALMENTE
+//
+// ======================================================
+// ======================================================
+// AI-SUPERCOMMENT — CONFIGURATION READY_FOR_CHECKOUT
+//
+// DEFINIZIONE:
+// Una Configuration è vendibile SOLO se:
+// - solutionId presente
+// - productId presente
+// - layoutId selezionato
+// - dati business minimi compilati
+//
+// RESPONSABILITÀ:
+// - Il configurator GARANTISCE la completezza
+// - Il checkout PRESUME una configuration valida
+//
+// INVARIANTI:
+// - Nessun accesso al checkout da configurazioni incomplete
+// - La validazione NON vive nel checkout
 //
 // ======================================================
 

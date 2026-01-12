@@ -32,7 +32,7 @@
 // - Backend = source of truth
 // ======================================================
 
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getBusiness } from "../../../../lib/userApi/business.user.api";
 
@@ -47,7 +47,6 @@ type BusinessDetail = {
   
 export default function UserBusinessDetail() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
 
   const [business, setBusiness] = useState<BusinessDetail | null>(null);const [loading, setLoading] = useState(true);
 
@@ -79,12 +78,12 @@ export default function UserBusinessDetail() {
       <hr />
 
       <button
-        onClick={() =>
-          navigate(`/user/configurator/start?businessId=${business.id}`)
-        }
-      >
-        ✏️ Modifica configurazione
-      </button>
+  onClick={() => alert("Flusso configurazione in aggiornamento")}
+>
+  ✏️ Configurazione
+</button>
+
+      
     </section>
   );
 }

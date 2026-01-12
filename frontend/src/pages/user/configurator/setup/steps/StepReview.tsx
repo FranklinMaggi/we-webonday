@@ -1,18 +1,25 @@
 // ======================================================
-// FE || StepReview.tsx
-// ======================================================
+// AI-SUPERCOMMENT — LAYOUT COME BENE VENDUTO (CANONICO)
 //
-// STEP 4 — PREVIEW & CONFERMA
+// DECISIONE:
+// - Il layout selezionato in questo step È PARTE DEL PRODOTTO
+// - Non è solo preview UI
 //
-// RUOLO:
-// - Mostra preview layout disponibili
-// - Permette selezione layout
-// - Salva configurazione DRAFT
+// EFFETTI:
+// - layoutId viene persistito nella Configuration
+// - Il layout è incluso nel valore economico venduto
+// - Dopo l’acquisto:
+//   • il layout NON è più sostituibile liberamente
+//   • eventuali cambi sono POST-VENDITA (upgrade / revisione)
 //
-// INVARIANTI:
-// - Layout = backend (KV)
-// - Preview = FE render JSON
-// - NO AI
+// INVARIANTI (NON NEGOZIABILI):
+// 1. Questo è l’UNICO punto di selezione layout
+// 2. Il checkout NON decide il layout
+// 3. L’ordine fotografa il layout scelto
+//
+// STATO:
+// - CANONICO
+// - BLOCCATO STRUTTURALMENTE
 // ======================================================
 
 import { useParams, useNavigate } from "react-router-dom";
@@ -20,7 +27,7 @@ import { useConfigurationSetupStore } from "../../../../../lib/store/configurati
 import { updateConfiguration } from "../../../../../lib/userApi/configuration.user.api";
 import { useEffect, useState } from "react";
 import type { LayoutKVDTO } from "../../../../../lib/configurationLayout/layout.dto";
-import { LayoutPreview } from "../../../../../components/preview/LayoutPreview";
+import { LayoutPreview } from "../../layouts/preview/LayoutPreview";
 import { fetchAvailableLayouts } from "../../../../../lib/userApi/layout.user.api";
 
 
@@ -33,6 +40,23 @@ export default function StepReview({ onBack }: { onBack: () => void }) {
   const [selectedLayoutId, setSelectedLayoutId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isReadyForCheckout =
+  !!data.solutionId &&
+  !!data.productId &&
+  !!selectedLayoutId &&
+  !!data.businessName;
+
+if (!isReadyForCheckout) {
+  return (
+    <div className="step">
+      <h2>Configurazione incompleta</h2>
+      <p>
+        Completa tutti i passaggi prima di procedere.
+      </p>
+      <button onClick={onBack}>Torna indietro</button>
+    </div>
+  );
+}
 
   // =========================
   // LOAD LAYOUTS FROM BE
