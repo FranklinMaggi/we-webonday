@@ -208,7 +208,7 @@ export default function StepBusinessInfo({
           <h4>Descrivi la tua attività con dei tag</h4>
 
           <div className="tag-pills">
-            {data.solutionDescriptionTags ?? [] .map((tag) => {
+            {(data.solutionDescriptionTags ?? []).map((tag) => {
               const active =
                 data.businessDescriptionTags?.includes(tag);
 
@@ -248,7 +248,7 @@ export default function StepBusinessInfo({
           <h4>I servizi che offri</h4>
 
           <div className="tag-pills">
-            {data.solutionServiceTags ?? [].map((tag) => {
+            {(data.solutionServiceTags ?? []).map((tag) => {
               const active =
                 data.businessServiceTags?.includes(tag);
 
