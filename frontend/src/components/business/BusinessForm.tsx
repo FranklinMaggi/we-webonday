@@ -197,34 +197,31 @@ export default function StepBusinessInfo({
       <h3>Contenuti del sito</h3>
 
       {/* ======================================================
-         DESCRIPTION TAGS
-         - Derivano da Solution.descriptionTags
-         - Selezione tramite pills
-         - FE-only
+        DESCRIPTION TAGS
+        - Derivano da Solution.descriptionTags
+        - Selezione tramite pills
+        - FE-only
       ====================================================== */}
- {(data.solutionDescriptionTags?.length ?? 0) > 0 && (
-
+      {(data.solutionDescriptionTags?.length ?? 0) > 0 && (
         <>
           <h4>Descrivi la tua attività con dei tag</h4>
 
           <div className="tag-pills">
             {(data.solutionDescriptionTags ?? []).map((tag) => {
-              const active =
-                data.businessDescriptionTags?.includes(tag);
+              const isActive =
+                data.businessDescriptionTags?.includes(tag) ?? false;
 
               return (
                 <button
                   key={tag}
                   type="button"
-                  className={`pill ${active ? "active" : ""}`}
+                  className={`pill ${isActive ? "active" : ""}`}
                   onClick={() =>
                     setField(
                       "businessDescriptionTags",
-                      normalizeTags(
-                        toggleTag(
-                          data.businessDescriptionTags,
-                          tag
-                        )
+                      toggleTag(
+                        data.businessDescriptionTags,
+                        tag
                       )
                     )
                   }
@@ -237,59 +234,46 @@ export default function StepBusinessInfo({
         </>
       )}
 
+
       {/* ======================================================
-         SERVICE TAGS
-         - Derivano da Solution.serviceTags
-         - Selezione tramite pills
-         - FE-only
+      SERVICE TAGS
+      - Derivano da Solution.serviceTags
+      - Selezione tramite pills
+      - FE-only
       ====================================================== */}
-      {(data.solutionServiceTags?.length ?? 0 ) > 0 && (
-        <>
-          <h4>I servizi che offri</h4>
+      {(data.solutionServiceTags?.length ?? 0) > 0 && (
+      <>
+      <h4>I servizi che offri</h4>
 
-          <div className="tag-pills">
-            {(data.solutionServiceTags ?? []).map((tag) => {
-              const active =
-                data.businessServiceTags?.includes(tag);
+      <div className="tag-pills">
+      {(data.solutionServiceTags ?? []).map((tag) => {
+      const isActive =
+        data.businessServiceTags?.includes(tag) ?? false;
 
-              return (
-                <button
-                  key={tag}
-                  type="button"
-                  className={`pill ${active ? "active" : ""}`}
-                  onClick={() =>
-                    setField(
-                      "businessServiceTags",
-                      normalizeTags(
-                        toggleTag(
-                          data.businessServiceTags,
-                          tag
-                        )
-                      )
-                    )
-                  }
-                >
-                  {tag}
-                </button>
-              );
-            })}
-          </div>
-        </>
+      return (
+        <button
+          key={tag}
+          type="button"
+          className={`pill ${isActive ? "active" : ""}`}
+          onClick={() =>
+            setField(
+              "businessServiceTags",
+              toggleTag(
+                data.businessServiceTags,
+                tag
+              )
+            )
+          }
+        >
+          {tag}
+        </button>
+      );
+      })}
+      </div>
+      </>
       )}
 
-      {/* ======================================================
-         COPY TESTUALE (ANCORA UTILE)
-         - usato per hero / about
-      ====================================================== */}
-      <textarea
-        placeholder="Descrizione dell’attività"
-        value={data.description ?? ""}
-        onChange={(e) =>
-          setField("description", e.target.value)
-        }
-      />
 
-   
       {/* ======================================================
          ORARI DI APERTURA (FE-ONLY)
       ====================================================== */}
