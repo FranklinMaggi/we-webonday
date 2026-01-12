@@ -121,7 +121,10 @@ type ConfigurationDTO = {
 /* ======================================================
    COMPONENT
 ====================================================== */
-
+console.log("[CONFIGURATOR ENTRY]", {
+  pathname: window.location.pathname,
+  search: window.location.search,
+});
 export default function ConfigurationIndex() {
   const navigate = useNavigate();
   const { id: configurationId } = useParams<{ id: string }>();
