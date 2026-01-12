@@ -289,14 +289,7 @@ export default function StepBusinessInfo({
         }
       />
 
-      <input
-        placeholder="Call to action (es. Contattaci ora)"
-        value={data.cta ?? ""}
-        onChange={(e) =>
-          setField("cta", e.target.value)
-        }
-      />
-
+   
       {/* ======================================================
          ORARI DI APERTURA (FE-ONLY)
       ====================================================== */}
