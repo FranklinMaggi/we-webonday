@@ -1,3 +1,12 @@
+// NOTA ARCHITETTURALE:
+//
+// Questo step NON mostra layout.
+// Serve esclusivamente a:
+// - derivare visibility
+// - garantire che i dati minimi esistano
+//
+// La preview e la selezione layout
+// avvengono ESCLUSIVAMENTE nello step successivo.
 // ======================================================
 // FE || STEP — LAYOUT PREPARATION (CANONICAL)
 //
@@ -87,6 +96,8 @@ export default function StepLayoutGenerator({
           continuare.
         </p>
       )}
+ 
+
 
       <div className="actions">
         <button type="button" onClick={onBack}>

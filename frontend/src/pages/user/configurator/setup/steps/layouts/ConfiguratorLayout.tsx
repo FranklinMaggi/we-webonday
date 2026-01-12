@@ -21,7 +21,7 @@
 
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { useAuthStore } from "../../../../lib/store/auth.store";
+import { useAuthStore } from "../../../../../../lib/store/auth.store";
 
 export default function ConfiguratorLayout() {
   const user = useAuthStore((s) => s.user);

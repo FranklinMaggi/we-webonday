@@ -19,8 +19,8 @@
 // - Checkout/Order leggono
 // ======================================================
 
-import type { LayoutKVDTO } from "../../../../../lib/configurationLayout/layout.dto";
-import type { UserConfigurationSetupDTO } from "../../../../../lib/storeModels/ConfigurationSetup.store-model";
+import type { LayoutKVDTO } from "../../../../../../../lib/configurationLayout/layout.dto";
+import type { UserConfigurationSetupDTO } from "../../../../../../../lib/storeModels/ConfigurationSetup.store-model";
 
 type LayoutPreviewProps = {
   layout: LayoutKVDTO;

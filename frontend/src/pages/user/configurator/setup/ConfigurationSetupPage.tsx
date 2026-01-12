@@ -26,6 +26,39 @@
 // - configurationSetupStore (Zustand)
 //
 // ======================================================
+// ======================================================
+// AI-SUPERCOMMENT — CONFIGURATOR FLOW (CANONICAL)
+//
+// FLUSSO COMPLETO:
+//
+// 1. StepProductIntro
+//    - Contesto
+//    - Nessuna modifica store
+//
+// 2. StepBusinessInfo
+//    - Raccolta dati business
+//    - Scrittura store FE
+//
+// 3. StepDesign
+//    - Scelta stile / palette
+//    - Scrittura store FE
+//
+// 4. StepLayoutGenerator   ← STEP PREPARATORIO
+//    - Deriva visibility
+//    - Valida prerequisiti layout
+//    - NON mostra layout
+//
+// 5. StepReview            ← STEP DI SCELTA
+//    - Fetch layout disponibili (BE)
+//    - Render preview layout (business-aware)
+//    - Selezione layoutId
+//    - Persistenza configuration (draft)
+//
+// INVARIANTE:
+// - Nessuno step salta il precedente
+// - La selezione layout avviene SOLO in StepReview
+//
+// ======================================================
 
 import { useState } from "react";
 

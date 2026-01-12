@@ -1,89 +1,79 @@
 // ======================================================
-// AI-SUPERCOMMENT — LAYOUT COME BENE VENDUTO (CANONICO)
+// FE || STEP — LAYOUT SELECTION (CANONICAL)
+// ======================================================
 //
-// DECISIONE:
-// - Il layout selezionato in questo step È PARTE DEL PRODOTTO
-// - Non è solo preview UI
+// RESPONSABILITÀ:
+// - Unico consumer dei layout BE
+// - Unico punto di selezione layoutId
+// - Ultimo step prima del checkout
 //
-// EFFETTI:
-// - layoutId viene persistito nella Configuration
-// - Il layout è incluso nel valore economico venduto
-// - Dopo l’acquisto:
-//   • il layout NON è più sostituibile liberamente
-//   • eventuali cambi sono POST-VENDITA (upgrade / revisione)
+// INVARIANTI:
+// - Nessuna decisione di pricing
+// - Nessuna creazione ordine
+// - Checkout NON sceglie layout
 //
-// INVARIANTI (NON NEGOZIABILI):
-// 1. Questo è l’UNICO punto di selezione layout
-// 2. Il checkout NON decide il layout
-// 3. L’ordine fotografa il layout scelto
-//
-// STATO:
-// - CANONICO
-// - BLOCCATO STRUTTURALMENTE
 // ======================================================
 
 import { useParams, useNavigate } from "react-router-dom";
-import { useConfigurationSetupStore } from "../../../../../lib/store/configurationSetup.store";
-import { updateConfiguration } from "../../../../../lib/userApi/configuration.user.api";
 import { useEffect, useState } from "react";
-import type { LayoutKVDTO } from "../../../../../lib/configurationLayout/layout.dto";
-import { LayoutPreview } from "../../layouts/preview/LayoutPreview";
+
+import { useConfigurationSetupStore } from "../../../../../lib/store/configurationSetup.store";
 import { fetchAvailableLayouts } from "../../../../../lib/userApi/layout.user.api";
+import { updateConfiguration } from "../../../../../lib/userApi/configuration.user.api";
 
+import type { LayoutKVDTO } from "../../../../../lib/configurationLayout/layout.dto";
+import { LayoutPreview } from "./layouts/preview/LayoutPreview";
 
-export default function StepReview({ onBack }: { onBack: () => void }) {
+type Props = {
+  onBack: () => void;
+};
+
+export default function StepReview({ onBack }: Props) {
+  /* ======================================================
+     CONTEXT
+  ====================================================== */
   const { id: configurationId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data } = useConfigurationSetupStore();
 
+  /* ======================================================
+     STATE
+  ====================================================== */
   const [layouts, setLayouts] = useState<LayoutKVDTO[]>([]);
   const [selectedLayoutId, setSelectedLayoutId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const isReadyForCheckout =
-  !!data.solutionId &&
-  !!data.productId &&
-  !!selectedLayoutId &&
-  !!data.businessName;
 
-if (!isReadyForCheckout) {
-  return (
-    <div className="step">
-      <h2>Configurazione incompleta</h2>
-      <p>
-        Completa tutti i passaggi prima di procedere.
-      </p>
-      <button onClick={onBack}>Torna indietro</button>
-    </div>
-  );
-}
-
-  // =========================
-  // LOAD LAYOUTS FROM BE
-  // =========================
+  /* ======================================================
+     LOAD LAYOUTS (BE)
+  ====================================================== */
   useEffect(() => {
-    async function load() {
+    if (!data.solutionId || !data.productId) {
+      setError("Configurazione incompleta");
+      return;
+    }
+
+    async function loadLayouts() {
       try {
         const res = await fetchAvailableLayouts({
           solutionId: data.solutionId!,
           productId: data.productId!,
         });
-        setLayouts(res.layouts);
-      } catch (e: any) {
-        setError("Errore caricamento layout");
+
+        setLayouts(res.layouts ?? []);
+      } catch {
+        setError("Errore nel caricamento dei layout");
       }
     }
-    load();
-  }, []);
 
-  // =========================
-  // SAVE DRAFT
-  // =========================
-  async function saveDraft() {
-    if (!configurationId || !selectedLayoutId) {
-      setError("Configurazione incompleta");
-      return;
-    }
+    loadLayouts();
+  }, [data.solutionId, data.productId]);
+
+  /* ======================================================
+     CTA — SAVE & CONTINUE
+  ====================================================== */
+  async function confirmLayout() {
+    if (!configurationId || !selectedLayoutId) return;
 
     setLoading(true);
     setError(null);
@@ -95,22 +85,32 @@ if (!isReadyForCheckout) {
         status: "draft",
       });
 
-      navigate(`/user/dashboard/configuration/${configurationId}`, {
-        replace: true,
-      });
+      // 🔁 HANDOFF (scegline uno)
+      // navigate(`/user/checkout/${configurationId}`);
+      navigate(`/user/dashboard/configuration/${configurationId}`);
     } catch (e: any) {
-      setError(e.message ?? "Errore salvataggio");
+      setError(e.message ?? "Errore salvataggio configurazione");
     } finally {
       setLoading(false);
     }
   }
 
+  /* ======================================================
+     RENDER
+  ====================================================== */
   return (
-    <div className="step">
+    <div className="step step-review">
       <h2>Scegli il layout del tuo sito</h2>
+
+      <p style={{ opacity: 0.7 }}>
+        Questo layout sarà incluso nel progetto finale.
+      </p>
 
       {error && <p className="error">{error}</p>}
 
+      {/* =========================
+         LAYOUT GRID
+      ========================= */}
       <div className="layout-grid">
         {layouts.map((layout) => (
           <div
@@ -122,24 +122,28 @@ if (!isReadyForCheckout) {
             }
             onClick={() => setSelectedLayoutId(layout.id)}
           >
-
-            {/* QUI VA IL RENDERER */}
-            {/* <LayoutPreview layout={layout} data={data} /> */}
             <LayoutPreview layout={layout} data={data} />
-       
+
             <h4>{layout.name}</h4>
             <p>{layout.description}</p>
           </div>
         ))}
       </div>
 
+      {/* =========================
+         ACTIONS
+      ========================= */}
       <div className="actions">
-        <button onClick={onBack}>Indietro</button>
+        <button type="button" onClick={onBack}>
+          Indietro
+        </button>
+
         <button
+          type="button"
+          onClick={confirmLayout}
           disabled={!selectedLayoutId || loading}
-          onClick={saveDraft}
         >
-          {loading ? "Salvataggio…" : "Conferma e salva"}
+          {loading ? "Salvataggio…" : "Conferma layout e continua"}
         </button>
       </div>
     </div>

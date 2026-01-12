@@ -36,9 +36,9 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 /* =========================
    LAYOUTS
 ========================= */
-import { MainLayout } from "../pages/user/configurator/layouts/MainLayout";
+import { MainLayout } from "../pages/user/configurator/setup/steps/layouts/MainLayout";
 import DashboardLayout from "../pages/user/dashboard/DashboardLayout";
-import ConfiguratorLayout from "../pages/user/configurator/layouts/ConfiguratorLayout";
+import ConfiguratorLayout from "../pages/user/configurator/setup/steps/layouts/ConfiguratorLayout";
 import AdminLayout from "../components/admin/layouts/AdminLayout";
 
 /* =========================
