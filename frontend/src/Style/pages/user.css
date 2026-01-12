@@ -92,23 +92,65 @@
     opacity: 0.4;
     cursor: not-allowed;
   }
-  .pill {
-    padding: 6px 12px;
-    border-radius: 999px;
-    border: 1px solid #ccc;
-    background: #f7f7f7;
-    cursor: pointer;
-  }
-  
-  .pill.active {
-    background: #111;
-    color: white;
-    border-color: #111;
-  }
-  
-  .tag-pills {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  
+  /* ======================================================
+   TAG PILLS — BASE
+====================================================== */
+.tag-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 16px;
+}
+
+.tag-pills .pill {
+  appearance: none;
+  border: 1px solid #d0d5dd;
+  background: #ffffff;
+  color: #344054;
+
+  padding: 6px 12px;
+  border-radius: 999px;
+
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+
+  /* FONDAMENTALE */
+  pointer-events: auto;
+}
+
+/* Hover */
+.tag-pills .pill:hover {
+  background: #f9fafb;
+  border-color: #98a2b3;
+}
+
+/* ======================================================
+   TAG PILLS — ACTIVE
+====================================================== */
+.tag-pills .pill.active {
+  background: #2563eb;        /* blu primario */
+  border-color: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+}
+
+/* Hover su active */
+.tag-pills .pill.active:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* ======================================================
+   ACCESSIBILITY (FOCUS)
+====================================================== */
+.tag-pills .pill:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35);
+}
