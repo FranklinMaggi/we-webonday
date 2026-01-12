@@ -3,8 +3,8 @@
 // ======================================================
 
 import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate ,useLocation } from "react-router-dom";
+import { useAuthStore } from "../../../../lib/store/auth.store";
 import type { ProductVM } from "../../../../lib/viewModels/product/Product.view-model";
 import { eur } from "../../../../utils/format";
 import { putCart } from "../../../../lib/cart/cart.api";
@@ -22,7 +22,27 @@ export default function CartPreview({
 }: Props) {
   const ref = useRef<HTMLElement>(null);
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const user = useAuthStore((s) => s.user);
+  function handleContinue() {
+    // ======================================================
+    // VISITOR → LOGIN
+    // ======================================================
+    if (!user) {
+      navigate(
+        `/user/login?redirect=${encodeURIComponent(
+          location.pathname
+        )}`
+      );
+      return;
+    }
+  
+    // ======================================================
+    // USER → CONFIGURATOR
+    // ======================================================
+    navigate(`/user/configurator/${solutionId}`);
+  }
+  
   /* =========================
      PREVIEW PRICING (UI ONLY)
   ========================= */
@@ -139,11 +159,11 @@ export default function CartPreview({
       </p>
 
       <button
-        className="wd-btn wd-btn--primary"
-        onClick={continueFlow}
-      >
-        Continua
-      </button>
+  className="wd-btn wd-btn--primary"
+  onClick={handleContinue}
+>
+  Configura 
+</button>
     </aside>
   );
 }
