@@ -67,7 +67,7 @@ import { useConfigurationSetupStore } from "../../../../lib/store/configurationS
 import StepProductIntro from "./steps/StepProductIntro";
 import StepBusinessInfo from "./steps/StepBusinessInfo";
 import StepDesign from "./steps/StepDesign";
-import StepExtra from "./steps/StepLayoutGenerator";
+
 import StepReview from "./steps/StepReview";
 import StepLayoutGenerator from "./steps/StepLayoutGenerator";
 /* =========================
