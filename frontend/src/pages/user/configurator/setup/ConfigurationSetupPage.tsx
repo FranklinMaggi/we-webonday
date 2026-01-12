@@ -69,7 +69,7 @@ import StepBusinessInfo from "./steps/StepBusinessInfo";
 import StepDesign from "./steps/StepDesign";
 import StepExtra from "./steps/StepLayoutGenerator";
 import StepReview from "./steps/StepReview";
-
+import StepLayoutGenerator from "./steps/StepLayoutGenerator";
 /* =========================
    STEPS ORDER
 ========================= */
@@ -133,7 +133,7 @@ export default function ConfigurationSetupPage() {
       return <StepDesign onNext={next} onBack={back} />;
 
     case "extra":
-      return <StepExtra onNext={next} onBack={back} />;
+      return <StepLayoutGenerator onNext={next} onBack={back} />;
 
     case "review":
       return <StepReview onBack={back} />;
