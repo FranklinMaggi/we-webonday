@@ -31,6 +31,21 @@
  * - Qualsiasi flusso visitor NON deve MAI passare da questo file
  * ======================================================
  */
+/**
+ * NOTA ARCHITETTURALE (INVARIANTE):
+ *
+ * - Questo file gestisce SOLO l’autenticazione HARD (user loggato)
+ * - NON rappresenta l’identità applicativa globale
+ * - NON conosce visitor, device, o sessioni soft
+ *
+ * L’identità applicativa (visitor / user / device)
+ * è intenzionalmente ESTERNA a questo modulo.
+ *
+ * Questo consente:
+ * - multi-device corretto
+ * - persistenza visitor indipendente dal login
+ * - assenza di side-effect post-login
+ */
 
 import type { Env } from "../../types/env";
 

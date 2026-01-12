@@ -15,6 +15,13 @@ import {type CartPointer } from "./cart.api";
  * - NO localStorage
  * ======================================================
  */
+/**
+ * NOTA ARCHITETTURALE:
+ * - Questo store NON conosce identity né auth
+ * - Il carrello è identity-scoped a livello BE
+ * - Lo stato FE è solo una proiezione temporanea
+ */
+
 
 interface CartState {
   item?: CartPointer;

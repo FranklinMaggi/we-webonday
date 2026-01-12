@@ -11,6 +11,7 @@
  * - Nessun item, nessun pricing
  * ======================================================
  */
+import { useIdentityStore } from "../store/identity.store";
 
 export type CartPointer = {
     configurationId: string;
@@ -37,10 +38,20 @@ export type CartPointer = {
   export async function putCart(
     payload: CartPointer
   ): Promise<void> {
+    const { identityId } = useIdentityStore.getState();
     const res = await fetch("/api/cart", {
       method: "PUT",
       credentials: "include",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" ,
+        // ======================================================
+      // 🆔 IDENTITY — SHADOW HEADER
+      // ======================================================
+      // Header informativo (non usato dal backend).
+      // Serve per debug, audit e futura identity-first API.
+
+        "X-WOD-Identity": identityId,
+      },
+      
       body: JSON.stringify(payload),
     });
   
