@@ -11,6 +11,8 @@
 //   • contatti
 //   • indirizzo
 //   • contenuti testuali
+//   • TAG DESCRITTIVI (descriptionTags)
+//   • TAG SERVIZI (serviceTags)
 //   • orari di apertura
 //
 // INVARIANTI CRITICHE:
@@ -22,16 +24,18 @@
 //
 // SCOPO:
 // - Preparare TUTTI i dati necessari
-//   allo step successivo (creazione Business BE)
+//   allo step successivo
 //
 // ======================================================
+
 import { upsertConfigurationFromBusiness } from "../../lib/userApi/configuration.user.api";
 import { useConfigurationSetupStore } from "../../lib/store/configurationSetup.store";
 import { OpeningHoursDay } from "../openingHours/OpeningHoursDay";
 import { createBusiness } from "../../lib/userApi/business.user.api";
-import { normalizeBusinessTags } from "../../utils/businessTags";
+import { normalizeTags } from "../../utils/tags";
 import { useAuthStore } from "../../lib/store/auth.store";
 import { useEffect } from "react";
+
 /* =========================
    COSTANTI
 ========================= */
@@ -44,7 +48,11 @@ const DAYS = [
   ["saturday", "Sabato"],
   ["sunday", "Domenica"],
 ] as const;
-    
+
+/**
+ * Toggle puro di una tag
+ * (nessuna normalizzazione qui)
+ */
 function toggleTag(
   current: string[] = [],
   tag: string
@@ -66,8 +74,8 @@ export default function StepBusinessInfo({
 }: StepBusinessInfoProps) {
   /**
    * SOURCE OF TRUTH:
-   * - data     → stato corrente del wizard (FE)
-   * - setField → mutazione atomica di un singolo campo
+   * - data     → stato corrente wizard (FE)
+   * - setField → mutazione atomica
    */
   const {
     data,
@@ -75,13 +83,19 @@ export default function StepBusinessInfo({
     businessId,
     setBusinessId,
   } = useConfigurationSetupStore();
+
   const user = useAuthStore((s) => s.user);
 
-useEffect(() => {
-  if (user?.email && !data.email) {
-    setField("email", user.email);
-  }
-}, [user?.email]);
+  /* ======================================================
+     PREFILL EMAIL (DA AUTH)
+     - Avviene una sola volta
+     - Non sovrascrive input manuale
+  ====================================================== */
+  useEffect(() => {
+    if (user?.email && !data.email) {
+      setField("email", user.email);
+    }
+  }, [user?.email]);
 
   return (
     <div className="step">
@@ -182,79 +196,96 @@ useEffect(() => {
       ====================================================== */}
       <h3>Contenuti del sito</h3>
 
-{/* ======================================================
-   TAG SUGGERITI (DA SOLUTION)
-====================================================== */}
-{data.solutionTags && data.solutionTags.length > 0 && (
-  <>
-    <h4>Tag suggeriti</h4>
+      {/* ======================================================
+         DESCRIPTION TAGS
+         - Derivano da Solution.descriptionTags
+         - Selezione tramite pills
+         - FE-only
+      ====================================================== */}
+ {(data.solutionDescriptionTags?.length ?? 0) > 0 && (
 
-    <div className="tag-pills">
-      {data.solutionTags.map((tag) => {
-        const active = data.businessTags?.includes(tag);
+        <>
+          <h4>Descrivi la tua attività con dei tag</h4>
 
-        return (
-          <button
-            key={tag}
-            type="button"
-            className={`pill ${active ? "active" : ""}`}
-            onClick={() =>
-              setField(
-                "businessTags",
-                toggleTag(data.businessTags, tag)
-              )
-            }
-          >
-            {tag}
-          </button>
-        );
-      })}
-    </div>
-  </>
-)}
-<input
-  type="text"
-  placeholder="Aggiungi tag (es. camere sul mare)"
-  onKeyDown={(e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const next = normalizeBusinessTags([
-        ...(data.businessTags ?? []),
-        e.currentTarget.value,
-      ]);
+          <div className="tag-pills">
+            {data.solutionDescriptionTags ?? [] .map((tag) => {
+              const active =
+                data.businessDescriptionTags?.includes(tag);
 
-      setField("businessTags", next);
-      e.currentTarget.value = "";
-    }
-  }}
-/>
+              return (
+                <button
+                  key={tag}
+                  type="button"
+                  className={`pill ${active ? "active" : ""}`}
+                  onClick={() =>
+                    setField(
+                      "businessDescriptionTags",
+                      normalizeTags(
+                        toggleTag(
+                          data.businessDescriptionTags,
+                          tag
+                        )
+                      )
+                    )
+                  }
+                >
+                  {tag}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
 
-<div className="tag-pills">
-  {(data.businessTags ?? []).slice(0, 6).map((tag) => (
-    <span key={tag} className="pill">
-      {tag}
-      <button
-        onClick={() =>
-          setField(
-            "businessTags",
-            normalizeBusinessTags(
-              (data.businessTags ?? []).filter((t) => t !== tag)
-            )
-          )
-        }
-      >
-        ×
-      </button>
-    </span>
-  ))}
-</div>
+      {/* ======================================================
+         SERVICE TAGS
+         - Derivano da Solution.serviceTags
+         - Selezione tramite pills
+         - FE-only
+      ====================================================== */}
+      {(data.solutionServiceTags?.length ?? 0 ) > 0 && (
+        <>
+          <h4>I servizi che offri</h4>
 
+          <div className="tag-pills">
+            {data.solutionServiceTags ?? [].map((tag) => {
+              const active =
+                data.businessServiceTags?.includes(tag);
 
+              return (
+                <button
+                  key={tag}
+                  type="button"
+                  className={`pill ${active ? "active" : ""}`}
+                  onClick={() =>
+                    setField(
+                      "businessServiceTags",
+                      normalizeTags(
+                        toggleTag(
+                          data.businessServiceTags,
+                          tag
+                        )
+                      )
+                    )
+                  }
+                >
+                  {tag}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {/* ======================================================
+         COPY TESTUALE (ANCORA UTILE)
+         - usato per hero / about
+      ====================================================== */}
       <textarea
-        placeholder="Elenca i servizi o prodotti principali"
-        value={data.services ?? ""}
+        placeholder="Descrizione dell’attività"
+        value={data.description ?? ""}
         onChange={(e) =>
-          setField("services", e.target.value)
+          setField("description", e.target.value)
         }
       />
 
@@ -270,7 +301,7 @@ useEffect(() => {
          ORARI DI APERTURA (FE-ONLY)
       ====================================================== */}
       <h3>Orari di apertura</h3>
-     {DAYS.map(([dayKey, dayLabel]) => (
+      {DAYS.map(([dayKey, dayLabel]) => (
         <OpeningHoursDay
           key={dayKey}
           dayKey={dayKey}
@@ -288,65 +319,63 @@ useEffect(() => {
       {/* ======================================================
          AZIONE
       ====================================================== */}
-    <div className="actions">
-    <button
-  onClick={async () => {
-    // ============================================
-    // STEP 2 — CREATE BUSINESS (ONCE)
-    // ============================================
+      <div className="actions">
+        <button
+          onClick={async () => {
+            // ============================================
+            // STEP 2 — CREATE BUSINESS (ONCE)
+            // ============================================
 
-    if (!data.businessName) {
-      alert("Inserisci il nome dell’attività");
-      return;
-    }
-    
-    if (!data.solutionId || !data.productId) {
-      alert("Configurazione commerciale mancante");
-      return;
-    }
-    
-    if (!businessId) {
-      const res = await createBusiness({
-        name: data.businessName,
-        address: [
-          data.address,
-          data.city,
-          data.state,
-          data.zip,
-        ].filter(Boolean).join(", "),
-        phone: data.phone,
-        openingHours: data.openingHours,
-    
-        solutionId: data.solutionId,
-        productId: data.productId,
-        optionIds: data.optionIds ?? [],
-      });
-    
-      if (!res || !res.ok) {
-        alert("Errore creazione attività");
-        return;
-      }
-    
-      // TECH STATE (FE-only)
-      setBusinessId(res.businessId);
-      
-      await upsertConfigurationFromBusiness({
-        businessId: res.businessId,
-        productId: data.productId,
-        optionIds: data.optionIds ?? [],
-      });
-    }
-    
-    onComplete();
-    
-  }}
->
-  Continua
-</button>
+            if (!data.businessName) {
+              alert("Inserisci il nome dell’attività");
+              return;
+            }
 
+            if (!data.solutionId || !data.productId) {
+              alert("Configurazione commerciale mancante");
+              return;
+            }
 
-</div>
+            if (!businessId) {
+              const res = await createBusiness({
+                name: data.businessName,
+                address: [
+                  data.address,
+                  data.city,
+                  data.state,
+                  data.zip,
+                ]
+                  .filter(Boolean)
+                  .join(", "),
+                phone: data.phone,
+                openingHours: data.openingHours,
 
+                solutionId: data.solutionId,
+                productId: data.productId,
+                optionIds: data.optionIds ?? [],
+              });
+
+              if (!res || !res.ok) {
+                alert("Errore creazione attività");
+                return;
+              }
+
+              // TECH STATE (FE-only)
+              setBusinessId(res.businessId);
+
+              await upsertConfigurationFromBusiness({
+                businessId: res.businessId,
+                productId: data.productId,
+                optionIds: data.optionIds ?? [],
+              });
+            }
+
+            onComplete();
+          }}
+        >
+          Continua
+        </button>
+      </div>
     </div>
   );
 }

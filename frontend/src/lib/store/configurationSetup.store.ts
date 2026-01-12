@@ -39,8 +39,8 @@ const initialData: Partial<UserConfigurationSetupDTO> = {
   privacyAccepted: false,
 
   /* TAGS */
-  solutionTags: [],   // 🔴 CRITICO
-  businessTags: [],   // 🔴 CRITICO
+  solutionServiceTags: [],   // 🔴 CRITICO
+  solutionDescriptionTags: [],   // 🔴 CRITICO
 
   /* COMMERCIAL */
   solutionId: "",
@@ -53,7 +53,7 @@ const initialData: Partial<UserConfigurationSetupDTO> = {
     address: true,
     gallery: true,
     openingHours: true,
-    businessTags: [],
+ 
   },
 
   openingHours: {},

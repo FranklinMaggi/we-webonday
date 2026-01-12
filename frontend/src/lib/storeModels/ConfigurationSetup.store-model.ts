@@ -37,40 +37,59 @@ export type UserConfigurationSetupDTO = {
    email: string;
    phone?: string;
    privacyAccepted: boolean;
-   businessTags: string[];
+ 
    /* =========================
       COMMERCIAL CONTEXT
-      (from cart)
+      (from cart / solution)
    ========================= */
    solutionId: string;
-   solutionTags: string[];
    productId: string;
    optionIds: string[];
+ 
+   /**
+    * TAG DESCRITTIVI — SEED (READ ONLY)
+    * provenienti dalla Solution
+    */
+   solutionDescriptionTags: string[];
+   solutionServiceTags: string[];
+ 
+   /**
+    * TAG BUSINESS — USER INPUT (FE)
+    */
+   businessDescriptionTags: string[];
+   businessServiceTags: string[];
+ 
+   /* =========================
+      OPENING HOURS
+   ========================= */
    openingHours?: {
-      monday?: string;
-      tuesday?: string;
-      wednesday?: string;
-      thursday?: string;
-      friday?: string;
-      saturday?: string;
-      sunday?: string;
-    };
-    
-    visibility: {
-      contactForm: boolean;
-      address: boolean;
-      gallery: boolean;
-      openingHours: boolean;
-       businessTags?: string[];
-    };
+     monday?: string;
+     tuesday?: string;
+     wednesday?: string;
+     thursday?: string;
+     friday?: string;
+     saturday?: string;
+     sunday?: string;
+   };
+ 
+   /* =========================
+      VISIBILITY (DERIVED)
+   ========================= */
+   visibility: {
+     contactForm: boolean;
+     address: boolean;
+     gallery: boolean;
+     openingHours: boolean;
+   };
+ 
    /* =========================
       DESIGN (SEMANTICO)
    ========================= */
-   colorPreset?: string; // es. "modern_blue"
+   colorPreset?: string;
    style?: "modern" | "elegant" | "minimal" | "bold";
  
    /* =========================
-      CONTENT
+      CONTENT (TESTUALE)
    ========================= */
    description?: string;
    services?: string;

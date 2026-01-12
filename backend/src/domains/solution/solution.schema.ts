@@ -78,7 +78,7 @@ export const SolutionSchema = z.object({
    * - definiti da admin / seed
    * - suggeriti al FE
    */
-  tags: z.array(TagSchema).default([]),
+  descriptionTags: z.array(TagSchema).default([]),
 
   /**
    * TAG GENERATI DAGLI UTENTI (FLAT)

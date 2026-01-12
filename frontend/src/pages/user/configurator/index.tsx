@@ -207,7 +207,7 @@ export default function ConfigurationIndex() {
         }
 
         if (cfg.businessTags) {
-          setField("businessTags", cfg.businessTags);
+          setField("businessDescriptionTags", cfg.businessTags);
         }
 
         // Workspace data (se presente)
@@ -248,7 +248,7 @@ export default function ConfigurationIndex() {
           ])
         );
       
-        setField("solutionTags", mergedTags);
+        setField("solutionServiceTags", mergedTags);
       }
       
     }
