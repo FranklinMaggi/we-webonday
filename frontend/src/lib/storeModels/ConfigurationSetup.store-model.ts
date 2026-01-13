@@ -56,8 +56,8 @@ export type UserConfigurationSetupDTO = {
 /* =========================
    TAGS (SELECTED BY BUSINESS)
 ========================= */
-   businessDescriptionTags?: string[];
-   businessServiceTags?: string[];
+   businessDescriptionTags: string[];
+   businessServiceTags: string[];
 
  
    /* =========================

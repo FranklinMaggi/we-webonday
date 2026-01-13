@@ -51,7 +51,8 @@ export interface BusinessInternalDTO {
     category?: string;
     tone?: string;
   };
-
+  descriptionTags: string[];
+  serviceTags: string [];
   // REFERRAL
   referralToken: string;
   referredBy: string | null;

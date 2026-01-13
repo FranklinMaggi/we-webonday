@@ -70,6 +70,10 @@ import StepDesign from "./steps/StepDesign";
 
 import StepReview from "./steps/StepReview";
 import StepLayoutGenerator from "./steps/StepLayoutGenerator";
+import { initDevConfiguration } from "../../../../lib/store/configurationSetup.dev";
+
+
+
 /* =========================
    STEPS ORDER
 ========================= */
@@ -87,6 +91,15 @@ export default function ConfigurationSetupPage() {
   /* =========================
      STATE
   ========================= */
+  const isDev =
+    import.meta.env.DEV ||
+    location.hostname === "localhost";
+
+  if (isDev) {
+    initDevConfiguration();
+  }
+
+  
   const [stepIndex, setStepIndex] = useState(0);
 
   const { data , setField} = useConfigurationSetupStore();

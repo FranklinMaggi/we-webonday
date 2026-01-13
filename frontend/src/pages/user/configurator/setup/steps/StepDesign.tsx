@@ -1,134 +1,112 @@
 // ======================================================
-// FE || pages/user/configurator/setup/steps/StepDesign.tsx
-// ======================================================
-//
-// STEP 2 — DESIGN & STILE
-//
-// RUOLO:
-// - Scelta stile visivo del sito
-// - Selezione palette colori (SEMANTICA)
-//
-// INVARIANTI:
-// - Nessuna fetch
-// - Nessuna persistenza backend
-// - Store FE come unica source of truth
-//
+// FE || STEP DESIGN — PREVIEW ENGINE
 // ======================================================
 
 import { useConfigurationSetupStore } from "../../../../../lib/store/configurationSetup.store";
+
+import { generatePreviewCanvases } from "../../../../../lib/developerEngine/engine.orchestrator";
+import { EnginePreview } from "../../../../../components/webyDevEngine/EnginePreview";
+
 import { COLOR_PRESETS } from "../../../../../lib/configurationLayout/palette.dto";
 import { LAYOUT_STYLES } from "../../../../../lib/configurationLayout/style.dto";
-type StepDesignProps = {
+import type { LayoutKVDTO } from "../../../../../lib/configurationLayout/layout.dto";
+
+import { slugify } from "../../../../../utils/slugify";
+
+
+
+type Props = {
   onNext: () => void;
   onBack: () => void;
 };
 
-export default function StepDesign({
-  onNext,
-  onBack,
-}: StepDesignProps) {
-  const { data, setField } = useConfigurationSetupStore();
+export default function StepDesign({ onNext, onBack }: Props) {
+  const { data, configurationId } = useConfigurationSetupStore();
+
+  /* =========================
+     GUARD — PREREQUISITI STEP
+     (OBBLIGATORIO)
+  ========================= */
+  if (
+    !configurationId ||
+    !data.businessName ||
+    !data.sector ||
+    !data.address
+  ) {
+    return (
+      <div className="step-error">
+        <h3>Dati mancanti</h3>
+        <p>
+          Completa prima lo step precedente.
+        </p>
+      </div>
+    );
+  }
+
+  /* =========================
+     PREVIEW GENERATION
+  ========================= */
+  const previews = generatePreviewCanvases({
+    configurationId,
+    business: {
+      name: data.businessName,
+      sector: data.sector,
+      address: data.address,
+      slug: slugify(data.businessName),
+    },
+    layouts: AVAILABLE_LAYOUTS,
+    styles: LAYOUT_STYLES.map((s) => s.id),
+    palettes: COLOR_PRESETS.map((p) => p.id),
+  });
 
   return (
-    <div className="step">
-      <h2>Personalizza lo stile del tuo sito</h2>
-            <p className="step-subtitle">
-              Scegli l’atmosfera visiva che rappresenta meglio la tua attività.
-              Potrai sempre modificarla in seguito.
-            </p>
+    <div className="step step-design">
+      <h2>Scegli il layout del tuo sito</h2>
 
-      {/* ======================================================
-         PALETTE COLORI (SEMANTICA)
-         - Salviamo SOLO colorPreset (id)
-         - Nessun colore raw nello store
-      ====================================================== */}
-<div className="palette-grid">
-  {COLOR_PRESETS.map((palette) => (
-    <button
-      key={palette.id}
-      type="button"
-      className={
-        data.colorPreset === palette.id
-          ? "palette-card active"
-          : "palette-card"
-      }
-      onClick={() => setField("colorPreset", palette.id)}
-    >
-      <div
-        className="palette-preview"
-        style={{
-          background: palette.colors.background,
-          color: palette.colors.text,
-        }}
-      >
-        <div
-          className="palette-primary"
-          style={{ background: palette.colors.primary }}
-        />
-        <div
-          className="palette-secondary"
-          style={{ background: palette.colors.secondary }}
-        />
+      <div className="preview-grid">
+        {previews.map((canvas, i) => (
+          <EnginePreview key={i} canvas={canvas} />
+        ))}
       </div>
 
-      <span>{palette.label}</span>
-    </button>
-  ))}
-</div>
-
-
-
-
-<div className="style-grid">
-  {LAYOUT_STYLES.map((style) => (
-    <button
-      key={style.id}
-      type="button"
-      className={
-        data.style === style.id
-          ? "style-card active"
-          : "style-card"
-      }
-      onClick={() => setField("style", style.id)}
-    >
-      <h3 className={`style-title style-${style.id}`}>
-        {data.businessName || "Nome attività"}
-      </h3>
-
-      <p className="style-description">
-        {style.description}
-      </p>
-    </button>
-  ))}
-</div>
-
-      {/* ======================================================
-         STILE LAYOUT
-         - Riferimento semantico
-      ====================================================== */}
-      <select
-        value={data.style ?? "modern"}
-        onChange={(e) =>
-          setField("style", e.target.value as any)
-        }
-      >
-        <option value="modern">Moderno</option>
-        <option value="elegant">Elegante</option>
-        <option value="minimal">Minimal</option>
-        <option value="bold">Bold</option>
-      </select>
-
-      {/* ======================================================
-         AZIONI
-      ====================================================== */}
       <div className="actions">
-        <button type="button" onClick={onBack}>
-          Indietro
-        </button>
-        <button type="button" onClick={onNext}>
-          Continua
-        </button>
+        <button onClick={onBack}>Indietro</button>
+        <button onClick={onNext}>Continua</button>
       </div>
     </div>
   );
 }
+
+
+
+/**
+ * TEMPORANEO (FE)
+ * Domani arriva dal BE
+ */
+const AVAILABLE_LAYOUTS: LayoutKVDTO[] = [
+  {
+    id: "layout-landing-essential",
+    version: "1",
+    name: "Landing Essential",
+    description: "Landing page singola",
+    supportedStyles: ["modern", "elegant", "minimal", "bold"],
+    supportedPalettes: ["warm", "dark", "light", "pastel", "corporate"],
+    structure: {
+      navbar: true,
+      hero: true,
+      sections: ["gallery", "contact", "map"],
+      footer: true,
+    },
+    bindings: {
+      businessName: true,
+      logo: false,
+      address: true,
+      phone: true,
+      services: true,
+    },
+    render: {
+      inlineCss: false,
+      previewBlur: false,
+    },
+  },
+];

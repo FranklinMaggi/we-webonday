@@ -49,6 +49,13 @@ export function normalizeBusiness(raw: any): BusinessInternalDTO {
       : [],
 
     designProfile: raw.designProfile ?? undefined,
+descriptionTags: Array.isArray(raw.descriptionTags)
+  ? raw.descriptionTags
+  : [],
+
+serviceTags: Array.isArray(raw.serviceTags)
+  ? raw.serviceTags
+  : [],
 
     referralToken: raw.referralToken,
     referredBy: raw.referredBy ?? null,
