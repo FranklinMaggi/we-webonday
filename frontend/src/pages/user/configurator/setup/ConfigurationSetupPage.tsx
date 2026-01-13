@@ -60,10 +60,9 @@
 //
 // ======================================================
 
-import { useState ,useEffect } from "react";
+import { useState } from "react";
 
 import { useConfigurationSetupStore } from "../../../../lib/store/configurationSetup.store";
-import { fetchPublicSolutionById } from "../../../../lib/solutions/solutions.public.api";
 import StepProductIntro from "./steps/StepProductIntro";
 import StepBusinessInfo from "./steps/StepBusinessInfo";
 import StepDesign from "./steps/StepDesign";
@@ -93,7 +92,7 @@ export default function ConfigurationSetupPage() {
   
   const [stepIndex, setStepIndex] = useState(0);
 
-  const { data , setField} = useConfigurationSetupStore();
+  const { data } = useConfigurationSetupStore();
 
 
   /* =========================
@@ -110,43 +109,7 @@ export default function ConfigurationSetupPage() {
       </div>
     );
   }
-  useEffect(() => {
-    const solutionId = data.solutionId;
-    if (
-      !solutionId ||
-      data.solutionDescriptionTags?.length ||
-      data.solutionServiceTags?.length
-    ) {
-      return;
-    }
-  
-    let cancelled = false;
-  
-    (async () => {
-      const solution = await fetchPublicSolutionById(solutionId);
-  
-      if (cancelled) return;
-  
-      setField(
-        "solutionDescriptionTags",
-        solution.descriptionTags ?? []
-      );
-  
-      setField(
-        "solutionServiceTags",
-        solution.serviceTags ?? []
-      );
-    })();
-  
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    data.solutionId,
-    data.solutionDescriptionTags?.length,
-    data.solutionServiceTags?.length,
-  ]);
-  
+
   
   /* =========================
      NAVIGATION
