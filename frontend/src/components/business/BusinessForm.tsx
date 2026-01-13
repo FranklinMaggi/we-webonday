@@ -343,6 +343,8 @@ export default function StepBusinessInfo({
                 businessId: res.businessId,
                 productId: data.productId,
                 optionIds: data.optionIds ?? [],
+                businessDescriptionTags : data.businessDescriptionTags ?? [] ,
+                businessServiceTags : data.businessServiceTags ?? [] ,
               });
             }
 
