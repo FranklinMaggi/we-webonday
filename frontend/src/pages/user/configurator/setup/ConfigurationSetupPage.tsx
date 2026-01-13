@@ -112,14 +112,18 @@ export default function ConfigurationSetupPage() {
   }
   useEffect(() => {
     const solutionId = data.solutionId;
-    if (!solutionId) return;
+    if (
+      !solutionId ||
+      data.solutionDescriptionTags?.length ||
+      data.solutionServiceTags?.length
+    ) {
+      return;
+    }
   
     let cancelled = false;
   
     (async () => {
-      const solution = await fetchPublicSolutionById(
-        solutionId
-      );
+      const solution = await fetchPublicSolutionById(solutionId);
   
       if (cancelled) return;
   
@@ -137,7 +141,12 @@ export default function ConfigurationSetupPage() {
     return () => {
       cancelled = true;
     };
-  }, [data.solutionId]);
+  }, [
+    data.solutionId,
+    data.solutionDescriptionTags?.length,
+    data.solutionServiceTags?.length,
+  ]);
+  
   
   /* =========================
      NAVIGATION
