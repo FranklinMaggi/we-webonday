@@ -41,7 +41,8 @@ const initialData: Partial<UserConfigurationSetupDTO> = {
   /* TAGS */
   solutionServiceTags: [],   // 🔴 CRITICO
   solutionDescriptionTags: [],   // 🔴 CRITICO
-
+  businessServiceTags: [],          // selezione utente
+  businessDescriptionTags: [],      // selezione utente
   /* COMMERCIAL */
   solutionId: "",
   productId: "",
