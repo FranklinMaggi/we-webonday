@@ -36,8 +36,11 @@ export type SolutionDetailResult =
         name: string;
         description?: string;
         longDescription?: string;
-        tags: string[];
-        userGeneratedTags?: string[];
+        descriptionTags?: string[];
+        userGeneratedDescriptionTags?: string[];
+        serviceTags?: string [];
+        userGeneratedServiceTags?: string [];
+
         /** URL pubblico hero / card */
         image?: {
           hero: string;
@@ -141,8 +144,9 @@ export async function getSolutionDetail(
     
       icon: solution.icon, // legacy
       industries: solution.industries,
-      tags: solution.tags?? [],
-      userGeneratedTags: solution.userGeneratedTags ?? [],
+      descriptionTags : solution.descriptionTags ?? [],
+      serviceTags: solution.serviceTags ?? [],
+
     },
     
     products,

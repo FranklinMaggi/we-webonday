@@ -58,7 +58,8 @@ export async function getSolutions(
           description: parsed.description,
           icon: parsed.icon,
           image: getSolutionImageUrl(parsed.imageKey),
-          tags: parsed.tags ?? [], 
+          descriptionTags: parsed.descriptionTags ?? [],
+          serviceTags: parsed.serviceTags ?? [],
         });
       }
       

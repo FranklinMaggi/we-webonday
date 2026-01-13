@@ -46,18 +46,19 @@ export type UserConfigurationSetupDTO = {
    productId: string;
    optionIds: string[];
  
-   /**
-    * TAG DESCRITTIVI — SEED (READ ONLY)
-    * provenienti dalla Solution
-    */
+/* =========================
+   TAGS (FROM SOLUTION)
+   FE-ONLY
+========================= */
    solutionDescriptionTags: string[];
    solutionServiceTags: string[];
- 
-   /**
-    * TAG BUSINESS — USER INPUT (FE)
-    */
-   businessDescriptionTags: string[];
-   businessServiceTags: string[];
+
+/* =========================
+   TAGS (SELECTED BY BUSINESS)
+========================= */
+   businessDescriptionTags?: string[];
+   businessServiceTags?: string[];
+
  
    /* =========================
       OPENING HOURS
