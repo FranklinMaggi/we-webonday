@@ -229,7 +229,10 @@ export default function StepBusinessInfo({
                 </button>
               );
             })}
+
+            
           </div>
+
         </>
       )}
 
@@ -353,6 +356,17 @@ export default function StepBusinessInfo({
         >
           Continua
         </button>
+        <pre>
+{JSON.stringify(
+  {
+    desc: data.solutionDescriptionTags,
+    serv: data.solutionServiceTags,
+  },
+  null,
+  2
+)}
+</pre>
+
       </div>
     </div>
   );

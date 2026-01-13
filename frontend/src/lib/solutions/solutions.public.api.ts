@@ -59,3 +59,20 @@ export async function fetchPublicSolutions(): Promise<AdminSolution[]> {
   const data: PublicSolutionsResponse = await res.json();
   return data.solutions;
 }
+export async function fetchPublicSolutionById(id: string) {
+  const res = await fetch(
+    `${API_BASE}/api/solution?id=${encodeURIComponent(id)}`
+  );
+
+  if (!res.ok) {
+    throw new Error("FAILED_TO_FETCH_SOLUTION");
+  }
+
+  const data = await res.json();
+
+  if (!data?.ok || !data.solution) {
+    throw new Error("INVALID_SOLUTION_RESPONSE");
+  }
+
+  return data.solution;
+}
