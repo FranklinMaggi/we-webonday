@@ -20,7 +20,7 @@ import {
     userConfigurationsKey,
     getConfiguration,
     buildConfigurationId,
-  } from "./configuration/configuration.schema";
+  } from "../../../domains/configuration";
   
   import { requireUser } from "../../../lib/auth/session";
   import { json } from "../../../lib/https";// ✅ helper allineato

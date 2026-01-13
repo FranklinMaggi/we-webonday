@@ -36,6 +36,8 @@ IMPATTO MODIFICHE:
 ====================================================== */
 import { z } from "zod";
 
+
+
 export const BusinessSchema = z.object({
   /* =========================
      IDENTITÀ
@@ -52,6 +54,13 @@ export const BusinessSchema = z.object({
   phone: z.string(),
 
   openingHours: z.string().optional(),
+
+  /* =========================
+     TAG SEMANTICI (CONTENUTO)
+     SOURCE OF TRUTH
+  ========================= */
+  descriptionTags: z.array(z.string()).default([]),
+  serviceTags: z.array(z.string()).default([]),
 
   /* =========================
      ORIGINE COMMERCIALE
@@ -93,7 +102,12 @@ export const BusinessSchema = z.object({
     .enum(["draft", "pending", "active", "suspended"])
     .default("draft"),
 
+  /* =========================
+     TIMESTAMPS
+  ========================= */
   createdAt: z.string(),
+  updatedAt: z.string().optional(),
 });
+
 
 export type BusinessDTO = z.infer<typeof BusinessSchema>;

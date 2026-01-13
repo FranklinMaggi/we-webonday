@@ -20,7 +20,7 @@
 // ======================================================
 
 import { z } from "zod";
-import type { Env } from "../../../../types/env";
+
 const BusinessTagSchema = z
   .string()
   .min(1)
@@ -78,43 +78,3 @@ export const ConfigurationSchema = z.object({
 });
 
 export type ConfigurationDTO = z.infer<typeof ConfigurationSchema>;
-
-/* =========================
-   KV KEYS
-========================= */
-export function configurationKey(id: string) {
-  return `CONFIGURATION:${id}`;
-}
-
-export function userConfigurationsKey(userId: string) {
-  return `USER_CONFIGURATIONS:${userId}`;
-}
-
-/* =========================
-   HELPERS
-========================= */
-export async function getConfiguration(env: Env, id: string) {
-  const raw = await env.CONFIGURATION_KV.get(configurationKey(id));
-  return raw ? (JSON.parse(raw) as ConfigurationDTO) : null;
-}
-
-/* =========================
-   ID HELPERS (DETERMINISTICO)
-========================= */
-export function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-/**
- * ConfigurationId deterministico
- * pattern: {businessSlug}:{solutionId}
- * es: pizzeria-da-mario:website-basic
- */
-export function buildConfigurationId(businessName: string, solutionId: string) {
-  return `${slugify(businessName)}:${slugify(solutionId)}`;
-}

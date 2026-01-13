@@ -45,7 +45,7 @@ import {
   configurationKey,
   userConfigurationsKey,
   buildConfigurationId,
-} from "./configuration/configuration.schema";
+} from "../../../domains/configuration";
 
 /* =========================
    INPUT VALIDATION

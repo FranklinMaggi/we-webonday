@@ -1,9 +1,28 @@
 // ======================================================
-// BE || POST /api/configuration/from-business
+// BE || CONFIGURATION — UPSERT FROM BUSINESS
 // ======================================================
 //
-// CREA O AGGIORNA CONFIGURATION PARZIALE
-// (dopo StepBusiness)
+// SCOPO:
+// - Punto di CONTATTO tra BUSINESS e CONFIGURATION
+//
+// RESPONSABILITÀ:
+// 1. Caricare il BUSINESS (source of truth)
+// 2. Aggiornare il BUSINESS con i dati raccolti nello step
+//    (es. TAG descrittivi / servizi)
+// 3. Creare o aggiornare una CONFIGURATION
+//    che REFERENZIA il business (NON lo duplica)
+//
+// INVARIANTI CRITICHE:
+// - Le TAG appartengono SEMPRE al BUSINESS
+// - La CONFIGURATION NON duplica dati di contenuto
+// - CONFIGURATION.data contiene SOLO riferimenti tecnici
+// - Backend = source of truth
+//
+// MOTIVAZIONE ARCHITETTURALE:
+// - La CONFIGURATION è un WORKSPACE (canva)
+// - Il BUSINESS è il CONTENUTO
+// - Il layout engine leggerà:
+//   GetBusiness → GetProduct → GetSolution → GetLayout
 //
 // ======================================================
 
@@ -12,10 +31,10 @@ import type { Env } from "../../../types/env";
 import { requireUser } from "../../../lib/auth/session";
 import { json } from "../../../lib/https";
 
-import {configurationKey,userConfigurationsKey,buildConfigurationId,} from "./configuration/configuration.schema";
+import {configurationKey,userConfigurationsKey,buildConfigurationId,} from "../../../domains/configuration";
 import { BusinessSchema } from "../../../domains/business/business.schema";
 import { ProductSchema } from "../../../domains/product/product.schema";
-import type { ConfigurationDTO } from "./configuration/configuration.schema";
+import type { ConfigurationDTO } from "../../../domains/configuration/configuration.schema";
 
 // =========================
 // INPUT
@@ -24,6 +43,12 @@ const InputSchema = z.object({
   businessId: z.string().min(1),
   productId: z.string().min(1),
   optionIds: z.array(z.string()).default([]),
+
+  // =========================
+  // TAGS — BUSINESS DOMAIN
+  // =========================
+  businessDescriptionTags: z.array(z.string()).optional(),
+  businessServiceTags: z.array(z.string()).optional(),
 });
 
 export async function upsertConfigurationFromBusiness(
@@ -63,8 +88,36 @@ export async function upsertConfigurationFromBusiness(
     );
   }
 
-  const business = BusinessSchema.parse(JSON.parse(rawBusiness));
+  let business = BusinessSchema.parse(JSON.parse(rawBusiness));
 
+  // ======================================================
+  // PATCH BUSINESS — CONTENUTI + TAGS
+  // ======================================================
+  //
+  // Tutti questi dati provengono dallo StepBusinessInfo (FE)
+  // e DEVONO vivere nel BUSINESS.
+  //
+  // La CONFIGURATION NON li duplica.
+  // ======================================================
+  
+  const updatedBusiness = {
+    ...business,
+  
+    // TAGS
+    descriptionTags:
+      body.businessDescriptionTags ?? business.descriptionTags ?? [],
+  
+    serviceTags:
+      body.businessServiceTags ?? business.serviceTags ?? [],
+  
+    // Timestamp
+    updatedAt: new Date().toISOString(),
+  };
+
+  await env.BUSINESS_KV.put(
+    `BUSINESS:${business.id}`,
+    JSON.stringify(updatedBusiness)
+  );
   // =========================
   // LOAD PRODUCT
   // =========================
