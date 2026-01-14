@@ -48,15 +48,8 @@ const UserServiceTagStatusSchema = z.enum([
   "APPROVED",
   "REJECTED",
 ]);
-const OpeningHoursDefaultSchema = z.object({
-  monday: z.string(),
-  tuesday: z.string(),
-  wednesday: z.string(),
-  thursday: z.string(),
-  friday: z.string(),
-  saturday: z.string(),
-  sunday: z.string(),
-});
+
+
 
 
 export const UserServiceTagMetaSchema = z.object({
@@ -142,10 +135,17 @@ userServiceTagsMeta: z
   .array(UserServiceTagMetaSchema)
   .default([]),
 
+
+  openingHoursDefault: z.object({
+    monday: z.string(),
+    tuesday: z.string(),
+    wednesday: z.string(),
+    thursday: z.string(),
+    friday: z.string(),
+    saturday: z.string(),
+    sunday: z.string(),
+  }).optional(),
   
-  openingHoursDefault: OpeningHoursDefaultSchema.optional(),
-
-
   status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   createdAt: z.string().datetime(),
 });

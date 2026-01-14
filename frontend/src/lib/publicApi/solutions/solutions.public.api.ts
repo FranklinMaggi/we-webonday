@@ -60,3 +60,15 @@ export async function fetchPublicSolutions(): Promise<AdminSolution[]> {
   const data: PublicSolutionsResponse = await res.json();
   return data.solutions;
 }
+export type PublicSolutionDTO = {
+  id: string;
+  name: string;
+  description?: string;
+
+  icon?: string;
+
+  image?: string; // card / fallback
+
+  descriptionTags: string[];
+  serviceTags: string[];
+};

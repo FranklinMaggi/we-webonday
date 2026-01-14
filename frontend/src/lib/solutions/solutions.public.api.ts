@@ -3,53 +3,96 @@
  * FE || src/lib/solutions/solutionsApi.ts
  * ======================================================
  *
- * VERSIONE ATTUALE:
- * - v1.0 (2026-01)
- *
- * STATO:
- * - CORE (PUBLIC)
+ * VERSIONE:
+ * - v1.1 (2026-01)
  *
  * RUOLO:
- * - API FE per il fetch pubblico delle Solutions
+ * - API FE per il fetch PUBBLICO delle Solutions
  *
- * CONTESTO:
+ * USATA DA:
  * - Landing page
  * - Catalogo soluzioni
- *
- * RESPONSABILITÀ:
- * - Recuperare solo Solutions ACTIVE
- *
- * NON FA:
- * - NON gestisce auth
- * - NON espone soluzioni DRAFT / ARCHIVED
- * - NON normalizza dati
+ * - Configuratore (step iniziale)
  *
  * INVARIANTI:
- * - Nessun token
- * - Backend filtra le soluzioni
- *
- * PROBLEMA NOTO:
- * - Usa fetch diretto
- *
- * MIGRAZIONE FUTURA:
- * - Destinazione: src/lib/publicApi/solutions.public.api.ts
- * - Refactor:
- *   • uso apiFetch
- *
- * NOTE:
- * - File volutamente minimale
  * - Backend = source of truth
+ * - Nessuna auth
+ * - Nessuna normalizzazione
+ *
  * ======================================================
  */
 
 import { API_BASE } from "../config";
-import type { AdminSolution } from "../apiModels/admin/Solution.api-model";
-export type PublicSolutionsResponse = {
-  ok: true;
-  solutions: AdminSolution[];
+
+/* ======================================================
+   DTO — PUBLIC SOLUTION (LIST)
+====================================================== */
+export type PublicSolutionDTO = {
+  id: string;
+  name: string;
+  description?: string;
+
+  icon?: string;
+
+  image?: string; // card / fallback
+
+  descriptionTags: string[];
+  serviceTags: string[];
 };
 
-export async function fetchPublicSolutions(): Promise<AdminSolution[]> {
+/* ======================================================
+   DTO — PUBLIC SOLUTION (DETAIL)
+====================================================== */
+export type PublicSolutionDetailDTO = {
+  id: string;
+  name: string;
+  description?: string;
+  longDescription?: string;
+
+  icon?: string;
+
+  image?: {
+    hero: string;
+    card: string;
+    fallback?: string;
+  };
+
+  industries?: string[];
+
+  descriptionTags: string[];
+  serviceTags: string[];
+
+  openingHoursDefault?: {
+    monday: string;
+    tuesday: string;
+    wednesday: string;
+    thursday: string;
+    friday: string;
+    saturday: string;
+    sunday: string;
+  };
+};
+
+/* ======================================================
+   RESPONSE TYPES
+====================================================== */
+type PublicSolutionsResponse = {
+  ok: true;
+  solutions: PublicSolutionDTO[];
+};
+
+type PublicSolutionDetailResponse = {
+  ok: true;
+  solution: PublicSolutionDetailDTO;
+  products: unknown[];
+};
+
+/* ======================================================
+   FETCH — SOLUTIONS LIST
+====================================================== */
+export async function fetchPublicSolutions(): Promise<
+  PublicSolutionDTO[]
+> {
   const res = await fetch(`${API_BASE}/api/solutions`);
 
   if (!res.ok) {
@@ -57,9 +100,16 @@ export async function fetchPublicSolutions(): Promise<AdminSolution[]> {
   }
 
   const data: PublicSolutionsResponse = await res.json();
-  return data.solutions;
+
+  return data.solutions ?? [];
 }
-export async function fetchPublicSolutionById(id: string) {
+
+/* ======================================================
+   FETCH — SOLUTION DETAIL
+====================================================== */
+export async function fetchPublicSolutionById(
+  id: string
+): Promise<PublicSolutionDetailDTO> {
   const res = await fetch(
     `${API_BASE}/api/solution?id=${encodeURIComponent(id)}`
   );
@@ -68,7 +118,7 @@ export async function fetchPublicSolutionById(id: string) {
     throw new Error("FAILED_TO_FETCH_SOLUTION");
   }
 
-  const data = await res.json();
+  const data: PublicSolutionDetailResponse = await res.json();
 
   if (!data?.ok || !data.solution) {
     throw new Error("INVALID_SOLUTION_RESPONSE");

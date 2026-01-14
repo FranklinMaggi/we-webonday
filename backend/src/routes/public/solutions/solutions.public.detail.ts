@@ -47,7 +47,16 @@ export type SolutionDetailResult =
           card: string;
           
         };
-      
+        openingHoursDefault?: {
+          monday: string;
+          tuesday: string;
+          wednesday: string;
+          thursday: string;
+          friday: string;
+          saturday: string;
+          sunday: string;
+        };
+        
         /** @deprecated */
         icon?: string;
       
@@ -139,14 +148,14 @@ export async function getSolutionDetail(
       name: solution.name,
       description: solution.description,
       longDescription: solution.longDescription,
-    
+      openingHoursDefault : solution.openingHoursDefault ,
       image: getSolutionImages(solution.imageKey),
     
       icon: solution.icon, // legacy
       industries: solution.industries,
       descriptionTags : solution.descriptionTags ?? [],
       serviceTags: solution.serviceTags ?? [],
-
+     
     },
     
     products,

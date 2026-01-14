@@ -72,7 +72,13 @@ export default function StepBusinessInfo({
     businessId,
     setBusinessId,
   } = useConfigurationSetupStore();
-
+ 
+ 
+  const safeOpeningHoursDefault =
+  data.solutionOpeningHoursDefault &&
+  typeof data.solutionOpeningHoursDefault === "object"
+    ? data.solutionOpeningHoursDefault
+    : undefined;
   const user = useAuthStore((s) => s.user);
 
   /* ======================================================
@@ -88,20 +94,20 @@ export default function StepBusinessInfo({
      PREFILL OPENING HOURS (SOLUTION → STORE)
   ====================================================== */
   useEffect(() => {
-    if (
-      data.openingHours &&
-      Object.keys(data.openingHours).length > 0
-    ) {
+    // se l’utente ha già toccato gli orari → STOP
+    if (data.openingHours && Object.keys(data.openingHours).length > 0) {
       return;
     }
-
-    if (!data.solutionOpeningHoursDefault) {
+  
+    // se non esistono default → STOP
+    if (!safeOpeningHoursDefault) {
       return;
     }
-
-    setField("openingHours", data.solutionOpeningHoursDefault);
-  }, [data.solutionOpeningHoursDefault]);
-
+  
+    // PREFILL FE-ONLY
+    setField("openingHours", safeOpeningHoursDefault);
+  }, [safeOpeningHoursDefault]);
+  
   /* =========================
      SUBMIT HANDLER
   ========================= */
