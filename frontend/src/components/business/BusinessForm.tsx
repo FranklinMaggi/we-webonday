@@ -61,8 +61,16 @@ export default function StepBusinessInfo({
   } = useConfigurationSetupStore();
 
   const user = useAuthStore((s) => s.user);
-  const descriptionTags = data.solutionDescriptionTags ?? [];
-  const serviceTags = data.solutionServiceTags ?? [];
+
+  /* ======================================================
+     SAFE DERIVATIONS (NO TS ERRORS)
+  ====================================================== */
+  const descriptionTags: string[] =
+    data.solutionDescriptionTags ?? [];
+
+  const serviceTags: string[] =
+    data.solutionServiceTags ?? [];
+
   /* ======================================================
      PREFILL EMAIL (AUTH → STORE)
   ====================================================== */
@@ -73,7 +81,9 @@ export default function StepBusinessInfo({
   }, [user?.email, data.email, setField]);
 
   /* ======================================================
-     PREFILL OPENING HOURS (SOLUTION → STORE)
+     PREFILL OPENING HOURS
+     source: solutionOpeningHoursDefault (KV → store)
+     rules:
      - una sola volta
      - solo se l’utente non ha già scritto
   ====================================================== */
@@ -229,7 +239,7 @@ export default function StepBusinessInfo({
       </div>
 
       {/* ================= TAG DESCRITTIVI ================= */}
-      {descriptionTags?.length > 0 && (
+      {descriptionTags.length > 0 && (
         <>
           <h4>Descrizione attività</h4>
           <div className="tag-pills">
@@ -260,7 +270,7 @@ export default function StepBusinessInfo({
       )}
 
       {/* ================= TAG SERVIZI ================= */}
-      {serviceTags?.length > 0 && (
+      {serviceTags.length > 0 && (
         <>
           <h4>Servizi offerti</h4>
           <div className="tag-pills">
@@ -300,7 +310,7 @@ export default function StepBusinessInfo({
           value={data.openingHours?.[dayKey] ?? ""}
           onChange={(value) =>
             setField("openingHours", {
-              ...data.openingHours,
+              ...(data.openingHours ?? {}),
               [dayKey]: value,
             })
           }

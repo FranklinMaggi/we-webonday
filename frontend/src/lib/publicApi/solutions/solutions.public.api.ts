@@ -1,74 +1,121 @@
 /**
  * ======================================================
- * FE || src/lib/solutions/solutionsApi.ts
+ * FE || PUBLIC API — SOLUTIONS
+ * File: src/lib/publicApi/solutions/solutions.public.api.ts
  * ======================================================
  *
- * VERSIONE ATTUALE:
- * - v1.0 (2026-01)
- *
- * STATO:
- * - CORE (PUBLIC)
- *
  * RUOLO:
- * - API FE per il fetch pubblico delle Solutions
+ * - Accesso pubblico alle Solutions
  *
- * CONTESTO:
- * - Landing page
- * - Catalogo soluzioni
- *
- * RESPONSABILITÀ:
- * - Recuperare solo Solutions ACTIVE
- *
- * NON FA:
- * - NON gestisce auth
- * - NON espone soluzioni DRAFT / ARCHIVED
- * - NON normalizza dati
+ * USATO DA:
+ * - Landing
+ * - Catalogo
+ * - Configuratore
  *
  * INVARIANTI:
- * - Nessun token
- * - Backend filtra le soluzioni
- *
- * PROBLEMA NOTO:
- * - Usa fetch diretto
- *
- * MIGRAZIONE FUTURA:
- * - Destinazione: src/lib/publicApi/solutions.public.api.ts
- * - Refactor:
- *   • uso apiFetch
- *
- * NOTE:
- * - File volutamente minimale
+ * - READ ONLY
+ * - Nessuna auth
  * - Backend = source of truth
+ *
+ * NOTA:
+ * - NON usare per admin
  * ======================================================
  */
 
 import { API_BASE } from "../../config";
-import type { AdminSolution } from "../../apiModels/admin/Solution.api-model";
 
-export type PublicSolutionsResponse = {
-  ok: true;
-  solutions: AdminSolution[];
-};
-
-export async function fetchPublicSolutions(): Promise<AdminSolution[]> {
-  const res = await fetch(`${API_BASE}/api/solutions`);
-
-  if (!res.ok) {
-    throw new Error("FAILED_TO_FETCH_SOLUTIONS");
-  }
-
-  const data: PublicSolutionsResponse = await res.json();
-  return data.solutions;
-}
+/* ======================================================
+   DTO — SOLUTION (LIST)
+   → usato per catalogo / cards
+====================================================== */
 export type PublicSolutionDTO = {
   id: string;
   name: string;
   description?: string;
 
   icon?: string;
-
-  image?: string; // card / fallback
+  image?: string;
 
   descriptionTags: string[];
   serviceTags: string[];
 };
+
+/* ======================================================
+   DTO — SOLUTION (DETAIL)
+   → usato da configuratore / pagina solution
+====================================================== */
+export type PublicSolutionDetailDTO = {
+  id: string;
+  name: string;
+  description?: string;
+  longDescription?: string;
+
+  icon?: string;
+
+  image?: {
+    hero: string;
+    card: string;
+    fallback?: string;
+  };
+
+  industries?: string[];
+
+  descriptionTags: string[];
+  serviceTags: string[];
+
+  openingHoursDefault?: {
+    monday: string;
+    tuesday: string;
+    wednesday: string;
+    thursday: string;
+    friday: string;
+    saturday: string;
+    sunday: string;
+  };
+};
+
+/* ======================================================
+   RESPONSE TYPES
+====================================================== */
+type PublicSolutionsResponse = {
+  ok: true;
+  solutions: PublicSolutionDTO[];
+};
+
+type PublicSolutionDetailResponse = {
+  ok: true;
+  solution: PublicSolutionDetailDTO;
+  products: unknown[];
+};
+
+/* ======================================================
+   FETCH — SOLUTIONS LIST
+====================================================== */
+export async function fetchPublicSolutions(): Promise<
+  PublicSolutionDTO[]
+> {
+  const res = await fetch(`${API_BASE}/api/solutions`);
+  if (!res.ok) throw new Error("FAILED_TO_FETCH_SOLUTIONS");
+
+  const data: PublicSolutionsResponse = await res.json();
+  return data.solutions ?? [];
+}
+
+/* ======================================================
+   FETCH — SOLUTION DETAIL
+====================================================== */
+export async function fetchPublicSolutionById(
+  id: string
+): Promise<PublicSolutionDetailDTO> {
+  const res = await fetch(
+    `${API_BASE}/api/solution?id=${encodeURIComponent(id)}`
+  );
+  if (!res.ok) throw new Error("FAILED_TO_FETCH_SOLUTION");
+
+  const data: PublicSolutionDetailResponse = await res.json();
+  if (!data?.ok || !data.solution) {
+    throw new Error("INVALID_SOLUTION_RESPONSE");
+  }
+
+  return data.solution;
+}

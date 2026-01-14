@@ -54,9 +54,9 @@ const initialData: Partial<UserConfigurationSetupDTO> = {
     address: true,
     gallery: true,
     openingHours: true,
- 
+    
   },
-
+  solutionOpeningHoursDefault: undefined,
   openingHours: {},
 };
 

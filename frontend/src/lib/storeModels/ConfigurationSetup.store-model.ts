@@ -63,7 +63,7 @@ export type UserConfigurationSetupDTO = {
    /* =========================
       OPENING HOURS
    ========================= */
-   openingHours: {
+   openingHours?: {
      monday?: string;
      tuesday?: string;
      wednesday?: string;
@@ -73,7 +73,7 @@ export type UserConfigurationSetupDTO = {
      sunday?: string;
    };
    
-   solutionOpeningHoursDefault: {
+   solutionOpeningHoursDefault?: {
       monday: string;
       tuesday: string;
       wednesday: string;

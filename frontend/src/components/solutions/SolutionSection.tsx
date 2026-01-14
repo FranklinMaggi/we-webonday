@@ -45,10 +45,16 @@ export default function SolutionsSection() {
     async function loadSolutions() {
       setLoading(true);
       setError(null);
-
+    
       try {
         const data = await fetchPublicSolutions();
-        if (!cancelled) setSolutions(data);
+    
+        const normalized = data.map((s) => ({
+          ...s,
+          description: s.description ?? "", // ⬅️ GUARD UI-SAFE
+        }));
+    
+        if (!cancelled) setSolutions(normalized);
       } catch (err: any) {
         if (!cancelled) {
           setError(err?.message || "Errore caricamento soluzioni");
@@ -57,6 +63,7 @@ export default function SolutionsSection() {
         if (!cancelled) setLoading(false);
       }
     }
+    
 
     loadSolutions();
     return () => {
