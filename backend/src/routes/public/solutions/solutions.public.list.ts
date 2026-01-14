@@ -1,6 +1,6 @@
 /* ======================================================
    AI-SUPERCOMMENT
-   FILE: backend/src/routes/solutions/solutions.public.ts
+   FILE: backend/src/routes/solutions/solutions.public.list.ts
 
    RUOLO:
    - Espone il catalogo pubblico delle SOLUTIONS
@@ -17,7 +17,7 @@
    - Fail-fast su KV corrotto
 
    CONNECT POINT:
-   - index.ts → GET /api/solutions
+   - index.ts → GET /api/solution/list
 ====================================================== */
 
 import type { Env } from "../../../types/env";

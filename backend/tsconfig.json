@@ -1,13 +1,23 @@
 {
-    "compilerOptions": {
-      "target": "ES2021",
-      "module": "ESNext",
-      "moduleResolution": "Bundler",
-      "strict": true,
-      "types": ["@cloudflare/workers-types"],
-      "allowJs": false,
-      "isolatedModules": true
-    },
-    "include": ["src"]
-  }
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "NodeNext",
+   "moduleResolution": "NodeNext",
+    "strict": true,
+    "types": ["@cloudflare/workers-types"],
+    "allowJs": false,
+    "isolatedModules": true,
+ "ignoreDeprecations":"6.0",
+
   
+    "baseUrl": "./src",
+    "paths": {
+      "@domains/*": ["domains/*"],
+      "@routes/*": ["routes/*"],
+      "@utils/*": ["utils/*"],
+      "@lib/*": ["lib/*"],
+      "@types/*": ["types/*"]
+    }
+  },
+  "include": ["src"]
+}

@@ -83,7 +83,7 @@ type PublicSolutionDetailResponse = {
 export async function fetchPublicSolutions(): Promise<
   PublicSolutionDTO[]
 > {
-  const res = await fetch(`${API_BASE}/api/solutions`);
+  const res = await fetch(`${API_BASE}/api/solution/list`);
   if (!res.ok) throw new Error("FAILED_TO_FETCH_SOLUTIONS");
 
   const data: PublicSolutionsResponse = await res.json();

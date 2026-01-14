@@ -246,7 +246,7 @@ export default {
    SOLUTIONS — PUBLIC
 ====================================================== */
 
-if (pathname === "/api/solutions" && method === "GET") {
+if (pathname === "/api/solution/list" && method === "GET") {
   const result = await getSolutions(env);
 
   return withCors(
