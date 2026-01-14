@@ -61,7 +61,8 @@ export default function StepBusinessInfo({
   } = useConfigurationSetupStore();
 
   const user = useAuthStore((s) => s.user);
-
+  const descriptionTags = data.solutionDescriptionTags ?? [];
+  const serviceTags = data.solutionServiceTags ?? [];
   /* ======================================================
      PREFILL EMAIL (AUTH → STORE)
   ====================================================== */
@@ -228,11 +229,11 @@ export default function StepBusinessInfo({
       </div>
 
       {/* ================= TAG DESCRITTIVI ================= */}
-      {data.solutionDescriptionTags?.length > 0 && (
+      {descriptionTags?.length > 0 && (
         <>
           <h4>Descrizione attività</h4>
           <div className="tag-pills">
-            {data.solutionDescriptionTags.map((tag) => (
+            {descriptionTags.map((tag) => (
               <button
                 key={tag}
                 type="button"
@@ -259,11 +260,11 @@ export default function StepBusinessInfo({
       )}
 
       {/* ================= TAG SERVIZI ================= */}
-      {data.solutionServiceTags?.length > 0 && (
+      {serviceTags?.length > 0 && (
         <>
           <h4>Servizi offerti</h4>
           <div className="tag-pills">
-            {data.solutionServiceTags.map((tag) => (
+            {serviceTags.map((tag) => (
               <button
                 key={tag}
                 type="button"
