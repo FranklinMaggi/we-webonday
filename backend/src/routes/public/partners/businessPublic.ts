@@ -39,10 +39,7 @@ import { BusinessSchema }
   from "../../../domains/business/business.schema";
 
 import { normalizeBusiness } from "../../../domains/business/business.internal.normalizer";
-
-import { normalizePublicBusiness }
-  from "../../../domains/business/business.public.normalizer";
-
+import { BusinessInternalDTO } from "../../../domains/business/business.internal.dto";
 import { BUSINESS_KEY } from "../../../lib/kv";
 import { json } from "../../../lib/https";
 

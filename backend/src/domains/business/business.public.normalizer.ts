@@ -21,6 +21,9 @@
 
 import { z } from "zod";
 import type { Env } from "../../types/env";
+import { OpeningHoursSchema } from "./business.schema";
+
+
 const BusinessTagSchema = z
   .string()
   .min(1)

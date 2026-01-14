@@ -21,6 +21,9 @@ INVARIANTI:
 MODIFICHE:
 - Ogni modifica richiede audit FE
 ====================================================== */
+import { OpeningHoursSchema } from "./business.schema";
+import {type  BusinessOpeningHoursDTO } from "./business.public.dto";
+
 
 export interface BusinessInput {
   name?: unknown;
@@ -92,4 +95,22 @@ export function normalizeBusinessInput(
       ? optionIdsRaw.map((x) => String(x)).filter(Boolean)
       : [],
   };
+}
+
+/* ======================================================
+ * NORMALIZE INPUT (FE → BE)
+ * ====================================================== */
+export function normalizeOpeningHoursInput(
+  raw: unknown
+): BusinessOpeningHoursDTO {
+  return OpeningHoursSchema.parse(raw);
+}
+
+/* ======================================================
+ * NORMALIZE OUTPUT (BE → FE)
+ * ====================================================== */
+export function normalizeOpeningHoursToPublic(
+  openingHours: BusinessOpeningHoursDTO
+): BusinessOpeningHoursDTO {
+  return openingHours;
 }

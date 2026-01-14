@@ -37,4 +37,36 @@ export interface BusinessDTO {
     status: "draft" | "active" | "suspended";
     createdAt: string;
   }
-  
+  /* AI-SUPERCOMMENT
+ * RUOLO:
+ * - Stato Business lato FE
+ * - openingHours = verità FE allineata al BE
+ */
+
+export type TimeRange = { from: string; to: string };
+
+export type OpeningHours = {
+  monday: TimeRange[];
+  tuesday: TimeRange[];
+  wednesday: TimeRange[];
+  thursday: TimeRange[];
+  friday: TimeRange[];
+  saturday: TimeRange[];
+  sunday: TimeRange[];
+};
+
+export type BusinessState = {
+  openingHours: OpeningHours;
+  loading: boolean;
+  error?: string;
+};
+
+export const emptyOpeningHours: OpeningHours = {
+  monday: [],
+  tuesday: [],
+  wednesday: [],
+  thursday: [],
+  friday: [],
+  saturday: [],
+  sunday: [],
+};

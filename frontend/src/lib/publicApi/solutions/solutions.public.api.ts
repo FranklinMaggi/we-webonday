@@ -23,22 +23,11 @@
  */
 
 import { API_BASE } from "../../config";
-
+import {type  PublicSolutionDTO } from "../../dto/solution.public.dto";
 /* ======================================================
    DTO — SOLUTION (LIST)
    → usato per catalogo / cards
 ====================================================== */
-export type PublicSolutionDTO = {
-  id: string;
-  name: string;
-  description?: string;
-
-  icon?: string;
-  image?: string;
-
-  descriptionTags: string[];
-  serviceTags: string[];
-};
 
 /* ======================================================
    DTO — SOLUTION (DETAIL)
@@ -94,7 +83,7 @@ type PublicSolutionDetailResponse = {
 export async function fetchPublicSolutions(): Promise<
   PublicSolutionDTO[]
 > {
-  const res = await fetch(`${API_BASE}/api/solutions`);
+  const res = await fetch(`${API_BASE}/api/public/solutions`);
   if (!res.ok) throw new Error("FAILED_TO_FETCH_SOLUTIONS");
 
   const data: PublicSolutionsResponse = await res.json();

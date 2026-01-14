@@ -38,6 +38,29 @@ import { z } from "zod";
 
 
 
+/* ======================================================
+ * TIME RANGE
+ * ====================================================== */
+export const TimeRangeSchema = z.object({
+  from: z.string(), // "09:00"
+  to: z.string(),   // "13:00"
+});
+
+/* ======================================================
+ * OPENING HOURS (BUSINESS)
+ * SOURCE OF TRUTH
+ * ====================================================== */
+export const OpeningHoursSchema = z.object({
+  monday: z.array(TimeRangeSchema).default([]),
+  tuesday: z.array(TimeRangeSchema).default([]),
+  wednesday: z.array(TimeRangeSchema).default([]),
+  thursday: z.array(TimeRangeSchema).default([]),
+  friday: z.array(TimeRangeSchema).default([]),
+  saturday: z.array(TimeRangeSchema).default([]),
+  sunday: z.array(TimeRangeSchema).default([]),
+});
+
+
 export const BusinessSchema = z.object({
   /* =========================
      IDENTITÀ
