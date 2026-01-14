@@ -173,9 +173,9 @@ import { getAdminKPI } from "./routes/admin/kpi/kpi.read";
 
 import {  listAdminSolutions,
   getAdminSolution,
-  registerSolution, } from "./routes/admin/solutions/solutions.admin";
-import { getSolutionDetail } from "./routes/public/solutions/solutions.public.detail";
-import { getSolutions } from "./routes/public/solutions/solutions.public.list";
+  registerSolution, } from "./routes/solution/admin.solution.operation";
+import { getSolutionDetail } from "./routes/solution/solutions.public.detail";
+import { getSolutions } from "./routes/solution/solutions.public.list";
 /* ============================================================
    HTTP HELPERS
 ============================================================ */

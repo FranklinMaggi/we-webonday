@@ -20,11 +20,11 @@
    - index.ts → GET /api/solution?id=XXX
 ====================================================== */
 
-import type { Env } from "../../../types/env";
-import { SolutionSchema } from "../../../domains/solution/solution.schema";
-import { ProductSchema } from "../../../domains/product/product.schema";
-import { getSolutionImageUrl } from "../../../utils/assets";
-import { getSolutionImages } from "../../../utils/assets";
+import type { Env } from "../../types/env";
+import { SolutionSchema } from "../../domains/solution/solution.schema";
+import { ProductSchema } from "../../domains/product/product.schema";
+import { getSolutionImageUrl } from "../../utils/assets";
+import { getSolutionImages } from "../../utils/assets";
 /* ======================================================
    DOMAIN OUTPUT TYPES
 ====================================================== */

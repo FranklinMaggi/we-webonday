@@ -75,7 +75,7 @@ import UserDashboardHome from "../pages/user/dashboard";
 import UserBusinessDashboard from "../pages/user/dashboard/business";
 import UserBusinessDetail from "../pages/user/dashboard/business/[id]";
 import UserConfigurationWorkspace from "../pages/user/dashboard/workspace/[id]";
-
+import WorkspaceIndex from "../pages/user/dashboard/workspace";
 /* =========================
    USER — CONFIGURATOR
 ========================= */
@@ -161,9 +161,19 @@ const router = createBrowserRouter([
 
               /* ===== CONFIGURATION WORKSPACE (POST-WIZARD) ===== */
               {
-                path: "configuration/:id",
-                element: <UserConfigurationWorkspace />,
+                path: "workspace",
+                children: [
+                  {
+                    index: true,
+                    element: <WorkspaceIndex />,
+                  },
+                  {
+                    path: ":id",
+                    element: <ConfigurationIndex />,
+                  },
+                ],
               },
+              
 
               /* ===== ORDERS (PLACEHOLDER CANONICO) ===== */
               {

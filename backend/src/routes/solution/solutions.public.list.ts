@@ -20,9 +20,9 @@
    - index.ts → GET /api/solution/list
 ====================================================== */
 
-import type { Env } from "../../../types/env";
-import { SolutionSchema } from "../../../domains/solution/solution.schema";
-import { getSolutionImageUrl} from "../../../utils/assets";
+import type { Env } from "../../types/env";
+import { SolutionSchema } from "../../domains/solution/solution.schema";
+import { getSolutionImageUrl} from "../../utils/assets";
 /* ======================================================
    DOMAIN OUTPUT TYPE
 ====================================================== */

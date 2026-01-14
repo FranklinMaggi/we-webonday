@@ -73,35 +73,62 @@
 // - STRUTTURALMENTE SEPARATO DAL CONFIGURATOR
 //
 // ======================================================
+// ======================================================
+// FE || pages/user/dashboard/workspace/[id].tsx
+// ======================================================
+//
+// CONFIGURATION WORKSPACE (POST-WIZARD)
+//
+// SOURCE OF TRUTH:
+// - Backend → GET /api/configuration
+// - FE filtra per :id
+//
+// ======================================================
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import ConfigurationLayout from "../ConfigurationLayout";
-import { type ConfigurationDTO } from "../../../../lib/apiModels/user/Configuration.api-model";
+
+
+import { listMyConfigurations } from "../../../../lib/userApi/configuration.user.api";
+import type { ConfigurationDTO } from "../../../../lib/apiModels/user/Configuration.api-model";
 
 export default function UserConfigurationWorkspace() {
   const { id } = useParams<{ id: string }>();
-  const [configuration, setConfiguration] = useState<ConfigurationDTO | null>(null);
+  const navigate = useNavigate();
+
+  const [configuration, setConfiguration] =
+    useState<ConfigurationDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
 
-    fetch(`/api/configuration/${id}`, {
-      credentials: "include",
-    })
-      .then((r) => r.json())
+    listMyConfigurations()
       .then((res) => {
-        if (res.ok) setConfiguration(res.configuration as ConfigurationDTO);
+        const found = res.items.find((c) => c.id === id);
+        if (found) {
+          setConfiguration(found);
+        }
       })
       .finally(() => setLoading(false));
   }, [id]);
 
+  /* =========================
+     UI GUARDS
+  ========================= */
   if (!id) return <p>ID configurazione mancante</p>;
   if (loading) return <p>Caricamento…</p>;
-  if (!configuration) return <p>Configurazione non trovata</p>;
 
-  return (
-    <ConfigurationLayout configuration={configuration} />
-  );
+  if (!configuration) {
+    return (
+      <section>
+        <p>Configurazione non trovata</p>
+        <button onClick={() => navigate("/user/dashboard/workspace")}>
+          Torna alle configurazioni
+        </button>
+      </section>
+    );
+  }
+
+ 
 }

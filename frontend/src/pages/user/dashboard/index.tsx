@@ -52,24 +52,10 @@
 import UserOrders from "./sections/UserOrders";
 import UserProjects from "./sections/UserProjects";
 import ExploreSolutionsCTA from "./sections/ExploreSolutionsCTA";
-import { useEffect, useState } from "react";
-import { listMyConfigurations } from "../../../lib/userApi/configuration.user.api";
-import { useNavigate } from "react-router-dom";
-import type { ConfigurationDTO } from "../../../lib/apiModels/user/Configuration.api-model";
 
 export default function UserDashboardHome() {
-  const navigate = useNavigate();
-  const [resumeConfig, setResumeConfig] = useState< ConfigurationDTO| null>(null);
-  
-  useEffect(() => {
-    listMyConfigurations().then((res) => {
-      const resumable = res.items.find((c) =>
-        ["draft", "BUSINESS_READY", "preview"].includes(c.status)
-      );
-      if (resumable) setResumeConfig(resumable);
-    });
-  }, []);
-  
+
+
   return (
     <section className="user-dashboard-home">
         
@@ -104,20 +90,7 @@ export default function UserDashboardHome() {
       <section className="dashboard-section">
         <UserOrders />
       </section>
-      <section className="dashboard-primary-action">
-  {resumeConfig ? (
-    <button
-      className="user-cta primary"
-      onClick={() =>
-        navigate(`/user/configurator/${resumeConfig.id}`)
-      }
-    >
-      🔁 Riprendi configurazione
-    </button>
-  ) : (
-    <ExploreSolutionsCTA />
-  )}
-</section>
+
 
     </section>
   );
