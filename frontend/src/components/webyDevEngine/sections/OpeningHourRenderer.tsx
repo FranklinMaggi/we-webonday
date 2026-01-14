@@ -120,3 +120,30 @@ function renderHours(value: string) {
 
   return <span>{value}</span>;
 }
+type OpeningHoursSectionProps = {
+  openingHours?: Record<string, string>;
+};
+
+export function OpeningHoursSection({
+  openingHours,
+}: OpeningHoursSectionProps) {
+  if (!openingHours || Object.keys(openingHours).length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="opening-hours">
+      <h3>Orari di apertura</h3>
+
+      <ul>
+        {Object.entries(openingHours).map(
+          ([day, value]) => (
+            <li key={day}>
+              <strong>{day}</strong>: {value}
+            </li>
+          )
+        )}
+      </ul>
+    </section>
+  );
+}
