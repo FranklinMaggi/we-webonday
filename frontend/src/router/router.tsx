@@ -74,7 +74,6 @@ import PolicyPage from "../pages/policy/policy";
 import UserDashboardHome from "../pages/user/dashboard";
 import UserBusinessDashboard from "../pages/user/dashboard/business";
 import UserBusinessDetail from "../pages/user/dashboard/business/[id]";
-import UserConfigurationWorkspace from "../pages/user/dashboard/workspace/[id]";
 import WorkspaceIndex from "../pages/user/dashboard/workspace";
 /* =========================
    USER — CONFIGURATOR
