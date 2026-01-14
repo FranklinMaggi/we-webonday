@@ -2,38 +2,34 @@
 // FE || pages/user/configurator/setup/steps/StepBusinessInfo.tsx
 // ======================================================
 //
-// STEP — BUSINESS SETUP (ANAGRAFICA + CONTENUTI)
+// STEP — BUSINESS SETUP (SPORCO MA FUNZIONALE)
 //
 // RUOLO:
 // - Raccolta completa dei dati del business
-// - Include:
+// - FE + BE (volutamente accoppiato)
+// - Punto unico di verità per:
 //   • anagrafica
-//   • contatti
-//   • indirizzo
-//   • contenuti testuali
-//   • TAG DESCRITTIVI (descriptionTags)
-//   • TAG SERVIZI (serviceTags)
-//   • orari di apertura
+//   • tag
+//   • orari
+//   • creazione business
+//   • sync configuration
 //
-// INVARIANTI CRITICHE:
-// - FE ONLY (Zustand store)
-// - Nessuna fetch
-// - Nessuna persistenza backend
-// - Nessuna validazione bloccante
-// - Nessuna creazione Business / Configuration
-//
-// SCOPO:
-// - Preparare TUTTI i dati necessari
-//   allo step successivo
+// INVARIANTI (ACCETTATI):
+// - Usa Zustand come source of truth
+// - Fa fetch e persistenza
+// - È wizard-aware
 //
 // ======================================================
 
-import { upsertConfigurationFromBusiness } from "../../lib/userApi/configuration.user.api";
-import { useConfigurationSetupStore } from "../../lib/store/configurationSetup.store";
-import { OpeningHoursDay } from "../openingHours/OpeningHoursDay";
-import { createBusiness } from "../../lib/userApi/business.user.api";
-import { useAuthStore } from "../../lib/store/auth.store";
 import { useEffect } from "react";
+
+import { useConfigurationSetupStore } from "../../lib/store/configurationSetup.store";
+import { useAuthStore } from "../../lib/store/auth.store";
+
+import { createBusiness } from "../../lib/userApi/business.user.api";
+import { upsertConfigurationFromBusiness } from "../../lib/userApi/configuration.user.api";
+
+import { OpeningHoursDay } from "../openingHours/OpeningHoursDay";
 
 /* =========================
    COSTANTI
@@ -48,14 +44,10 @@ const DAYS = [
   ["sunday", "Domenica"],
 ] as const;
 
-/**
- * Toggle puro di una tag
- * (nessuna normalizzazione qui)
- */
-function toggleTag(
-  current: string[] = [],
-  tag: string
-): string[] {
+/* =========================
+   UTILS
+========================= */
+function toggleTag(current: string[] = [], tag: string): string[] {
   return current.includes(tag)
     ? current.filter((t) => t !== tag)
     : [...current, tag];
@@ -71,11 +63,9 @@ type StepBusinessInfoProps = {
 export default function StepBusinessInfo({
   onComplete,
 }: StepBusinessInfoProps) {
-  /**
-   * SOURCE OF TRUTH:
-   * - data     → stato corrente wizard (FE)
-   * - setField → mutazione atomica
-   */
+  /* =========================
+     STORE + AUTH
+  ========================= */
   const {
     data,
     setField,
@@ -86,9 +76,7 @@ export default function StepBusinessInfo({
   const user = useAuthStore((s) => s.user);
 
   /* ======================================================
-     PREFILL EMAIL (DA AUTH)
-     - Avviene una sola volta
-     - Non sovrascrive input manuale
+     PREFILL EMAIL (AUTH → STORE)
   ====================================================== */
   useEffect(() => {
     if (user?.email && !data.email) {
@@ -96,13 +84,86 @@ export default function StepBusinessInfo({
     }
   }, [user?.email]);
 
+  /* ======================================================
+     PREFILL OPENING HOURS (SOLUTION → STORE)
+  ====================================================== */
+  useEffect(() => {
+    if (
+      data.openingHours &&
+      Object.keys(data.openingHours).length > 0
+    ) {
+      return;
+    }
+
+    if (!data.solutionOpeningHoursDefault) {
+      return;
+    }
+
+    setField("openingHours", data.solutionOpeningHoursDefault);
+  }, [data.solutionOpeningHoursDefault]);
+
+  /* =========================
+     SUBMIT HANDLER
+  ========================= */
+  async function handleSubmit() {
+    if (!data.businessName) {
+      alert("Inserisci il nome dell’attività");
+      return;
+    }
+
+    if (!data.solutionId || !data.productId) {
+      alert("Configurazione commerciale mancante");
+      return;
+    }
+
+    if (!businessId) {
+      const res = await createBusiness({
+        name: data.businessName,
+        address: [
+          data.address,
+          data.city,
+          data.state,
+          data.zip,
+        ]
+          .filter(Boolean)
+          .join(", "),
+        phone: data.phone,
+        openingHours: data.openingHours,
+
+        solutionId: data.solutionId,
+        productId: data.productId,
+        optionIds: data.optionIds ?? [],
+      });
+
+      if (!res?.ok) {
+        alert("Errore creazione attività");
+        return;
+      }
+
+      setBusinessId(res.businessId);
+
+      await upsertConfigurationFromBusiness({
+        businessId: res.businessId,
+        productId: data.productId,
+        optionIds: data.optionIds ?? [],
+        businessDescriptionTags:
+          data.businessDescriptionTags ?? [],
+        businessServiceTags:
+          data.businessServiceTags ?? [],
+      });
+    }
+
+    onComplete();
+  }
+
+  /* =========================
+     RENDER
+  ========================= */
   return (
     <div className="step">
       <h2>Configuriamo il tuo business</h2>
 
-      {/* ======================================================
-         ANAGRAFICA BUSINESS
-      ====================================================== */}
+      {/* ================= ANAGRAFICA ================= */}
       <input
         placeholder="Nome attività"
         value={data.businessName ?? ""}
@@ -136,11 +197,9 @@ export default function StepBusinessInfo({
         Accetto il trattamento dei dati personali
       </label>
 
-      {/* ======================================================
-         INDIRIZZO BUSINESS (FE-ONLY)
-      ====================================================== */}
+      {/* ================= INDIRIZZO ================= */}
       <input
-        placeholder="Indirizzo attività (es. Via Roma 10)"
+        placeholder="Indirizzo"
         value={data.address ?? ""}
         onChange={(e) =>
           setField("address", e.target.value)
@@ -155,15 +214,13 @@ export default function StepBusinessInfo({
             setField("city", e.target.value)
           }
         />
-
         <input
-          placeholder="Provincia / Stato"
+          placeholder="Provincia"
           value={data.state ?? ""}
           onChange={(e) =>
             setField("state", e.target.value)
           }
         />
-
         <input
           placeholder="CAP"
           value={data.zip ?? ""}
@@ -173,118 +230,75 @@ export default function StepBusinessInfo({
         />
       </div>
 
-      {/* ======================================================
-         IMMAGINE BUSINESS (FE-ONLY)
-      ====================================================== */}
-      <label>
-        Immagine dell’attività (opzionale)
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) =>
-            setField(
-              "businessImage",
-              e.target.files?.[0] ?? null
-            )
-          }
-        />
-      </label>
-
-      {/* ======================================================
-         CONTENUTI SITO
-      ====================================================== */}
-      <h3>Contenuti del sito</h3>
-
-      {/* ======================================================
-        DESCRIPTION TAGS
-        - Derivano da Solution.descriptionTags
-        - Selezione tramite pills
-        - FE-only
-      ====================================================== */}
+      {/* ================= TAG DESCRITTIVI ================= */}
       {(data.solutionDescriptionTags?.length ?? 0) > 0 && (
         <>
-          <h4>Descrivi la tua attività con dei tag</h4>
-
+          <h4>Descrizione attività</h4>
           <div className="tag-pills">
-            {(data.solutionDescriptionTags ?? []).map((tag) => {
-              const isActive =
-                data.businessDescriptionTags?.includes(tag) ?? false;
-
-              return (
-                <button
-                  key={tag}
-                  type="button"
-                  className={`pill ${isActive ? "active" : ""}`}
-                  onClick={() =>
-                    setField(
-                      "businessDescriptionTags",
-                      toggleTag(
-                        data.businessDescriptionTags,
-                        tag
-                      )
+            {data.solutionDescriptionTags!.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                className={`pill ${
+                  data.businessDescriptionTags?.includes(tag)
+                    ? "active"
+                    : ""
+                }`}
+                onClick={() =>
+                  setField(
+                    "businessDescriptionTags",
+                    toggleTag(
+                      data.businessDescriptionTags,
+                      tag
                     )
-                  }
-                >
-                  {tag}
-                </button>
-              );
-            })}
-
-            
+                  )
+                }
+              >
+                {tag}
+              </button>
+            ))}
           </div>
-
         </>
       )}
 
-
-      {/* ======================================================
-      SERVICE TAGS
-      - Derivano da Solution.serviceTags
-      - Selezione tramite pills
-      - FE-only
-      ====================================================== */}
+      {/* ================= TAG SERVIZI ================= */}
       {(data.solutionServiceTags?.length ?? 0) > 0 && (
-      <>
-      <h4>I servizi che offri</h4>
-
-      <div className="tag-pills">
-      {(data.solutionServiceTags ?? []).map((tag) => {
-      const isActive =
-        data.businessServiceTags?.includes(tag) ?? false;
-
-      return (
-        <button
-          key={tag}
-          type="button"
-          className={`pill ${isActive ? "active" : ""}`}
-          onClick={() =>
-            setField(
-              "businessServiceTags",
-              toggleTag(
-                data.businessServiceTags,
-                tag
-              )
-            )
-          }
-        >
-          {tag}
-        </button>
-      );
-      })}
-      </div>
-      </>
+        <>
+          <h4>Servizi offerti</h4>
+          <div className="tag-pills">
+            {data.solutionServiceTags!.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                className={`pill ${
+                  data.businessServiceTags?.includes(tag)
+                    ? "active"
+                    : ""
+                }`}
+                onClick={() =>
+                  setField(
+                    "businessServiceTags",
+                    toggleTag(
+                      data.businessServiceTags,
+                      tag
+                    )
+                  )
+                }
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        </>
       )}
 
-
-      {/* ======================================================
-         ORARI DI APERTURA (FE-ONLY)
-      ====================================================== */}
+      {/* ================= ORARI ================= */}
       <h3>Orari di apertura</h3>
-      {DAYS.map(([dayKey, dayLabel]) => (
+      {DAYS.map(([dayKey, label]) => (
         <OpeningHoursDay
           key={dayKey}
           dayKey={dayKey}
-          dayLabel={dayLabel}
+          dayLabel={label}
           value={data.openingHours?.[dayKey] ?? ""}
           onChange={(value) =>
             setField("openingHours", {
@@ -295,78 +309,11 @@ export default function StepBusinessInfo({
         />
       ))}
 
-      {/* ======================================================
-         AZIONE
-      ====================================================== */}
+      {/* ================= AZIONE ================= */}
       <div className="actions">
-        <button
-          onClick={async () => {
-            // ============================================
-            // STEP 2 — CREATE BUSINESS (ONCE)
-            // ============================================
-
-            if (!data.businessName) {
-              alert("Inserisci il nome dell’attività");
-              return;
-            }
-
-            if (!data.solutionId || !data.productId) {
-              alert("Configurazione commerciale mancante");
-              return;
-            }
-
-            if (!businessId) {
-              const res = await createBusiness({
-                name: data.businessName,
-                address: [
-                  data.address,
-                  data.city,
-                  data.state,
-                  data.zip,
-                ]
-                  .filter(Boolean)
-                  .join(", "),
-                phone: data.phone,
-                openingHours: data.openingHours,
-
-                solutionId: data.solutionId,
-                productId: data.productId,
-                optionIds: data.optionIds ?? [],
-              });
-
-              if (!res || !res.ok) {
-                alert("Errore creazione attività");
-                return;
-              }
-
-              // TECH STATE (FE-only)
-              setBusinessId(res.businessId);
-
-              await upsertConfigurationFromBusiness({
-                businessId: res.businessId,
-                productId: data.productId,
-                optionIds: data.optionIds ?? [],
-                businessDescriptionTags : data.businessDescriptionTags ?? [] ,
-                businessServiceTags : data.businessServiceTags ?? [] ,
-              });
-            }
-
-            onComplete();
-          }}
-        >
+        <button onClick={handleSubmit}>
           Continua
         </button>
-        <pre>
-{JSON.stringify(
-  {
-    desc: data.solutionDescriptionTags,
-    serv: data.solutionServiceTags,
-  },
-  null,
-  2
-)}
-</pre>
-
       </div>
     </div>
   );

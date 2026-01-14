@@ -227,3 +227,52 @@
   color: #fff;
   border-color: #111;
 }
+.wizard-progress {
+  margin-bottom: 32px;
+}
+
+.wizard-progress-bar {
+  height: 6px;
+  background: #e5e5e5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.wizard-progress-fill {
+  height: 100%;
+  background: #111;
+  transition: width 0.3s ease;
+}
+
+.wizard-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.wizard-step {
+  background: none;
+  border: none;
+  text-align: center;
+  cursor: default;
+  opacity: 0.4;
+}
+
+.wizard-step.clickable {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.wizard-step.active {
+  font-weight: 600;
+}
+
+.wizard-step-index {
+  display: block;
+  font-size: 12px;
+  color: #666;
+}
+
+.wizard-step-label {
+  font-size: 12px;
+}

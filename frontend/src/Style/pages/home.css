@@ -148,3 +148,105 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
+/* ======================================================
+   SECTION — WHY WEBONDAY
+   ====================================================== */
+
+   .section-why-webonday {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem;
+  
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  
+    line-height: 1.6;
+    font-size: 1rem;
+  
+    /* COLORI — derivano dalla palette attiva */
+    color: var(--text-color);
+  }
+  
+  /* =========================
+     TITOLI
+  ========================= */
+  .section-why-webonday h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  
+    color: var(--primary-color);
+  }
+  
+  /* =========================
+     TESTO
+  ========================= */
+  .section-why-webonday p {
+    margin: 0;
+    max-width: 720px;
+  }
+  
+  /* Evidenzia il paragrafo finale */
+  .section-why-webonday .why-footer {
+    margin-top: 1rem;
+    font-weight: 500;
+    opacity: 0.9;
+  }
+  
+  /* =========================
+     LISTA MOTIVAZIONALE
+  ========================= */
+  .section-why-webonday .why-list {
+    margin: 1.5rem 0 0.5rem;
+    padding-left: 1.2rem;
+  
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .section-why-webonday .why-list li {
+    list-style: disc;
+    opacity: 0.95;
+  }
+  
+  /* =========================
+     LINK DI APPROFONDIMENTO
+  ========================= */
+  .section-why-webonday .section-links {
+    margin-top: 1.5rem;
+  
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .section-why-webonday .section-links a {
+    text-decoration: none;
+    font-weight: 500;
+  
+    color: var(--primary-color);
+    border-bottom: 1px solid transparent;
+  
+    transition: border-color 0.2s ease, opacity 0.2s ease;
+  }
+  
+  .section-why-webonday .section-links a:hover {
+    border-color: var(--primary-color);
+    opacity: 0.85;
+  }
+  
+  /* =========================
+     RESPONSIVE
+  ========================= */
+  @media (max-width: 640px) {
+    .section-why-webonday {
+      padding: 3rem 1rem;
+    }
+  
+    .section-why-webonday h2 {
+      font-size: 1.6rem;
+    }
+  }
+  

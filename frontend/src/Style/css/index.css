@@ -30,7 +30,7 @@
 @import "../components/whatsapp.css";
 
 /* PAGES */
-
+@import "../pages/home.css";
 @import "../pages/login.css";
 @import "../pages/checkout.css";
 @import "../pages/user.css";

@@ -127,21 +127,21 @@ export default function HomeSolutionPage() {
   const heroImage = solution.image?.fallback;
   return (
     <main className="solution-page">
-      {/* ================= HERO ================= */}
+{/* ================= HERO ================= */}
       
-              <section
-          className="solution-hero"
-          style={{
-            backgroundImage: heroImage
-              ? `url(${heroImage})`
-              : undefined,
-          }}
-        >
-    <div className="solution-hero-overlay">
-    <h1>La nostra offerta per {solution.name}</h1>
-    <p>{solution.description}</p>
-  </div>
-</section>
+        <section
+                  className="solution-hero"
+                  style={{
+                    backgroundImage: heroImage
+                      ? `url(${heroImage})`
+                      : undefined,
+                  }}
+                >
+            <div className="solution-hero-overlay">
+            <h1>La nostra offerta per {solution.name}</h1>
+            <p>{solution.description}</p>
+          </div>
+        </section>
 {/* ================= SOLUTION EXPLANATION ================= */}
 <section className="section solution-explanation">
   <h2>Cos’è la solution {solution.name}</h2>
@@ -162,7 +162,7 @@ export default function HomeSolutionPage() {
 </section>
 
 
-      {/* ================= OVERVIEW ================= */}
+{/* ================= OVERVIEW ================= */}
       <section className="section">
         <h2>
           La soluzione pensata per il tuo business
@@ -174,10 +174,7 @@ export default function HomeSolutionPage() {
           progettati per convertire.
         </p>
 
-        <p>
-          Tu scegli il prodotto più adatto,
-          al resto pensa il nostro <strong>AI Configurator</strong>.
-        </p>
+       
       </section>
 {/* ================= HOW IT WORKS ================= */}
 <section className="section solution-how-it-works">
@@ -185,7 +182,7 @@ export default function HomeSolutionPage() {
 
   <ol className="solution-steps">
     <li>
-      <strong>Scegli un prodotto</strong><br />
+      <strong> Scegli un prodotto</strong><br />
       Seleziona il prodotto più adatto alle tue esigenze
       in base al livello di personalizzazione e supporto.
     </li>

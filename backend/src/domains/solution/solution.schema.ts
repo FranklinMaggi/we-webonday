@@ -48,6 +48,16 @@ const UserServiceTagStatusSchema = z.enum([
   "APPROVED",
   "REJECTED",
 ]);
+const OpeningHoursDefaultSchema = z.object({
+  monday: z.string(),
+  tuesday: z.string(),
+  wednesday: z.string(),
+  thursday: z.string(),
+  friday: z.string(),
+  saturday: z.string(),
+  sunday: z.string(),
+});
+
 
 export const UserServiceTagMetaSchema = z.object({
   tag: TagSchema,
@@ -63,6 +73,10 @@ export const UserServiceTagMetaSchema = z.object({
  * ======================================================
  */
 export const SolutionSchema = z.object({
+
+
+
+
   id: z.string().min(1),           // "food"
   name: z.string().min(1),         // "Ristoranti & Food"
 
@@ -70,9 +84,14 @@ export const SolutionSchema = z.object({
   description: z.string().min(1).optional(),
   longDescription: z.string().optional(),
 
+
+
+
   icon: z.string().optional(),
   imageKey: z.string().optional(),
 
+  
+  
   /**
    * TAG SEMANTICI SEED (CANONICI)
    * - definiti da admin / seed
@@ -122,6 +141,9 @@ userServiceTags: z.array(TagSchema).default([]),
 userServiceTagsMeta: z
   .array(UserServiceTagMetaSchema)
   .default([]),
+
+  
+  openingHoursDefault: OpeningHoursDefaultSchema.optional(),
 
 
   status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
