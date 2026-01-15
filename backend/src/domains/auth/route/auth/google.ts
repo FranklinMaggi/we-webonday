@@ -6,6 +6,8 @@ import { logActivity } from "../../../activity/router/logActivity";
 import { resolveOrCreateUser } from "../../user/auth.user.service";
 import { mapGooglePayload } from "@domains/auth/identity/auth.identity.google";
 import { buildSessionCookie } from "../../session/auth.session.cookies";
+import { getFrontendBaseUrl } from "../helper/frontendBase";
+
 
 export async function googleAuth(request: Request, env: Env): Promise<Response> {
   const redirect =
@@ -107,19 +109,23 @@ export async function googleCallback(
   /**
    * FIX #2 — cookie valido per frontend domain
    */
-  let cookie = buildSessionCookie(env, userId);
+  let cookie = buildSessionCookie(env, userId ,request);
 
-  if (!cookie.includes("Domain=")) {
-    cookie += "; Domain=.webonday.it";
-  }
 
-  const redirectUrl = new URL(redirectState, env.FRONTEND_URL).toString();
+ // 🔐 sicurezza: blocco redirect assoluti
+if (redirectState.startsWith("http")) {
+  redirectState = "/";
+}
 
-  return new Response(null, {
-    status: 302,
-    headers: {
-      "Set-Cookie": cookie,
-      "Location": redirectUrl,
-    },
-  });
+const frontendBase = getFrontendBaseUrl(request, env);
+const redirectUrl = new URL(redirectState, frontendBase).toString();
+
+return new Response(null, {
+  status: 302,
+  headers: {
+    "Set-Cookie": cookie,
+    "Location": redirectUrl,
+  },
+});
+
 }

@@ -71,7 +71,7 @@ export async function loginUser(request: Request, env: Env) {
     });
   
     // 5️⃣ Session cookie (🔥 QUESTO ERA IL BUG)
-    const cookie = buildSessionCookie(env, user.id);
+    const cookie = buildSessionCookie(env, user.id ,request);
   
     return json(
       {

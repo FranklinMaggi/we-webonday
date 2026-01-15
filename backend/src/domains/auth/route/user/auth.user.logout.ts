@@ -11,7 +11,7 @@ import { destroySessionCookie } from "../../session/auth.session.cookies";
     env: Env
   ): Promise<Response> {
     const headers = new Headers();
-    headers.set("Set-Cookie", destroySessionCookie(env));
+    headers.set("Set-Cookie", destroySessionCookie(env ,_request ));
   
     return new Response(JSON.stringify({ ok: true }), {
       status: 200,

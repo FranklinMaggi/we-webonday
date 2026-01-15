@@ -30,7 +30,7 @@
 import { useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../lib/store/auth.store";
-import { API_BASE } from "../../../lib/config";
+import { IS_DEV , API_BASE} from "../../../lib/config";
 
 export default function UserLoginPage() {
   const fetchUser = useAuthStore((s) => s.fetchUser);
@@ -48,6 +48,21 @@ export default function UserLoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+function safeRedirect(target: string) {
+  // ❗ blocca redirect cross-domain in DEV
+  if (IS_DEV && target.startsWith("http")) {
+    console.warn(
+      "[AUTH] Redirect cross-domain bloccato in DEV:",
+      target
+    );
+    navigate("/user/dashboard/workspace", {
+      replace: true,
+    });
+    return;
+  }
+
+  navigate(target, { replace: true });
+}
   async function login() {
     if (loading) return;
 
@@ -71,7 +86,7 @@ export default function UserLoginPage() {
       // 🔑 backend ha creato la sessione
       await fetchUser();
 
-      navigate(redirect, { replace: true });
+      safeRedirect(redirect);
     } catch {
       setErrorMsg("Errore di rete. Riprova.");
     } finally {
@@ -100,7 +115,7 @@ export default function UserLoginPage() {
       }
 
       await fetchUser();
-      navigate(redirect, { replace: true });
+      safeRedirect(redirect);
     } catch {
       setErrorMsg("Errore di rete. Riprova.");
     } finally {
@@ -109,10 +124,22 @@ export default function UserLoginPage() {
   }
 
   function googleLogin() {
+    let safe = redirect;
+  
+    if (IS_DEV && safe.startsWith("http")) {
+      console.warn(
+        "[AUTH] Google OAuth redirect bloccato in DEV:",
+        safe
+      );
+      safe = "/user/dashboard/workspace";
+    }
+  
     const url = new URL(`${API_BASE}/api/user/google/auth`);
-    url.searchParams.set("redirect", redirect);
+    url.searchParams.set("redirect", safe);
+  
     window.location.href = url.toString();
   }
+  
   return (
     <div className="login-page">
       <div className="login-card">

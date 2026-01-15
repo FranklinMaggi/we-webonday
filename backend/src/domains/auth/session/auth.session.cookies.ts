@@ -51,9 +51,15 @@ import type { Env } from "../../../types/env";
 
 export function buildSessionCookie(
     env: Env,
-    userId: string
+    userId: string ,
+    request?: Request
   ) {
-    const isLocal = env.FRONTEND_URL.startsWith("http://localhost");
+    const origin = request?.headers.get("Origin") ?? "";
+  const referer = request?.headers.get("Referer") ?? "";
+
+  const isLocal =
+    origin.includes("localhost") ||
+    referer.includes("localhost");
   
     return [
       `webonday_session=${userId}`,
@@ -68,9 +74,17 @@ export function buildSessionCookie(
   
 
 
-export function destroySessionCookie(env: Env) {
-  const isLocal = env.FRONTEND_URL.startsWith("http://localhost");
-  
+export function destroySessionCookie(
+  env: Env , 
+request?: Request) {
+
+const origin = request?.headers.get("Origin") ?? "";
+  const referer = request?.headers.get("Referer") ?? "";
+
+  const isLocal =
+    origin.includes("localhost") ||
+    referer.includes("localhost");
+
   return [
     "webonday_session=",
     "Path=/",

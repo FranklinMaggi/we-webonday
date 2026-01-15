@@ -78,7 +78,7 @@ function json(body: unknown, status = 200, headers?: HeadersInit) {
     await env.ON_USERS_KV.put(`EMAIL:${user.email}`, user.id);
   
     // 7️⃣ Create session immediately (UX + consistency)
-    const cookie = buildSessionCookie(env, user.id);
+    const cookie = buildSessionCookie(env, user.id,request);
   
     return json(
       { ok: true, userId: user.id },
