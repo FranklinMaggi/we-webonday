@@ -21,7 +21,7 @@ INVARIANTI:
 MODIFICHE:
 - Ogni modifica richiede audit FE
 ====================================================== */
-import { OpeningHoursSchema } from "./business.schema";
+import { OpeningHoursSchema } from "./schema/business.schema";
 import {type  BusinessOpeningHoursDTO } from "./business.public.dto";
 
 

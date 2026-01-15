@@ -11,6 +11,11 @@ export type PublicSolutionDTO = {
     imageKey?: string
     icon?: string
     industries: string[]
+
+    descriptionTags : string[]
+    serviceTags : string[]
+
+
     // ⬇️ SEED, NON OBBLIGATORIO
   openingHoursDefault?: {
     monday: string

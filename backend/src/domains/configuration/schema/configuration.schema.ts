@@ -19,14 +19,10 @@
 //   • createConfiguration (che aggiunge createdAt/updatedAt manualmente)
 // ======================================================
 
+import { TagSchema } from "@domains/solution/schema/solution.schema";
 import { z } from "zod";
 
-const BusinessTagSchema = z
-  .string()
-  .min(1)
-  .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, {
-    message: "businessTag must be kebab-case lowercase",
-  });
+
 /* =========================
    STATUS (compat + step)
 ========================= */
@@ -61,7 +57,8 @@ export const ConfigurationSchema = z.object({
    * - persistenti in KV
    * - SEO / AI / Preview
    */
-  businessTags: z.array(BusinessTagSchema).default([]),
+  descriptionTags: z.array(TagSchema).default([]),
+  solutionTags : z.array(TagSchema).default([]),
 
   /* ---------- Options ---------- */
   options: z.array(z.string()).default([]),

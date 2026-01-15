@@ -2,7 +2,7 @@
 
 import { Env } from "../../types/env";
 
-import { ConfigurationDTO } from "./configuration.schema";
+import { ConfigurationDTO } from "./schema/configuration.schema";
 /* =========================
    KV KEYS
 ========================= */

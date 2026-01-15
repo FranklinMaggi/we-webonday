@@ -21,7 +21,7 @@
 
 import { z } from "zod";
 import type { Env } from "../../types/env";
-import { OpeningHoursSchema } from "./business.schema";
+import { OpeningHoursSchema } from "./schema/business.schema";
 
 
 const BusinessTagSchema = z

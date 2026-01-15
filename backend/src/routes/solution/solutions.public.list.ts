@@ -21,7 +21,7 @@
 ====================================================== */
 
 import type { Env } from "../../types/env";
-import { SolutionSchema } from "../../domains/solution/solution.schema";
+import { SolutionSchema } from "../../domains/solution/schema/solution.schema";
 import { getSolutionImageUrl} from "../../utils/assets";
 /* ======================================================
    DOMAIN OUTPUT TYPE

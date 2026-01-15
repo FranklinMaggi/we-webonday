@@ -23,12 +23,12 @@
 export {
     CONFIGURATION_STATUS,
     ConfigurationSchema,
-  } from "./configuration.schema";
+  } from "./schema/configuration.schema";
   
   export type {
     ConfigurationStatus,
     ConfigurationDTO,
-  } from "./configuration.schema";
+  } from "./schema/configuration.schema";
   
   export {
     configurationKey,
@@ -43,5 +43,5 @@ export {
   
   export type {
     ConfigurationPublicDTO,
-  } from "./configuration.dto";
+  } from "./DataTransferObgject/configuration.dto";
   

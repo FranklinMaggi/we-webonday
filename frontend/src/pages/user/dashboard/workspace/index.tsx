@@ -72,7 +72,7 @@ export default function WorkspaceIndex() {
 
         <button
           className="user-cta primary"
-          onClick={() => navigate("/solutions")}
+          onClick={() => navigate("/solution")}
         >
           Inizia da una soluzione
         </button>

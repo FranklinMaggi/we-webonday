@@ -8,7 +8,7 @@ export type ConfigurationPublicDTO = {
     id: string;
     status: string;
     solutionId: string;
-    productId?: string;
+    productId: string;
     businessId?: string;
   };
   

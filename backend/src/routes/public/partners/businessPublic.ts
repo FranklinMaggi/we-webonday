@@ -36,7 +36,7 @@
 import type { Env } from "../../../types/env";
 
 import { BusinessSchema } 
-  from "../../../domains/business/business.schema";
+  from "../../../domains/business/schema/business.schema";
 
 import { normalizeBusiness } from "../../../domains/business/business.internal.normalizer";
 import { BusinessInternalDTO } from "../../../domains/business/business.internal.dto";

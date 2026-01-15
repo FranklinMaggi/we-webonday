@@ -67,7 +67,6 @@
 import { apiFetch } from "../api/client";
 import type { ConfigurationDTO} from "../apiModels/user/Configuration.api-model";
 
-
 /**
  * PUT /api/configuration/:configurationId
  */
@@ -135,3 +134,27 @@ export async function listMyConfigurations(): Promise<{
 
   return res;
 }
+// FE || src/lib/userApi/configuration.user.api.ts
+
+export async function getMyConfiguration(
+  configurationId: string
+): Promise<{
+  ok: true;
+  configuration: ConfigurationDTO;
+}> {
+  const res = await apiFetch<{
+    ok: true;
+    configuration: ConfigurationDTO;
+  }>(`/api/configuration/${configurationId}`, {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  if (!res) {
+    throw new Error("API /api/configuration/:id returned null");
+  }
+
+  return res;
+}
+
+

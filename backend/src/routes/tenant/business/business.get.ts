@@ -18,7 +18,7 @@
 import type { Env } from "../../../types/env";
 import { requireAuthUser } from "@domains/auth";
 import { BUSINESS_KEY } from "../../../lib/kv";
-import { BusinessSchema } from "../../../domains/business/business.schema";
+import { BusinessSchema } from "../../../domains/business/schema/business.schema";
 import { json } from "../../../domains/auth/route/helper/https";
 
 export async function getBusiness(

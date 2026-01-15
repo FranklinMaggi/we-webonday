@@ -110,7 +110,7 @@ export default function CartPreview({
       /* =========================
          4) USER → CONFIGURATOR
       ========================= */
-      navigate(`/user/configurator/${json.configurationId}`);
+      navigate(`/user/dashboard/workspace/${json.configurationId}`);
     } catch (err) {
       console.error("[CART_PREVIEW] continueFlow failed", err);
     }

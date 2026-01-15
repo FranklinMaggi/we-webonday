@@ -1,5 +1,5 @@
 import { normalizeTag } from "./normalizeTag";
-import { SolutionSchema } from "./solution.schema";
+import { SolutionSchema } from "./schema/solution.schema";
 export function prepareSolutionInput(raw: any) {
   const normalized = {
     ...raw,

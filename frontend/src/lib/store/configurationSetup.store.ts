@@ -74,11 +74,12 @@ type ConfigurationSetupState = {
     value: UserConfigurationSetupDTO[K]
   ): void;
 
-  setBusinessId(id: string): void;
-  setConfigurationId(id: string): void;
+  setBusinessId(id?: string): void;
+  setConfigurationId(id?: string): void;
 
   reset(): void;
 };
+
 
 /* =========================
    STORE

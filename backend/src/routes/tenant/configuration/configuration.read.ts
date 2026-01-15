@@ -26,7 +26,7 @@ import {
   
   import { json } from "../../../domains/auth/route/helper/https";// ✅ helper allineato
   import { BUSINESS_KEY } from "../../../lib/kv";
-  import { BusinessSchema } from "../../../domains/business/business.schema";
+  import { BusinessSchema } from "../../../domains/business/schema/business.schema";
   import type { Env } from "../../../types/env";
   
   /* ======================================================
@@ -317,9 +317,9 @@ import {
       ...existing,
       ...patch,
       // 🔒 normalizzazione tag
-  businessTags: patch.businessTags
-  ? normalizeBusinessTags(patch.businessTags)
-  : existing.businessTags,
+  descriptionTags: patch.descriptionTags
+  ? normalizeBusinessTags(patch.descriptionTags)
+  : existing.descriptionTags,
       updatedAt: new Date().toISOString(),
     };
   

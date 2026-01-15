@@ -49,7 +49,7 @@ export function normalizeBusiness(raw: any): BusinessInternalDTO {
       : [],
 
     designProfile: raw.designProfile ?? undefined,
-descriptionTags: Array.isArray(raw.descriptionTags)
+    descriptionTags: Array.isArray(raw.descriptionTags)
   ? raw.descriptionTags
   : [],
 

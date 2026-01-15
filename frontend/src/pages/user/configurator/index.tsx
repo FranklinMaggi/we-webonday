@@ -103,24 +103,11 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate, useParams ,useLocation} from "react-router-dom";
-
+import { type ConfigurationConfiguratorDTO } from "../../../lib/apiModels/user/Configuration.api-model";
 import ConfigurationSetupPage from "./setup/ConfigurationSetupPage";
 import { useConfigurationSetupStore } from "../../../lib/store/configurationSetup.store";
-
-/* ======================================================
-   TYPES (READ-ONLY VIEW MODELS)
-====================================================== */
-
-type ConfigurationDTO = {
-  id: string;
-  solutionId: string;
-  productId?: string;
-  options?: string[];
-  businessTags?: string[];
-  data?: any;
-  status: string;
-};
-
+import { getMyConfiguration } from "../../../lib/userApi/configuration.user.api";
+import { getSolutionById } from "../../../lib/publicApi/solutions/solutions.public.api";
 
 /* ======================================================
    COMPONENT
@@ -129,15 +116,18 @@ console.log("[CONFIGURATOR ENTRY]", {
   pathname: window.location.pathname,
   search: window.location.search,
 });
+
+{/** */}
 export default function ConfigurationIndex() {
   const navigate = useNavigate();
+  
   const { id: configurationId } = useParams<{ id: string }>();
   const location = useLocation() ; 
   const fromCart = new URLSearchParams(location.search).get("fromCart");
   const { setField, reset } = useConfigurationSetupStore();
 
   const [configuration, setConfiguration] =
-    useState<ConfigurationDTO | null>(null);
+    useState<ConfigurationConfiguratorDTO | null>(null);
 
 
   const [loading, setLoading] = useState(true);
@@ -175,86 +165,73 @@ export default function ConfigurationIndex() {
   ====================================================== */
   useEffect(() => {
     if (!configurationId) return;
-
-    async function loadConfiguration() {
+  
+    async function load() {
       try {
-        const res = await fetch(
-          `/api/configuration/${configurationId}`,
-          { credentials: "include" }
-        );
+        const { configuration } =
+          await getMyConfiguration(configurationId);
+        
+          const cfg = configuration;
 
-        const json = await res.json();
-
-        if (!json?.ok || !json.configuration) {
-          navigate("/user");
-          return;
-        }
-
-        const cfg: ConfigurationDTO = json.configuration;
-        setConfiguration(cfg);
-
+        setConfiguration(configuration);
+  
         // =========================
         // PREFILL STORE (BE → FE)
         // =========================
         setField("solutionId", cfg.solutionId);
-
-        if (cfg.productId) {
-          setField("productId", cfg.productId);
+  
+        if (configuration.productId)
+          setField("productId", configuration.productId);
+  
+        if (configuration.optionId)
+          setField("optionIds", configuration.optionId);
+  
+        if (configuration.descriptionTags)
+          setField("businessDescriptionTags", configuration.descriptionTags);
+  
+        if (configuration.data) {
+          Object.entries(configuration.data).forEach(([k, v]) =>
+            setField(k as any, v as any)
+          );
         }
-
-        if (cfg.options) {
-          setField("optionIds", cfg.options);
-        }
-
-        if (cfg.businessTags) {
-          setField("businessDescriptionTags", cfg.businessTags);
-        }
-
-        // Workspace data (se presente)
-        if (cfg.data) {
-          Object.entries(cfg.data).forEach(([key, value]) => {
-            setField(key as any, value as any);
-          });
-        }
+      } catch {
+        navigate("/user/dashboard", { replace: true });
       } finally {
         setLoading(false);
       }
     }
-
-    loadConfiguration();
+  
+    load();
   }, [configurationId, navigate, setField]);
-
+  
   /* ======================================================
      STEP 2 — LOAD SOLUTION (SEED TAGS / INDUSTRIES)
   ====================================================== */
   useEffect(() => {
-    if (!configuration) return;
-  
-    const solutionId = configuration.solutionId;
-    if (!solutionId) return;
+    if (!configuration?.solutionId) return;
   
     async function loadSolution() {
-      const res = await fetch(
-        `/api/solution?id=${solutionId}`
-      );
+      try {
+        const res = await getSolutionById(configuration.solutionId);
   
-      const json = await res.json();
+        if (res.ok && res.solution) {
+          const mergedTags = Array.from(
+            new Set([
+              ...(res.solution.tags ?? []),
+              ...(res.solution.userGeneratedTags ?? []),
+            ])
+          );
   
-      if (json?.ok && json.solution) {
-        const mergedTags = Array.from(
-          new Set([
-            ...(json.solution.tags ?? []),
-            ...(json.solution.userGeneratedTags ?? []),
-          ])
-        );
-      
-        setField("solutionServiceTags", mergedTags);
+          setField("solutionServiceTags", mergedTags);
+        }
+      } catch {
+        // NON blocca il configurator
       }
-      
     }
   
     loadSolution();
   }, [configuration, setField]);
+  
   
 
   /* ======================================================

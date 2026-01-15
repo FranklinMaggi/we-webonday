@@ -15,7 +15,7 @@
 
 import type { Env } from "../../types/env";
 import { requireAdmin } from "../../domains/auth/route/admin/guard/admin.guard";
-import { SolutionSchema } from "@domains/solution/solution.schema";
+import { SolutionSchema } from "@domains/solution/schema/solution.schema";
 /* =========================
    JSON HELPER
 ========================= */

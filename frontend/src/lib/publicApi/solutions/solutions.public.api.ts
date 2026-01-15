@@ -22,7 +22,9 @@
  * ======================================================
  */
 
+import { apiFetch } from "../../api";
 import { API_BASE } from "../../config";
+
 import {type  PublicSolutionDTO } from "../../dto/solution.public.dto";
 /* ======================================================
    DTO — SOLUTION (LIST)
@@ -108,3 +110,25 @@ export async function fetchPublicSolutionById(
 
   return data.solution;
 }
+
+export async function getSolutionById(solutionId: string) {
+  const res = await apiFetch<{
+    ok: true;
+    solution: {
+      tags?: string[];
+      userGeneratedTags?: string[];
+    };
+  }>(`/api/solution?id=${solutionId}`, {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  if (!res) {
+    throw new Error("API /api/solution returned null");
+  }
+
+  return res;
+
+}
+
+

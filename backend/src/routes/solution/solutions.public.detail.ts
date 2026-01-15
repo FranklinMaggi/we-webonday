@@ -21,7 +21,7 @@
 ====================================================== */
 
 import type { Env } from "../../types/env";
-import { SolutionSchema } from "../../domains/solution/solution.schema";
+import { SolutionSchema } from "../../domains/solution/schema/solution.schema";
 import { ProductSchema } from "../../domains/product/product.schema";
 import { getSolutionImageUrl } from "../../utils/assets";
 import { getSolutionImages } from "../../utils/assets";

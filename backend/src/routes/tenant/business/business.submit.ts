@@ -20,7 +20,7 @@ PERCHÉ:
 
 import type { Env } from "../../../types/env";
 
-import { BusinessSchema } from "../../../domains/business/business.schema";
+import { BusinessSchema } from "../../../domains/business/schema/business.schema";
 import { logActivity } from "../../../domains/activity/router/logActivity";
 
 import { BUSINESS_KEY } from "../../../lib/kv";

@@ -26,7 +26,7 @@
 
 import type { Env } from "../../../types/env";
 
-import { BusinessSchema } from "../../../domains/business/business.schema";
+import { BusinessSchema } from "../../../domains/business/schema/business.schema";
 import { normalizeBusinessInput } from "../../../domains/business/business.input.normalizer";
 import { BUSINESS_KEY } from "../../../lib/kv";
 import { requireAuthUser } from "@domains/auth";

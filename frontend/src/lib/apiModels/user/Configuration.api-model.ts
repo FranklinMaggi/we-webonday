@@ -38,3 +38,40 @@ export type ConfigurationDTO = {
     updatedAt?: string;
   };
   
+  
+  /**
+ * ======================================================
+ * CONFIGURATION — CONFIGURATOR DTO (FE)
+ * ======================================================
+ *
+ * USO ESCLUSIVO:
+ * - /user/configurator/:id
+ *
+ * SOURCE OF TRUTH:
+ * - Backend (endpoint dedicato)
+ *
+ * NON USARE:
+ * - per liste
+ * - per workspace
+ * ======================================================
+ */
+
+export type ConfigurationConfiguratorDTO = {
+  id: string;
+  status: "draft" | "preview" | "ordered";
+
+  /* CORE */
+  solutionId: string;
+  productId?: string;
+  optionIds?: string[];
+
+  /* BUSINESS TAGS */
+  businessDescriptionTags?: string[];
+  businessServiceTags?: string[];
+
+  /* WIZARD DATA */
+  data?: Record<string, unknown>;
+
+  createdAt?: string;
+  updatedAt?: string;
+};
