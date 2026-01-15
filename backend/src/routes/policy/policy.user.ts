@@ -24,9 +24,9 @@ import {
   PolicyScope,
 } from "./policy.core";
 import {
-  requireUser,
-  getUserFromSession,
-} from "../../lib/auth/session";
+  requireAuthUser ,
+  getUserFromSession ,
+} from "@domains/auth";
 
 /* JSON helper */
 function json(body: unknown, status = 200): Response {
@@ -72,7 +72,7 @@ export async function acceptPolicy(
   request: Request,
   env: Env
 ): Promise<Response> {
-  const session = await requireUser(request, env);
+  const session = await requireAuthUser(request, env);
   if (!session) {
     return json({ ok: false, error: "UNAUTHORIZED" }, 401);
   }

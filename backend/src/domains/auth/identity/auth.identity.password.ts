@@ -29,7 +29,9 @@
  * ======================================================
  */
 
-import type { AuthIdentity } from "../types";
+import type { AuthIdentity } from "./auth.identity.types";
+
+
 export function mapPasswordLogin(
     email: string,
     passwordHash: string

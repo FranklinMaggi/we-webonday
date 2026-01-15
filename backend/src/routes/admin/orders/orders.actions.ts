@@ -49,8 +49,8 @@ import {
   OrderStatusSchema,
   assertCheckoutOrderTransition
 } from "../../../domains/order/order.checkout.schema";
-import { json } from "../../../lib/https";
-import { logActivity } from "../../../lib/logActivity";
+import { json } from "../../../domains/auth/route/helper/https";
+import { logActivity } from "../../../domains/activity/router/logActivity";
 
 /* =========================
    INPUT SCHEMAS

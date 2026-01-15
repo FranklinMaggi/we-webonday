@@ -25,8 +25,8 @@ import {
 } from "../../../lib/kv";
 
 import { createReferral } from "../../../domains/referral/referral.domain";
-import { requireUser } from "../../../lib/auth/session";
-import { json } from "../../../lib/https";
+import { requireAuthUser } from "@domains/auth";
+import { json } from "../../../domains/auth/route/helper/https";
 
 /* ======================================================
    CREATE REFERRAL
@@ -39,7 +39,7 @@ export async function createReferralHandler(
   /* =====================
      1️⃣ AUTH
   ====================== */
-  const session = await requireUser(request, env);
+  const session = await requireAuthUser(request, env);
 
   if (!session) {
     return json(
@@ -117,7 +117,7 @@ export async function getMyReferral(
   /* =====================
      1️⃣ AUTH
   ====================== */
-  const session = await requireUser(request, env);
+  const session = await requireAuthUser(request, env);
 
   if (!session) {
     return json(

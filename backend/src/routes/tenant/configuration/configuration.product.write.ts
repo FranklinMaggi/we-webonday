@@ -34,7 +34,7 @@
 import { z } from "zod";
 import type { Env } from "../../../types/env";
 
-import { requireUser } from "../../../lib/auth/session";
+import { requireAuthUser } from "@domains/auth";
 
 import { SolutionSchema } from "../../../domains/solution/solution.schema";
 import { ProductSchema } from "../../../domains/product/product.schema";
@@ -67,7 +67,7 @@ export async function createConfigurationFromCart(
   /* =========================
      AUTH — REQUIRED
   ========================= */
-  const auth = await requireUser(req, env);
+  const auth = await requireAuthUser(req, env);
   if (!auth) {
     return Response.json(
       { ok: false, error: "UNAUTHORIZED" },

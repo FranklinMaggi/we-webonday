@@ -14,7 +14,7 @@
 
 import type { Env } from "../../../types/env";
 import { ProjectSchema } from "../../../domains/project/project.schema";
-import { requireAdmin } from "../guard/admin.guard";
+import { requireAdmin } from "../../../domains/auth/route/admin/guard/admin.guard";
 
 /* =========================
    JSON helper

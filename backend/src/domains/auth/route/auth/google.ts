@@ -1,11 +1,11 @@
 // routes/auth/google.ts
 
-import type { Env } from "../../types/env";
-import { getCorsHeaders } from "../../index";
-import { logActivity } from "../../lib/logActivity";
-import { resolveOrCreateUser } from "../../lib/auth/authService";
-import { mapGooglePayload } from "../../lib/auth/providers/google";
-import { buildSessionCookie } from "../../lib/auth/session";
+import type { Env } from "../../../../types/env";
+import { getCorsHeaders } from "../../../../index";
+import { logActivity } from "../../../activity/router/logActivity";
+import { resolveOrCreateUser } from "../../user/auth.user.service";
+import { mapGooglePayload } from "@domains/auth/identity/auth.identity.google";
+import { buildSessionCookie } from "../../session/auth.session.cookies";
 
 export async function googleAuth(request: Request, env: Env): Promise<Response> {
   const redirect =

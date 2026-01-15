@@ -34,7 +34,8 @@
  * ======================================================
  */
 
-import type { AuthIdentity } from "../types";
+import type { AuthIdentity } from "./auth.identity.types";
+
 export function mapGooglePayload(payload: any): AuthIdentity {
     return {
       provider: "google",

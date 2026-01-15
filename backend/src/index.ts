@@ -22,13 +22,8 @@ import type { Env } from "./types/env";
    AUTH — USER
 ============================================================ */
 
-import { googleAuth } from "./routes/auth/google";
-import { googleCallback } from "./routes/auth/google";
-
-import { registerUser } from "./routes/auth/password";
-import { loginUser } from "./routes/auth/password";
-import { getUser } from "./routes/auth/password";
-import { logoutUser } from "./routes/auth/password";
+import { getUser ,registerUser ,loginUser ,logoutUser 
+  ,googleAuth ,googleCallback} from "@domains/auth";
 
 
 // import
@@ -138,14 +133,14 @@ import { createConfigurationFromCart } from "./routes/tenant/configuration";
    COOKIES — CONSENSO
 ============================================================ */
 
-import { acceptCookies } from "./routes/system/cookies/cookies";
-import { getCookieStatus } from "./routes/system/cookies/cookies";
+import { acceptCookies } from "./domains/auth/cookies/cookies";
+import { getCookieStatus } from "./domains/auth/cookies/cookies";
 
 /* ============================================================
    ADMIN — GUARD
 ============================================================ */
 
-import { requireAdmin } from "./routes/admin/guard/admin.guard";
+import { requireAdmin } from "./domains/auth/route/admin/guard/admin.guard";
 
 /* ============================================================
    ADMIN — READ
@@ -180,7 +175,7 @@ import { getSolutions } from "./routes/solution/solutions.public.list";
    HTTP HELPERS
 ============================================================ */
 
-import { json } from "./lib/https";
+import { json } from "./domains/auth/route/helper/https";
 
 /* ============================================================
    CORS — SINGLE SOURCE OF TRUTH

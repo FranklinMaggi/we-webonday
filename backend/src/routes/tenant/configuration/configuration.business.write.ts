@@ -28,8 +28,8 @@
 
 import { z } from "zod";
 import type { Env } from "../../../types/env";
-import { requireUser } from "../../../lib/auth/session";
-import { json } from "../../../lib/https";
+import { requireAuthUser } from "@domains/auth";
+import { json } from "../../../domains/auth/route/helper/https";
 
 import {configurationKey,userConfigurationsKey,buildConfigurationId,} from "../../../domains/configuration";
 import { BusinessSchema } from "../../../domains/business/business.schema";
@@ -58,7 +58,7 @@ export async function upsertConfigurationFromBusiness(
   // =========================
   // AUTH
   // =========================
-  const session = await requireUser(request, env);
+  const session = await requireAuthUser(request, env);
   if (!session) {
     return json(
       { ok: false, error: "UNAUTHORIZED" },

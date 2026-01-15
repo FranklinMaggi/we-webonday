@@ -23,8 +23,8 @@ import type { Env } from "../../../types/env";
 import { BusinessSchema } from "../../../domains/business/business.schema";
 import { BUSINESS_KEY } from "../../../lib/kv";
 
-import { requireUser } from "../../../lib/auth/session";
-import { json } from "../../../lib/https";
+import { requireAuthUser } from "@domains/auth";
+import { json } from "../../../domains/auth/route/helper/https";
 
 /* ======================================================
    UPLOAD BUSINESS MENU (PDF)
@@ -38,7 +38,7 @@ export async function uploadBusinessMenu(
      1️⃣ AUTH
   ====================== */
  
-const session = await requireUser(request, env);
+const session = await requireAuthUser(request, env);
 
 if (!session) {
   return json(

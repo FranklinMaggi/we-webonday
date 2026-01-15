@@ -10,7 +10,7 @@
 // - Supporta più business per lo stesso user
 //
 // INVARIANTI:
-// - user derivato SOLO da sessione (requireUser)
+// - user derivato SOLO da sessione (requireAuthUser)
 // - FE NON passa userId
 // - BusinessSchema è verità assoluta
 //
@@ -29,8 +29,8 @@ import type { Env } from "../../../types/env";
 import { BusinessSchema } from "../../../domains/business/business.schema";
 import { normalizeBusinessInput } from "../../../domains/business/business.input.normalizer";
 import { BUSINESS_KEY } from "../../../lib/kv";
-import { requireUser } from "../../../lib/auth/session";
-import { json } from "../../../lib/https";
+import { requireAuthUser } from "@domains/auth";
+import { json } from "../../../domains/auth/route/helper/https";
 
 /* =========================
    KV KEYS (LOCAL)
@@ -68,7 +68,7 @@ export async function createBusiness(
   /* =====================
      1) AUTH (HARD)
   ====================== */
-  const session = await requireUser(request, env);
+  const session = await requireAuthUser(request, env);
   if (!session) {
     return json({ ok: false, error: "UNAUTHORIZED" }, request, env, 401);
   }

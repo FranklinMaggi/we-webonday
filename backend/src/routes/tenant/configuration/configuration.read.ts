@@ -22,8 +22,9 @@ import {
     buildConfigurationId,
   } from "../../../domains/configuration";
   
-  import { requireUser } from "../../../lib/auth/session";
-  import { json } from "../../../lib/https";// ✅ helper allineato
+  import { requireAuthUser } from "@domains/auth";
+  
+  import { json } from "../../../domains/auth/route/helper/https";// ✅ helper allineato
   import { BUSINESS_KEY } from "../../../lib/kv";
   import { BusinessSchema } from "../../../domains/business/business.schema";
   import type { Env } from "../../../types/env";
@@ -36,7 +37,7 @@ import {
     request: Request,
     env: Env
   ) {
-    const session = await requireUser(request, env);
+    const session = await requireAuthUser(request, env);
     if (!session) {
       return json(
         { ok: false, error: "UNAUTHORIZED" },
@@ -74,7 +75,7 @@ import {
     env: Env,
     id: string
   ) {
-    const session = await requireUser(request, env);
+    const session = await requireAuthUser(request, env);
     if (!session) {
       return json(
         { ok: false, error: "UNAUTHORIZED" },
@@ -118,7 +119,7 @@ import {
     request: Request,
     env: Env
   ) {
-    const session = await requireUser(request, env);
+    const session = await requireAuthUser(request, env);
     if (!session) {
       return json(
         { ok: false, error: "UNAUTHORIZED" },
@@ -250,7 +251,7 @@ import {
     env: Env,
     id: string
   ) {
-    const session = await requireUser(request, env);
+    const session = await requireAuthUser(request, env);
     if (!session) {
       return json(
         { ok: false, error: "UNAUTHORIZED" },

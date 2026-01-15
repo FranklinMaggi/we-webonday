@@ -28,7 +28,7 @@
  */
 
 import type { Env } from "../../../types/env";
-import { json } from "../../../lib/https";
+import { json } from "../../../domains/auth/route/helper/https";
 
 /**
  * ProjectSetupSchema

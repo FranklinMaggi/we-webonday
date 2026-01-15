@@ -16,9 +16,9 @@ USA:
 - domains/activity/activity.schema.ts
 ====================================================== */
 
-import type { Env } from "../types/env";
+import type { Env } from "../../../types/env";
 
-import { ActivitySchema } from "../domains/activity/activity.schema";
+import { ActivitySchema } from "../activity.schema";
 
 export async function logActivity(
   env: Env,

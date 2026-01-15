@@ -16,10 +16,10 @@
 // ======================================================
 
 import type { Env } from "../../../types/env";
-import { requireUser } from "../../../lib/auth/session";
+import { requireAuthUser } from "@domains/auth";
 import { BUSINESS_KEY } from "../../../lib/kv";
 import { BusinessSchema } from "../../../domains/business/business.schema";
-import { json } from "../../../lib/https";
+import { json } from "../../../domains/auth/route/helper/https";
 
 export async function getBusiness(
   request: Request,
@@ -28,7 +28,7 @@ export async function getBusiness(
   /* =====================
      1) AUTH
   ====================== */
-  const session = await requireUser(request, env);
+  const session = await requireAuthUser(request, env);
   if (!session) {
     return json({ ok: false, error: "UNAUTHORIZED" }, request, env, 401);
   }

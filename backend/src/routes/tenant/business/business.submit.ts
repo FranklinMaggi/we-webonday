@@ -21,11 +21,11 @@ PERCHÉ:
 import type { Env } from "../../../types/env";
 
 import { BusinessSchema } from "../../../domains/business/business.schema";
-import { logActivity } from "../../../lib/logActivity";
+import { logActivity } from "../../../domains/activity/router/logActivity";
 
 import { BUSINESS_KEY } from "../../../lib/kv";
-import { requireUser } from "../../../lib/auth/session";
-import { json } from "../../../lib/https";
+import { requireAuthUser } from "@domains/auth";
+import { json } from "../../../domains/auth/route/helper/https";
 
 /* ======================================================
    SUBMIT BUSINESS
@@ -39,7 +39,7 @@ export async function submitBusiness(
   /* =====================
      1️⃣ AUTH
   ====================== */
-  const session = await requireUser(request, env);
+  const session = await requireAuthUser(request, env);
 
   if (!session) {
     return json(

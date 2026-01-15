@@ -27,7 +27,7 @@ import type { Env } from "../../../types/env";
 import { normalizeProductInput } from "../../../domains/product/product.input.normalizer";
 import { ProductSchema } from "../../../domains/product/product.schema";
 import type { Product } from "../../../domains/product/product.schema";
-import { requireAdmin } from "../../admin/guard/admin.guard";
+import { requireAdmin } from "../../../domains/auth/route/admin/guard/admin.guard";
 import { OptionSchema } from "../../../domains/option/option.schema.ts";
 /* ============================================================
    GET ALL PRODUCTS (PUBLIC)

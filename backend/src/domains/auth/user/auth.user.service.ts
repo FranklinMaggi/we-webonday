@@ -34,9 +34,9 @@
  * ======================================================
  */
 
-import type { AuthIdentity } from "./types";
-import type { Env } from "../../types/env";
-import { UserSchema } from "../../domains/user/user.schema";
+import type { AuthIdentity } from "../identity/auth.identity.types";
+import type { Env } from "../../../types/env";
+import { UserSchema } from "../../user/user.schema";
 
 export async function resolveOrCreateUser(
   env: Env,

@@ -10,14 +10,14 @@
 // - Basata su indice KV (no scan, no join)
 //
 // INVARIANTI:
-// - Auth hard (requireUser)
+// - Auth hard (requireAuthUser)
 // - Read-only
 // - Non carica Business completi
 // ======================================================
 
 import type { Env } from "../../../types/env";
-import { requireUser } from "../../../lib/auth/session";
-import { json } from "../../../lib/https";
+import { requireAuthUser } from "@domains/auth";
+import { json } from "../../../domains/auth/route/helper/https";
 
 const USER_BUSINESSES_KEY = (userId: string) =>
   `USER_BUSINESSES:${userId}`;
@@ -34,7 +34,7 @@ export async function listBusinesses(
   request: Request,
   env: Env
 ): Promise<Response> {
-  const session = await requireUser(request, env);
+  const session = await requireAuthUser(request, env);
   if (!session) {
     return json({ ok: false, error: "UNAUTHORIZED" }, request, env, 401);
   }

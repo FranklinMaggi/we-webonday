@@ -1,6 +1,6 @@
 //superadmin.tsx
-import type { Env } from "../types/env";
-import { getCorsHeaders } from "../index";
+import type { Env } from "../../../../types/env";
+import { getCorsHeaders } from "../../../../index";
 
 export function json(
   body: unknown,

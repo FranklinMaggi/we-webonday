@@ -1,7 +1,7 @@
 import type { Env } from "../../../../types/env";
 import { CartSchema } from "../../../../domains/cart/cart.schema";
 import { CART_KEY } from "../../../../domains/cart/cart.keys";
-import { getUserIdFromSession } from "../../../../lib/auth/session";
+import { getUserIdFromSession } from "@domains/auth";
 
 /**
  * READ CART v2

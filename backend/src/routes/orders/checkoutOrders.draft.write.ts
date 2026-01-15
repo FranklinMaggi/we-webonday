@@ -25,7 +25,7 @@ import {
   CheckoutOrderDomainSchema,
   OrderKindSchema,
 } from "../../domains/order/order.checkout.schema";
-import { json } from "../../lib/https";
+import { json } from "../../domains/auth/route/helper/https";
 
 /* =========================
    INPUT SCHEMA

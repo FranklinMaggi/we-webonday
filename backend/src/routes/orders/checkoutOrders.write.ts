@@ -24,7 +24,7 @@
 import { z } from "zod";
 import type { Env } from "../../types/env";
 import { CheckoutOrderDomainSchema } from "../../domains/order/order.checkout.schema";
-import { json } from "../../lib/https";
+import { json } from "../../domains/auth/route/helper/https";
 
 /* =========================
    INPUT SCHEMA
