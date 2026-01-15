@@ -89,7 +89,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 
-import { listMyConfigurations } from "../../../../lib/userApi/configuration.user.api";
 import type { ConfigurationDTO } from "../../../../lib/apiModels/user/Configuration.api-model";
 
 export default function UserConfigurationWorkspace() {
@@ -102,17 +101,24 @@ export default function UserConfigurationWorkspace() {
 
   useEffect(() => {
     if (!id) return;
-
-    listMyConfigurations()
-      .then((res) => {
-        const found = res.items.find((c) => c.id === id);
-        if (found) {
-          setConfiguration(found);
+  
+    setLoading(true);
+  
+    fetch(`/api/configuration/${id}`, {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        if (!json?.ok || !json.configuration) {
+          setConfiguration(null);
+          return;
         }
+  
+        setConfiguration(json.configuration);
       })
       .finally(() => setLoading(false));
   }, [id]);
-
+  
   /* =========================
      UI GUARDS
   ========================= */
