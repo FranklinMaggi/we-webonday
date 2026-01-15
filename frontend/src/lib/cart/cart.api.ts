@@ -11,6 +11,7 @@
  * - Nessun item, nessun pricing
  * ======================================================
  */
+import { apiFetch } from "../api";
 import { useIdentityStore } from "../store/identity.store";
 
 export type CartPointer = {
@@ -39,7 +40,7 @@ export type CartPointer = {
     payload: CartPointer
   ): Promise<void> {
     const { identityId } = useIdentityStore.getState();
-    const res = await fetch("/api/cart", {
+     await apiFetch("/api/cart", {
       method: "PUT",
       credentials: "include",
       headers: { "Content-Type": "application/json" ,
@@ -54,10 +55,7 @@ export type CartPointer = {
       
       body: JSON.stringify(payload),
     });
-  
-    if (!res.ok) {
-      console.error("[CART] PUT failed", res.status);
-    }
+
   }
   
   /* =========================
