@@ -90,6 +90,7 @@ import { useEffect, useState } from "react";
 
 
 import type { ConfigurationDTO } from "../../../../lib/apiModels/user/Configuration.api-model";
+import { apiFetch } from "../../../../lib/api";
 
 export default function UserConfigurationWorkspace() {
   const { id } = useParams<{ id: string }>();
@@ -103,20 +104,21 @@ export default function UserConfigurationWorkspace() {
     if (!id) return;
   
     setLoading(true);
-  
-    fetch(`/api/configuration/${id}`, {
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((json) => {
-        if (!json?.ok || !json.configuration) {
+   
+    apiFetch<{
+      ok: true;
+      configuration: ConfigurationDTO;
+    }>(`/api/configuration/${id}`)
+      .then((res) => {
+        if (!res?.ok) {
           setConfiguration(null);
           return;
         }
-  
-        setConfiguration(json.configuration);
+    
+        setConfiguration(res.configuration);
       })
       .finally(() => setLoading(false));
+    
   }, [id]);
   
   /* =========================
