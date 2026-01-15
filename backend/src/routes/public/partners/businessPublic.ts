@@ -115,7 +115,7 @@ export async function getBusinessPublic(
      domain → internal DTO → public DTO
   ====================== */
   const internalDTO = normalizeBusiness(business);
-  const publicDTO = normalizePublicBusiness(internalDTO);
+  const publicDTO = normalizeBusiness(internalDTO);
   /* =====================
      6️⃣ RESPONSE
   ====================== */
