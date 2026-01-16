@@ -68,7 +68,7 @@ export default function CartPreview({
           credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            businessName: "progetto",
+            businessName: product.id,
             solutionId,
             productId: product.id,
             optionIds: selectedOptions,
