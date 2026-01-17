@@ -1,0 +1,1 @@
+//come business.read , ma al contrario : leggono da businessform , FE quelli selezionati , e li restituiscono nel BE in configuration_KV durante la configurazione del business 

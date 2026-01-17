@@ -1,0 +1,22 @@
+// ======================================================
+// BE || routes/configuration/index.ts
+// ======================================================
+
+export { deleteUserConfiguration } from "./configuration.user.delete";
+
+export {
+    listUserConfigurations,
+    getUserConfiguration,
+    createConfiguration,
+    updateConfiguration,
+  } from "./configuration.read";
+  
+  export {
+    listAllConfigurations,
+  } from "./configuration.admin.read";
+  export {
+    upsertConfigurationFromBusiness,
+  } from "./configuration.business.write";
+  export {
+    createConfigurationFromCart,
+  } from "./configuration.product.write";

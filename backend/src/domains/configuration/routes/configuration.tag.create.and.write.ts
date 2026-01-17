@@ -1,0 +1,3 @@
+//business.tag.create.and.write.ts 
+// se non c'è un tag adatto un business puo crearlo , deve essere regedato , deve essere in fomrato giusto , deve essere visionato e modarato non contenere parole sconcie , 
+//in fomrato kebab , una volta scritto , con invio viene versionato scritto in BE -> solution -> createTag() -> recuperato da BESolution all'istante con getLatestTagCreated write-> automatico 
