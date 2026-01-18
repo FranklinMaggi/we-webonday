@@ -73,21 +73,6 @@ export interface ProductVM {
    */
   pricing: ProductPricingVM;
 
-  /**
-   * Opzioni aggiuntive (upsell)
-   */
-  options: ProductOptionVM[];
 
-  /**
-   * FLAG DI CONTROLLO FLUSSO (CRITICO)
-   *
-   * false → prodotto semplice
-   *         - va diretto a checkout
-   *         - NON crea Configuration
-   *
-   * true  → prodotto avanzato
-   *         - richiede configurazione
-   *         - passa dal configurator
-   */
   requiresConfiguration: boolean;
 }

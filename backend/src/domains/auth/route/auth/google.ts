@@ -1,7 +1,7 @@
 // routes/auth/google.ts
 
 import type { Env } from "../../../../types/env";
-import { getCorsHeaders } from "../../../../index";
+import { getCorsHeaders } from "@domains/auth/cors/auth.cors";
 import { logActivity } from "../../../activity/router/logActivity";
 import { resolveOrCreateUser } from "../../user/auth.user.service";
 import { mapGooglePayload } from "@domains/auth/identity/auth.identity.google";
@@ -27,7 +27,7 @@ export async function googleAuth(request: Request, env: Env): Promise<Response> 
       "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString(),
   });
 
-  const cors = getCorsHeaders(request, env);
+  const cors = getCorsHeaders(request, env,"SOFT");
   for (const [k, v] of Object.entries(cors)) headers.set(k, v);
 
   return new Response(null, { status: 302, headers });

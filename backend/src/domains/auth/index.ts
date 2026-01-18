@@ -16,7 +16,14 @@
  * ======================================================
  */
 
+export { emitAuthLifecycleEvent } from "./lifecycle/auth.lifecycle.ar";
 
+export { logoutUser } from "./route/user/auth.user.logout";
+export { withCors } from "./cors/auth.cors";
+
+export { resolveAuthCorsMode } from "./cors/auth.cors";
+
+export { getCorsHeaders } from "./cors/auth.cors";
 
 /* ======================================================
    IDENTITY (provider → AuthIdentity)
@@ -67,4 +74,6 @@ export { requireAuthUser } from "./session/auth.session.guard";
 export { registerUser } from "./route/user/auth.user.register";
 export { loginUser } from "./route/user/auth.user.login";
 export { getUser } from "./route/user/auth.user.me";
-export { logoutUser } from "./route/user/auth.user.logout";
+
+
+

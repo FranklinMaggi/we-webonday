@@ -20,7 +20,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { listMyBusinesses } from "../../../../lib/userApi/business.user.api";
+import { listMyBusinesses } from "../../../../domains/buyflow/api/business/business.user.api";
 
 /* =========================
    VIEW MODEL (FE)
@@ -83,7 +83,7 @@ export default function UserBusinessDashboard() {
      HANDLERS
   ====================== */
   function goToConfigurator(configurationId: string) {
-    navigate(`/user/configurator/${configurationId}`);
+    navigate(`/user/dashboard/configuration/${configurationId}`)
   }
 
   function goToBusinessView(businessId: string) {

@@ -24,14 +24,14 @@
 import type { Env } from "../../../types/env";
 
 /* =========================
-   HELPERS
+   DOMAIN JSON HELPER
+   (NO CORS, NO SIDE EFFECT)
 ========================= */
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
     },
   });
 }
@@ -52,26 +52,15 @@ export async function acceptCookies(
   request: Request,
   env: Env
 ): Promise<Response> {
-  if (request.method === "OPTIONS") {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-      },
-    });
-  }
-
   if (request.method !== "POST") {
-    return json({ error: "Method Not Allowed" }, 405);
+    return json({ error: "METHOD_NOT_ALLOWED" }, 405);
   }
 
   let payload: CookieEventPayload;
   try {
     payload = (await request.json()) as CookieEventPayload;
   } catch {
-    return json({ error: "Invalid JSON body" }, 400);
+    return json({ error: "INVALID_JSON_BODY" }, 400);
   }
 
   const today = new Date().toISOString().slice(0, 10);
@@ -101,22 +90,6 @@ export async function acceptCookies(
 
   return json({ ok: true });
 }
-/**
- * AI-SUPERCOMMENT — COOKIE STATUS (DEFAULT)
- *
- * RUOLO:
- * - Fornire uno stato cookie di default
- *
- * SCELTA ARCHITETTURALE:
- * - Necessary: true
- * - Analytics: false
- * - Marketing: false
- *
- * MOTIVO:
- * - Nessun consenso persistito
- * - Banner sempre neutro
- * - Nessun fingerprinting
- */
 
 /* =========================
    GET /api/cookies/status

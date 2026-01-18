@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { initWhatsAppScrollWatcher } from "../../../lib/ui/scrollWatcher";
-import SolutionsSection from "../../../components/solutions/SolutionSection";
+import SolutionsSection from "../../../domains/buyflow/solutions/SolutionSection";
 
 export default function Solutions() {
   useEffect(() => {

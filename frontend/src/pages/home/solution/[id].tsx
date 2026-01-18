@@ -23,12 +23,12 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchProducts } from "../../../lib/publicApi/products/products.public.api";
+import { fetchProducts } from "../../../domains/buyflow/api/publiApi/products/products.public.api";
 
 import { API_BASE } from "../../../lib/config";
 import { initWhatsAppScrollWatcher } from "../../../lib/ui/scrollWatcher";
 import type { ProductVM } from "../../../lib/viewModels/product/Product.view-model";
-import ProductCard from "../../../components/buyflow/catalog/ProductCard/ProductCard";
+import ProductCard from "../../../domains/buyflow/catalog/ProductCard/ProductCard";
 /* =========================
    TIPI PUBLIC
 ========================= */

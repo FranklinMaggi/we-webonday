@@ -17,16 +17,32 @@
 // ============================================================
 
 import type { Env } from "./types/env";
-
 /* ============================================================
    AUTH — USER
 ============================================================ */
+import {
+  getCorsHeaders,
+  withCors,
+  resolveAuthCorsMode,
+  getUser,
+  registerUser,
+  loginUser,
+  logoutUser,
+  googleAuth,
+  googleCallback,
+} from "@domains/auth";
 
-import { getUser ,registerUser ,loginUser ,logoutUser 
-  ,googleAuth ,googleCallback} from "@domains/auth";
+/* ============================================================
+   COOKIES — CONSENSO
+============================================================ */
+
+import { acceptCookies ,
+  getCookieStatus } from "./domains/auth/cookies/cookies";
 
 
-// import
+/* ============================================================
+   PROJECT — ACTUALLY DEPRECATED
+============================================================ */
 import { startProject } from "./routes/tenant/projects/project.start";
 import { progressProject } from "./routes/tenant/projects/project.progress";
 import { completeProject } from "./routes/tenant/projects/project.complete";
@@ -128,13 +144,7 @@ import {
 } from "./routes/admin/options/options.read";
 import { getAdminProductWithOptions } from "./routes/admin/products/products.withOptions";
 
-import { createConfigurationFromCart } from "./routes/tenant/configuration";
-/* ============================================================
-   COOKIES — CONSENSO
-============================================================ */
-
-import { acceptCookies } from "./domains/auth/cookies/cookies";
-import { getCookieStatus } from "./domains/auth/cookies/cookies";
+import { createConfigurationBase } from "@domains/configuration/routes";
 
 /* ============================================================
    ADMIN — GUARD
@@ -177,47 +187,7 @@ import { getSolutions } from "./routes/solution/solutions.public.list";
 
 import { json } from "./domains/auth/route/helper/https";
 
-/* ============================================================
-   CORS — SINGLE SOURCE OF TRUTH
-============================================================ */
 
-export function getCorsHeaders(request: Request, env: Env) {
-  const origin = request.headers.get("Origin") || "";
-
-  const allowedOrigins = [
-    env.FRONTEND_URL,
-    "https://webonday.it",
-    "https://www.webonday.it",
-    "http://localhost:5173",
-    "http://localhost:5174",
-  ];
-
-  const isAllowed = allowedOrigins.includes(origin);
-
-  return {
-    "Access-Control-Allow-Origin": isAllowed ? origin : env.FRONTEND_URL,
-    "Access-Control-Allow-Credentials": "true",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
-    "Access-Control-Allow-Headers":
-      "Content-Type, Authorization, x-admin-token, X-Requested-With",
-    "Access-Control-Max-Age": "86400",
-  };
-}
-
-function withCors(res: Response, request: Request, env: Env): Response {
-  const headers = new Headers(res.headers);
-  const cors = getCorsHeaders(request, env);
-
-  for (const [k, v] of Object.entries(cors)) {
-    headers.set(k, v);
-  }
-
-  return new Response(res.body, {
-    status: res.status,
-    statusText: res.statusText,
-    headers,
-  });
-}
 
 /* ============================================================
    WORKER ENTRYPOINT
@@ -228,15 +198,65 @@ export default {
     const { pathname } = new URL(request.url);
     const method = request.method;
 
-    /* ================= PREFLIGHT ================= */
     if (method === "OPTIONS") {
+      const mode = pathname.startsWith("/api/user/")
+        ? resolveAuthCorsMode(pathname)
+        : "SOFT";
+    
       return new Response(null, {
         status: 204,
-        headers: getCorsHeaders(request, env),
+        headers: new Headers(
+          getCorsHeaders(request, env, mode)
+        ),
       });
     }
+    
 
+     function handleAuth(
+      pathname: string,
+      method: string,
+      request: Request,
+      env: Env
+    ): Promise<Response> | null {
+      if (pathname === "/api/user/google/auth" && method === "GET")
+        return googleAuth(request, env);
+    
+      if (pathname === "/api/user/google/callback" && method === "GET")
+        return googleCallback(request, env);
+    
+      if (pathname === "/api/user/me" && method === "GET")
+        return getUser(request, env);
+    
+      if (pathname === "/api/user/register" && method === "POST")
+        return registerUser(request, env);
+    
+      if (pathname === "/api/user/login" && method === "POST")
+        return loginUser(request, env);
+    
+      if (pathname === "/api/user/logout" && method === "POST")
+        return logoutUser(request, env);
+    
+      return null;
+    }
+
+    
     try {
+
+
+  /* ======================================================
+    AUTH
+  ====================================================== */
+          const authResponse = await handleAuth(
+            pathname,
+            method,
+            request,
+            env
+          );
+
+          if (authResponse) {
+            return withCors(authResponse, request, env);
+          }
+
 /* ======================================================
    SOLUTIONS — PUBLIC
 ====================================================== */
@@ -288,39 +308,19 @@ if (pathname === "/api/cookies/status" && method === "GET") {
   );
 }
 
-      /* ======================================================
-         AUTH
-      ====================================================== */
-      if (pathname === "/api/user/google/auth" && method === "GET")
-        return withCors(await googleAuth(request, env), request, env);
 
-      if (pathname === "/api/user/google/callback" && method === "GET")
-        return withCors(await googleCallback(request, env), request, env);
-
-      if (pathname === "/api/user/me" && method === "GET")
-        return withCors(await getUser(request, env), request, env);
-
-      if (pathname === "/api/user/register" && method === "POST")
-        return withCors(await registerUser(request, env), request, env);
-
-      if (pathname === "/api/user/login" && method === "POST")
-        return withCors(await loginUser(request, env), request, env);
-
-      if (pathname === "/api/user/logout" && method === "POST")
-        return withCors(await logoutUser(request, env), request, env);
 
       /* ======================================================
          CART
       ====================================================== */
       if (pathname === "/api/cart" && method === "GET")
-        return getCart(request, env);
+        return withCors(await getCart(request, env), request, env);
       
       if (pathname === "/api/cart" && method === "PUT")
-        return putCart(request, env);
+        return withCors(await putCart(request, env), request, env);
       
       if (pathname === "/api/cart" && method === "DELETE")
-        return deleteCart(request, env);
-
+        return withCors(await deleteCart(request, env), request, env);
       /* ======================================================
          ORDERS — USER
       ====================================================== */
@@ -401,11 +401,11 @@ if (pathname === "/api/cookies/status" && method === "GET") {
 
 
 if (
-  pathname === "/api/configuration/from-cart" &&
+  pathname === "/api/configuration/base" &&
   method === "POST"
 ) {
   return withCors(
-    await createConfigurationFromCart(request, env),
+    await createConfigurationBase(request, env),
     request,
     env
   );

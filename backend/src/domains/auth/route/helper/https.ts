@@ -1,6 +1,6 @@
 //superadmin.tsx
 import type { Env } from "../../../../types/env";
-import { getCorsHeaders } from "../../../../index";
+import { getCorsHeaders } from "@domains/auth/cors/auth.cors";
 
 export function json(
   body: unknown,
@@ -12,7 +12,7 @@ export function json(
     "Content-Type": "application/json",
   });
 
-  const cors = getCorsHeaders(request, env);
+  const cors = getCorsHeaders(request, env ,"HARD");
   for (const [k, v] of Object.entries(cors)) {
     headers.set(k, v);
   }

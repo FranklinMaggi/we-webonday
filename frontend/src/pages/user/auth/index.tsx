@@ -1,4 +1,3 @@
-
 // ======================================================
 // FE || pages/user/auth/index.tsx
 // ======================================================
@@ -12,57 +11,46 @@
 // SOURCE OF TRUTH:
 // - Backend auth (session-based)
 //
-// COSA FA:
-// - Login email/password
-// - Login Google OAuth
-// - Redirect post-auth
-//
-// COSA NON FA:
-// - NON gestisce profilo
-// - NON carica dati dashboard
-//
 // INVARIANTI:
-// - credentials: "include" SEMPRE
+// - Tutte le chiamate FE → BE passano da apiFetch
+// - credentials: "include" è gestito DAL CLIENT
 // - redirect controllato via query
 //
 // ======================================================
 
 import { useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../../lib/store/auth.store";
-import { IS_DEV , API_BASE} from "../../../lib/config";
+ import { useAuthStore } from "../../../lib/store/auth.store";
+import { apiFetch } from "../../../lib/api";
+
+
+
 
 export default function UserLoginPage() {
   const fetchUser = useAuthStore((s) => s.fetchUser);
-
   const navigate = useNavigate();
   const location = useLocation();
 
+  /* ======================================================
+     REDIRECT SAFE
+  ====================================================== */
   const redirect = useMemo(() => {
     const params = new URLSearchParams(location.search);
     return params.get("redirect") || "/user/dashboard";
   }, [location.search]);
 
+
+  /* ======================================================
+     STATE
+  ====================================================== */
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-function safeRedirect(target: string) {
-  // ❗ blocca redirect cross-domain in DEV
-  if (IS_DEV && target.startsWith("http")) {
-    console.warn(
-      "[AUTH] Redirect cross-domain bloccato in DEV:",
-      target
-    );
-    navigate("/user/dashboard/workspace", {
-      replace: true,
-    });
-    return;
-  }
-
-  navigate(target, { replace: true });
-}
+  /* ======================================================
+     LOGIN (PASSWORD)
+  ====================================================== */
   async function login() {
     if (loading) return;
 
@@ -70,30 +58,25 @@ function safeRedirect(target: string) {
     setErrorMsg(null);
 
     try {
-      const res = await fetch(`${API_BASE}/api/user/login`, {
+      await apiFetch("/api/user/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
-      const out = await res.json();
-      if (!out?.ok) {
-        setErrorMsg("Email o password non validi");
-        return;
-      }
-
-      // 🔑 backend ha creato la sessione
+      // 🔑 session cookie creato dal backend
       await fetchUser();
 
-      safeRedirect(redirect);
-    } catch {
-      setErrorMsg("Errore di rete. Riprova.");
+      navigate(redirect, { replace:true});
+    } catch (err) {
+      setErrorMsg("Email o password non validi");
     } finally {
       setLoading(false);
     }
   }
 
+  /* ======================================================
+     REGISTER (PASSWORD)
+  ====================================================== */
   async function register() {
     if (loading) return;
 
@@ -101,54 +84,44 @@ function safeRedirect(target: string) {
     setErrorMsg(null);
 
     try {
-      const res = await fetch(`${API_BASE}/api/user/register`, {
+      await apiFetch("/api/user/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
-      const out = await res.json();
-      if (!out?.ok) {
-        setErrorMsg("Registrazione fallita. Email già in uso?");
-        return;
-      }
-
+      // 🔑 session cookie creato dal backend
       await fetchUser();
-      safeRedirect(redirect);
-    } catch {
-      setErrorMsg("Errore di rete. Riprova.");
+
+      navigate(redirect ,{replace:true});
+    } catch (err) {
+      setErrorMsg("Registrazione fallita. Email già in uso?");
     } finally {
       setLoading(false);
     }
   }
 
+  /* ======================================================
+     GOOGLE OAUTH (REDIRECT HARD)
+  ====================================================== */
   function googleLogin() {
-    let safe = redirect;
-  
-    if (IS_DEV && safe.startsWith("http")) {
-      console.warn(
-        "[AUTH] Google OAuth redirect bloccato in DEV:",
-        safe
-      );
-      safe = "/user/dashboard/workspace";
-    }
-  
-    const url = new URL(`${API_BASE}/api/user/google/auth`);
-    url.searchParams.set("redirect", safe);
-  
+    
+    const url = new URL("/api/user/google/auth", window.location.origin);
+    url.searchParams.set("redirect", redirect);
+
     window.location.href = url.toString();
   }
-  
+
+  /* ======================================================
+     UI
+  ====================================================== */
   return (
     <div className="login-page">
       <div className="login-card">
-  
         <h1 className="login-title">Area Cliente</h1>
         <p className="login-subtitle">
           Accedi o crea il tuo account WebOnDay
         </p>
-  
+
         <button
           className="login-google-btn"
           onClick={googleLogin}
@@ -156,9 +129,9 @@ function safeRedirect(target: string) {
         >
           Accedi con Google
         </button>
-  
+
         <div className="login-divider">oppure</div>
-  
+
         <div className="login-form">
           <input
             className="login-input"
@@ -166,7 +139,7 @@ function safeRedirect(target: string) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-  
+
           <input
             className="login-input"
             type="password"
@@ -174,11 +147,9 @@ function safeRedirect(target: string) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-  
-          {errorMsg && (
-            <p className="login-error">{errorMsg}</p>
-          )}
-  
+
+          {errorMsg && <p className="login-error">{errorMsg}</p>}
+
           <button
             className="login-primary-btn"
             onClick={login}
@@ -186,7 +157,7 @@ function safeRedirect(target: string) {
           >
             Accedi
           </button>
-  
+
           <button
             className="login-secondary-btn"
             onClick={register}
@@ -195,13 +166,11 @@ function safeRedirect(target: string) {
             Registrati
           </button>
         </div>
-  
+
         <p className="login-hint">
           L’accesso crea automaticamente una sessione sicura
         </p>
-  
       </div>
     </div>
   );
-  
 }

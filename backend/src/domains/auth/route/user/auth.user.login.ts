@@ -1,20 +1,33 @@
 import type { Env } from "../../../../types/env";
 import { logActivity } from "../../../activity/router/logActivity";
 import { buildSessionCookie } from "../../session/auth.session.cookies";
+import { getCorsHeaders } from "@domains/auth/cors/auth.cors";
 
 /**
- * Helper JSON response standard
+ * Helper JSON response standard + CORS
  */
-function json(body: unknown, status = 200, headers?: HeadersInit) {
-    return new Response(JSON.stringify(body), {
-      status,
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-    });
+function json(
+  body: unknown,
+  request: Request,
+  env: Env,
+  status = 200,
+  extraHeaders?: HeadersInit
+):Response {
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    ...extraHeaders,
+  });
+
+  const cors = getCorsHeaders(request, env , "HARD");
+  for (const [k, v] of Object.entries(cors)) {
+    headers.set(k, v);
   }
-  
+
+  return new Response(JSON.stringify(body), {
+    status,
+    headers,
+  });
+}
 
 /* ============================================================
    LOGIN USER (PASSWORD)
@@ -27,11 +40,13 @@ export async function loginUser(request: Request, env: Env) {
     try {
       body = await request.json();
     } catch {
-      return json({ error: "Invalid JSON body" }, 400);
+      return json({ error: "Invalid JSON body" },request, env, 401);
     }
   
     if (!body.email || !body.password) {
-      return json({ error: "Missing credentials" }, 400);
+      return json({ error: "Missing credentials" }, request, env, 401
+
+      );
     }
   
     const email = body.email.toLowerCase();
@@ -39,12 +54,14 @@ export async function loginUser(request: Request, env: Env) {
     // 2️⃣ Lookup via email index
     const userId = await env.ON_USERS_KV.get(`EMAIL:${email}`);
     if (!userId) {
-      return json({ error: "Invalid credentials" }, 401);
+      return json({ error: "Invalid credentials" }, request, env, 401);
     }
   
     const stored = await env.ON_USERS_KV.get(`USER:${userId}`);
     if (!stored) {
-      return json({ error: "Invalid credentials" }, 401);
+      return json({ error: "Invalid credentials" }, request, env, 401
+
+      );
     }
   
     const user = JSON.parse(stored);
@@ -59,7 +76,7 @@ export async function loginUser(request: Request, env: Env) {
       .join("");
   
     if (passwordHash !== user.passwordHash) {
-      return json({ error: "Invalid credentials" }, 401);
+      return json({ error: "Invalid credentials" }, request, env, 401);
     }
   
     // 4️⃣ Activity log
@@ -80,6 +97,7 @@ export async function loginUser(request: Request, env: Env) {
         userType: user.userType,
         membershipLevel: user.membershipLevel,
       },
+      request , env , 
       200,
       { "Set-Cookie": cookie }
     );

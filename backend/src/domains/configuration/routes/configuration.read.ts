@@ -20,13 +20,13 @@ import {
     userConfigurationsKey,
     getConfiguration,
     buildConfigurationId,
-  } from "..";
+  } from "../../../domains/configuration";
   
   import { requireAuthUser } from "@domains/auth";
   
-  import { json } from "../../auth/route/helper/https";// ✅ helper allineato
+  import { json } from "../../../domains/auth/route/helper/https";// ✅ helper allineato
   import { BUSINESS_KEY } from "../../../lib/kv";
-  import { BusinessSchema } from "../../business/schema/business.schema";
+  import { BusinessSchema } from "../../../domains/business/schema/business.schema";
   import type { Env } from "../../../types/env";
   
   /* ======================================================

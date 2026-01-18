@@ -51,10 +51,7 @@ export function normalizeAdminProductToPublic(
       monthly: Number(raw.pricing?.monthly) || 0,
     },
 
-    options: Array.isArray(raw.options)
-      ? raw.options.map(normalizeAdminOption)
-
-      : [],
+    
       requiresConfiguration: raw.requiresConfiguration ?? false,
   };
 }

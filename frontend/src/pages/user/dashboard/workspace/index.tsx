@@ -26,8 +26,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { listMyConfigurations } from "../../../../lib/userApi/configuration.user.api";
-import type { ConfigurationDTO } from "../../../../lib/apiModels/user/Configuration.api-model";
+import { listMyConfigurations } from "../configurator/api/configuration.user.api";
+import type { ConfigurationDTO } from "../configurator/models/Configuration.api-model";
 
 export default function WorkspaceIndex() {
   const navigate = useNavigate();

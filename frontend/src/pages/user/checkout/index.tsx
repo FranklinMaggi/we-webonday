@@ -44,7 +44,7 @@ import { useParams } from "react-router-dom";
 
 import CartReview from "./steps/CartReview";
 import { useAuthStore } from "../../../lib/store/auth.store";
-import BusinessForm from "../../../components/business/BusinessForm";
+import BusinessForm from "../../../domains/business/BusinessForm";
 import { useCheckout } from "./useCheckout";
 import { useEffect ,useState } from "react";
 export default function CheckoutPage() {

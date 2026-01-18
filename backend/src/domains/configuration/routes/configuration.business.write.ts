@@ -29,12 +29,12 @@
 import { z } from "zod";
 import type { Env } from "../../../types/env";
 import { requireAuthUser } from "@domains/auth";
-import { json } from "../../auth/route/helper/https";
+import { json } from "../../../domains/auth/route/helper/https";
 
-import {configurationKey,userConfigurationsKey,buildConfigurationId,} from "..";
-import { BusinessSchema } from "../../business/schema/business.schema";
-import { ProductSchema } from "../../product/product.schema";
-import type { ConfigurationDTO } from "../schema/configuration.schema";
+import {configurationKey,userConfigurationsKey,buildConfigurationId,} from "../../../domains/configuration";
+import { BusinessSchema } from "../../../domains/business/schema/business.schema";
+import { ProductSchema } from "../../../domains/product/product.schema";
+import type { ConfigurationDTO } from "../../../domains/configuration/schema/configuration.schema";
 
 // =========================
 // INPUT

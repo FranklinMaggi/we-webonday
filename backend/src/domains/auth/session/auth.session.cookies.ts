@@ -48,6 +48,7 @@
  */
 
 import type { Env } from "../../../types/env";
+import { emitAuthLifecycleEvent } from "@domains/auth";
 
 export function buildSessionCookie(
     env: Env,
@@ -56,42 +57,43 @@ export function buildSessionCookie(
   ) {
     const origin = request?.headers.get("Origin") ?? "";
   const referer = request?.headers.get("Referer") ?? "";
+  const isCrossSite =
+  origin.startsWith("http://localhost") ||
+  !origin.endsWith("webonday.it");
 
-  const isLocal =
-    origin.includes("localhost") ||
-    referer.includes("localhost");
-  
-    return [
-      `webonday_session=${userId}`,
-      "Path=/",
-      "HttpOnly",
-      isLocal ? "" : "Secure",
-      isLocal ? "SameSite=Lax" : "SameSite=None",
-      isLocal ? "" : "Domain=.webonday.it",
-      "Max-Age=2592000",
-    ].join("; ");
-  }
-  
+  const cookie = [
+    `webonday_session=${userId}`,
+    "Path=/",
+    "HttpOnly",
+    "Secure",                 // 🔒 OBBLIGATORIO
+    "SameSite=None",          // 🔥 OBBLIGATORIO cross-site
+    "Domain=.webonday.it",
+    "Max-Age=2592000",
+  ].join("; ");
 
+ 
+   
+    emitAuthLifecycleEvent({
+      event: "SESSION_CREATED",
+      userId,
+      source: "route",
+    });
+  return cookie;
+
+}
 
 export function destroySessionCookie(
   env: Env , 
 request?: Request) {
 
-const origin = request?.headers.get("Origin") ?? "";
-  const referer = request?.headers.get("Referer") ?? "";
-
-  const isLocal =
-    origin.includes("localhost") ||
-    referer.includes("localhost");
 
   return [
     "webonday_session=",
     "Path=/",
     "HttpOnly",
-    isLocal ? "" : "Secure",
-    isLocal ? "SameSite=Lax" : "SameSite=None",
-    isLocal ? "" : "Domain=.webonday.it",
+    "Secure",
+    "SameSite=None",
+    "Domain=.webonday.it",
     "Max-Age=0",
   ].join("; ");
 }

@@ -36,9 +36,9 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 /* =========================
    LAYOUTS
 ========================= */
-import { MainLayout } from "../pages/user/configurator/setup/steps/layouts/MainLayout";
+import { MainLayout } from "../pages/user/dashboard/configurator/setup/steps/layouts/MainLayout";
 import DashboardLayout from "../pages/user/dashboard/DashboardLayout";
-import ConfiguratorLayout from "../pages/user/configurator/setup/steps/layouts/ConfiguratorLayout";
+import ConfiguratorLayout from "../pages/user/dashboard/configurator/setup/steps/layouts/ConfiguratorLayout";
 import AdminLayout from "../components/admin/layouts/AdminLayout";
 
 /* =========================
@@ -78,8 +78,8 @@ import WorkspaceIndex from "../pages/user/dashboard/workspace";
 /* =========================
    USER — CONFIGURATOR
 ========================= */
-import UserConfiguratorIndex from "../pages/user/configurator/index";
-import ConfigurationIndex from "../pages/user/configurator/index";
+import UserConfiguratorIndex from "../pages/user/dashboard/configurator/index";
+import ConfigurationIndex from "../pages/user/dashboard/configurator/index";
 
 /* =========================
    ADMIN
@@ -95,7 +95,7 @@ import AdminOptionsPage from "../pages/admin/products/options";
 import AdminEditOptionPage from "../pages/admin/products/options/[id]";
 import SolutionsList from "../pages/admin/solutions";
 import SolutionEditor from "../pages/admin/solutions/[id]";
-
+import UserConfigurationWorkspace from "../pages/user/dashboard/workspace/[id]";
 /* =====================================================
    ROUTER DEFINITION
 ===================================================== */
@@ -157,7 +157,11 @@ const router = createBrowserRouter([
                   { path: ":id", element: <UserBusinessDetail /> },
                 ],
               },
-
+                /* ===== CONFIGURATOR (EMBEDDED IN DASHBOARD) ===== */
+{
+  path: "configuration/:id",
+  element: <ConfigurationIndex />, // riusa l’entry del configurator
+},
               /* ===== CONFIGURATION WORKSPACE (POST-WIZARD) ===== */
               {
                 path: "workspace",
@@ -168,7 +172,7 @@ const router = createBrowserRouter([
                   },
                   {
                     path: ":id",
-                    element: <ConfigurationIndex />,
+                    element: <UserConfigurationWorkspace />,
                   },
                 ],
               },
@@ -209,12 +213,8 @@ const router = createBrowserRouter([
 
           /* ================= CONFIGURATOR ================= */
           {
-            path: "configurator",
-            element: <ConfiguratorLayout />,
-            children: [
-              { index: true, element: <UserConfiguratorIndex /> },
-              { path: ":id", element: <ConfigurationIndex /> },
-            ],
+            path: "configurator/:id",
+            element:<Navigate to="/user/dashboard/configuration/:id" replace />
           },
         ],
       },

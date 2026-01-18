@@ -21,7 +21,7 @@
  */
 import type { Env } from "../../../types/env";
 import { getUserIdFromSession } from "./auth.session.reader";
-
+import { emitAuthLifecycleEvent } from "../lifecycle/auth.lifecycle.ar";
 /**
  * HARD AUTH GUARD
  * Usare SOLO per endpoint protetti
@@ -37,8 +37,18 @@ export async function requireAuthUser(
   if (!raw) return null;
 
   try {
-    return { userId, user: JSON.parse(raw) };
+    const user = JSON.parse(raw);
+  
+    // 🔵 LIFECYCLE — session usata (PASSIVO)
+    emitAuthLifecycleEvent({
+      event: "SESSION_USED",
+      userId,
+      source: "guard",
+    });
+  
+    return { userId, user };
   } catch {
     return null;
   }
+  
 }
