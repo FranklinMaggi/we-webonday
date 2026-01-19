@@ -17,9 +17,9 @@
 // ======================================================
 
 import type { Env } from "../../../types/env";
-import { requireAdmin } from "../../../domains/auth/route/admin/guard/admin.guard";
-import { configurationKey } from "../../../domains/configuration";
-import { json } from "../../../domains/auth/route/helper/https";
+import { requireAdmin } from "../../auth/route/admin/guard/admin.guard";
+import { configurationKey } from "../../configuration";
+import { json } from "../../auth/route/helper/https";
 /* ======================================================
    GET /api/admin/configuration
    LIST ALL CONFIGURATIONS

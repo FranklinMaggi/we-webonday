@@ -14,7 +14,7 @@
 // ======================================================
 
 import { useState } from "react";
-import type { ProductVM } from "../../../../../lib/viewModels/product/Product.view-model";
+import type { ProductVM } from "../../../../lib/viewModels/product/Product.view-model";
 import BuyflowPreForm from "./PreForm";
 
 interface Props {

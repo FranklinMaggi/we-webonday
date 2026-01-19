@@ -114,3 +114,17 @@ export function normalizeOpeningHoursToPublic(
 ): BusinessOpeningHoursDTO {
   return openingHours;
 }
+
+
+export interface NormalizedBusinessBaseInput {
+  name: string;
+  address: string;
+  phone: string;
+  openingHours: string | null;
+
+  solutionId: string;
+  productId: string;
+  optionIds: string[];
+
+  referredBy: string | null;
+}

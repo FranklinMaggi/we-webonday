@@ -57,7 +57,11 @@ export default function ConfigurationSetupPage() {
   const [stepIndex, setStepIndex] = useState(0);
   const [maxReachedStep, setMaxReachedStep] = useState(0);
   const { data } = useConfigurationSetupStore();
-
+  console.log("[SETUP_PAGE] init", {
+    configurationId: data.configurationId,
+    solutionId: data.solutionId,
+    productId: data.productId,
+  });
   /* =========================
      GUARD — STATO MINIMO
      (FAIL FAST, ADHD-SAFE)

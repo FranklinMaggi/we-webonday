@@ -21,10 +21,12 @@
 
 import { useEffect } from "react";
 
-import { useConfigurationSetupStore } from "../../store/configurationSetup.store";
-import { useAuthStore } from "../../../../../../lib/store/auth.store";
+import { useConfigurationSetupStore } from "../../pages/user/dashboard/configurator/store/configurationSetup.store";
+import { useAuthStore } from "../../lib/store/auth.store";
 import { OpeningHoursDay } from "./openingHours/OpeningHoursDay";
+import { apiFetch } from "../../lib/api";
 
+import { buildBusinessCreateSchedaPayload } from "./normalizers/business.base.create";
 /* ======================================================
    TYPES
 ====================================================== */
@@ -127,19 +129,75 @@ export default function BusinessForm({
   /* ======================================================
      SUBMIT (FE ONLY)
   ====================================================== */
-  function handleSubmit() {
-    if (!data.businessName) {
-      alert("Inserisci il nome dell’attività");
-      return;
-    }
+/* ======================================================
+   SUBMIT — CREATE BUSINESS (BE)
+====================================================== */
+async function handleSubmit() {
+  console.log("[BUSINESS_FORM][SUBMIT] start", {
+    businessId: data.businessId,
+    businessName: data.businessName,
+  });
 
-    if (!data.privacyAccepted) {
-      alert("Devi accettare il trattamento dei dati");
-      return;
-    }
-
+  /* =========================
+     HARD GUARDS (UI ONLY)
+  ========================= */
+  if (data.businessId) {
+    console.warn(
+      "[BUSINESS_FORM] business already exists",
+      data.businessId
+    );
     onComplete();
+    return;
   }
+
+  if (!data.businessName?.trim()) {
+    alert("Inserisci il nome dell’attività");
+    return;
+  }
+
+  if (!data.privacyAccepted) {
+    alert("Devi accettare il trattamento dei dati");
+    return;
+  }
+
+  try {
+    /* =========================
+       BUILD PAYLOAD (CANONICAL)
+       ⛔ BusinessForm NON conosce
+          la shape del backend
+    ========================= */
+    const payload =
+      buildBusinessCreateSchedaPayload(data);
+
+    console.log(
+      "[BUSINESS_FORM] POST /api/business/create-schede",
+      payload
+    );
+
+    const result = await apiFetch<{
+      ok: true;
+      draftId: string;
+    }>("/api/business/create-draft", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+
+    if (!result?.draftId) {
+      throw new Error("BUSINESS_CREATE_EMPTY_RESPONSE");
+    }
+
+    console.log(
+      "[BUSINESS_FORM] business created",
+      result.draftId
+    );
+
+    setField("draftId", result.draftId);
+    onComplete();
+  } catch (err) {
+    console.error("[BUSINESS_FORM][ERROR]", err);
+    alert("Errore nella creazione del business");
+  }
+}
 
   /* ======================================================
      RENDER

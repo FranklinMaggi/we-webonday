@@ -1,9 +1,9 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useAuthStore } from "../../../../../lib/store/auth.store";
-import { usePreConfigurationStore } from "../../configurator/store/pre-configuration.store";
-import type { ProductVM } from "../../../../../lib/viewModels/product/Product.view-model";
+import { useAuthStore } from "../../../../lib/store/auth.store";
+import { usePreConfigurationStore } from "../../../../pages/user/dashboard/configurator/store/pre-configuration.store";
+import type { ProductVM } from "../../../../lib/viewModels/product/Product.view-model";
 
 interface Props {
   solutionId: string;
@@ -36,7 +36,7 @@ export default function BuyflowPreForm({ solutionId, product }: Props) {
     navigate(
       user
         ? "/user/post-login"
-        : "/user/login?redirect=/post-login",
+        : "/user/login?redirect=/user/post-login",
       { replace: true }
     );
   };

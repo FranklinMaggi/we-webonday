@@ -28,7 +28,7 @@ import { fetchProducts } from "../../../domains/buyflow/api/publiApi/products/pr
 import { API_BASE } from "../../../lib/config";
 import { initWhatsAppScrollWatcher } from "../../../lib/ui/scrollWatcher";
 import type { ProductVM } from "../../../lib/viewModels/product/Product.view-model";
-import ProductCard from "../../user/dashboard/catalog/ProductCard/ProductCard";
+import ProductCard from "../../../domains/buyflow/catalog/ProductCard/ProductCard";
 /* =========================
    TIPI PUBLIC
 ========================= */

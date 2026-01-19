@@ -29,9 +29,9 @@
 // ⚠️ NON USATO NEL BUYFLOW BASE
 // Questo componente appartiene alla Configuration ESTESA
 
-import type { ProductOptionVM } from "../../../../../lib/viewModels/product/Product.view-model";
-import { eur } from "../../../../../utils/format";
-import { t } from "../../../../../lib/translateFe/helper/i18n";
+import type { ProductOptionVM } from "../../../../lib/viewModels/product/Product.view-model";
+import { eur } from "../../../../utils/format";
+import { t } from "../../../../lib/translateFe/helper/i18n";
 
 interface Props {
   options: ProductOptionVM[];

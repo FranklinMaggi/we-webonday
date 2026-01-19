@@ -35,7 +35,7 @@ import { json } from "../../../domains/auth/route/helper/https";
  * --------------------------------------
  * Schema della configurazione operativa post-vendita.
  */
-import { OrderSetupSchema } from "../configuration/configuration.projectEsecution.schema";
+import { OrderSetupSchema } from "@domains/configuration/routes/configuration.projectEsecution.schema";
 
 /* ======================================================
    POST /api/projects/setup

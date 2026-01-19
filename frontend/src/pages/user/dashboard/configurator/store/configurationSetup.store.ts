@@ -27,7 +27,8 @@ import { create } from "zustand";
 
 const initialState: ConfigurationSetupStoreDTO = {
   configurationId: undefined,
-
+  businessId: "",
+  draftId:"",
   solutionId: "",
   productId: "",
   optionIds: [],
@@ -97,6 +98,7 @@ export type ConfigurationSetupStoreDTO = {
      CORE (BE)
   ========================= */
   configurationId?: string;
+  businessId?: string;
 
   solutionId: string;
   productId: string;
@@ -122,6 +124,7 @@ export type ConfigurationSetupStoreDTO = {
   zip?: string;
 
   openingHours?: Record<string, string>;
+  draftId?:string;
 
   servicesTags?: string;
   descriptionTags?: string;

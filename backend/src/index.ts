@@ -31,6 +31,12 @@ import {
   googleAuth,
   googleCallback,
 } from "@domains/auth";
+/* ============================================================
+ USER - CONFIGURATION _ FLOW 
+============================================================ */
+
+import { createConfigurationBase ,getUserConfiguration, listAllConfigurations ,listUserConfigurations } from "@domains/configuration/routes";
+import { createBusinessDraft } from "@domains/business/routes/business.create-draft";
 
 /* ============================================================
    COOKIES — CONSENSO
@@ -61,13 +67,6 @@ import { getCart ,putCart ,deleteCart} from "./routes/tenant/user/cart/cart.rout
    CONFIGURATION — PRE-ORDER
 ============================================================ */
 
-import {
-  listUserConfigurations,
-  getUserConfiguration,
-  createConfiguration,
-  updateConfiguration,
-} from "./routes/tenant/configuration";
-import { listAllConfigurations } from "./routes/tenant/configuration";
 
 /* ============================================================
    ORDERS — USER
@@ -103,14 +102,12 @@ import { listPolicyVersions } from "./routes/policy";
    BUSINESS — USER
 ============================================================ */
 
-import { createBusiness } from "./routes/tenant/business/business.create";
-import { getBusiness } from "./routes/tenant/business/business.get";
-import { listBusinesses } from "./routes/tenant/business/business.list";
-import { submitBusiness } from "./routes/tenant/business/business.submit";
-import { uploadBusinessMenu } from "./routes/tenant/business/uploadMenu";
-import {
-  upsertConfigurationFromBusiness,
-} from "./routes/tenant/configuration/configuration.business.write";
+import { createBusiness ,
+  getBusiness ,
+  listBusinesses ,
+  submitBusiness,
+  uploadBusinessMenu
+} from "@domains/business/routes";
 
 // ======================================================
 // BE || routes/configuration/index.ts
@@ -143,8 +140,6 @@ import {
   updateOptionStatus,
 } from "./routes/admin/options/options.read";
 import { getAdminProductWithOptions } from "./routes/admin/products/products.withOptions";
-
-import { createConfigurationBase } from "@domains/configuration/routes";
 
 /* ============================================================
    ADMIN — GUARD
@@ -375,7 +370,13 @@ if (pathname === "/api/cookies/status" && method === "GET") {
       /* ======================================================
          BUSINESS
       ====================================================== */
-
+      if (pathname === "/api/business/create-draft" && method === "POST")
+        return withCors(
+          await createBusinessDraft(request, env),
+          request,
+          env
+        );
+      
       if (pathname === "/api/business/create" && method === "POST")
         return withCors(await createBusiness(request, env), request, env);
        
@@ -396,7 +397,7 @@ if (pathname === "/api/cookies/status" && method === "GET") {
 
 
 /* ======================================================
-   CONFIGURATION — FROM CART (AUTH REQUIRED)
+   CONFIGURATION — BASE(AUTH REQUIRED)
 ====================================================== */
 
 
@@ -411,49 +412,24 @@ if (
   );
 }
 
+
 if (pathname === "/api/configuration" && method === "GET")
   return withCors(
     await listUserConfigurations(request, env),
     request,
     env
   );
+  if (pathname.startsWith("/api/configuration/")) {
+    const id = pathname.split("/").pop()!;
+    if (method === "GET")
+      return withCors(
+        await getUserConfiguration(request, env, id),
+        request,
+        env
+      );
 
-if (pathname === "/api/configuration" && method === "POST")
-  return withCors(
-    await createConfiguration(request, env),
-    request,
-    env
-  );
+    }
 
-if (pathname.startsWith("/api/configuration/")) {
-  const id = pathname.split("/").pop()!;
-  if (method === "GET")
-    return withCors(
-      await getUserConfiguration(request, env, id),
-      request,
-      env
-    );
-  if (method === "PUT")
-    return withCors(
-      await updateConfiguration(request, env, id),
-      request,
-      env
-    );
-}
-
-/* ======================================================
-   CONFIGURATION — FROM BUSINESS (AUTH REQUIRED)
-====================================================== */
-if (
-  pathname === "/api/configuration/from-business" &&
-  method === "POST"
-) {
-  return withCors(
-    await upsertConfigurationFromBusiness(request, env),
-    request,
-    env
-  );
-}
 
       /* ======================================================
          PRODUCTS

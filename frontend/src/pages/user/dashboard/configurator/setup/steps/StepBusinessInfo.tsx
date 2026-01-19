@@ -15,7 +15,7 @@
 import { useEffect, useState } from "react";
 
 import { useConfigurationSetupStore } from "../../store/configurationSetup.store";
-import BusinessForm from "../business/BusinessForm";
+import BusinessForm from "../../../../../../domains/business/BusinessForm";
 
 import { getSolutionById } from "../../../../../../domains/buyflow/api/publiApi/solutions/solutions.public.api";
 /* ======================================================
@@ -44,7 +44,11 @@ export default function StepBusinessInfo({
      LOCAL STATE
   ========================= */
   const [seed, setSeed] = useState<SolutionSeed | null>(null);
-
+  console.log("[STEP_BUSINESS] store snapshot", {
+    businessName: data.businessName,
+    solutionId: data.solutionId,
+  });
+  
   /* ======================================================
      HARD GUARD — BUSINESS NAME
      (deriva da Configuration.prefill)
@@ -65,16 +69,20 @@ export default function StepBusinessInfo({
      LOAD SOLUTION SEED (READ ONLY)
   ====================================================== */
   useEffect(() => {
+    console.log("[STEP_BUSINESS] loading solution seed", data.solutionId);
+
     if (!data.solutionId) return;
 
     let cancelled = false;
 
     async function loadSeed() {
       try {
+        
         const solution = await getSolutionById(
           data.solutionId
+          
         );
-
+        console.log("[STEP_BUSINESS] seed loaded", seed);
         if (cancelled) return;
 
         setSeed({

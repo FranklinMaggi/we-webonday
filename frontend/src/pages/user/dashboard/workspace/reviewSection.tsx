@@ -15,7 +15,7 @@
 // NOTE:
 // - Editing avviene nelle singole form
 // ======================================================
-import type { ConfigurationConfiguratorDTO } from "../configurator/models/ConfigurationConfiguratorDTO";
+import type { ConfigurationConfiguratorDTO } from "../configurator/models/COnfigurationConfiguratorDTO";
 
 
 export default function ReviewSection({
