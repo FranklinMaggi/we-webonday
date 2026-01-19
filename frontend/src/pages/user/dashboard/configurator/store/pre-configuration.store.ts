@@ -8,8 +8,8 @@
 //
 // INVARIANTI:
 // - FE only
-// - Nessuna persistenza
-// - Viene consumato UNA SOLA VOLTA
+
+
 //
 // ======================================================
 
@@ -21,16 +21,21 @@ interface PreConfigurationState {
   consumeBusinessName: () => string | null;
 }
 
-export const usePreConfigurationStore =
-  create<PreConfigurationState>((set, get) => ({
-    businessName: null,
+import { persist } from "zustand/middleware";
 
-    setBusinessName: (name) =>
-      set({ businessName: name }),
+export const usePreConfigurationStore = create<PreConfigurationState>()(
+    persist(
+      (set, get) => ({
+        businessName: null,
+        setBusinessName: (name) => set({ businessName: name.trim() ||null }),
+        consumeBusinessName: () => {
+          const name = get().businessName;
+          set({ businessName: null });
+          return name;
+        },
+      }),
+      { name: "wod-pre-config" }
+    )
+  );
+  
 
-    consumeBusinessName: () => {
-      const value = get().businessName;
-      set({ businessName: null }); // 🔥 one-shot
-      return value;
-    },
-  }));
