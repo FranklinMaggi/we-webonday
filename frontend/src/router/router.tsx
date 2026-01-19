@@ -113,8 +113,7 @@ const router = createBrowserRouter([
       { path: "mission", element: <Mission /> },
       { path: "founder", element: <FounderPage /> },
       { path: "pricing", element: <Price /> },
-      { path: "post-login", element: <PostLoginHandoff /> },
-
+      
       /* ===== SOLUTIONS (PUBLIC / SHARED) ===== */
       { path: "solution", element: <Solutions /> },
       { path: "solution/:id", element: <HomeSolutionPage /> },
@@ -140,6 +139,7 @@ const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
           { index: true, element: <Navigate to="dashboard" replace /> },
+          { path: "post-login", element: <PostLoginHandoff /> },
 
           /* ================= DASHBOARD ================= */
           {
