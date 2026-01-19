@@ -1,47 +1,42 @@
-// FE || PostLoginHandoff.tsx
 // ======================================================
+// FE || PostLoginHandoff
+// ======================================================
+//
 // RUOLO:
 // - Punto UNICO di creazione Configuration post-login
-// - Ponte pre-login → post-login
+// - Ponte atomico pre-login → post-login
+//
+// INVARIANTI:
+// - CREA solo se user autenticato
+// - Consuma PreConfiguration UNA SOLA VOLTA
+// - Redirect deterministico
+//
 // ======================================================
 
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { usePreConfigurationStore } from "./dashboard/configurator/store/pre-configuration.store";
 import { useAuthStore } from "../../lib/store/auth.store";
-import { useConfigurationSetupStore } from "./dashboard/configurator/store/configurationSetup.store";
+import { usePreConfigurationStore } from
+  "./dashboard/configurator/store/pre-configuration.store";
+import { useConfigurationSetupStore } from
+  "./dashboard/configurator/store/configurationSetup.store";
+
 import { apiFetch } from "../../lib/api";
 
 export default function PostLoginHandoff() {
   const navigate = useNavigate();
   const executed = useRef(false); // 🔒 anti double-run
 
-  const consumeBusinessName =
-    usePreConfigurationStore((s) => s.consumeBusinessName);
-
   const { user, ready } = useAuthStore();
+  const consumePreConfig = usePreConfigurationStore(
+    (s) => s.consume
+  );
+
   const { data, setField } = useConfigurationSetupStore();
 
-  // ======================================================
-  // GUARD SINCRONO (PRE-EFFECT)
-  // ======================================================
   useEffect(() => {
-    if (!data.solutionId || !data.productId) {
-      console.error(
-        "[POST_LOGIN_HANDOFF][0] missing solutionId or productId",
-        {
-          solutionId: data.solutionId,
-          productId: data.productId,
-        }
-      );
-  
-      navigate("/solution", { replace: true });
-    }
-  }, [data.solutionId, data.productId, navigate]);
-  
-  useEffect(() => {
-    console.log("[POST_LOGIN_HANDOFF][1] effect start", {
+    console.log("[POST_LOGIN][1] effect start", {
       ready,
       user,
       configurationId: data.configurationId,
@@ -51,56 +46,63 @@ export default function PostLoginHandoff() {
     // GUARDIE CANONICHE
     // =========================
     if (!ready) {
-      console.log("[POST_LOGIN_HANDOFF][2] auth not ready");
+      console.log("[POST_LOGIN][2] auth not ready");
       return;
     }
 
     if (!user) {
-      console.log("[POST_LOGIN_HANDOFF][3] no user (should not happen)");
+      console.log("[POST_LOGIN][3] no user");
+      navigate("/user/login", { replace: true });
       return;
     }
 
     if (data.configurationId) {
-      console.log("[POST_LOGIN_HANDOFF][4] configuration already exists");
+      console.log("[POST_LOGIN][4] configuration already exists");
+      navigate(
+        `/user/dashboard/workspace/${data.configurationId}`,
+        { replace: true }
+      );
       return;
     }
 
     if (executed.current) {
-      console.log("[POST_LOGIN_HANDOFF][5] already executed");
+      console.log("[POST_LOGIN][5] already executed");
+      return;
+    }
+
+    // =========================
+    // CONSUMO PRE-CONFIG
+    // =========================
+    const pre = consumePreConfig();
+
+    console.log("[POST_LOGIN][6] consumed pre-config", pre);
+
+    if (!pre) {
+      console.warn("[POST_LOGIN][7] missing pre-config");
+      navigate("/solution", { replace: true });
+      return;
+    }
+
+    const { solutionId, productId, businessName } = pre;
+
+    if (!solutionId || !productId || !businessName) {
+      console.error("[POST_LOGIN][8] invalid pre-config", pre);
+      navigate("/solution", { replace: true });
       return;
     }
 
     executed.current = true;
 
-    async function create() {
+    async function createConfiguration() {
       try {
-        console.log("[POST_LOGIN_HANDOFF][6] starting create flow");
-
-        const preBusinessName = consumeBusinessName();
-
-        console.log("[POST_LOGIN_HANDOFF][7] business name sources", {
-          preBusinessName,
-          storeBusinessName: data.businessName,
-        });
-
-        if (!preBusinessName && !data.businessName) {
-          throw new Error("MISSING_BUSINESS_NAME");
-        }
-
-        // 🔑 Iniezione store canonico
-        if (preBusinessName && !data.businessName) {
-          setField("businessName", preBusinessName);
-        }
-
         const payload = {
-          solutionId: data.solutionId,
-          productId: data.productId,
-          businessName:
-            data.businessName || preBusinessName,
+          solutionId,
+          productId,
+          businessName,
         };
 
         console.log(
-          "[POST_LOGIN_HANDOFF][8] POST /api/configuration/base payload",
+          "[POST_LOGIN][9] POST /api/configuration/base",
           payload
         );
 
@@ -112,20 +114,22 @@ export default function PostLoginHandoff() {
           body: JSON.stringify(payload),
         });
 
-        console.log(
-          "[POST_LOGIN_HANDOFF][9] create response",
-          res
-        );
+        console.log("[POST_LOGIN][10] response", res);
 
         if (!res?.ok || !res.configurationId) {
           throw new Error("CREATE_CONFIGURATION_FAILED");
         }
 
-        // 🔑 STORE = source of truth FE
+        // =========================
+        // STORE CANONICO
+        // =========================
         setField("configurationId", res.configurationId);
+        setField("solutionId", solutionId);
+        setField("productId", productId);
+        setField("businessName", businessName);
 
         console.log(
-          "[POST_LOGIN_HANDOFF][10] redirect to workspace",
+          "[POST_LOGIN][11] redirect workspace",
           res.configurationId
         );
 
@@ -134,24 +138,19 @@ export default function PostLoginHandoff() {
           { replace: true }
         );
       } catch (err) {
-        console.error(
-          "[POST_LOGIN_HANDOFF][ERR]",
-          err
-        );
-        navigate("/user/dashboard", {
-          replace: true,
-        });
+        console.error("[POST_LOGIN][ERR]", err);
+        navigate("/user/dashboard", { replace: true });
       }
     }
 
-    create();
+    createConfiguration();
   }, [
     ready,
     user,
-    data,
+    data.configurationId,
+    consumePreConfig,
     setField,
     navigate,
-    consumeBusinessName,
   ]);
 
   return null; // headless

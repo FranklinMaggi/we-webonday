@@ -4,38 +4,53 @@
 //
 // RUOLO:
 // - Conservare dati minimi raccolti pre-login
-// - Trasporto sicuro verso PostLogin
+// - Trasporto atomico verso PostLogin
 //
 // INVARIANTI:
 // - FE only
-
-
+// - Persistente (localStorage)
+// - Consumato UNA SOLA VOLTA
 //
 // ======================================================
 
 import { create } from "zustand";
-
-interface PreConfigurationState {
-  businessName: string | null;
-  setBusinessName: (name: string) => void;
-  consumeBusinessName: () => string | null;
-}
-
 import { persist } from "zustand/middleware";
 
-export const usePreConfigurationStore = create<PreConfigurationState>()(
-    persist(
-      (set, get) => ({
-        businessName: null,
-        setBusinessName: (name) => set({ businessName: name.trim() ||null }),
-        consumeBusinessName: () => {
-          const name = get().businessName;
-          set({ businessName: null });
-          return name;
-        },
-      }),
-      { name: "wod-pre-config" }
-    )
-  );
-  
+type PreConfigPayload = {
+  businessName: string;
+  solutionId: string;
+  productId: string;
+};
 
+interface PreConfigurationState {
+  payload: PreConfigPayload | null;
+
+  setPreConfig: (data: PreConfigPayload) => void;
+  consume: () => PreConfigPayload | null;
+}
+
+export const usePreConfigurationStore = create<PreConfigurationState>()(
+  persist(
+    (set, get) => ({
+      payload: null,
+
+      setPreConfig: (data) =>
+        set({
+          payload: {
+            businessName: data.businessName.trim(),
+            solutionId: data.solutionId,
+            productId: data.productId,
+          },
+        }),
+
+      consume: () => {
+        const snapshot = get().payload;
+        set({ payload: null });
+        return snapshot;
+      },
+    }),
+    {
+      name: "wod-pre-config",
+    }
+  )
+);
