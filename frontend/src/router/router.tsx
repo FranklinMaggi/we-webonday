@@ -80,7 +80,7 @@ import WorkspaceIndex from "../pages/user/dashboard/workspace";
 ========================= */
 //import UserConfiguratorIndex from "../pages/user/dashboard/configurator/index";
 import ConfigurationIndex from "../pages/user/dashboard/configurator/index";
-
+import PostLoginHandoff from "../pages/user/PostLoginHandoff";
 /* =========================
    ADMIN
 ========================= */
@@ -113,6 +113,7 @@ const router = createBrowserRouter([
       { path: "mission", element: <Mission /> },
       { path: "founder", element: <FounderPage /> },
       { path: "pricing", element: <Price /> },
+      { path: "post-login", element: <PostLoginHandoff /> },
 
       /* ===== SOLUTIONS (PUBLIC / SHARED) ===== */
       { path: "solution", element: <Solutions /> },
