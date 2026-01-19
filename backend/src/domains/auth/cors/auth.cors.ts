@@ -36,10 +36,10 @@ export function getCorsHeaders(
   // PUBLIC → no cookie, wildcard
   if (mode === "PUBLIC") {
     return {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Max-Age": "86400",
+"Access-Control-Allow-Origin": origin || env.FRONTEND_URL,
+    "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "86400",
     };
   }
 
@@ -81,7 +81,7 @@ export function resolveAuthCorsMode(
     pathname === "/api/user/google/callback" ||
     pathname === "/api/user/me"
   ) {
-    return "SOFT";
+    return "HARD";
   }
 
   if (pathname === "/api/user/logout") {
@@ -101,7 +101,7 @@ export function withCors(
   
     const mode = pathname.startsWith("/api/user/")
       ? resolveAuthCorsMode(pathname)
-      : "SOFT";
+      : "HARD";
   
     const headers = new Headers(response.headers);
     const cors = getCorsHeaders(request, env, mode);
