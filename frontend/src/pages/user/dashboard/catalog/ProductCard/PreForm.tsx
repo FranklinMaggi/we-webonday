@@ -35,7 +35,7 @@ export default function BuyflowPreForm({ solutionId, product }: Props) {
     // 👉 SEMPRE POST-LOGIN
     navigate(
       user
-        ? "/post-login"
+        ? "/user/post-login"
         : "/user/login?redirect=/post-login",
       { replace: true }
     );
