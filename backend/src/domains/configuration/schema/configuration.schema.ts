@@ -2,128 +2,97 @@
 // BE || domains/configuration/configuration.schema.ts
 // ======================================================
 //
-// CONFIGURATION — CORE DOMAIN (PRE-ORDER WORKSPACE)
+// CONFIGURATION — CORE DOMAIN (WORKSPACE PRE-ORDER)
 //
 // RUOLO:
 // - Single Source of Truth della Configuration
-// - È un workspace mutabile pre-ordine
+// - Workspace mutabile fino all’ordine
 //
 // INVARIANTI:
+// - Configuration ≠ Business
 // - Configuration ≠ Order
-// - user derivato da sessione
-// - KV keys deterministiche
-//
-// NOTE:
-// - Manteniamo compatibilità con flussi esistenti:
-//   • createConfigurationFromCart (che oggi non setta sempre id/userId)
-//   • createConfiguration (che aggiunge createdAt/updatedAt manualmente)
+// - userId derivato SOLO da sessione
+// - Business nasce SOLO dopo StepBusiness + Policy
 // ======================================================
-
 
 import { z } from "zod";
 
-
 /* ======================================================
    CONFIGURATION STATUS — CANONICAL STATE MACHINE
-   ====================================================== */
+====================================================== */
 
-   export const CONFIGURATION_STATUS = [
-    // =========================
-    // BOOTSTRAP
-    // =========================
-    "DRAFT", 
-    // Creata dal BuyFlow (Configuration BASE)
-    // Contiene solo riferimenti minimi (solutionId, productId, businessName)
-  
-    // =========================
-    // BUSINESS SETUP
-    // =========================
-    "BUSINESS_READY",
-    // StepBusiness completato
-    // Business aggiornato e referenziato correttamente
-  
-    // =========================
-    // CONFIGURATION SETUP
-    // =========================
-    "CONFIGURATION_IN_PROGRESS",
-    // L’utente sta lavorando nel configurator
-    // Layout / design / contenuti in corso
-  
-    "CONFIGURATION_READY",
-    // Tutti gli step obbligatori completati
-    // Pronta per preview / validazione
-  
-    // =========================
-    // PREVIEW & VALIDATION
-    // =========================
-    "PREVIEW",
-    // Preview tecnica / cliente
-    // Nessun vincolo commerciale ancora
-  
-    "ACCEPTED",
-    // Il cliente accetta la configurazione
-    // Blocco contenuti (immutabile)
-  
-    // =========================
-    // COMMERCIALE
-    // =========================
-    "ORDERED",
-    // Ordine effettuato
-    // Checkout completato
-  
-    // =========================
-    // POST-ORDER
-    // =========================
-    "IN_PRODUCTION",
-    // Team / AI / pipeline in lavorazione
-  
-    "DELIVERED",
-    // Progetto consegnato
-  
-    // =========================
-    // TERMINALI / ECCEZIONI
-    // =========================
-    "CANCELLED",
-    // Annullata manualmente
-  
-    "ARCHIVED",
-    // Storico / sola lettura
-  ] as const;
-  
+export const CONFIGURATION_STATUS = [
+  // BOOTSTRAP
+  "DRAFT",
+
+  // BUSINESS SETUP
+  "BUSINESS_READY",
+
+  // CONFIGURATION SETUP
+  "CONFIGURATION_IN_PROGRESS",
+  "CONFIGURATION_READY",
+
+  // PREVIEW & VALIDATION
+  "PREVIEW",
+  "ACCEPTED",
+
+  // COMMERCIALE
+  "ORDERED",
+
+  // POST-ORDER
+  "IN_PRODUCTION",
+  "DELIVERED",
+
+  // TERMINALI
+  "CANCELLED",
+  "ARCHIVED",
+] as const;
 
 export type ConfigurationStatus =
   (typeof CONFIGURATION_STATUS)[number];
 
-/* =========================
-   WORKSPACE DATA (TIPIZZATA)
-========================= */
+/* ======================================================
+   PREFILL (VISITOR / BUYFLOW)
+   ⚠️ NON È BUSINESS
+====================================================== */
+
+export const ConfigurationPrefillSchema = z.object({
+  businessName: z.string().min(2).max(80),
+});
+
+/* ======================================================
+   WORKSPACE DATA (UI-DRIVEN)
+====================================================== */
 
 export const ConfigurationWorkspaceSchema = z.object({
-  // dati TEMPORANEI, UI-driven
   layoutId: z.string().optional(),
   themeId: z.string().optional(),
-
-  // preview / engine
   lastPreviewAt: z.string().optional(),
 });
 
-/* =========================
-   SCHEMA
-========================= */
+/* ======================================================
+   MAIN CONFIGURATION SCHEMA
+====================================================== */
+
 export const ConfigurationSchema = z.object({
-  /* ---------- Identity (BE) ---------- */
+  /* ---------- Identity ---------- */
   id: z.string().optional(),
   userId: z.string().optional(),
+
+  /* ---------- Business linkage (POST-STEP) ---------- */
   businessId: z.string().optional(),
 
   /* ---------- Commercial origin ---------- */
   solutionId: z.string().min(1),
-  productId: z.string().optional(),
+  productId: z.string().min(1),
+
+  /* ---------- Prefill (BuyFlow) ---------- */
+  prefill: ConfigurationPrefillSchema.optional(),
 
   /* ---------- Options ---------- */
   options: z.array(z.string()).default([]),
 
-  /* ---------- Workspace FE ---------- */
+  /* ---------- Workspace ---------- */
   data: ConfigurationWorkspaceSchema.default({}),
 
   /* ---------- Status ---------- */

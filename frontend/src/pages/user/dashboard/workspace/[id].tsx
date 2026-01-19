@@ -20,15 +20,17 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Navigate } from "react-router-dom";
 
-import { getMyConfiguration } from "../configurator/api/configuration.user.api";
-import type { ConfigurationDTO } from "../configurator/models/Configuration.api-model";
+//import { getMyConfiguration } from "../configurator/api/configuration.user.api";
+import { getConfigurationForConfigurator } from "../configurator/api/configuration.user.api";
+import type { ConfigurationConfiguratorDTO } from "../configurator/models/ConfigurationConfiguratorDTO";
+
 
 export default function UserConfigurationWorkspace() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const [configuration, setConfiguration] =
-    useState<ConfigurationDTO | null>(null);
+    useState<ConfigurationConfiguratorDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
   if (!id) {
@@ -39,7 +41,7 @@ export default function UserConfigurationWorkspace() {
      LOAD CONFIGURATION (MINIMAL)
   ========================= */
   useEffect(() => {
-    getMyConfiguration(id)
+    getConfigurationForConfigurator(id)
       .then((res) => {
         setConfiguration(res.configuration);
       })

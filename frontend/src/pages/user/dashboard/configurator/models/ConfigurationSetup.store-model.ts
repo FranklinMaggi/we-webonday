@@ -1,42 +1,66 @@
 /**
  * ======================================================
- * FE || UserConfigurationSetupDTO (WIZARD REAL)
+ * FE || ConfigurationSetupStoreDTO (CANONICAL)
  * ======================================================
  *
  * RUOLO:
- * - Stato FE del wizard di configurazione
+ * - Stato FE completo del configurator
+ * - Workspace temporaneo
  *
  * SOURCE OF TRUTH:
- * - Backend per solutionId + optionIds
- * - FE per il resto (temporaneo)
- *
- * NOTE:
- * - Solo campi realmente usati dagli step attivi
+ * - Backend per id / solutionId / productId / optionIds
+ * - FE per il resto
  * ======================================================
  */
 
-export type UserConfigurationSetupDTO = {
+export type ConfigurationSetupStoreDTO = {
    /* =========================
-      STEP 1 — SOLUTION
+      CORE (BE)
    ========================= */
+   configurationId?: string;
+ 
    solutionId: string;
+   productId: string;
    optionIds: string[];
  
    /* =========================
-      STEP 2 — BUSINESS INFO
+      BUSINESS
    ========================= */
    businessName: string;
    sector: string;
  
    email: string;
    phone?: string;
-   privacyAccepted: boolean;
+ 
+   address?: string;
+   city?: string;
+   state?: string;
+   zip?: string;
+ 
+   openingHours?: Record<string, string>;
+ 
+   services?: string;
+   description?: string;
  
    /* =========================
-      STEP 3 — TAGS
+      TAGS
    ========================= */
    solutionServiceTags: string[];
    businessServiceTags: string[];
    businessDescriptionTags: string[];
+ 
+   /* =========================
+      DESIGN
+   ========================= */
+   layoutId?: string;
+   style?: string;
+   colorPreset?: string;
+ 
+   visibility?: Record<string, boolean>;
+ 
+   /* =========================
+      META
+   ========================= */
+   privacyAccepted: boolean;
  };
  

@@ -1,11 +1,10 @@
 /**
  * ======================================================
  * FE || PUBLIC API — SOLUTIONS
- * File: src/lib/publicApi/solutions/solutions.public.api.ts
  * ======================================================
  *
  * RUOLO:
- * - Accesso pubblico alle Solutions
+ * - Accesso pubblico READ-ONLY alle Solutions
  *
  * USATO DA:
  * - Landing
@@ -16,25 +15,25 @@
  * - READ ONLY
  * - Nessuna auth
  * - Backend = source of truth
- *
- * NOTA:
- * - NON usare per admin
  * ======================================================
  */
 
 import { apiFetch } from "../../../../../lib/api";
-import { API_BASE } from "../../../../../lib/config";
-
-import {type  PublicSolutionDTO } from "../../DataTransferObject/solution.public.dto";
-/* ======================================================
-   DTO — SOLUTION (LIST)
-   → usato per catalogo / cards
-====================================================== */
 
 /* ======================================================
-   DTO — SOLUTION (DETAIL)
-   → usato da configuratore / pagina solution
+   TYPES
 ====================================================== */
+
+export type OpeningHoursDefault = {
+  monday: string;
+  tuesday: string;
+  wednesday: string;
+  thursday: string;
+  friday: string;
+  saturday: string;
+  sunday: string;
+};
+
 export type PublicSolutionDetailDTO = {
   id: string;
   name: string;
@@ -42,93 +41,51 @@ export type PublicSolutionDetailDTO = {
   longDescription?: string;
 
   icon?: string;
-
-  image?: {
-    hero: string;
-    card: string;
-    fallback?: string;
-  };
-
   industries?: string[];
+  imageKey?: string;
+  productIds: string[];
 
   descriptionTags: string[];
   serviceTags: string[];
 
-  openingHoursDefault?: {
-    monday: string;
-    tuesday: string;
-    wednesday: string;
-    thursday: string;
-    friday: string;
-    saturday: string;
-    sunday: string;
-  };
+  openingHoursDefault?: OpeningHoursDefault;
+
+  status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+  createdAt: string;
 };
 
 /* ======================================================
-   RESPONSE TYPES
+   API RESPONSES
 ====================================================== */
-type PublicSolutionsResponse = {
-  ok: true;
-  solutions: PublicSolutionDTO[];
-};
 
 type PublicSolutionDetailResponse = {
   ok: true;
   solution: PublicSolutionDetailDTO;
-  products: unknown[];
 };
 
 /* ======================================================
-   FETCH — SOLUTIONS LIST
+   FETCH — SOLUTION DETAIL (CANONICAL)
 ====================================================== */
-export async function fetchPublicSolutions(): Promise<
-  PublicSolutionDTO[]
-> {
-  const res = await fetch(`${API_BASE}/api/solution/list`);
-  if (!res.ok) throw new Error("FAILED_TO_FETCH_SOLUTIONS");
 
-  const data: PublicSolutionsResponse = await res.json();
-  return data.solutions ?? [];
-}
-
-/* ======================================================
-   FETCH — SOLUTION DETAIL
-====================================================== */
-export async function fetchPublicSolutionById(
-  id: string
+/**
+ * 🔒 CANONICAL PUBLIC READER
+ * - Usato dal Configurator (StepBusinessInfo)
+ * - Usato da pagine Solution
+ */
+export async function getSolutionById(
+  solutionId: string
 ): Promise<PublicSolutionDetailDTO> {
-  const res = await fetch(
-    `${API_BASE}/api/solution?id=${encodeURIComponent(id)}`
+  const res = await apiFetch<PublicSolutionDetailResponse>(
+    `/api/solution?id=${encodeURIComponent(solutionId)}`,
+    {
+      method: "GET",
+      cache: "no-store",
+    }
   );
-  if (!res.ok) throw new Error("FAILED_TO_FETCH_SOLUTION");
 
-  const data: PublicSolutionDetailResponse = await res.json();
-  if (!data?.ok || !data.solution) {
-    throw new Error("INVALID_SOLUTION_RESPONSE");
+  if (!res || !res.ok || !res.solution) {
+    throw new Error("INVALID_PUBLIC_SOLUTION_RESPONSE");
   }
 
-  return data.solution;
+  return res.solution;
 }
-
-export async function getSolutionById(solutionId: string) {
-  const res = await apiFetch<{
-    ok: true;
-    solution: {
-      tags?: string[];
-      userGeneratedTags?: string[];
-    };
-  }>(`/api/solution?id=${solutionId}`, {
-    method: "GET",
-    cache: "no-store",
-  });
-
-  if (!res) {
-    throw new Error("API /api/solution returned null");
-  }
-
-  return res;
-
-}
-
-

@@ -15,13 +15,13 @@
 // NOTE:
 // - Editing avviene nelle singole form
 // ======================================================
-import type { ConfigurationDTO } from "../configurator/models/Configuration.api-model";
+import type { ConfigurationConfiguratorDTO } from "../configurator/models/ConfigurationConfiguratorDTO";
 
 
 export default function ReviewSection({
     configuration,
   }: {
-    configuration: ConfigurationDTO;
+    configuration: ConfigurationConfiguratorDTO;
   }) {
     return (
       <section>

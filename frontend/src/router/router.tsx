@@ -38,7 +38,7 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 ========================= */
 import { MainLayout } from "../pages/user/dashboard/configurator/setup/steps/layouts/MainLayout";
 import DashboardLayout from "../pages/user/dashboard/DashboardLayout";
-import ConfiguratorLayout from "../pages/user/dashboard/configurator/setup/steps/layouts/ConfiguratorLayout";
+//import ConfiguratorLayout from "../pages/user/dashboard/configurator/setup/steps/layouts/ConfiguratorLayout";
 import AdminLayout from "../components/admin/layouts/AdminLayout";
 
 /* =========================
@@ -78,7 +78,7 @@ import WorkspaceIndex from "../pages/user/dashboard/workspace";
 /* =========================
    USER — CONFIGURATOR
 ========================= */
-import UserConfiguratorIndex from "../pages/user/dashboard/configurator/index";
+//import UserConfiguratorIndex from "../pages/user/dashboard/configurator/index";
 import ConfigurationIndex from "../pages/user/dashboard/configurator/index";
 
 /* =========================

@@ -20,11 +20,11 @@
 // ======================================================
 
 import type { LayoutKVDTO } from "../../../../../../../../lib/configurationLayout/layout.dto";
-import type { UserConfigurationSetupDTO } from "../../../../models/ConfigurationSetup.store-model";
+import type { ConfigurationSetupStoreDTO } from "../../../../models/ConfigurationSetup.store-model";
 
 type LayoutPreviewProps = {
   layout: LayoutKVDTO;
-  data: Partial<UserConfigurationSetupDTO>;
+  data: Partial<ConfigurationSetupStoreDTO>;
 };
 
 export function LayoutPreview({ layout, data }: LayoutPreviewProps) {

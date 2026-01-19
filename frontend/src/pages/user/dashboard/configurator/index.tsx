@@ -1,93 +1,50 @@
 // ======================================================
-// FE || pages/user/configurator/index.tsx
+// FE || Configurator Entry — CANONICAL & MINIMAL
 // ======================================================
 //
-// AI-SUPERCOMMENT — CONFIGURATOR CANONICAL ENTRY
-//
 // RUOLO:
-// - Entry point CANONICO e UNICO del configurator
-// - Ponte tra Backend Configuration (truth) e Wizard UI
+// - Carica una Configuration ESISTENTE (BASE)
+// - Inizializza lo store FE (Zustand)
+// - Avvia il wizard UI
 //
-// SOURCE OF TRUTH:
-// - Backend (ConfigurationConfiguratorDTO)
-// - Zustand = proiezione temporanea FE
-//
-// INVARIANTI (BLOCCANTI):
-// 1. Senza configurationId → redirect dashboard
-// 2. Il wizard NON vive senza una Configuration BE
-// 3. Nessuna creazione configuration lato FE
-// 4. Zustand NON è mai source of truth
-// 5. Nessun accesso da /configurator/start (legacy)
+// INVARIANTI:
+// - Nessuna creazione Configuration
+// - Backend = source of truth
+// - Senza configurationId → redirect
 //
 // ======================================================
 
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
-import type {
-  ConfigurationConfiguratorDTO,
-} from "./models/Configuration.api-model";
-
-import { getMyConfiguration } from "./api/configuration.user.api";
-import { getSolutionById } from "../../../../domains/buyflow/api/publiApi/solutions/solutions.public.api";
+import {
+  getConfigurationForConfigurator,
+} from "./api/configuration.user.api";
 
 import { useConfigurationSetupStore } from "./store/configurationSetup.store";
 import ConfigurationSetupPage from "./setup/ConfigurationSetupPage";
 
-/* ======================================================
-   COMPONENT
-====================================================== */
-
 export default function ConfigurationIndex() {
-  const navigate = useNavigate();
-  const location = useLocation();
-
   const { id: configurationId } = useParams<{ id: string }>();
-  const fromCart = new URLSearchParams(location.search).get("fromCart");
+  const navigate = useNavigate();
 
   const { setField, reset } = useConfigurationSetupStore();
-
-  const [configuration, setConfiguration] =
-    useState<ConfigurationConfiguratorDTO | null>(null);
-
   const [loading, setLoading] = useState(true);
 
   /* ======================================================
-     GUARD — ACCESSO DA CARRELLO (NON AMMESSO)
-  ====================================================== */
-  useEffect(() => {
-    if (!fromCart) return;
-    navigate("/user/dashboard", { replace: true });
-  }, [fromCart, navigate]);
-
-  /* ======================================================
-     GUARD — CONFIGURATION ID OBBLIGATORIO
+     INIT — LOAD CONFIGURATION BASE
   ====================================================== */
   useEffect(() => {
     if (!configurationId) {
       navigate("/user/dashboard", { replace: true });
       return;
     }
-  }, [configurationId, navigate]);
 
-  /* ======================================================
-     RESET STORE ON CONFIG CHANGE
-     (evita stati fantasma)
-  ====================================================== */
-  useEffect(() => {
-    if (!configurationId) return;
+    // 🔁 evita stati fantasma
     reset();
-  }, [configurationId, reset]);
 
-  /* ======================================================
-     STEP 1 — LOAD CONFIGURATION (SOURCE OF TRUTH)
-  ====================================================== */
-  useEffect(() => {
-    if (!configurationId) return;
-
-    async function loadConfiguration() {
-      try {
-        const res = await getMyConfiguration(configurationId);
+    getConfigurationForConfigurator(configurationId)
+      .then((res) => {
         const cfg = res.configuration;
 
         if (!cfg) {
@@ -95,66 +52,34 @@ export default function ConfigurationIndex() {
           return;
         }
 
-        // 🔵 Backend = truth
-        setConfiguration(cfg);
-
-        // 🔵 Prefill store FE (proiezione temporanea)
+        // ==========================================
+        // 🔑 STORE INIT — BASE FIELDS ONLY
+        // ==========================================
+        setField("configurationId", cfg.id);
         setField("solutionId", cfg.solutionId);
+        setField("productId", cfg.productId);
+        setField("optionIds", cfg.options ?? []);
 
-        if (cfg.optionIds?.length) {
-          setField("optionIds", cfg.optionIds);
-        }
-      } catch {
+        // prefill UX (non obbligatorio)
+        setField(
+          "businessName",
+          cfg.prefill?.businessName ?? ""
+        );
+      })
+      .catch(() => {
         navigate("/user/dashboard", { replace: true });
-      } finally {
+      })
+      .finally(() => {
         setLoading(false);
-      }
-    }
-
-    loadConfiguration();
-  }, [configurationId, navigate, setField]);
+      });
+  }, [configurationId, navigate, reset, setField]);
 
   /* ======================================================
-     STEP 2 — LOAD SOLUTION (SEED TAGS / INDUSTRIES)
-  ====================================================== */
-  useEffect(() => {
-    if (!configuration?.solutionId) return;
-
-    async function loadSolution() {
-      try {
-        const res = await getSolutionById(configuration.solutionId);
-
-        if (res.ok && res.solution) {
-          const mergedTags = Array.from(
-            new Set([
-              ...(res.solution.tags ?? []),
-              ...(res.solution.userGeneratedTags ?? []),
-            ])
-          );
-
-          setField("solutionServiceTags", mergedTags);
-        }
-      } catch {
-        // Non blocca il configurator
-      }
-    }
-
-    loadSolution();
-  }, [configuration, setField]);
-
-  /* ======================================================
-     GUARDS UI
+     UI GUARD
   ====================================================== */
   if (loading) {
     return <p>Preparazione configurazione…</p>;
   }
 
-  if (!configuration) {
-    return <p>Configurazione non trovata</p>;
-  }
-
-  /* ======================================================
-     RENDER — DELEGA TOTALE AL WIZARD
-  ====================================================== */
   return <ConfigurationSetupPage />;
 }

@@ -17,7 +17,7 @@
 // BuyFlow → LOGIN → CREATE BASE → DASHBOARD
 // ======================================================
 
-import { ConfigurationBaseInputSchema } from "../DataTransferObgject/inputDaUser/configuration.base.input";
+import { ConfigurationBaseInputSchema } from "../schema/configuration.base.schema";
 import type { Env } from "../../../types/env";
 import { requireAuthUser } from "@domains/auth";
 import { json } from "@domains/auth/route/helper/https";
@@ -87,21 +87,23 @@ export async function createConfigurationBase(
   const configuration: ConfigurationDTO = {
     id: configurationId,
     userId: session.user.id,
-    
+  
     solutionId: body.solutionId,
     productId: body.productId,
-
+  
+    prefill: {
+      businessName: body.businessName,
+    },
+  
     options: [],
-
-    data:{},
-
+    data: {},
+  
     status: "DRAFT",
-
+  
     createdAt: now,
     updatedAt: now,
-    deletedAt:"",
   };
-
+  
   await env.CONFIGURATION_KV.put(
     key,
     JSON.stringify(configuration)

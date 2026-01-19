@@ -24,17 +24,24 @@
 // ======================================================
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 
 import { listMyConfigurations } from "../configurator/api/configuration.user.api";
-import type { ConfigurationDTO } from "../configurator/models/Configuration.api-model";
+import type { ConfigurationConfiguratorDTO } from "../configurator/models/ConfigurationConfiguratorDTO";
+import { getConfigurationForConfigurator } from "../configurator/api/configuration.user.api";
+import { useConfigurationSetupStore } from "../configurator/store/configurationSetup.store";
 
 export default function WorkspaceIndex() {
   const navigate = useNavigate();
 
-  const [items, setItems] = useState<ConfigurationDTO[]>([]);
+  const [items, setItems] = useState<ConfigurationConfiguratorDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const { id: configurationId } = useParams<{ id: string }>();
+
+  const { setField, reset } = useConfigurationSetupStore();
+
 
   /* =========================
      LOAD CONFIGURATIONS
@@ -56,6 +63,42 @@ export default function WorkspaceIndex() {
       });
   }, []);
 
+useEffect(() => {
+    if (!configurationId) {
+   
+      return;
+    }
+    getConfigurationForConfigurator(configurationId)
+      .then((res) => {
+        const cfg = res.configuration;
+
+        if (!cfg) {
+          navigate("/user/dashboard", { replace: true });
+          return;
+        }
+
+        // ==========================================
+        // 🔑 STORE INIT — BASE FIELDS ONLY
+        // ==========================================
+        setField("configurationId", cfg.id);
+        setField("solutionId", cfg.solutionId);
+        setField("productId", cfg.productId);
+        setField("optionIds", cfg.options ?? []);
+       
+
+        // prefill UX (non obbligatorio)
+        setField(
+          "businessName",
+          cfg.prefill?.businessName ?? ""
+        );
+      })
+      .catch(() => {
+        navigate("/user/dashboard", { replace: true });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [configurationId, navigate, reset, setField]);
   /* =========================
      UI STATES
   ========================= */
@@ -102,7 +145,10 @@ export default function WorkspaceIndex() {
             }
           >
             <div className="workspace-card__header">
-              <h3>{"Nuova attività"}</h3>
+            <h3>
+            {config.prefill?.businessName || "Nuova attività"}
+             </h3>
+
               <span className={`status status-${config.status}`}>
                 {config.status}
               </span>

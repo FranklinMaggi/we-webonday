@@ -21,7 +21,8 @@ type Props = {
 };
 
 export default function StepDesign({ onNext, onBack }: Props) {
-  const { data, configurationId } = useConfigurationSetupStore();
+  const { data } = useConfigurationSetupStore();
+const configurationId = data.configurationId;
 
   /* =========================
      GUARD — PREREQUISITI STEP

@@ -47,14 +47,14 @@
  */
 
 import { apiFetch } from "../api";
-import { type UserConfigurationSetupDTO } from "../../pages/user/dashboard/configurator/models/ConfigurationSetup.store-model";
+import { type ConfigurationSetupStoreDTO } from "../../pages/user/dashboard/configurator/models/ConfigurationSetup.store-model";
 
 /**
  * POST /api/order/setup?orderId=XXX
  */
 export async function saveOrderSetup(
   orderId: string,
-  data: UserConfigurationSetupDTO
+  data: ConfigurationSetupStoreDTO
 ): Promise<unknown> {
   const res = await apiFetch<unknown>(
     `/api/order/setup?orderId=${orderId}`,

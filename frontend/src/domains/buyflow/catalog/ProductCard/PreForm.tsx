@@ -5,19 +5,22 @@
 // RUOLO:
 // - Raccolta dati minimi pre-login
 // - Creazione UNICA della Configuration Base (BE)
-// - BuyFlow NON decide la destinazione finale
 //
 // INVARIANTI:
 // - Nessun cart
 // - Nessun checkout
 // - Nessuna option selection
-// - Redirect SEMPRE a /user/dashboard
+// - La Configuration nasce SEMPRE
+// - Login serve solo per continuare
 //
 // ======================================================
 
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useAuthStore } from "../../../../lib/store/auth.store";
+import { useIdentityStore } from "../../../../lib/store/identity.store";
+
 import type { ProductVM } from "../../../../lib/viewModels/product/Product.view-model";
 import { API_BASE } from "../../../../lib/config";
 
@@ -32,7 +35,9 @@ export default function BuyflowPreForm({
 }: Props) {
   const ref = useRef<HTMLElement>(null);
   const navigate = useNavigate();
+
   const user = useAuthStore((s) => s.user);
+  const identityId = useIdentityStore((s) => s.identityId);
 
   // =========================
   // CONFIGURATION BASE INPUT
@@ -45,22 +50,17 @@ export default function BuyflowPreForm({
   const continueFlow = async () => {
     try {
       // ======================================================
-      // 0) VISITOR → LOGIN
-      // ======================================================
-      if (!user) {
-        navigate("/user/login?redirect=/user/dashboard");
-        return;
-      }
-
-      // ======================================================
-      // 1) CREATE CONFIGURATION BASE
+      // 1) CREATE CONFIGURATION BASE (VISITOR OR USER)
       // ======================================================
       const res = await fetch(
         `${API_BASE}/api/configuration/base`,
         {
           method: "POST",
           credentials: "include",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "X-WOD-Identity": identityId, // 🔑 identity-first
+          },
           body: JSON.stringify({
             solutionId,
             productId: product.id,
@@ -74,33 +74,47 @@ export default function BuyflowPreForm({
         return;
       }
 
-      const json: { configurationId: string } = await res.json();
+      const { configurationId } = await res.json();
 
-      if (!json.configurationId) {
-        console.error("[CONFIG] invalid response", json);
+      if (!configurationId) {
+        console.error("[CONFIG] invalid response");
         return;
       }
 
       // ======================================================
-      // 2) HANDOFF → DASHBOARD (CANONICO)
+      // 2) HANDOFF
       // ======================================================
-     navigate(`/user/configurator/${json.configurationId}`);
+      if (!user) {
+        // visitor → login → ritorno alla configuration
+        navigate(
+          `/user/login?redirect=/user/dashboard/workspace/${configurationId}`,
+          { replace: true }
+        );
+        return;
+      }
 
+      // user già loggato → workspace diretto
+      navigate(
+        `/user/dashboard/workspace/${configurationId}`,
+        { replace: true }
+      );
     } catch (err) {
-      console.error("[BUYFLOW_PREFORM] continueFlow failed", err);
+      console.error(
+        "[BUYFLOW_PREFORM] continueFlow failed",
+        err
+      );
     }
   };
 
   /* =========================
      RENDER
   ========================= */
-
   return (
     <aside ref={ref} className="cart-preview">
       <h3>Avvia la configurazione</h3>
 
       <p className="cart-note">
-        Inserisci il nome della tua attività.  
+        Inserisci il nome della tua attività.
         Potrai completare tutti i dettagli dopo l’accesso.
       </p>
 
@@ -114,7 +128,9 @@ export default function BuyflowPreForm({
           className="wd-input"
           placeholder="Es. Studio Medico Rossi"
           value={businessName}
-          onChange={(e) => setBusinessName(e.target.value)}
+          onChange={(e) =>
+            setBusinessName(e.target.value)
+          }
         />
       </label>
 

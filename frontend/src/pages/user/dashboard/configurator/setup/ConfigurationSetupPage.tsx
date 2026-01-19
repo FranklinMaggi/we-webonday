@@ -29,22 +29,23 @@
 import { useState } from "react";
 import { useConfigurationSetupStore } from "../store/configurationSetup.store";
 
-import StepProductIntro from "./steps/StepProductIntro";
+//import StepProductIntro from "./steps/StepProductIntro";
 import StepBusinessInfo from "./steps/StepBusinessInfo";
-import StepDesign from "./steps/StepDesign";
-import StepLayoutGenerator from "./steps/StepLayoutGenerator";
-import StepReview from "./steps/StepReview";
+import StepOwnerInfo from "./steps/StepOwnerInf";
+import StepCommitConfiguration from "./steps/StepCommitConfiguration";
+//import StepDesign from "./steps/StepDesign";
+//import StepLayoutGenerator from "./steps/StepLayoutGenerator";
+//import StepReview from "./steps/StepReview";
 
 /* =========================
    STEPS ORDER (CANONICAL)
 ========================= */
 const STEPS = [
-  { key: "intro", label: "Intro" },
   { key: "business", label: "Business" },
-  { key: "design", label: "Design" },
-  { key: "extra", label: "Layout" },
-  { key: "review", label: "Review" },
+  { key: "owner", label: "Titolare" },
+  { key: "commit", label: "Conferma" },
 ] as const;
+
 
 
 type StepKey = (typeof STEPS)[number]["key"];
@@ -150,34 +151,28 @@ export default function ConfigurationSetupPage() {
       ========================= */}
       {(() => {
         switch (currentStep) {
-          case "intro":
-            return <StepProductIntro onNext={next} />;
-
           case "business":
             return <StepBusinessInfo onNext={next} />;
-
-          case "design":
+        
+          case "owner":
             return (
-              <StepDesign
+              <StepOwnerInfo
                 onNext={next}
                 onBack={back}
               />
             );
-
-          case "extra":
+        
+          case "commit":
             return (
-              <StepLayoutGenerator
-                onNext={next}
+              <StepCommitConfiguration
                 onBack={back}
               />
             );
-
-          case "review":
-            return <StepReview onBack={back} />;
-
+        
           default:
             return null;
         }
+        
       })()}
     </div>
   );

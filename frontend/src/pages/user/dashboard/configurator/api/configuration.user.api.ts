@@ -1,80 +1,64 @@
 /**
  * ======================================================
- * FE || src/lib/configuration/configuration.user.api.ts-> /lib/userAPi
+ * FE || CONFIGURATION USER API (CANONICAL)
  * ======================================================
  *
- * VERSIONE ATTUALE:
- * - v1.0 (2026-01)
- *
- * STATO:
- * - CORE (PRE-MIGRAZIONE)
- *
  * RUOLO:
- * - API FE per la persistenza della CONFIGURATION
- * - Salvataggio incrementale (draft) lato backend
+ * - Bridge FE ⇄ BE per la persistenza della Configuration
+ * - Usato da:
+ *   • configurator (wizard)
+ *   • workspace / dashboard
  *
- * CONTESTO:
- * - Usata durante il flusso di configurazione prodotto
- * - Opera su una entità "Configuration" già creata
+ * DOMINIO:
+ * - Configuration = workspace persistente (BE)
+ * - Configurator = draft FE temporaneo (Zustand)
  *
- * RESPONSABILITÀ:
- * - Inviare aggiornamenti parziali della configuration
- * - Delegare al backend:
- *   • validazione
- *   • merge
- *   • persistenza
- *
- * NON FA:
- * - NON crea configuration
- * - NON valida i dati
- * - NON interpreta il contenuto del payload
+ * SOURCE OF TRUTH:
+ * - Backend
  *
  * INVARIANTI:
  * - configurationId è SEMPRE fornito dal backend
- * - credentials: include (session user)
- * - Backend = source of truth
+ * - FE non crea Configuration
+ * - FE invia payload parziali (draft)
  *
- * PROBLEMA NOTO:
- * - Usa fetch diretto invece di apiFetch
+ * NOTE ARCHITETTURALI:
+ * - Questo file NON contiene logica di dominio
+ * - Nessuna validazione FE
+ * - Nessuna interpretazione dei dati
  *
- * MIGRAZIONE FUTURA:
- * - Destinazione: src/lib/userApi/configuration.user.api.ts
- * - Refactor:
- *   • sostituire fetch con apiFetch
- *   • allineare gestione errori
- *
- * NOTE:
- * - File mantenuto semplice per evitare coupling
- * - Ogni evoluzione passa dal backend
+ * FUTURO:
+ * - descriptionTags / solutionTags verranno gestiti
+ *   da endpoint dedicati o merge BE
  * ======================================================
  */
-// ======================================================
-// FE || lib/configurationApi.ts
-// ======================================================
-//
-// CONFIGURATION API — FE ⇄ BE
-//
-// RUOLO:
-// - Persistenza draft configurazione
-//
-// INVARIANTI:
-// - Usa sempre configurationId
-// - credentials: include
-
-
-// ======================================================
 
 import { apiFetch } from "../../../../../lib/api/client";
-import type { ConfigurationDTO} from "../models/Configuration.api-model";
+import type {
+  ConfigurationConfiguratorDTO,
+} from "../models/ConfigurationConfiguratorDTO";
+
+/* ======================================================
+   UPDATE CONFIGURATION (DRAFT SAVE)
+   ====================================================== */
 
 /**
  * PUT /api/configuration/:configurationId
+ *
+ * Salva aggiornamenti parziali della configuration.
+ *
+ * USO:
+ * - StepReview
+ * - Handoff configurator → workspace
+ *
+ * NOTE:
+ * - payload è intenzionalmente `unknown`
+ * - validazione e merge sono responsabilità BE
  */
 export async function updateConfiguration(
   configurationId: string,
   payload: unknown
-): Promise<unknown> {
-  const res = await apiFetch<unknown>(
+): Promise<{ ok: true }> {
+  const res = await apiFetch<{ ok: true }>(
     `/api/configuration/${configurationId}`,
     {
       method: "PUT",
@@ -82,23 +66,42 @@ export async function updateConfiguration(
     }
   );
 
-  if (res === null) {
+  if (!res) {
     throw new Error("Invalid configuration update response");
   }
 
   return res;
 }
-// ======================================================
-// CONFIGURATION — UPSERT FROM BUSINESS
-// ======================================================
 
+/* ======================================================
+   UPSERT FROM BUSINESS (BUYFLOW BRIDGE)
+   ====================================================== */
+
+/**
+ * POST /api/configuration/from-business
+ *
+ * Crea o aggiorna una configuration partendo da un Business.
+ *
+ * USO:
+ * - flusso buyflow
+ * - post creazione business
+ *
+ * NOTE:
+ * - Non usato direttamente dal configurator
+ * - Backend decide se creare o aggiornare
+ */
 export async function upsertConfigurationFromBusiness(input: {
   businessId: string;
   productId: string;
   optionIds: string[];
+
+  /**
+   * FUTURO:
+   * - verranno persistiti come parte del dominio Business
+   * - o come metadata Configuration
+   */
   businessDescriptionTags?: string[];
   businessServiceTags?: string[];
-
 }) {
   return apiFetch<{
     ok: true;
@@ -109,21 +112,29 @@ export async function upsertConfigurationFromBusiness(input: {
   });
 }
 
-// ======================================================
-// FE || lib/userApi/configuration.user.api.ts
-// ======================================================
-//
-// Backend = source of truth
-// Configuration = workspace persistente
-// ======================================================
+/* ======================================================
+   LIST USER CONFIGURATIONS
+   ====================================================== */
 
+/**
+ * GET /api/configuration
+ *
+ * Lista delle configuration dell’utente.
+ *
+ * USO:
+ * - dashboard
+ * - workspace index
+ *
+ * NOTE:
+ * - Usa ConfigurationConfiguratorDTO per coerenza FE
+ */
 export async function listMyConfigurations(): Promise<{
   ok: true;
-  items: ConfigurationDTO[];
+  items: ConfigurationConfiguratorDTO[];
 }> {
   const res = await apiFetch<{
     ok: true;
-    items: ConfigurationDTO[];
+    items: ConfigurationConfiguratorDTO[];
   }>("/api/configuration", {
     method: "GET",
   });
@@ -134,40 +145,36 @@ export async function listMyConfigurations(): Promise<{
 
   return res;
 }
-// FE || src/lib/userApi/configuration.user.api.ts
 
-export async function getMyConfiguration(
+/* ======================================================
+   LOAD CONFIGURATION (CONFIGURATOR / WORKSPACE)
+   ====================================================== */
+
+/**
+ * GET /api/configuration/:id
+ *
+ * Carica una configuration esistente.
+ *
+ * USO:
+ * - entry point configurator
+ * - workspace
+ *
+ * NOTE:
+ * - DTO minimo
+ * - campi extra ignorati dal FE
+ */
+export async function getConfigurationForConfigurator(
   configurationId: string
 ): Promise<{
   ok: true;
-  configuration: ConfigurationDTO;
+  configuration: ConfigurationConfiguratorDTO;
 }> {
-  const res = await apiFetch<{
-    ok: true;
-    configuration: ConfigurationDTO;
-  }>(`/api/configuration/${configurationId}`, {
-    method: "GET",
-    cache: "no-store",
-  });
-
-  if (!res) {
-    throw new Error("API /api/configuration/:id returned null");
-  }
-
-  return res;
-}
-
-
-import type { ConfigurationConfiguratorDTO } from "../models/Configuration.api-model";
-
-export async function getConfigurationForConfigurator(
-  configurationId: string
-): Promise<{ ok: true; configuration: ConfigurationConfiguratorDTO }> {
   const res = await apiFetch<{
     ok: true;
     configuration: ConfigurationConfiguratorDTO;
   }>(`/api/configuration/${configurationId}`, {
     method: "GET",
+    cache: "no-store",
   });
 
   if (!res) {
@@ -177,3 +184,21 @@ export async function getConfigurationForConfigurator(
   return res;
 }
 
+/* ======================================================
+   FUTURE EXTENSIONS (DOCUMENTATE)
+   ====================================================== */
+
+/**
+ * TODO (NON IMPLEMENTATO):
+ *
+ * - Persistenza esplicita:
+ *   • solutionDescriptionTags
+ *   • solutionServiceTags
+ *
+ * Possibili strade:
+ * 1) endpoint dedicato (/configuration/:id/tags)
+ * 2) merge automatico lato BE
+ * 3) migrazione nel dominio Business
+ *
+ * Decisione rimandata volutamente.
+ */

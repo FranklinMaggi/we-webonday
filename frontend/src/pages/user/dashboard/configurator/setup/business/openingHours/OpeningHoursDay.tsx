@@ -2,76 +2,87 @@
 // FE || components/OpeningHoursDay.tsx
 // ======================================================
 //
-// AI-SUPERCOMMENT — OPENING HOURS DAY
+// AI-SUPERCOMMENT — OPENING HOURS DAY (HARDENED)
 //
 // RUOLO:
 // - Gestisce orari di apertura per UN singolo giorno
-// - Supporta flusso sequenziale (wizard)
-// - Può propagare il valore al giorno successivo
+// - UX a preset + modifica fine
+// - Sicuro contro valori vuoti / parziali
 //
 // SOURCE OF TRUTH:
-// - openingHours → configurationSetup.store
+// - configurationSetup.store (openingHours)
 //
 // INVARIANTI:
 // - Nessuna fetch
 // - Nessuna persistenza backend
-// - Salva stringhe normalizzate ("H24", "Chiuso", "09:00 - 18:00", ecc.)
+// - Accetta SOLO stringhe normalizzate
 // ======================================================
 
 type OpeningHoursDayProps = {
   dayKey: string;
   dayLabel: string;
-  value: string;
 
-  /** true se è il giorno attualmente visibile */
-  isActive?: boolean, //default;
+  /** valore corrente (stringa normalizzata o vuota) */
+  value?: string;
 
-  /** aggiorna il valore del giorno corrente */
+  /** se false, il giorno non viene renderizzato */
+  isActive?: boolean;
+
+  /** aggiorna il valore del giorno */
   onChange: (value: string) => void;
 
-  /**
-   * chiamato quando il giorno è "completato"
-   * → il parent può:
-   *   - mostrare il giorno successivo
-   *   - copiare automaticamente il valore
-   */
+  /** opzionale: avanzamento automatico wizard */
   onAutoNext?: (value: string) => void;
 };
+
+/* ======================================================
+   COSTANTI
+====================================================== */
 
 const HOURS = Array.from({ length: 24 }, (_, i) =>
   String(i).padStart(2, "0")
 );
 const MINUTES = ["00", "15", "30", "45"];
 
+/* ======================================================
+   COMPONENT
+====================================================== */
+
 export function OpeningHoursDay({
   dayLabel,
   value,
-  isActive,
+  isActive = true,
   onChange,
   onAutoNext,
 }: OpeningHoursDayProps) {
   if (!isActive) return null;
 
-  /* =========================
-     MODE DERIVATO (UI)
-  ========================= */
-  const mode: "h24" | "closed" | "single" | "split" =
-    value === "H24"
+  const safeValue = value?.trim() ?? "";
+
+  /* ======================================================
+     MODE DERIVATION (SAFE)
+  ====================================================== */
+  const mode: "empty" | "h24" | "closed" | "single" | "split" =
+    !safeValue
+      ? "empty"
+      : safeValue === "H24"
       ? "h24"
-      : value === "Chiuso"
+      : safeValue === "Chiuso"
       ? "closed"
-      : value.includes("/")
+      : safeValue.includes("/")
       ? "split"
-      : "single";
+      : safeValue.includes(" - ")
+      ? "single"
+      : "empty";
 
-  const isSingle = mode === "single";
-  const isSplit = mode === "split";
-
-  function commit(value: string) {
-    onChange(value);
-    onAutoNext?.(value);
+  function commit(next: string) {
+    onChange(next);
+    onAutoNext?.(next);
   }
 
+  /* ======================================================
+     RENDER
+  ====================================================== */
   return (
     <div className="opening-day">
       <strong>{dayLabel}</strong>
@@ -104,18 +115,18 @@ export function OpeningHoursDay({
       </div>
 
       {/* ================= ORARIO SINGOLO ================= */}
-      {isSingle && (
+      {mode === "single" && (
         <div className="time-row">
           <TimeRange
-            value={value}
+            value={safeValue}
             onChange={commit}
           />
         </div>
       )}
 
       {/* ================= DOPPIO TURNO ================= */}
-      {isSplit && (() => {
-        const [morning, afternoon] = value.split(" / ");
+      {mode === "split" && (() => {
+        const [morning, afternoon] = safeValue.split(" / ");
 
         return (
           <>
@@ -146,7 +157,7 @@ export function OpeningHoursDay({
 }
 
 /* ======================================================
-   SUBCOMPONENT — TIME RANGE (CONTROLLATO)
+   SUBCOMPONENT — TIME RANGE (SAFE)
 ====================================================== */
 
 type TimeTuple = {
@@ -157,10 +168,26 @@ type TimeTuple = {
 };
 
 function parseRange(range: string): TimeTuple {
+  // 🔒 fallback assoluto
+  if (!range || !range.includes(" - ")) {
+    return {
+      fromH: "09",
+      fromM: "00",
+      toH: "18",
+      toM: "00",
+    };
+  }
+
   const [from, to] = range.split(" - ");
   const [fromH, fromM] = from.split(":");
   const [toH, toM] = to.split(":");
-  return { fromH, fromM, toH, toM };
+
+  return {
+    fromH: fromH ?? "09",
+    fromM: fromM ?? "00",
+    toH: toH ?? "18",
+    toM: toM ?? "00",
+  };
 }
 
 function composeRange(t: TimeTuple) {
@@ -185,24 +212,64 @@ function TimeRange({ value, onChange }: TimeRangeProps) {
   }
 
   return (
-    <>
-      <select value={time.fromH} onChange={(e) => update({ fromH: e.target.value })}>
-        {HOURS.map((h) => <option key={h}>{h}</option>)}
-      </select>
-      :
-      <select value={time.fromM} onChange={(e) => update({ fromM: e.target.value })}>
-        {MINUTES.map((m) => <option key={m}>{m}</option>)}
+    <div className="time-range">
+      <select
+        value={time.fromH}
+        onChange={(e) =>
+          update({ fromH: e.target.value })
+        }
+      >
+        {HOURS.map((h) => (
+          <option key={h} value={h}>
+            {h}
+          </option>
+        ))}
       </select>
 
-      <span>—</span>
-
-      <select value={time.toH} onChange={(e) => update({ toH: e.target.value })}>
-        {HOURS.map((h) => <option key={h}>{h}</option>)}
-      </select>
       :
-      <select value={time.toM} onChange={(e) => update({ toM: e.target.value })}>
-        {MINUTES.map((m) => <option key={m}>{m}</option>)}
+
+      <select
+        value={time.fromM}
+        onChange={(e) =>
+          update({ fromM: e.target.value })
+        }
+      >
+        {MINUTES.map((m) => (
+          <option key={m} value={m}>
+            {m}
+          </option>
+        ))}
       </select>
-    </>
+
+      <span> — </span>
+
+      <select
+        value={time.toH}
+        onChange={(e) =>
+          update({ toH: e.target.value })
+        }
+      >
+        {HOURS.map((h) => (
+          <option key={h} value={h}>
+            {h}
+          </option>
+        ))}
+      </select>
+
+      :
+
+      <select
+        value={time.toM}
+        onChange={(e) =>
+          update({ toM: e.target.value })
+        }
+      >
+        {MINUTES.map((m) => (
+          <option key={m} value={m}>
+            {m}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }

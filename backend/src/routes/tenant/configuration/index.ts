@@ -17,4 +17,4 @@ export {
   } from "./configuration.business.write";
   export {
     createConfigurationFromCart,
-  } from "./configuration.product.write";
+  } from "./configuration.cart.write";

@@ -1,52 +1,76 @@
 /**
  * ======================================================
- * FE || CONFIGURATION SETUP STORE (CANONICAL)
+ * FE || ConfigurationSetupStoreDTO (CANONICAL)
  * ======================================================
  *
  * RUOLO:
- * - Stato FE temporaneo del wizard di configurazione
+ * - Stato FE completo del configurator
+ * - Workspace temporaneo
  *
  * SOURCE OF TRUTH:
- * - Backend (ConfigurationConfiguratorDTO)
- *
- * INVARIANTI:
- * - Stato SOLO frontend
- * - Nessuna fetch
- * - Nessuna persistenza diretta
- * - Resettato a ogni mount del configurator
- *
+ * - Backend per id / solutionId / productId / optionIds
+ * - FE per il resto
  * ======================================================
  */
+// ======================================================
+// FE || Configuration Setup Store (Zustand)
+// ======================================================
+//
+// RUOLO:
+// - Stato FE temporaneo del configurator
+// - NON persiste
+// - NON fa fetch
+//
+// ======================================================
+
 import { create } from "zustand";
-import type { UserConfigurationSetupDTO } from "../models/ConfigurationSetup.store-model";
 
-/* =========================
-   INITIAL STATE
-========================= */
-const initialState: UserConfigurationSetupDTO = {
-  /* STEP 1 */
+const initialState: ConfigurationSetupStoreDTO = {
+  configurationId: undefined,
+
   solutionId: "",
+  productId: "",
   optionIds: [],
-
-  /* STEP 2 */
+  /* =========================
+     OWNER (NEW — FE ONLY)
+  ========================= */
+  ownerName: undefined,
+  ownerEmail: undefined,
+  ownerPhone: undefined,
   businessName: "",
   sector: "",
-  email: "",
-  phone: "",
-  privacyAccepted: false,
 
-  /* STEP 3 */
+  email: "",
+  phone: undefined,
+
+  address: undefined,
+  city: undefined,
+  state: undefined,
+  zip: undefined,
+
+  openingHours: undefined,
+  servicesTags: undefined,
+  descriptionTags: undefined,
+
   solutionServiceTags: [],
   businessServiceTags: [],
   businessDescriptionTags: [],
+
+  layoutId: undefined,
+  style: undefined,
+  colorPreset: undefined,
+
+  visibility: undefined,
+
+  privacyAccepted: false,
 };
 
 type ConfigurationSetupState = {
-  data: UserConfigurationSetupDTO;
+  data: ConfigurationSetupStoreDTO;
 
-  setField<K extends keyof UserConfigurationSetupDTO>(
+  setField<K extends keyof ConfigurationSetupStoreDTO>(
     key: K,
-    value: UserConfigurationSetupDTO[K]
+    value: ConfigurationSetupStoreDTO[K]
   ): void;
 
   reset(): void;
@@ -66,3 +90,60 @@ export const useConfigurationSetupStore =
 
     reset: () => set({ data: initialState }),
   }));
+
+
+export type ConfigurationSetupStoreDTO = {
+  /* =========================
+     CORE (BE)
+  ========================= */
+  configurationId?: string;
+
+  solutionId: string;
+  productId: string;
+  optionIds: string[];
+/* =========================
+     OWNER (NEW — FE ONLY)
+  ========================= */
+  ownerName?: string;
+  ownerEmail?: string;
+  ownerPhone?: string;
+  /* =========================
+     BUSINESS
+  ========================= */
+  businessName: string;
+  sector: string;
+
+  email: string;
+  phone?: string;
+
+  address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+
+  openingHours?: Record<string, string>;
+
+  servicesTags?: string;
+  descriptionTags?: string;
+
+  /* =========================
+     TAGS
+  ========================= */
+  solutionServiceTags: string[];
+  businessServiceTags: string[];
+  businessDescriptionTags: string[];
+
+  /* =========================
+     DESIGN
+  ========================= */
+  layoutId?: string;
+  style?: string;
+  colorPreset?: string;
+
+  visibility?: Record<string, boolean>;
+
+  /* =========================
+     META
+  ========================= */
+  privacyAccepted: boolean;
+};

@@ -48,13 +48,38 @@
 //   ✔️ rimozione definitiva delle collisioni path
 //
 // ======================================================
+// ======================================================
+// FE || pages/user/index.tsx
+// ======================================================
+//
+// USER AREA ENTRY POINT
+//
+// RUOLO:
+// - Target root dell’area /user
+// - Demandato al router per redirect o layout
+//
+// COSA FA:
+// - NIENTE (placeholder intenzionale)
+//
+// COSA NON FA:
+// - NON fa redirect
+// - NON carica dati
+// - NON monta layout
+//
+// NOTE:
+// - Usato solo come hook di routing
+// ======================================================
 
 import UserOrders from "./sections/UserOrders";
 import UserProjects from "./sections/UserProjects";
 import ExploreSolutionsCTA from "./sections/ExploreSolutionsCTA";
+import { useAuthStore } from "../../../lib/store/auth.store";
+
+
 
 export default function UserDashboardHome() {
-
+  const user = useAuthStore((s) => s.user);
+  
 
   return (
     <section className="user-dashboard-home">
@@ -62,12 +87,17 @@ export default function UserDashboardHome() {
       {/* ===========================
          HEADER CONTESTUALE
       =========================== */}
-      <header className="dashboard-header">
-        <h1>Area Cliente</h1>
-        <p className="dashboard-subtitle">
-          Gestisci le tue attività, i progetti e gli ordini
-        </p>
-      </header>
+    <header className="dashboard-header">
+  <h1>
+    Benvenuto{user?.email ? `, ${user.email}` : ""}
+  </h1>
+
+  <p className="dashboard-subtitle">
+    Da qui puoi esplorare le soluzioni disponibili,
+    riprendere una configurazione in corso
+    o consultare i tuoi ordini.
+  </p>
+</header>
 
       {/* ===========================
          AZIONE PRINCIPALE

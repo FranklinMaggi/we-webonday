@@ -44,11 +44,7 @@ const InputSchema = z.object({
   productId: z.string().min(1),
   optionIds: z.array(z.string()).default([]),
 
-  // =========================
-  // TAGS — BUSINESS DOMAIN
-  // =========================
-  businessDescriptionTags: z.array(z.string()).optional(),
-  businessServiceTags: z.array(z.string()).optional(),
+
 });
 
 export async function upsertConfigurationFromBusiness(
@@ -102,14 +98,6 @@ export async function upsertConfigurationFromBusiness(
   
   const updatedBusiness = {
     ...business,
-  
-    // TAGS
-    descriptionTags:
-      body.businessDescriptionTags ?? business.descriptionTags ?? [],
-  
-    serviceTags:
-      body.businessServiceTags ?? business.serviceTags ?? [],
-  
     // Timestamp
     updatedAt: new Date().toISOString(),
   };

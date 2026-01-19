@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from "react";
 
-import { fetchPublicSolutions } from "../api/publiApi/solutions/solutions.public.api";
+import { fetchPublicSolutions} from "../../../lib/publicApi/solutions/solutions.public.api"
 
 import SolutionCard from "./SolutionCard";
 

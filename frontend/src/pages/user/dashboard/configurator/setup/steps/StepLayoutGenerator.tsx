@@ -44,7 +44,8 @@ export default function StepLayoutGenerator({ onNext, onBack }: Props) {
 
   const isComplete =
     !!data.businessName &&
-    (!!data.description || !!data.services);
+    (!!data.businessDescriptionTags?.length ||
+      !!data.businessServiceTags?.length);
 
   useEffect(() => {
     setField("visibility", derivedVisibility);

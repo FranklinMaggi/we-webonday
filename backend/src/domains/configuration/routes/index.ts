@@ -6,9 +6,7 @@ export { deleteUserConfiguration } from "./configuration.user.delete";
 
 export {
     listUserConfigurations,
-    getUserConfiguration,
-    createConfiguration,
-    updateConfiguration,
+    getUserConfiguration
   } from "./configuration.read";
   
   export {
