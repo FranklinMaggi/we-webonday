@@ -85,6 +85,7 @@ export async function createConfigurationBase(
   const now = new Date().toISOString();
 
   const configuration: ConfigurationDTO = {
+    //identityId,  // Qui dovremmo usare WOD 
     id: configurationId,
     userId: session.user.id,
   

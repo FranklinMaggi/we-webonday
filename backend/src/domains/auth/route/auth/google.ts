@@ -100,7 +100,7 @@ export async function googleCallback(
   // ===============================
   const identity = mapGooglePayload(payload);
   const { userId } = await resolveOrCreateUser(env, identity);
-
+  
   await logActivity(env, "LOGIN", userId, {
     provider: "google",
     email: identity.email,

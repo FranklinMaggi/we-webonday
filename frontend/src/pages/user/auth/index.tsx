@@ -60,6 +60,7 @@ export default function UserLoginPage() {
     try {
       await apiFetch("/api/user/login", {
         method: "POST",
+        credentials:"include",
         body: JSON.stringify({ email, password }),
       });
 
@@ -86,6 +87,7 @@ export default function UserLoginPage() {
     try {
       await apiFetch("/api/user/register", {
         method: "POST",
+        credentials:"include",
         body: JSON.stringify({ email, password }),
       });
 
