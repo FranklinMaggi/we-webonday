@@ -10,11 +10,13 @@
 // - SOLO route attive (no legacy)
 // ======================================================
 
+export { updateBusinessDraft } from "./business.update-draft";
 export { createBusinessDraft } from "./business.create-draft";
+export { getBusinessDraft } from "./business.get.base-draft";
 
 // ⚠️ FUTURE (quando riattivate):
- export { createBusiness } from "./business.create";
-export { getBusiness } from "./business.get";
-export { listBusinesses } from "./business.list";
-export { submitBusiness } from "./business.submit";
-export { uploadBusinessMenu } from "./uploadMenu";
+export { createBusiness } from "./deprecated/business.create";
+export { getBusiness } from "./deprecated/business.get";
+export { listBusinesses } from "./deprecated/business.list";
+export { submitBusiness } from "./deprecated/business.submit";
+export { uploadBusinessMenu } from "./deprecated/uploadMenu";

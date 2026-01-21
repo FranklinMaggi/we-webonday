@@ -51,9 +51,19 @@ type SidebarSection = {
 ========================= */
 const SECTIONS: SidebarSection[] = [
   {
-    title: "Account",
+    title: "Plans",
     items: [
-      { to: "/user/dashboard", label: "Dashboard" },
+      { to: "productId", label: "Free" },
+      { to: "productId", label: "Essential" , disabled: true },//la pagina visibile sempre solo il label effetto disabled , perchè non è attvia la promozione / mostra optionID di productId a destr bottone vicino switcher per attivatre a destra si apre pagina checkout
+      { to: "productId", label: "Working", disabled: true },//la pagina visibile sempre solo il label effetto disabled , perchè non è attvia la promozione / mostra optionID di productId a destr bottone vicino switcher per attivatre a destra si apre pagina checkout
+      { to: "productId", label: "KillerWeb", disabled: true },//la pagina visibile sempre solo il label effetto disabled , perchè non è attvia la promozione / mostra optionID di productId a destr bottone vicino switcher per attivatre a destra si apre pagina checkout
+      { to: "/user/dashboard/user", label: "Shuttle", disabled: true },//la pagina visibile sempre solo il label effetto disabled , perchè non è attvia la promozione / mostra optionID di productId a destr bottone vicino switcher per attivatre a destra si apre pagina checkout
+    ],
+  },
+  {
+    title: "Configurations",
+    items: [
+      { to: "/user/dashboard/configuration/id", label: "configurationid.nomeBusiness" },// quando ci clicco va direttamente a configuration/businessForm 
       { to: "/user/dashboard/business", label: "Attività" },
       { to: "/user/dashboard/user", label: "Profilo", disabled: true },
     ],

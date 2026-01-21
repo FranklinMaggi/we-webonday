@@ -17,7 +17,7 @@
 // BuyFlow → LOGIN → CREATE BASE → DASHBOARD
 // ======================================================
 
-import { ConfigurationBaseInputSchema } from "../schema/configuration.base.schema";
+import { ConfigurationBaseInputSchema } from "../schema/configuration.draft.schema";
 import type { Env } from "../../../types/env";
 import { requireAuthUser } from "@domains/auth";
 import { json } from "@domains/auth/route/helper/https";
@@ -51,7 +51,10 @@ export async function createConfigurationBase(
   const body = ConfigurationBaseInputSchema.parse(
     await request.json()
   );
+  const rawBusinessDraftId = crypto.randomUUID();
 
+  // Alias leggibile (debug / audit / KV naming)
+  const businessDraftId = `nomeAttività:${rawBusinessDraftId}`;
   // =========================
   // BUILD CONFIGURATION ID
   // =========================
@@ -95,7 +98,7 @@ export async function createConfigurationBase(
     prefill: {
       businessName: body.businessName,
     },
-  
+    businessDraftId,
     options: [],
     data: {},
   

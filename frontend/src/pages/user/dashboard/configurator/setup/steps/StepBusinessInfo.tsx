@@ -1,30 +1,56 @@
 // ======================================================
-// FE || STEP — BUSINESS INFO (CANONICAL SEED)
+// FE || STEP — BUSINESS INFO (CANONICAL)
 // ======================================================
 //
 // RUOLO:
-// - Carica dati READ-ONLY da Solution (public)
-// - Inietta seed nel BusinessForm
+// - Carica dati READ-ONLY da Solution
+// - Carica BusinessDraft (se esiste)
+// - Prefilla COMPLETAMENTE lo store FE
 //
-// INVARIANTI:
-// - UNICO punto FE che legge Solution_KV
-// - Nessuna scrittura
-// - Nessuna logica di fallback UI
+// SOURCE OF TRUTH:
+// - BusinessDraft (BE)
 // ======================================================
 
 import { useEffect, useState } from "react";
 
 import { useConfigurationSetupStore } from "../../store/configurationSetup.store";
-import BusinessForm from "../../../../../../domains/business/BusinessForm";
+import BusinessForm from "../business/BusinessForm";
 
 import { getSolutionById } from "../../../../../../domains/buyflow/api/publiApi/solutions/solutions.public.api";
+import { apiFetch } from "../../../../../../lib/api";
+
 /* ======================================================
-   LOCAL SEED (FE INTERNAL)
+   LOCAL TYPES
 ====================================================== */
 export type SolutionSeed = {
   descriptionTags: string[];
   serviceTags: string[];
   openingHoursDefault: Record<string, string> | null;
+};
+
+type BusinessDraftReadDTO = {
+  businessDraftId: string;
+  businessName: string;
+
+  businessOpeningHour?: Record<string, string>;
+
+  contact?: {
+    mail?: string;
+    phoneNumber?: string;
+    address?: {
+      street?: string;
+      city?: string;
+      province?: string;
+      zip?: string;
+    };
+  };
+  privacy?: {
+    accepted: boolean;
+    acceptedAt: string;
+    policyVersion: string;
+  };
+  businessDescriptionTags?: string[];
+  businessServiceTags?: string[];
 };
 
 /* ======================================================
@@ -35,76 +61,118 @@ export default function StepBusinessInfo({
 }: {
   onNext: () => void;
 }) {
-  /* =========================
-     STORE (SOURCE OF TRUTH)
-  ========================= */
-  const { data } = useConfigurationSetupStore();
+  const { data, setField } = useConfigurationSetupStore();
 
-  /* =========================
-     LOCAL STATE
-  ========================= */
   const [seed, setSeed] = useState<SolutionSeed | null>(null);
-  console.log("[STEP_BUSINESS] store snapshot", {
-    businessName: data.businessName,
-    solutionId: data.solutionId,
-  });
-  
+  const [loading, setLoading] = useState(true);
+
   /* ======================================================
-     HARD GUARD — BUSINESS NAME
-     (deriva da Configuration.prefill)
+     HARD GUARD — MINIMO
   ====================================================== */
-  if (!data.businessName) {
+  if (!data.solutionId || !data.productId) {
     return (
       <div className="step-error">
-        <h2>Nome attività mancante</h2>
-        <p>
-          Il nome dell’attività deve essere definito prima di
-          iniziare la configurazione.
-        </p>
+        <h2>Configurazione incompleta</h2>
       </div>
     );
   }
 
   /* ======================================================
-     LOAD SOLUTION SEED (READ ONLY)
+     LOAD SEED + BUSINESS DRAFT
   ====================================================== */
   useEffect(() => {
-    console.log("[STEP_BUSINESS] loading solution seed", data.solutionId);
-
-    if (!data.solutionId) return;
-
     let cancelled = false;
 
-    async function loadSeed() {
+    async function bootstrap() {
       try {
-        
-        const solution = await getSolutionById(
-          data.solutionId
-          
-        );
-        console.log("[STEP_BUSINESS] seed loaded", seed);
-        if (cancelled) return;
+        /* =========================
+           1️⃣ LOAD SOLUTION SEED
+        ========================= */
+        const solution = await getSolutionById(data.solutionId);
+        if (!cancelled) {
+          setSeed({
+            descriptionTags: solution.descriptionTags ?? [],
+            serviceTags: solution.serviceTags ?? [],
+            openingHoursDefault:
+              solution.openingHoursDefault ?? null,
+          });
+        }
 
-        setSeed({
-          descriptionTags:
-            solution.descriptionTags ?? [],
-          serviceTags:
-            solution.serviceTags ?? [],
-          openingHoursDefault:
-            solution.openingHoursDefault ?? null,
-        });
+        /* =========================
+           2️⃣ LOAD BUSINESS DRAFT (IF EXISTS)
+        ========================= */
+        if (data.configurationId) {
+          const res = await apiFetch<{
+            ok: boolean;
+            draft?: BusinessDraftReadDTO;
+          }>(
+            `/api/business/get-base-draft?configurationId=${data.configurationId}`,
+            { method: "GET" }
+          );
+
+          if (res?.draft && !cancelled) {
+            const d = res.draft;
+
+            // 🔑 PREFILL STORE — BUSINESS
+            setField("businessDraftId", d.businessDraftId);
+            setField("businessName", d.businessName);
+
+            if (d.businessOpeningHour) {
+              setField("openingHours", d.businessOpeningHour);
+            }
+
+            if (d.contact?.mail) {
+              setField("email", d.contact.mail);
+            }
+
+            if (d.contact?.phoneNumber) {
+              setField("phone", d.contact.phoneNumber);
+            }
+
+            if (d.contact?.address) {
+              setField("address", d.contact.address.street ?? "");
+              setField("city", d.contact.address.city ?? "");
+              setField("state", d.contact.address.province ?? "");
+              setField("zip", d.contact.address.zip ?? "");
+            }
+
+            setField(
+              "businessDescriptionTags",
+              d.businessDescriptionTags ?? []
+            );
+            setField(
+              "businessServiceTags",
+              d.businessServiceTags ?? []
+            );
+            if (d.privacy) {
+              setField("privacy", {
+                accepted: d.privacy.accepted,
+                acceptedAt: d.privacy.acceptedAt,
+                policyVersion: d.privacy.policyVersion,
+              });
+            }
+            
+          }
+        }
       } catch {
         // FAIL SILENTLY
-        // Il BusinessForm resta comunque utilizzabile
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
 
-    loadSeed();
-
+    bootstrap();
     return () => {
       cancelled = true;
     };
-  }, [data.solutionId]);
+  }, [data.solutionId, data.configurationId, setField]);
+
+  /* ======================================================
+     UI GUARD
+  ====================================================== */
+  if (loading) {
+    return <div className="step">Caricamento dati business…</div>;
+  }
 
   /* ======================================================
      RENDER

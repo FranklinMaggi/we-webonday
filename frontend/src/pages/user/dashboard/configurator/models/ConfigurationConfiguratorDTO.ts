@@ -18,7 +18,20 @@ export type ConfigurationConfiguratorDTO = {
 
   prefill?: {
     businessName: string;
+    email?: string;
+    phone?: string;
+    address?: {
+      street?: string;
+      city?: string;
+      province?: string;
+      zip?: string;}
   };
+
+  businessServiceTags?: string[];
+  businessDescriptionTags?: string[];
+
+
+
 
   status: string;
 

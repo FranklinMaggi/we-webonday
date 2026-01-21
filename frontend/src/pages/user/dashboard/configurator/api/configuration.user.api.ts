@@ -35,7 +35,7 @@
 import { apiFetch } from "../../../../../lib/api/client";
 import type {
   ConfigurationConfiguratorDTO,
-} from "../models/COnfigurationConfiguratorDTO";
+} from "../models/ConfigurationConfiguratorDTO";
 
 /* ======================================================
    UPDATE CONFIGURATION (DRAFT SAVE)

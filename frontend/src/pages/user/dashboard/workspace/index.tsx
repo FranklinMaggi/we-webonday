@@ -27,7 +27,7 @@ import { useEffect, useState } from "react";
 import { useNavigate,useParams } from "react-router-dom";
 
 import { listMyConfigurations } from "../configurator/api/configuration.user.api";
-import type { ConfigurationConfiguratorDTO } from "../configurator/models/COnfigurationConfiguratorDTO";
+import type { ConfigurationConfiguratorDTO } from "../configurator/models/ConfigurationConfiguratorDTO";
 import { getConfigurationForConfigurator } from "../configurator/api/configuration.user.api";
 import { useConfigurationSetupStore } from "../configurator/store/configurationSetup.store";
 

@@ -81,7 +81,8 @@ export const ConfigurationSchema = z.object({
 
   /* ---------- Business linkage (POST-STEP) ---------- */
   businessId: z.string().optional(),
-
+/* ---------- Business draft linkage (PRE-BUSINESS) ---------- */
+businessDraftId: z.string().optional(),
   /* ---------- Commercial origin ---------- */
   solutionId: z.string().min(1),
   productId: z.string().min(1),

@@ -27,8 +27,8 @@ import { create } from "zustand";
 
 const initialState: ConfigurationSetupStoreDTO = {
   configurationId: undefined,
-  businessId: "",
-  draftId:"",
+  businessDraftId: undefined, 
+  
   solutionId: "",
   productId: "",
   optionIds: [],
@@ -48,10 +48,14 @@ const initialState: ConfigurationSetupStoreDTO = {
   city: undefined,
   state: undefined,
   zip: undefined,
-
+  privacy:{
+    accepted: false , 
+    acceptedAt:"", 
+    policyVersion:"" ,
+  },
   openingHours: undefined,
-  servicesTags: undefined,
-  descriptionTags: undefined,
+  userPurposedServicesTags: undefined,
+  userPurposedDescriptionTags: undefined,
 
   solutionServiceTags: [],
   businessServiceTags: [],
@@ -63,7 +67,7 @@ const initialState: ConfigurationSetupStoreDTO = {
 
   visibility: undefined,
 
-  privacyAccepted: false,
+ 
 };
 
 type ConfigurationSetupState = {
@@ -98,8 +102,13 @@ export type ConfigurationSetupStoreDTO = {
      CORE (BE)
   ========================= */
   configurationId?: string;
-  businessId?: string;
-
+  businessDraftId?:string; 
+  privacy: {
+    accepted: boolean;
+    acceptedAt: string;
+    policyVersion: string;
+  }
+;
   solutionId: string;
   productId: string;
   optionIds: string[];
@@ -124,10 +133,10 @@ export type ConfigurationSetupStoreDTO = {
   zip?: string;
 
   openingHours?: Record<string, string>;
-  draftId?:string;
+ 
 
-  servicesTags?: string;
-  descriptionTags?: string;
+  userPurposedServicesTags?: string;
+  userPurposedDescriptionTags?: string;
 
   /* =========================
      TAGS
@@ -148,5 +157,5 @@ export type ConfigurationSetupStoreDTO = {
   /* =========================
      META
   ========================= */
-  privacyAccepted: boolean;
+ 
 };

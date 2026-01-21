@@ -19,7 +19,7 @@ export async function googleAuth(request: Request, env: Env): Promise<Response> 
     response_type: "code",
     scope: "openid email profile",
     prompt: "select_account",
-    state: redirect, // verrà URL-encoded automaticamente
+    state: encodeURIComponent(redirect), // verrà URL-encoded automaticamente
   });
 
   const headers = new Headers({
@@ -56,7 +56,12 @@ export async function googleCallback(
   } catch {
     redirectState = "/";
   }
-
+  if (
+    redirectState.startsWith("http") ||
+    redirectState.startsWith("//")
+  ) {
+    redirectState = "/";
+  }
   // ===============================
   // TOKEN EXCHANGE
   // ===============================
@@ -85,15 +90,18 @@ export async function googleCallback(
     return new Response("Missing id_token", { status: 500 });
   }
 
-  /**
-   * FIX #3 — base64url safe decode
-   */
-  const base64 = tokenJson.id_token
-    .split(".")[1]
-    .replace(/-/g, "+")
-    .replace(/_/g, "/");
+  function base64UrlDecode(input: string) {
+    input = input.replace(/-/g, "+").replace(/_/g, "/");
+    const pad = input.length % 4;
+    if (pad) input += "=".repeat(4 - pad);
+    return atob(input);
+  }
+  
+  const payload = JSON.parse(
+    base64UrlDecode(tokenJson.id_token.split(".")[1])
+  );
+  
 
-  const payload = JSON.parse(atob(base64));
 
   // ===============================
   // USER RESOLUTION
@@ -113,7 +121,8 @@ export async function googleCallback(
 
 
  // 🔐 sicurezza: blocco redirect assoluti
-if (redirectState.startsWith("http")) {
+if ((redirectState.startsWith("http")) ||
+redirectState.startsWith("//") ){
   redirectState = "/";
 }
 

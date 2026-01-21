@@ -25,7 +25,7 @@
 
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getBusiness } from "../../../../domains/buyflow/api/business/business.user.api";
+import { getBusiness } from "../configurator/api/business/business.user.api";
 
 type BusinessDetail = {
   id: string;

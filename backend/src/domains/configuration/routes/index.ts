@@ -2,6 +2,10 @@
 // BE || routes/configuration/index.ts
 // ======================================================
 
+export { attachOwnerToConfiguration } from "./configuration.attach-owner.ipnut";
+
+export { commitConfigurationRoute} from "./configuration.base.commit";
+
 export { deleteUserConfiguration } from "./configuration.user.delete";
 
 export {
@@ -19,4 +23,3 @@ export {
     createConfigurationBase,
   } from "./configuration.base.write";
 
-  

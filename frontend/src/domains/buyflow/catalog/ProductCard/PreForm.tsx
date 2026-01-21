@@ -19,7 +19,7 @@
 
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useConfigurationSetupStore } from "../../../../pages/user/dashboard/configurator/store/configurationSetup.store";
 import { usePreConfigurationStore } from
   "../../../../pages/user/dashboard/configurator/store/pre-configuration.store";
 import type { ProductVM } from
@@ -39,7 +39,7 @@ export default function BuyflowPreForm({
   ========================= */
   const ref = useRef<HTMLElement>(null);
   const navigate = useNavigate();
-
+  const resetSetup = useConfigurationSetupStore(s => s.reset);
   /* =========================
      STORE (WRITE ONLY)
   ========================= */
@@ -58,7 +58,8 @@ export default function BuyflowPreForm({
   function continueFlow() {
     const trimmed = businessName.trim();
     if (!trimmed) return;
-
+      // 🔥 SBLOCCO STATE MACHINE
+      resetSetup();
     // 🔑 PRE-CONFIG ATOMICA (UNICA RESPONSABILITÀ)
     setPreConfig({
       businessName: trimmed,

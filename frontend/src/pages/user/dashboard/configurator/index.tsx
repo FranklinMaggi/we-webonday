@@ -60,11 +60,17 @@ export default function ConfigurationIndex() {
         setField("productId", cfg.productId);
         setField("optionIds", cfg.options ?? []);
 
-        // prefill UX (non obbligatorio)
-        setField(
-          "businessName",
-          cfg.prefill?.businessName ?? ""
-        );
+
+        // ⚠️ Prefill UX opzionale (NON dominio)
+        if (cfg.prefill?.businessName) {
+          setField("businessName", cfg.prefill.businessName);
+        }
+
+
+
+
+
+        
       })
       .catch(() => {
         navigate("/user/dashboard", { replace: true });

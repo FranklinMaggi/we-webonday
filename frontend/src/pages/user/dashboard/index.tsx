@@ -2,126 +2,153 @@
 // FE || pages/user/dashboard/index.tsx
 // ======================================================
 //
-// AI-SUPERCOMMENT — LEGACY CATCH-ALL (ISOLATED)
-//
-// ⚠️ ATTENZIONE — FILE NON CANONICO ⚠️
-//
-// QUESTO FILE:
-// - ❌ NON è il configurator canonico
-// - ❌ NON è il workspace canonico post-wizard
-// - ❌ NON rappresenta un dominio funzionale chiaro
-////Il configurator è l’unica interfaccia
-//che modifica una Configuration.
-
-//La modalità (wizard / workspace)
-//dipende esclusivamente dallo status backend.
-// RUOLO ATTUALE:
-// - Catch-all legacy per route ambigue di dashboard
-// - Placeholder storico NON più in uso attivo
-//
-// PROBLEMA STRUTTURALE:
-// - Path dinamico generico ":id"
-// - Può intercettare route future per errore
-// - Crea collisioni semantiche con:
-//   • /user/dashboard/configuration/:id
-//   • /user/dashboard/business/:id
-//
-// SOURCE OF TRUTH:
-// - ❌ Nessuna (NON definita)
-// - NON allineato a BE
-//
-// INVARIANTI BLOCCANTI (NON NEGOZIABILI):
-// 1. ❌ NON estendere questo file
-// 2. ❌ NON aggiungere logica
-// 3. ❌ NON aggiungere fetch
-// 4. ❌ NON usarlo come entry point
-// 5. ❌ NON referenziarlo da nuovi flussi
-//
-// STATO:
-// - ISOLATO
-// - CONGELATO
-// - CANDIDATO A DEPRECATION FUTURA
-//
-// NOTE PER REFACOTR FUTURO:
-// - Da rimuovere SOLO dopo:
-//   ✔️ audit routing completo
-//   ✔️ rimozione definitiva delle collisioni path
-//
-// ======================================================
-// ======================================================
-// FE || pages/user/index.tsx
-// ======================================================
-//
-// USER AREA ENTRY POINT
+// AI-SUPERCOMMENT — DASHBOARD (CONFIGURATION-CENTRIC)
 //
 // RUOLO:
-// - Target root dell’area /user
-// - Demandato al router per redirect o layout
+// - Dashboard intelligente
+// - Lista le configurazioni come SEZIONI CHILD
+// - Ogni sezione rappresenta UNA attività / configurazione
 //
-// COSA FA:
-// - NIENTE (placeholder intenzionale)
+// SOURCE OF TRUTH:
+// - Backend → listMyConfigurations()
 //
-// COSA NON FA:
-// - NON fa redirect
-// - NON carica dati
-// - NON monta layout
+// COMPORTAMENTO:
+// - Click su sezione → /user/dashboard/workspace/:id
 //
-// NOTE:
-// - Usato solo come hook di routing
 // ======================================================
 
-import UserOrders from "./sections/UserOrders";
-import UserProjects from "./sections/UserProjects";
-import ExploreSolutionsCTA from "./sections/ExploreSolutionsCTA";
-import { useAuthStore } from "../../../lib/store/auth.store";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
+import { listMyConfigurations } from "./configurator/api/configuration.user.api";
+import type { ConfigurationConfiguratorDTO } from "./configurator/models/ConfigurationConfiguratorDTO";
 
+export default function Dashboard() {
+  const navigate = useNavigate();
 
-export default function UserDashboardHome() {
-  const user = useAuthStore((s) => s.user);
-  
+  const [configs, setConfigs] = useState<ConfigurationConfiguratorDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  /* =========================
+     LOAD CONFIGURATIONS
+  ========================= */
+  useEffect(() => {
+    listMyConfigurations()
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("LOAD_FAILED");
+        }
+        setConfigs(res.items ?? []);
+      })
+      .catch(() => {
+        setError("Errore caricamento configurazioni");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  /* =========================
+     UI GUARDS
+  ========================= */
+  if (loading) return <p>Caricamento dashboard…</p>;
+  if (error) return <p className="error">{error}</p>;
+
+  /* =========================
+     RENDER
+  ========================= */
+  return (
+    <section className="dashboard">
+
+      {/* =========================
+         HEADER
+      ========================= */}
+      <header className="dashboard-header">
+        <h1>Dashboard</h1>
+        <p>Le tue configurazioni attive</p>
+      </header>
+
+      {/* =========================
+         CONFIGURATIONS (CHILD SECTIONS)
+      ========================= */}
+      <section className="dashboard-configurations">
+        {configs.length === 0 ? (
+          <div className="workspace-empty">
+            <h2>Nessuna configurazione</h2>
+            <p>Non hai ancora creato nessuna attività.</p>
+
+            <button
+              className="user-cta primary"
+              onClick={() => navigate("/solution")}
+            >
+              Inizia da una soluzione →
+            </button>
+          </div>
+        ) : (
+          configs.map((cfg) => (
+            <ConfigurationSection
+              key={cfg.id}
+              config={cfg}
+              onOpen={() =>
+                navigate(`/user/dashboard/workspace/${cfg.id}`)
+              }
+            />
+          ))
+        )}
+      </section>
+    </section>
+  );
+}
+
+/* ======================================================
+   INTERNAL COMPONENT — CONFIGURATION SECTION
+   (IA = semantica, non routing)
+====================================================== */
+
+type ConfigurationSectionProps = {
+  config: ConfigurationConfiguratorDTO;
+  onOpen: () => void;
+};
+
+function ConfigurationSection({
+  config,
+  onOpen,
+}: ConfigurationSectionProps) {
+  const businessName =
+    config.prefill?.businessName || "Nuova attività";
 
   return (
-    <section className="user-dashboard-home">
-        
-      {/* ===========================
-         HEADER CONTESTUALE
-      =========================== */}
-    <header className="dashboard-header">
-  <h1>
-    Benvenuto{user?.email ? `, ${user.email}` : ""}
-  </h1>
+    <div
+      className="configuration-section"
+      onClick={onOpen}
+      role="button"
+      tabIndex={0}
+    >
+      <div className="configuration-section__header">
+        <h2 className="configuration-title">
+          {businessName}
+        </h2>
 
-  <p className="dashboard-subtitle">
-    Da qui puoi esplorare le soluzioni disponibili,
-    riprendere una configurazione in corso
-    o consultare i tuoi ordini.
-  </p>
-</header>
+        <span
+          className={`status status-${config.status}`}
+        >
+          {config.status}
+        </span>
+      </div>
 
-      {/* ===========================
-         AZIONE PRINCIPALE
-         (in futuro: “Riprendi configurazione”)
-      =========================== */}
-      <section className="dashboard-primary-action">
-        <ExploreSolutionsCTA />
-      </section>
+      <div className="configuration-section__meta">
+        <span>
+          <strong>Solution:</strong> {config.solutionId}
+        </span>
 
-      {/* ===========================
-         PROGETTI / ATTIVITÀ
-      =========================== */}
-      <section className="dashboard-section">
-        <UserProjects />
-      </section>
+        <span>
+          <strong>Product:</strong> {config.productId}
+        </span>
+      </div>
 
-      {/* ===========================
-         ORDINI
-      =========================== */}
-      <section className="dashboard-section">
-        <UserOrders />
-      </section>
-
-
-    </section>
+      {/* linea visiva di separazione */}
+      <div className="configuration-divider" />
+    </div>
   );
 }

@@ -36,8 +36,11 @@ import {
 ============================================================ */
 
 import { createConfigurationBase ,getUserConfiguration, listAllConfigurations ,listUserConfigurations } from "@domains/configuration/routes";
-import { createBusinessDraft } from "@domains/business/routes/business.create-draft";
-
+import { createBusinessDraft , getBusinessDraft ,updateBusinessDraft } from "@domains/business/routes";
+import {
+  createBusinessOwnerDraft,
+  getBusinessOwnerDraft,
+} from "@domains/business/owner/routes";
 /* ============================================================
    COOKIES — CONSENSO
 ============================================================ */
@@ -101,7 +104,7 @@ import { listPolicyVersions } from "./routes/policy";
 /* ============================================================
    BUSINESS — USER
 ============================================================ */
-
+import { AttachOwnerToConfiguration } from "@domains/configuration/routes/";
 import { createBusiness ,
   getBusiness ,
   listBusinesses ,
@@ -168,6 +171,7 @@ import {
 /* ============================================================
    ADMIN — KPI
 ============================================================ */
+import { commitConfigurationRoute} from "@domains/configuration/routes";
 
 import { getAdminKPI } from "./routes/admin/kpi/kpi.read";
 
@@ -181,7 +185,6 @@ import { getSolutions } from "./routes/solution/solutions.public.list";
 ============================================================ */
 
 import { json } from "./domains/auth/route/helper/https";
-
 
 
 /* ============================================================
@@ -376,6 +379,24 @@ if (pathname === "/api/cookies/status" && method === "GET") {
           request,
           env
         );
+// READ (prefill BusinessForm)
+if (pathname === "/api/business/get-base-draft" && method === "GET") {
+  return withCors(
+    await getBusinessDraft(request, env),
+    request,
+    env
+  );
+}
+
+// UPDATE (PATCH-like)
+if (pathname === "/api/business/update-draft" && method === "POST") {
+  return withCors(
+    await updateBusinessDraft(request, env),
+    request,
+    env
+  );
+}
+
       
       if (pathname === "/api/business/create" && method === "POST")
         return withCors(await createBusiness(request, env), request, env);
@@ -430,7 +451,52 @@ if (pathname === "/api/configuration" && method === "GET")
 
     }
 
+ 
+if (pathname === "/api/configuration/commit" && method === "POST") {
+  return withCors(
+    await commitConfigurationRoute(request, env),
+    request,
+    env
+  );
+}
+/* ======================================================
+   BUSINESS — OWNER (DRAFT)
+====================================================== */
 
+if (
+  pathname === "/api/owner/create-draft" &&
+  method === "POST"
+) {
+  return withCors(
+    await createBusinessOwnerDraft(request, env),
+    request,
+    env
+  );
+}
+if (
+  pathname === "/api/owner/get-draft" &&
+  method === "GET"
+) {
+  return withCors(
+    await getBusinessOwnerDraft(request, env),
+    request,
+    env
+  );
+}
+
+// ======================================================
+// BUSINESS || CONFIGURATION || ATTACH OWNER
+// ======================================================
+if (
+  pathname === "/api/business/configuration/attach-owner" &&
+  method === "POST"
+) {
+  return withCors(
+    await attachOwnerToConfiguration(request, env),
+    request,
+    env
+  );
+}
       /* ======================================================
          PRODUCTS
       ====================================================== */

@@ -31,7 +31,7 @@ import { useConfigurationSetupStore } from "../store/configurationSetup.store";
 
 //import StepProductIntro from "./steps/StepProductIntro";
 import StepBusinessInfo from "./steps/StepBusinessInfo";
-import StepOwnerInfo from "./steps/StepOwnerInf";
+import StepOwnerInfo from "./steps/StepOwnerInfo";
 import StepCommitConfiguration from "./steps/StepCommitConfiguration";
 //import StepDesign from "./steps/StepDesign";
 //import StepLayoutGenerator from "./steps/StepLayoutGenerator";
@@ -161,7 +161,7 @@ export default function ConfigurationSetupPage() {
           case "owner":
             return (
               <StepOwnerInfo
-                onNext={next}
+              
                 onBack={back}
               />
             );

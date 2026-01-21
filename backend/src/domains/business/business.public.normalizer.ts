@@ -52,7 +52,7 @@ export const ConfigurationSchema = z.object({
   id: z.string().optional(),
   userId: z.string().optional(),
   businessId: z.string().optional(),
-
+  
   /* ---------- Commercial origin ---------- */
   solutionId: z.string().min(1),
   productId: z.string().optional(),

@@ -1,68 +1,49 @@
 // ======================================================
-// BE || BUSINESS || CREATE DRAFT (FASE 1)
+// BE || BUSINESS || CREATE / UPDATE DRAFT (FASE 1)
 // POST /api/business/create-draft
-// ======================================================
-//
-// RUOLO:
-// - Crea un BusinessDraft (scheda amministrativa)
-// - Nessun owner
-// - Nessuna logica editoriale
-//
-// INVARIANTI:
-// - Auth obbligatoria
-// - Zod = source of truth
-// - verified SEMPRE false
-// - Nessun layout / AI / media
 // ======================================================
 
 import { json } from "@domains/auth/route/helper/https";
 import { requireAuthUser } from "@domains/auth";
 import type { Env } from "../../../types/env";
 
-import { CreateBusinessDraftSchema } from "../schema/business.draft.schema";
+import type { ConfigurationDTO } from "@domains/configuration";
+import { CreateBusinessDraftSchema } from "../schema/business.create-draft.schema";
+import { BusinessDraftSchema } from "../schema/business.draft.schema";
 
-// =======================
-// KV KEYS
-// =======================
-const BUSINESS_DRAFT_KEY = (draftId: string) =>
-  `BUSINESS_DRAFT:${draftId}`;
+/* ======================================================
+   KV KEYS — CANONICAL
+====================================================== */
+const BUSINESS_DRAFT_KEY = (id: string) =>
+  `BUSINESS_DRAFT:${id}`;
 
-// =======================
-// HANDLER
-// =======================
+const BUSINESS_DRAFT_BY_CONFIG_KEY = (configurationId: string) =>
+  `BUSINESS_DRAFT_BY_CONFIGURATION:${configurationId}`;
+
+/* ======================================================
+   HANDLER
+====================================================== */
 export async function createBusinessDraft(
   request: Request,
   env: Env
 ): Promise<Response> {
   /* =====================
-     1️⃣ AUTH (HARD GUARD)
+     1️⃣ AUTH
   ====================== */
   const session = await requireAuthUser(request, env);
   if (!session) {
-    return json(
-      { ok: false, error: "UNAUTHORIZED" },
-      request,
-      env,
-      401
-    );
+    return json({ ok: false, error: "UNAUTHORIZED" }, request, env, 401);
   }
 
   /* =====================
-     2️⃣ PARSE INPUT (ZOD)
+     2️⃣ INPUT
   ====================== */
-  let input: ReturnType<typeof CreateBusinessDraftSchema.parse>;
-
+  let input;
   try {
-    input = CreateBusinessDraftSchema.parse(
-      await request.json()
-    );
+    input = CreateBusinessDraftSchema.parse(await request.json());
   } catch (err) {
     return json(
-      {
-        ok: false,
-        error: "INVALID_INPUT",
-        details: String(err),
-      },
+      { ok: false, error: "INVALID_INPUT", details: String(err) },
       request,
       env,
       400
@@ -70,52 +51,149 @@ export async function createBusinessDraft(
   }
 
   /* =====================
-     3️⃣ BUILD DRAFT (PURE)
+     3️⃣ LOAD CONFIGURATION
+     (SOURCE OF TRUTH)
   ====================== */
-  const draftId = crypto.randomUUID();
+  const configuration = (await env.CONFIGURATION_KV.get(
+    `CONFIGURATION:${input.configurationId}`,
+    "json"
+  )) as ConfigurationDTO | null;
 
-  const draft = {
-    id: draftId,
+  if (!configuration) {
+    return json(
+      { ok: false, error: "CONFIGURATION_NOT_FOUND" },
+      request,
+      env,
+      404
+    );
+  }
 
-    businessName: input.businessName,
-    solutionId: input.solutionId,
-    productId: input.productId,
+  if (configuration.userId !== session.user.id) {
+    return json(
+      { ok: false, error: "FORBIDDEN" },
+      request,
+      env,
+      403
+    );
+  }
 
-    businessOpeningHour: input.businessOpeningHour ?? {},
+  if (!configuration.businessDraftId) {
+    return json(
+      { ok: false, error: "BUSINESS_DRAFT_ID_MISSING" },
+      request,
+      env,
+      409
+    );
+  }
 
-    contact: input.contact,
+  // 🔒 commerciale bloccato
+  if (
+    configuration.solutionId !== input.solutionId ||
+    configuration.productId !== input.productId
+  ) {
+    return json(
+      { ok: false, error: "COMMERCIAL_MISMATCH" },
+      request,
+      env,
+      409
+    );
+  }
 
-    businessDescriptionTags:
-      input.businessDescriptionTags ?? [],
-    businessServiceTags:
-      input.businessServiceTags ?? [],
-
-    verified: false as const,
-  };
+  const businessDraftId = configuration.businessDraftId;
+  const now = new Date().toISOString();
 
   /* =====================
-     4️⃣ VALIDATE DRAFT
-     (last line of defense)
+     4️⃣ LOAD EXISTING DRAFT
   ====================== */
-  const validatedDraft =
-    CreateBusinessDraftSchema.parse(draft);
-
-  /* =====================
-     5️⃣ PERSIST (ATOMIC)
-  ====================== */
-  await env.BUSINESS_KV.put(
-    BUSINESS_DRAFT_KEY(draftId),
-    JSON.stringify(validatedDraft)
+  const existingRaw = await env.BUSINESS_KV.get(
+    BUSINESS_DRAFT_KEY(businessDraftId)
   );
 
-  /* =====================
-     6️⃣ RESPONSE
-  ====================== */
+  // =====================================================
+  // CREATE
+  // =====================================================
+  if (!existingRaw) {
+    const candidate = {
+      id: businessDraftId,
+      configurationId: input.configurationId,
+      userId: session.user.id,
+
+      businessName: input.businessName,
+      solutionId: input.solutionId,
+      productId: input.productId,
+
+      businessOpeningHour: input.businessOpeningHour ?? {},
+      contact: input.contact,
+
+      businessDescriptionTags: input.businessDescriptionTags ?? [],
+      businessServiceTags: input.businessServiceTags ?? [],
+      privacy: input.privacy,
+
+      verified: false as const,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    const draft = BusinessDraftSchema.parse(candidate);
+
+    await env.BUSINESS_KV.put(
+      BUSINESS_DRAFT_KEY(businessDraftId),
+      JSON.stringify(draft)
+    );
+
+    await env.BUSINESS_KV.put(
+      BUSINESS_DRAFT_BY_CONFIG_KEY(input.configurationId),
+      businessDraftId
+    );
+
+    return json(
+      { ok: true, businessDraftId, reused: false },
+      request,
+      env
+    );
+  }
+
+  // =====================================================
+  // UPDATE
+  // =====================================================
+  const existing = BusinessDraftSchema.parse(JSON.parse(existingRaw));
+
+  const merged = {
+    ...existing,
+
+    businessName: input.businessName ?? existing.businessName,
+    businessOpeningHour:
+      input.businessOpeningHour ?? existing.businessOpeningHour,
+    contact: input.contact ?? existing.contact,
+    businessDescriptionTags:
+      input.businessDescriptionTags ?? existing.businessDescriptionTags,
+    businessServiceTags:
+      input.businessServiceTags ?? existing.businessServiceTags,
+    privacy: input.privacy ?? existing.privacy,
+
+    // 🔒 invarianti
+    solutionId: existing.solutionId,
+    productId: existing.productId,
+    verified: false as const,
+    createdAt: existing.createdAt,
+
+    updatedAt: now,
+  };
+
+  const validated = BusinessDraftSchema.parse(merged);
+
+  await env.BUSINESS_KV.put(
+    BUSINESS_DRAFT_KEY(businessDraftId),
+    JSON.stringify(validated)
+  );
+
+  await env.BUSINESS_KV.put(
+    BUSINESS_DRAFT_BY_CONFIG_KEY(input.configurationId),
+    businessDraftId
+  );
+
   return json(
-    {
-      ok: true,
-      draftId,
-    },
+    { ok: true, businessDraftId, reused: true },
     request,
     env
   );

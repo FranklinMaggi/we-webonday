@@ -22,7 +22,7 @@ import { useParams, useNavigate, Navigate } from "react-router-dom";
 
 //import { getMyConfiguration } from "../configurator/api/configuration.user.api";
 import { getConfigurationForConfigurator } from "../configurator/api/configuration.user.api";
-import type { ConfigurationConfiguratorDTO } from "../configurator/models/COnfigurationConfiguratorDTO";
+import type { ConfigurationConfiguratorDTO } from "../configurator/models/ConfigurationConfiguratorDTO";
 
 
 export default function UserConfigurationWorkspace() {
