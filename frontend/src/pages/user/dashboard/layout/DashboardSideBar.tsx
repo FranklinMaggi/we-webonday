@@ -196,7 +196,7 @@ export default function Sidebar() {
             to={`/user/dashboard/business/${b.configurationId}`}
             className="sidebar-link"
           >
-            {b.nomeBusiness ?? "Attività"}
+         
           </NavLink>
         </li>
       ))

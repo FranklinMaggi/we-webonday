@@ -140,7 +140,33 @@ export async function attachOwnerToConfiguration(
       409
     );
   }
-
+  /* =====================
+     5️⃣.1 ALREADY ATTACHED? (IDEMPOTENT)
+  ====================== */
+  if (configuration.ownerUserId) {
+    return json(
+      {
+        ok: true,
+        configurationId: configuration.id,
+        status: configuration.status,
+        alreadyAttached: true,
+      },
+      request,
+      env
+    );
+  }
+  if (configuration.status === "READY") {
+    return json(
+      {
+        ok: true,
+        configurationId: configuration.id,
+        status: "READY",
+        alreadyReady: true,
+      },
+      request,
+      env
+    );
+  }
   /* =====================
      6️⃣ ATTACH OWNER
   ====================== */

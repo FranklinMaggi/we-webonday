@@ -128,7 +128,7 @@ export async function createBusinessDraft(
       businessDescriptionTags: input.businessDescriptionTags ?? [],
       businessServiceTags: input.businessServiceTags ?? [],
       privacy: input.privacy,
-
+      complete :true , 
       verified: false as const,
       createdAt: now,
       updatedAt: now,

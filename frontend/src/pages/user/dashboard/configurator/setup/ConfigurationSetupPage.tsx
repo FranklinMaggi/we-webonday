@@ -163,6 +163,7 @@ export default function ConfigurationSetupPage() {
               <StepOwnerInfo
               
                 onBack={back}
+                onNext={next}
               />
             );
         

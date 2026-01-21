@@ -9,7 +9,6 @@
 //
 // ======================================================
 
-import { useNavigate } from "react-router-dom";
 
 import { useConfigurationSetupStore } from "../../store/configurationSetup.store";
 import { createBusinessOwnerDraft } from "../../api/business.owner.api";
@@ -23,10 +22,12 @@ import OwnerForm, {
 ====================================================== */
 export default function StepOwnerInfo({
   onBack,
+  onNext,
 }: {
   onBack: () => void;
+  onNext: () => void; 
 }) {
-  const navigate = useNavigate();
+
   const { data } = useConfigurationSetupStore();
 
   /* =====================
@@ -65,10 +66,8 @@ export default function StepOwnerInfo({
     }
 
     console.log("[STEP_OWNER][OK]");
-    navigate(
-      "/user/dashboard?completed=configuration",
-      { replace: true }
-    );
+    onNext(); // 🔑 PASSAGGIO AL COMMIT
+    
   }
 
   /* =====================

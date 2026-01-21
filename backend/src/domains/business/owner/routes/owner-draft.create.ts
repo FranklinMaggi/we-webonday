@@ -74,7 +74,7 @@ export async function createBusinessOwnerDraft(
     source: input.source ?? existing?.source ?? "manual",
 
     verified: false,
-    complete: false,
+    complete: true,
 
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,

@@ -104,7 +104,7 @@ import { listPolicyVersions } from "./routes/policy";
 /* ============================================================
    BUSINESS — USER
 ============================================================ */
-import { AttachOwnerToConfiguration } from "@domains/configuration/routes/";
+import { attachOwnerToConfiguration } from "@domains/configuration/routes/";
 import { createBusiness ,
   getBusiness ,
   listBusinesses ,
