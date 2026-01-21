@@ -101,6 +101,7 @@ const SECTIONS: SidebarSection[] = [
 
 export default function Sidebar() {
   return (
+    
     <aside className="dashboard-sidebar">
       {SECTIONS.map((section) => (
         <div key={section.title} className="sidebar-section">

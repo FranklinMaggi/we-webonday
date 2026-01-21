@@ -109,7 +109,7 @@ export default function StepBusinessInfo({
             `/api/business/get-base-draft?configurationId=${data.configurationId}`,
             { method: "GET" }
           );
-
+         
           if (res?.draft && !cancelled) {
             const d = res.draft;
 

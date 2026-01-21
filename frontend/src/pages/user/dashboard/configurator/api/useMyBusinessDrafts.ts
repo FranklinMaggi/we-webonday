@@ -44,41 +44,49 @@ export function normalizeBackendEntity<T extends object>(
 // ======================================================
 // FE || HOOK || useMyBusinessDrafts (ESTENSIBILE)
 // ======================================================
+// ======================================================
+// FE || HOOK || useBusinessDraft
+// ======================================================
+//
+// RUOLO:
+// - Carica il BusinessDraft di UNA Configuration
+// - Lookup puntuale
+//
+// ======================================================
 
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../../../../lib/api";
 
-type BusinessDraftRaw = {
-  id?: string;
-  configurationId: string;
-  businessName?: string;
-};
 
-export function useMyBusinessDrafts() {
-  const [items, setItems] = useState<
-    Omit<BusinessDraftRaw, "id">[]
-  >([]);
-  const [loading, setLoading] = useState(true);
+export function useBusinessDraft(configurationId?: string) {
+  const [draft, setDraft] = useState<any | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (!configurationId) return;
+
+    setLoading(true);
+
     apiFetch<{
       ok: boolean;
-      items?: BusinessDraftRaw[];
-    }>("/api/business/get-base-draft")
+      draft?: any;
+    }>(
+      `/api/business/get-base-draft?configurationId=${configurationId}`
+    )
       .then((res) => {
-        if (!res?.ok || !Array.isArray(res.items)) {
-          setItems([]);
+        if (!res?.ok || !res.draft) {
+          setDraft(null);
           return;
         }
 
-        setItems(res.items.map(normalizeBackendEntity));
+        setDraft(normalizeBackendEntity(res.draft));
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [configurationId]);
 
   return {
-    items,
+    draft,
     loading,
-    hasItems: items.length > 0,
+    hasDraft: Boolean(draft),
   };
 }

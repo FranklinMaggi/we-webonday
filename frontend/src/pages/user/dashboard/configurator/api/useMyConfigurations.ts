@@ -30,3 +30,58 @@ export function useMyConfigurations() {
     error,
   };
 }
+
+
+// ======================================================
+// FE || HOOK || useMyWorkspaceConfigurations
+// ======================================================
+//
+// RUOLO:
+// - Deriva le configurazioni pronte
+// - Workspace = stato READY
+//
+// ======================================================
+
+
+export function useMyWorkspaceConfigurations() {
+  const { items, loading, error } = useMyConfigurations();
+
+  const workspaceItems = items.filter(
+    (c) => c.status === "READY"
+  );
+
+  return {
+    items: workspaceItems,
+    loading,
+    error,
+    hasItems: workspaceItems.length > 0,
+  };
+}
+
+
+// ======================================================
+// FE || HOOK || useMyWorkspaceConfigurations
+// ======================================================
+//
+// RUOLO:
+// - Deriva le configurazioni pronte
+// - Workspace = stato READY
+//
+// ======================================================
+
+
+
+export function useMyWorkspaceEditor() {
+  const { items, loading, error } = useMyConfigurations();
+
+  const workspaceItems = items.filter(
+    (c) => c.status === "DRAFT"
+  );
+
+  return {
+    items: workspaceItems,
+    loading,
+    error,
+    hasItems: workspaceItems.length > 0,
+  };
+}

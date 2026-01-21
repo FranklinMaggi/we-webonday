@@ -9,8 +9,8 @@
 //
 // ======================================================
 
-import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {useState } from "react";
 import { attachOwnerToConfiguration } from "../../api/business/configuration.draft.complete";
 import { useConfigurationSetupStore } from "../../store/configurationSetup.store";
 import { updateConfiguration } from "../../api/configuration.user.api";

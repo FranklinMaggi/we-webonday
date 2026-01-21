@@ -31,9 +31,9 @@
 // ======================================================
 
 import { NavLink } from "react-router-dom";
-import { useMyConfigurations } from "../configurator/api/useMyConfigurations";
+import { useMyConfigurations , useMyWorkspaceConfigurations} from "../configurator/api/useMyConfigurations";
 import { useActiveProductsWithOptions } from "../configurator/api/useActiveProducts";
-import { useMyBusinessDrafts } from "../configurator/api/useMyBusinessDrafts";
+
 
 /* =========================
    TYPES
@@ -59,25 +59,40 @@ type SidebarSection = {
  */
 const SECTIONS: SidebarSection[] = [
   {
-    title: "Account",
+    title: "You On Day , We On Day , Web On Day ",
     items: [
-      { to: "/user/dashboard", label: "Dashboard (Control Center)" },
-      { to: "/user/dashboard/business", label: "Attività" },
-      { to: "/user/dashboard/user", label: "Profilo titolare", disabled: true },
+      { to: "/user/dashboard", label: "" },
+      { to: "/user/dashboard/business", label: "" },
+      { to: "/user/dashboard/user", label: "",  },
     ],
+  },
+  {
+    title: "Business",
+    items: [] // popolato dinamicamente
   },
   {
     title: "Workspace",
     items: [
       {
-        to: "/user/dashboard/workspace",
-        label: "Configurazioni / Siti",
+        to: "/user/dashboard/workspace/:id",
+        label: "Set Up ",
+      },
+      {
+        to: "/user/dashboard/workspace/weby",
+        label: "Weby Engine Dev",
+      },
+      {
+        to: "/user/dashboard/workspace/web-ai",
+        label: "Weby + Ai",
       },
     ],
   },
   {
-    title: "Orders",
-    items: [{ to: "/user/dashboard/orders", label: "Ordini" }],
+    title: "DriveIn",
+    items: [
+      { to: "/user/dashboard/orders", label: "Ordini" },
+      { to: "/user/dashboard/orders", label: "Token" },
+      { to: "/user/dashboard/orders", label: "Referral" }],
   },
   {
     title: "Plans",
@@ -96,11 +111,13 @@ const SECTIONS: SidebarSection[] = [
 export default function Sidebar() {
   const { items } = useMyConfigurations();
   const { products } = useActiveProductsWithOptions();
-  const { items: businessDrafts } = useMyBusinessDrafts();
- 
+  const { items: workspaceItems } = useMyWorkspaceConfigurations();
+  console.log("[SIDEBAR][WORKSPACE]", workspaceItems);
+
   return (
 
     <aside className="dashboard-sidebar">
+      
       {SECTIONS.map((section) => (
         <div key={section.title} className="sidebar-section">
           <h4 className="sidebar-title">{section.title}</h4>
@@ -187,29 +204,11 @@ export default function Sidebar() {
 ========================= */}
 <div className="sidebar-section">
   <h4 className="sidebar-title">Your Business</h4>
+ 
+{}
 
-  <ul>
-    {businessDrafts.length > 0 ? (
-      businessDrafts.map((b) => (
-        <li key={b.configurationId}>
-          <NavLink
-            to={`/user/dashboard/business/${b.configurationId}`}
-            className="sidebar-link"
-          >
-         
-          </NavLink>
-        </li>
-      ))
-    ) : (
-      <li>
-        <span className="sidebar-link disabled">
-          Nessuna attività
-        </span>
-      </li>
-    )}
-  </ul>
+
 </div>
-
     </aside>
   );
 }

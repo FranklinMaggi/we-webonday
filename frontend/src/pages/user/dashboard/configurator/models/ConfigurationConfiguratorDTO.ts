@@ -13,7 +13,7 @@ export type ConfigurationConfiguratorDTO = {
 
   solutionId: string;
   productId: string;
-
+  businessDraftId?:string; 
   options: string[];
 
   prefill?: {
