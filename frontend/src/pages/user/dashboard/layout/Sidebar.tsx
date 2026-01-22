@@ -33,7 +33,7 @@
 import { NavLink } from "react-router-dom";
 import { useMyConfigurations , useMyWorkspaceConfigurations} from "../configurator/api/useMyConfigurations";
 import { useActiveProductsWithOptions } from "../configurator/api/useActiveProducts";
-
+import { useMyBusinesses } from "../configurator/api/useMyBusinessDrafts";
 
 /* =========================
    TYPES
@@ -113,6 +113,7 @@ export default function Sidebar() {
   const { products } = useActiveProductsWithOptions();
   const { items: workspaceItems } = useMyWorkspaceConfigurations();
   console.log("[SIDEBAR][WORKSPACE]", workspaceItems);
+  const {completed , inProgress} = useMyBusinesses();
 
   return (
 
@@ -203,12 +204,35 @@ export default function Sidebar() {
    YOUR BUSINESS (PREVIEW)
 ========================= */}
 <div className="sidebar-section">
-  <h4 className="sidebar-title">Your Business</h4>
- 
-{}
+  <h4 className="sidebar-title">Business</h4>
 
+  <ul>
+  <h4 className="sidebar-title">Business</h4>
 
+<ul>
+  {completed.length > 0 ? (
+    completed.map(b => (
+      <li key={b.configurationId}>
+        <NavLink
+          to={`/user/dashboard/business/${b.configurationId}`}
+        >
+          {b.businessName}
+        </NavLink>
+      </li>
+    ))
+  ) : (
+    <li>
+      <span className="sidebar-link disabled">
+        Nessuna attività completa
+      </span>
+    </li>
+  )}
+</ul>
+
+  </ul>
 </div>
+
+
     </aside>
   );
 }

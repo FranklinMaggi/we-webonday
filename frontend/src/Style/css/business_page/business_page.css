@@ -1,0 +1,90 @@
+/* ======================================================
+   BUSINESS PAGE — THEME VARIABLES
+   ====================================================== */
+
+   :root {
+    /* fallback (light) */
+    --color-primary: #2563eb;
+    --color-secondary: #93c5fd;
+    --color-bg: #ffffff;
+    --color-text: #020617;
+  
+    --font-title: system-ui, -apple-system, BlinkMacSystemFont;
+    --font-body: system-ui, -apple-system, BlinkMacSystemFont;
+  
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 3rem;
+  }
+  /* ======================================================
+   BUSINESS PAGE — LAYOUT
+   ====================================================== */
+
+   .business-page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: var(--space-lg) var(--space-md);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+  }
+  
+  .business-page__header {
+    margin-bottom: var(--space-lg);
+  }
+  
+  .business-page__title {
+    font-family: var(--font-title);
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: var(--space-xs);
+  }
+  
+  .business-page__status {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    display: inline-block;
+  }
+  
+  .business-page__status.is-complete {
+    background: var(--color-secondary);
+    color: var(--color-text);
+  }
+  
+  .business-page__status.is-draft {
+    background: #fde68a;
+    color: #92400e;
+  }
+  
+  .business-page__section {
+    margin-bottom: var(--space-lg);
+  }
+  
+  .business-page__section h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+    border-left: 4px solid var(--color-primary);
+    padding-left: var(--space-sm);
+  }
+  
+  .business-page__hours {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .business-page__hours li {
+    padding: 0.25rem 0;
+    font-size: 0.95rem;
+  }
+  
+  .business-page__footer {
+    margin-top: var(--space-lg);
+    font-size: 0.85rem;
+    opacity: 0.65;
+  }
+  

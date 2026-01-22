@@ -1,77 +1,55 @@
 // ======================================================
-// FE || COMPONENT — OWNER FORM (MINIMAL)
+// FE || OWNER FORM (CANONICAL, STORE-DRIVEN)
 // ======================================================
 
-import { useState, useEffect } from "react";
+import { useConfigurationSetupStore } from "../../store/configurationSetup.store";
+import { apiFetch } from "../../../../../../lib/api";
 
-/* ======================================================
-   TYPES
-====================================================== */
-export type OwnerFormState = {
-  firstName: string;
-  lastName: string;
-  birthDate?: string;
-  secondaryMail?: string;
-};
-
-type Props = {
-  initialState: OwnerFormState;
-  businessEmail?: string;
-  businessPhone?: string;
-  onSubmit: (state: OwnerFormState) => void;
-  onBack: () => void;
-};
-
-/* ======================================================
-   COMPONENT
-====================================================== */
 export default function OwnerForm({
-  initialState,
-  businessEmail,
-  businessPhone,
-  onSubmit,
   onBack,
-}: Props) {
-  const [form, setForm] =
-    useState<OwnerFormState>(initialState);
+  onComplete,
+}: {
+  onBack: () => void;
+  onComplete: () => void;
+}) {
+  const { data, setField } = useConfigurationSetupStore();
 
-  const [error, setError] =
-    useState<string | null>(null);
-
-  useEffect(() => {
-    console.log("[OWNER_FORM][INIT]", initialState);
-  }, [initialState]);
-
-  function set<K extends keyof OwnerFormState>(
-    key: K,
-    value: OwnerFormState[K]
-  ) {
-    setForm((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  }
-
-  function handleSubmit() {
-    setError(null);
-
-    if (!form.firstName.trim()) {
-      setError("Inserisci il nome");
+  async function handleSubmit() {
+    if (!data.ownerFirstName?.trim()) {
+      alert("Inserisci il nome");
       return;
     }
 
-    if (!form.lastName.trim()) {
-      setError("Inserisci il cognome");
+    if (!data.ownerLastName?.trim()) {
+      alert("Inserisci il cognome");
       return;
     }
 
-    onSubmit({
-      firstName: form.firstName.trim(),
-      lastName: form.lastName.trim(),
-      birthDate: form.birthDate,
-      secondaryMail:
-        form.secondaryMail?.trim() || undefined,
+    if (!data.ownerPrivacy.accepted) {
+      alert("Devi accettare la privacy");
+      return;
+    }
+
+    const payload = {
+      firstName: data.ownerFirstName,
+      lastName: data.ownerLastName,
+      birthDate: data.ownerBirthDate || undefined,
+      contact: {
+        secondaryMail: data.ownerSecondaryMail || undefined,
+      },
+      privacy: {
+        ...data.ownerPrivacy,
+        subject: "owner",
+        source: "owner-form",
+      },
+    };
+
+    await apiFetch("/api/owner/create-draft", {
+      method: "POST",
+      body: JSON.stringify(payload),
     });
+
+    onComplete();
   }
 
   return (
@@ -80,51 +58,57 @@ export default function OwnerForm({
 
       <input
         placeholder="Nome"
-        value={form.firstName}
+        value={data.ownerFirstName}
         onChange={(e) =>
-          set("firstName", e.target.value)
+          setField("ownerFirstName", e.target.value)
         }
       />
 
       <input
         placeholder="Cognome"
-        value={form.lastName}
+        value={data.ownerLastName}
         onChange={(e) =>
-          set("lastName", e.target.value)
+          setField("ownerLastName", e.target.value)
         }
       />
 
       <input
         type="date"
-        value={form.birthDate ?? ""}
+        value={data.ownerBirthDate ?? ""}
         onChange={(e) =>
-          set("birthDate", e.target.value)
+          setField("ownerBirthDate", e.target.value)
         }
       />
-
-      <label>Email attività</label>
-      <input value={businessEmail ?? ""} disabled />
-
-      <label>Telefono attività</label>
-      <input value={businessPhone ?? ""} disabled />
 
       <input
         placeholder="Email secondaria (opzionale)"
-        value={form.secondaryMail ?? ""}
+        value={data.ownerSecondaryMail ?? ""}
         onChange={(e) =>
-          set("secondaryMail", e.target.value)
+          setField("ownerSecondaryMail", e.target.value)
         }
       />
 
-      {error && <p className="error">{error}</p>}
+      {/* PRIVACY */}
+      <label>
+        <input
+          type="checkbox"
+          checked={data.ownerPrivacy.accepted}
+          onChange={(e) =>
+            setField("ownerPrivacy", {
+              accepted: e.target.checked,
+              acceptedAt: e.target.checked
+                ? new Date().toISOString()
+                : "",
+              policyVersion: "v1",
+            })
+          }
+        />
+        Accetto il trattamento dei dati personali
+      </label>
 
       <div className="actions">
-        <button onClick={onBack}>
-          Indietro
-        </button>
-        <button onClick={handleSubmit}>
-          Continua
-        </button>
+        <button onClick={onBack}>Indietro</button>
+        <button onClick={handleSubmit}>Continua</button>
       </div>
     </div>
   );

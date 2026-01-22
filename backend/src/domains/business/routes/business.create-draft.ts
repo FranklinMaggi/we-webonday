@@ -3,6 +3,7 @@
 // POST /api/business/create-draft
 // ======================================================
 
+import { z } from "zod";
 import { json } from "@domains/auth/route/helper/https";
 import { requireAuthUser } from "@domains/auth";
 import type { Env } from "../../../types/env";
@@ -14,11 +15,10 @@ import { BusinessDraftSchema } from "../schema/business.draft.schema";
 /* ======================================================
    KV KEYS — CANONICAL
 ====================================================== */
+// Draft principale
 const BUSINESS_DRAFT_KEY = (id: string) =>
   `BUSINESS_DRAFT:${id}`;
 
-const BUSINESS_DRAFT_BY_CONFIG_KEY = (configurationId: string) =>
-  `BUSINESS_DRAFT_BY_CONFIGURATION:${configurationId}`;
 
 /* ======================================================
    HANDLER
@@ -27,6 +27,7 @@ export async function createBusinessDraft(
   request: Request,
   env: Env
 ): Promise<Response> {
+
   /* =====================
      1️⃣ AUTH
   ====================== */
@@ -36,9 +37,9 @@ export async function createBusinessDraft(
   }
 
   /* =====================
-     2️⃣ INPUT
+     2️⃣ INPUT VALIDATION
   ====================== */
-  let input;
+  let input: z.infer<typeof CreateBusinessDraftSchema>;
   try {
     input = CreateBusinessDraftSchema.parse(await request.json());
   } catch (err) {
@@ -52,12 +53,12 @@ export async function createBusinessDraft(
 
   /* =====================
      3️⃣ LOAD CONFIGURATION
-     (SOURCE OF TRUTH)
+     SOURCE OF TRUTH
   ====================== */
-  const configuration = (await env.CONFIGURATION_KV.get(
+  const configuration = await env.CONFIGURATION_KV.get(
     `CONFIGURATION:${input.configurationId}`,
     "json"
-  )) as ConfigurationDTO | null;
+  ) as ConfigurationDTO | null;
 
   if (!configuration) {
     return json(
@@ -77,6 +78,10 @@ export async function createBusinessDraft(
     );
   }
 
+  // 🔒 businessDraftId:
+  // - assegnato SOLO in configuration.base.write
+  // - UUID tecnico puro
+  // - mai generato dal frontend
   if (!configuration.businessDraftId) {
     return json(
       { ok: false, error: "BUSINESS_DRAFT_ID_MISSING" },
@@ -86,7 +91,7 @@ export async function createBusinessDraft(
     );
   }
 
-  // 🔒 commerciale bloccato
+  // 🔒 Blocco commerciale
   if (
     configuration.solutionId !== input.solutionId ||
     configuration.productId !== input.productId
@@ -109,9 +114,9 @@ export async function createBusinessDraft(
     BUSINESS_DRAFT_KEY(businessDraftId)
   );
 
-  // =====================================================
-  // CREATE
-  // =====================================================
+  /* =====================================================
+     CREATE — FIRST WRITE
+  ===================================================== */
   if (!existingRaw) {
     const candidate = {
       id: businessDraftId,
@@ -127,8 +132,12 @@ export async function createBusinessDraft(
 
       businessDescriptionTags: input.businessDescriptionTags ?? [],
       businessServiceTags: input.businessServiceTags ?? [],
+
       privacy: input.privacy,
-      complete :true , 
+
+      // ✅ questo endpoint chiude lo STEP BUSINESS
+      complete: true,
+
       verified: false as const,
       createdAt: now,
       updatedAt: now,
@@ -136,14 +145,10 @@ export async function createBusinessDraft(
 
     const draft = BusinessDraftSchema.parse(candidate);
 
+    // Persist draft
     await env.BUSINESS_KV.put(
       BUSINESS_DRAFT_KEY(businessDraftId),
       JSON.stringify(draft)
-    );
-
-    await env.BUSINESS_KV.put(
-      BUSINESS_DRAFT_BY_CONFIG_KEY(input.configurationId),
-      businessDraftId
     );
 
     return json(
@@ -153,9 +158,9 @@ export async function createBusinessDraft(
     );
   }
 
-  // =====================================================
-  // UPDATE
-  // =====================================================
+  /* =====================================================
+     UPDATE — MERGE + VALIDATE
+  ===================================================== */
   const existing = BusinessDraftSchema.parse(JSON.parse(existingRaw));
 
   const merged = {
@@ -165,10 +170,12 @@ export async function createBusinessDraft(
     businessOpeningHour:
       input.businessOpeningHour ?? existing.businessOpeningHour,
     contact: input.contact ?? existing.contact,
+
     businessDescriptionTags:
       input.businessDescriptionTags ?? existing.businessDescriptionTags,
     businessServiceTags:
       input.businessServiceTags ?? existing.businessServiceTags,
+
     privacy: input.privacy ?? existing.privacy,
 
     // 🔒 invarianti
@@ -182,15 +189,12 @@ export async function createBusinessDraft(
 
   const validated = BusinessDraftSchema.parse(merged);
 
+  // Persist updated draft
   await env.BUSINESS_KV.put(
     BUSINESS_DRAFT_KEY(businessDraftId),
     JSON.stringify(validated)
   );
 
-  await env.BUSINESS_KV.put(
-    BUSINESS_DRAFT_BY_CONFIG_KEY(input.configurationId),
-    businessDraftId
-  );
 
   return json(
     { ok: true, businessDraftId, reused: true },

@@ -33,6 +33,7 @@ import { useConfigurationSetupStore } from "../store/configurationSetup.store";
 import StepBusinessInfo from "./steps/StepBusinessInfo";
 import StepOwnerInfo from "./steps/StepOwnerInfo";
 import StepCommitConfiguration from "./steps/StepCommitConfiguration";
+import StepComplete from "./steps/StepComplete";
 //import StepDesign from "./steps/StepDesign";
 //import StepLayoutGenerator from "./steps/StepLayoutGenerator";
 //import StepReview from "./steps/StepReview";
@@ -44,6 +45,7 @@ const STEPS = [
   { key: "business", label: "Business" },
   { key: "owner", label: "Titolare" },
   { key: "commit", label: "Conferma" },
+  {key: "complete", label: "Completato" }
 ] as const;
 
 
@@ -171,6 +173,13 @@ export default function ConfigurationSetupPage() {
             return (
               <StepCommitConfiguration
                 onBack={back}
+                onNext={next}
+              />
+            );
+            case "complete":
+            return (
+              <StepComplete
+             
               />
             );
         

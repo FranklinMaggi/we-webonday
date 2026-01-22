@@ -1,90 +1,85 @@
 // ======================================================
-// FE || STEP — OWNER INFO (WRITE-ONLY)
-// ======================================================
-//
-// RUOLO:
-// - Raccoglie dati titolare
-// - Li invia al BE
-// - Non legge nulla
-//
+// FE || STEP — OWNER INFO (CANONICAL)
 // ======================================================
 
-
+import { useEffect, useState } from "react";
+import { apiFetch } from "../../../../../../lib/api";
 import { useConfigurationSetupStore } from "../../store/configurationSetup.store";
-import { createBusinessOwnerDraft } from "../../api/business.owner.api";
+import OwnerForm from "../owner/OwnerForm";
 
-import OwnerForm, {
-  type OwnerFormState,
-} from "../owner/OwnerForm";
+type OwnerDraftReadDTO = {
+  firstName?: string;
+  lastName?: string;
+  birthDate?: string;
+  contact?: {
+    secondaryMail?: string;
+  };
+  privacy?: {
+    accepted: boolean;
+    acceptedAt: string;
+    policyVersion: string;
+  };
+  complete: boolean;
+};
 
-/* ======================================================
-   COMPONENT
-====================================================== */
 export default function StepOwnerInfo({
   onBack,
   onNext,
 }: {
   onBack: () => void;
-  onNext: () => void; 
+  onNext: () => void;
 }) {
+  const { setField } = useConfigurationSetupStore();
+  const [loading, setLoading] = useState(true);
 
-  const { data } = useConfigurationSetupStore();
+  useEffect(() => {
+    let cancelled = false;
 
-  /* =====================
-     HARD GUARDS
-  ====================== */
-  if (!data.configurationId || !data.businessDraftId) {
-    return (
-      <div className="step-error">
-        Configurazione incompleta
-      </div>
-    );
-  }
+    async function loadOwner() {
+      try {
+        const res = await apiFetch<{
+          ok: boolean;
+          owner?: OwnerDraftReadDTO;
+        }>("/api/owner/get-draft");
 
-  /* =====================
-     SUBMIT (WRITE-ONLY)
-  ====================== */
-  async function handleSubmit(
-    state: OwnerFormState
-  ) {
-    console.log("[STEP_OWNER][SUBMIT]", state);
+        if (!cancelled && res?.owner) {
+          const o = res.owner;
 
-    const res = await createBusinessOwnerDraft({
-      firstName: state.firstName,
-      lastName: state.lastName,
-      birthDate: state.birthDate,
-      
-    });
+          setField("ownerFirstName", o.firstName ?? "");
+          setField("ownerLastName", o.lastName ?? "");
+          setField("ownerBirthDate", o.birthDate ?? undefined),
+          setField(
+            "ownerSecondaryMail",
+            o.contact?.secondaryMail ?? ""
+          );
 
-    if (!res.ok) {
-      console.error(
-        "[STEP_OWNER][ERROR]",
-        res.error
-      );
-      alert("Errore nel salvataggio del titolare");
-      return;
+          if (o.privacy) {
+            setField("ownerPrivacy", {
+              accepted: o.privacy.accepted,
+              acceptedAt: o.privacy.acceptedAt,
+              policyVersion: o.privacy.policyVersion,
+            });
+          }
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
 
-    console.log("[STEP_OWNER][OK]");
-    onNext(); // 🔑 PASSAGGIO AL COMMIT
-    
+    loadOwner();
+    return () => {
+      cancelled = true;
+    };
+  }, [setField]);
+
+  if (loading) {
+    return <div className="step">Caricamento titolare…</div>;
   }
 
-  /* =====================
-     RENDER
-  ====================== */
   return (
     <OwnerForm
-      initialState={{
-        firstName: "",
-        lastName: "",
-        birthDate: undefined,
-
-      }}
-      businessEmail={data.email}
-      businessPhone={data.phone}
       onBack={onBack}
-      onSubmit={handleSubmit}
+      onComplete={onNext}
     />
   );
 }

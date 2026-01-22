@@ -76,7 +76,7 @@ export const ConfigurationWorkspaceSchema = z.object({
 
 export const ConfigurationSchema = z.object({
   /* ---------- Identity ---------- */
-  id: z.string().optional(),
+  id: z.string().uuid(),
   userId: z.string().optional(),
 
   /* ---------- Business linkage (POST-STEP) ---------- */

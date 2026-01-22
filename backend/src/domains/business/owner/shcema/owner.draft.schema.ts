@@ -1,9 +1,10 @@
 import {z} from "zod";
 import { ContactSchema } from "@domains/GeneralSchema/contact.schema";
+import { PrivacyAcceptanceSchema } from "@domains/configuration/schema/privacy.acceptance.schema";
 
 export const OwnerDraftSchema = z.object({
   id: z.string().uuid().min(1),
-  userId: z.string().uuid().optional(),
+  userId: z.string().uuid(),
 
   firstName: z.string().min(1).optional(),
   lastName: z.string().min(1).optional(),
@@ -13,17 +14,11 @@ export const OwnerDraftSchema = z.object({
     secondaryMail: z.string().email().optional(),
   }).optional(),
 
-  source: z.enum(["google", "manual"]).optional(),
+  source: z.enum(["google", "manual"]),
 
-  privacy: z.object({
-    accepted: z.literal(true),
-    acceptedAt: z.string().min(1),
-    policyVersion: z.string().min(1),
-    source: z.literal("business"),
-  }).optional(),
-
-  verified: z.literal(false).optional(),
-  complete: z.boolean().default(false).optional(),
+  privacy:PrivacyAcceptanceSchema.optional(),
+  verified: z.boolean().default(false),
+  complete: z.boolean(),
 
   createdAt: z.string(),
   updatedAt: z.string(),

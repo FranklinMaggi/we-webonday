@@ -1,28 +1,40 @@
+// ======================================================
 // BE || BUSINESS || OWNER || GET DRAFT
+// GET /api/owner/get-draft
+// ======================================================
+//
+// RUOLO:
+// - Recupera l’OwnerDraft dell’utente autenticato
+//
+// INVARIANTI:
+// - Auth HARD obbligatoria
+// - 1 OwnerDraft per user
+// - Read only
+// ======================================================
 
 import { json } from "@domains/auth/route/helper/https";
 import { requireAuthUser } from "@domains/auth";
 import type { Env } from "../../../../types/env";
 import { OwnerDraftSchema } from "../shcema/owner.draft.schema";
-import { assertConfigurationOwnershipByBusinessDraft } from
-  "@domains/business/lib/assertConfigurationOwnershipByBusinessDraft";
+import type {
+  OwnerDraftReadDTO,
+} from "../DataTransferObject/output/busienss.owner.output.dto";
 
+// ======================================================
+// KV
+// ======================================================
+const OWNER_DRAFT_KEY = (userId: string) =>
+  `BUSINESS_OWNER_DRAFT:${userId}`;
 
-import type { OwnerDraftReadDTO } from "../DataTransferObject/output/busienss.owner.output.dto";
-const OWNER_DRAFT_KEY = (businessDraftId: string) =>
-  `BUSINESS_OWNER_DRAFT:${businessDraftId}`;
-
+// ======================================================
+// HANDLER
+// ======================================================
 export async function getBusinessOwnerDraft(
   request: Request,
   env: Env
 ): Promise<Response> {
-
-  function normalizeBusinessDraftId(id: string) {
-    return id.includes(":") ? id.split(":").pop()! : id;
-  }
   /* =====================
-
-     AUTH
+     1️⃣ AUTH
   ====================== */
   const session = await requireAuthUser(request, env);
   if (!session) {
@@ -34,59 +46,28 @@ export async function getBusinessOwnerDraft(
     );
   }
 
-  /* =====================
-     PARAMS
-  ====================== */
-  const url = new URL(request.url);
-  const rawbusinessDraftId =
-    url.searchParams.get("businessDraftId");
+  const userId = session.user.id;
+  const key = OWNER_DRAFT_KEY(userId);
 
-  if (!rawbusinessDraftId) {
+  /* =====================
+     2️⃣ LOAD OWNER DRAFT
+  ====================== */
+  const raw = await env.BUSINESS_KV.get(key);
+
+  if (!raw) {
     return json(
-      { ok: false, error: "BUSINESS_DRAFT_ID_REQUIRED" },
+      { ok: true, owner: null },
       request,
-      env,
-      400
+      env
     );
   }
-  const businessDraftId =
-  normalizeBusinessDraftId(rawbusinessDraftId);
+
   /* =====================
-     OWNERSHIP
+     3️⃣ VALIDATE
   ====================== */
-  try {
-    await assertConfigurationOwnershipByBusinessDraft(
-      env,
-      businessDraftId,
-      session.user.id
-    );
-  } catch (err: any) {
-    return json(
-      { ok: false, error: err.message },
-      request,
-      env,
-      err.message === "BUSINESS_DRAFT_NOT_FOUND"
-        ? 404
-        : 403
-    );
-  }
-  
-
- /* =====================
-   LOAD OWNER DRAFT
-===================== */
-const raw = await env.BUSINESS_KV.get(
-  OWNER_DRAFT_KEY(businessDraftId)
-);
-
-if (!raw) {
-  return json({ ok: true, owner: null }, request, env);
-}
-
-let ownerDraft: OwnerDraftReadDTO;
-
-try {
-  const parsed = OwnerDraftSchema.safeParse(JSON.parse(raw));
+  const parsed = OwnerDraftSchema.safeParse(
+    JSON.parse(raw)
+  );
 
   if (!parsed.success) {
     return json(
@@ -97,18 +78,10 @@ try {
     );
   }
 
-  let OwnerDraft= parsed.data;
-} catch {
-  return json(
-    { ok: false, error: "CORRUPTED_OWNER_DRAFT" },
-    request,
-    env,
-    500
-  );
-}
+  const ownerDraft = parsed.data;
 
   /* =====================
-     MAP → READ DTO
+     4️⃣ MAP → READ DTO
   ====================== */
   const owner: OwnerDraftReadDTO = {
     id: ownerDraft.id,
@@ -117,10 +90,14 @@ try {
     birthDate: ownerDraft.birthDate,
     contact: ownerDraft.contact,
     source: ownerDraft.source,
-    verified: ownerDraft.verified,
+    privacy:ownerDraft.privacy,
+    verified: ownerDraft.verified ,
     complete: ownerDraft.complete,
   };
 
+  /* =====================
+     5️⃣ RESPONSE
+  ====================== */
   return json(
     { ok: true, owner },
     request,

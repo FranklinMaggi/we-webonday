@@ -28,7 +28,7 @@
 @import "../components/hero/HeroBase.css";
 @import "../components/table/pricing-table.css";
 @import "../components/whatsapp.css";
-
+@import "./business_page/business_page.css";
 /* PAGES */
 @import "../pages/home.css";
 @import "../pages/login.css";

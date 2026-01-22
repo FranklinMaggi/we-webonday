@@ -51,17 +51,12 @@ export async function createConfigurationBase(
   const body = ConfigurationBaseInputSchema.parse(
     await request.json()
   );
-  const rawBusinessDraftId = crypto.randomUUID();
+  const businessDraftId = crypto.randomUUID();
 
-  // Alias leggibile (debug / audit / KV naming)
-  const businessDraftId = `nomeAttività:${rawBusinessDraftId}`;
   // =========================
   // BUILD CONFIGURATION ID
   // =========================
-  const configurationId = buildConfigurationId(
-    body.businessName,
-    body.solutionId
-  );
+  const configurationId = crypto.randomUUID();
 
   const key = configurationKey(configurationId);
 
@@ -98,7 +93,7 @@ export async function createConfigurationBase(
     prefill: {
       businessName: body.businessName,
     },
-    businessDraftId,
+    businessDraftId ,
     options: [],
     data: {},
   

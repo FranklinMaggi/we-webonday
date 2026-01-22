@@ -72,10 +72,12 @@ export async function createBusinessOwnerDraft(
     contact: input.contact ?? existing?.contact,
 
     source: input.source ?? existing?.source ?? "manual",
-
+    privacy: input.privacy ?? existing?.privacy ,
     verified: false,
-    complete: true,
-
+   // 🔥 REGOLA DI DOMINIO
+   complete: Boolean(
+    (input.privacy ?? existing?.privacy)?.accepted === true
+  ),
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   };

@@ -12,6 +12,7 @@
 // ======================================================
 
 import type { ContactDTO } from "@domains/GeneralSchema/contact.schema";
+import type {PrivacyAcceptanceDTO} from "@domains/configuration/schema/privacy.acceptance.schema"
 
 export interface BusinessOwnerDraftInputDTO {
   firstName?: string;
@@ -21,6 +22,7 @@ export interface BusinessOwnerDraftInputDTO {
   contact?: {
     secondaryMail?: string;
   };
+  privacy?:PrivacyAcceptanceDTO;
 
 }
 

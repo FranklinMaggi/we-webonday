@@ -1,92 +1,89 @@
 // ======================================================
-// FE || STEP — COMMIT CONFIGURATION
+// FE || STEP — COMMIT CONFIGURATION (CANONICAL)
 // ======================================================
 //
 // RUOLO:
-// - Scrive la configuration nel backend
-// - Punto di verità
-// - Fine configurator
+// - Punto finale del configurator
+// - Collega Owner + Business alla Configuration
+// - Backend = source of truth
 //
+// FLOW:
+// 1. OwnerDraft ✅
+// 2. BusinessDraft ✅
+// 3. attachOwnerToConfiguration (COMMIT)
 // ======================================================
 
-import { useNavigate } from "react-router-dom";
-import {useState } from "react";
+
+import { useState } from "react";
 import { attachOwnerToConfiguration } from "../../api/business/configuration.draft.complete";
 import { useConfigurationSetupStore } from "../../store/configurationSetup.store";
-import { updateConfiguration } from "../../api/configuration.user.api";
 
 export default function StepCommitConfiguration({
   onBack,
+  onNext, 
 }: {
   onBack: () => void;
+  onNext: ()=> void;
 }) {
   const { data } = useConfigurationSetupStore();
-  const navigate = useNavigate();
-  const configurationId=data.configurationId;
+
+  const configurationId = data.configurationId;
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleCommit() {
     if (!configurationId) return;
-  
+
     setLoading(true);
     setError(null);
-  
+
     try {
       /* =====================
-         1️⃣ UPDATE CONFIGURATION (FINAL SNAPSHOT)
+         COMMIT (BACKEND)
+         - OwnerDraft completo
+         - BusinessDraft completo
+         - Attach + state advance
       ====================== */
-      await updateConfiguration(configurationId, {
-        ...data,
-        status: "draft", // oppure "complete" se deciso
-      });
-  
-      /* =====================
-         2️⃣ ATTACH OWNER → CONFIGURATION
-      ====================== */
-      const attachRes = await attachOwnerToConfiguration({
+      const res = await attachOwnerToConfiguration({
         configurationId,
+    
       });
-  
-      if (!attachRes.ok) {
+
+      if (!res?.ok) {
         throw new Error(
-          attachRes.error ??
-          "ATTACH_OWNER_FAILED"
+          res?.error ?? "ATTACH_OWNER_FAILED"
         );
       }
-  
+
       /* =====================
-         3️⃣ NAVIGATE (LAST)
+         NAVIGATION (LAST STEP)
       ====================== */
-      navigate(
-        `/user/dashboard/configuration/${configurationId}`,
-        { replace: true }
-      );
-    } catch (e) {
-      console.error(
-        "[STEP_COMMIT][ERROR]",
-        e
-      );
-      setError("Errore nel salvataggio finale");
-    } finally {
-      setLoading(false);
-    }
+    // ✅ PASSAGGIO ALLO STEP COMPLETE
+    onNext();
+  } catch (e) {
+    console.error("[STEP_COMMIT][ERROR]", e);
+    setError("Errore nel salvataggio finale");
+  } finally {
+    setLoading(false);
   }
-  
+}
 
   return (
     <div className="step">
       <h2>Conferma configurazione</h2>
 
       <p>
-        Stiamo per salvare la configurazione del tuo business.
+        Stiamo per finalizzare la configurazione del tuo business.
       </p>
 
       {error && <p className="error">{error}</p>}
 
       <div className="actions">
-        <button onClick={onBack}>Indietro</button>
+        <button onClick={onBack} disabled={loading}>
+          Indietro
+        </button>
+
         <button onClick={handleCommit} disabled={loading}>
           {loading ? "Salvataggio…" : "Conferma"}
         </button>

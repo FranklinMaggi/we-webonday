@@ -25,8 +25,8 @@ import { OwnerDraftSchema } from "../shcema/owner.draft.schema";
 // ======================================================
 // KV KEYS
 // ======================================================
-const OWNER_DRAFT_KEY = (businessDraftId: string) =>
-  `BUSINESS_OWNER_DRAFT:${businessDraftId}`;
+const OWNER_DRAFT_KEY = (userId: string) =>
+  `BUSINESS_OWNER_DRAFT:${userId}`;
 
 // ======================================================
 // SCHEMAS
@@ -105,7 +105,7 @@ export async function confirmBusinessOwner(
      4️⃣ LOAD OWNER DRAFT
   ====================== */
   const raw = await env.BUSINESS_KV.get(
-    OWNER_DRAFT_KEY(businessDraftId)
+    OWNER_DRAFT_KEY(session.user.id)
   );
 
   if (!raw) {
@@ -121,7 +121,16 @@ export async function confirmBusinessOwner(
      5️⃣ CONFIRM
   ====================== */
   let confirmedOwner;
+  const draft = JSON.parse(raw);
 
+  if (!draft.complete || !draft.privacy?.accepted) {
+    return json(
+      { ok: false, error: "OWNER_DRAFT_NOT_COMPLETE" },
+      request,
+      env,
+      409
+    );
+  }
   try {
     confirmedOwner = OwnerConfirmedSchema.parse({
       ...JSON.parse(raw),
@@ -140,7 +149,7 @@ export async function confirmBusinessOwner(
      6️⃣ PERSIST
   ====================== */
   await env.BUSINESS_KV.put(
-    OWNER_DRAFT_KEY(businessDraftId),
+    OWNER_DRAFT_KEY(session.user.id),
     JSON.stringify(confirmedOwner),
     {
       metadata: {

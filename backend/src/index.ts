@@ -35,7 +35,7 @@ import {
  USER - CONFIGURATION _ FLOW 
 ============================================================ */
 
-import { createConfigurationBase ,getUserConfiguration, listAllConfigurations ,listUserConfigurations } from "@domains/configuration/routes";
+import { createConfigurationBase ,getUserConfiguration, listAllConfigurations ,listUserConfigurations , setConfigurationDraft} from "@domains/configuration/routes";
 import { createBusinessDraft , getBusinessDraft ,updateBusinessDraft } from "@domains/business/routes";
 import {
   createBusinessOwnerDraft,
@@ -111,7 +111,7 @@ import { createBusiness ,
   submitBusiness,
   uploadBusinessMenu
 } from "@domains/business/routes";
-
+import { listAllBusinessDrafts } from "@domains/business/routes";
 // ======================================================
 // BE || routes/configuration/index.ts
 // ======================================================
@@ -387,6 +387,23 @@ if (pathname === "/api/business/get-base-draft" && method === "GET") {
     env
   );
 }
+if (pathname === "/api/business/draft/get-list" && method === "GET") {
+  return withCors(
+    await listAllBusinessDrafts(request, env),
+    request,
+    env
+  );
+}
+if (
+  pathname === "/api/configuration/set-draft" &&
+  method === "POST"
+) {
+  return withCors(
+    await setConfigurationDraft(request, env),
+    request,
+    env
+  );
+}
 
 // UPDATE (PATCH-like)
 if (pathname === "/api/business/update-draft" && method === "POST") {
@@ -497,6 +514,8 @@ if (
     env
   );
 }
+
+
       /* ======================================================
          PRODUCTS
       ====================================================== */

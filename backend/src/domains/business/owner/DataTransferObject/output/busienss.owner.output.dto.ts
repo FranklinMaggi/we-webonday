@@ -10,6 +10,7 @@
 // - Può essere undefined se non esiste
 // ======================================================
 
+import { PrivacyAcceptanceDTO } from "@domains/configuration/schema/privacy.acceptance.schema";
 import type { ContactDTO } from "@domains/GeneralSchema/contact.schema";
 
 export interface OwnerUserGetDTO {
@@ -30,6 +31,7 @@ export interface OwnerUserGetDTO {
 // owner.draft.read.dto.ts
 
 
+// owner.draft.read.dto.ts
 export interface OwnerDraftReadDTO {
   id: string;
 
@@ -40,8 +42,9 @@ export interface OwnerDraftReadDTO {
   contact?: ContactDTO & {
     secondaryMail?: string;
   };
-
+privacy?:PrivacyAcceptanceDTO;
   source: "google" | "manual";
   verified: boolean;
   complete: boolean;
 }
+

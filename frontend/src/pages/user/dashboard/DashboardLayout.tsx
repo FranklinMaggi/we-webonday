@@ -16,12 +16,12 @@
 // FE || pages/user/dashboard/layout/DashboardLayout.tsx
 
 import { Outlet } from "react-router-dom";
-import Sidebar from "./layout/DashboardSideBar";
+import SidebarContainer from "./layout/Sidebar.container";
 
 export default function DashboardLayout() {
   return (
     <div className="dashboard-layout">
-      <Sidebar />
+      <SidebarContainer />
       <main className="dashboard-main">
         <Outlet />
       </main>

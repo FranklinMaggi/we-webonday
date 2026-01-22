@@ -1,28 +1,55 @@
 // ======================================================
 // BE || CONFIGURATION — COMMIT
 // ======================================================
+//
+// RUOLO:
+// - Finalizza una Configuration
+// - Transizione verso stato ACCEPTED
+//
+// INVARIANTI:
+// - Auth obbligatoria
+// - Configuration = source of truth
+// - BusinessDraft deve esistere
+// - Operazione IDEMPOTENTE
+//
+// FLOW:
+// Configurator → Commit → Business visibile in Dashboard
+// ======================================================
 
 import type { Env } from "../../../types/env";
-import type { ConfigurationDTO } from "@domains/configuration";
+import type { ConfigurationDTO } from "../schema/configuration.schema";
 import { UserCommitSchema } from "@domains/user/user.commit.schema";
+import { requireAuthUser } from "@domains/auth";
 import { json } from "@domains/auth/route/helper/https";
 
-const USER_COMMIT_KEY = (id: string) => `USER_COMMIT:${id}`;
-const USER_LAST_COMMIT_KEY = (userId: string) =>
+// =========================
+// KV HELPERS
+// =========================
+const configurationKey = (id: string) =>
+  `CONFIGURATION:${id}`;
+
+const userCommitKey = (id: string) =>
+  `USER_COMMIT:${id}`;
+
+const userLastCommitKey = (userId: string) =>
   `USER:${userId}:LAST_COMMIT`;
 
+// ======================================================
+// DOMAIN FUNCTION
+// ======================================================
 export async function commitConfiguration(
   env: Env,
   configurationId: string,
   userId: string
 ): Promise<{ ok: true }> {
-  /* =========================
-     LOAD CONFIGURATION
-  ========================= */
-  const configuration = await env.CONFIGURATION_KV.get(
-    `CONFIGURATION:${configurationId}`,
-    "json"
-  ) as ConfigurationDTO | null;
+  // =========================
+  // LOAD CONFIGURATION
+  // =========================
+  const configuration =
+    (await env.CONFIGURATION_KV.get(
+      configurationKey(configurationId),
+      "json"
+    )) as ConfigurationDTO | null;
 
   if (!configuration) {
     throw new Error("CONFIGURATION_NOT_FOUND");
@@ -32,9 +59,9 @@ export async function commitConfiguration(
     throw new Error("FORBIDDEN");
   }
 
-  /* =========================
-     STATE GUARD
-  ========================= */
+  // =========================
+  // STATE GUARD
+  // =========================
   if (
     configuration.status !== "BUSINESS_READY" &&
     configuration.status !== "CONFIGURATION_READY" &&
@@ -43,9 +70,9 @@ export async function commitConfiguration(
     throw new Error("INVALID_STATE_FOR_COMMIT");
   }
 
-  /* =========================
-     IDEMPOTENZA
-  ========================= */
+  // =========================
+  // GUARD — IDEMPOTENZA
+  // =========================
   if (configuration.status === "ACCEPTED") {
     return { ok: true };
   }
@@ -54,9 +81,9 @@ export async function commitConfiguration(
     throw new Error("BUSINESS_DRAFT_ID_MISSING");
   }
 
-  /* =========================
-     PROMOZIONE CONFIGURATION
-  ========================= */
+  // =========================
+  // PROMOTE CONFIGURATION
+  // =========================
   const now = new Date().toISOString();
 
   const updated: ConfigurationDTO = {
@@ -66,14 +93,14 @@ export async function commitConfiguration(
   };
 
   await env.CONFIGURATION_KV.put(
-    `CONFIGURATION:${configurationId}`,
+    configurationKey(configurationId),
     JSON.stringify(updated)
   );
 
-  /* =========================
-     USER COMMIT (AUDIT)
-  ========================= */
-  const commitId = globalThis.crypto.randomUUID();
+  // =========================
+  // USER COMMIT (AUDIT)
+  // =========================
+  const commitId = crypto.randomUUID();
 
   const commitRaw = {
     id: commitId,
@@ -90,33 +117,51 @@ export async function commitConfiguration(
   }
 
   await env.ON_USERS_KV.put(
-    USER_COMMIT_KEY(parsed.data.id),
+    userCommitKey(parsed.data.id),
     JSON.stringify(parsed.data)
   );
 
   await env.ON_USERS_KV.put(
-    USER_LAST_COMMIT_KEY(userId),
+    userLastCommitKey(userId),
     parsed.data.id
   );
 
   return { ok: true };
 }
-import { requireAuthUser } from "@domains/auth";
 
+// ======================================================
+// ROUTE
+// ======================================================
 export async function commitConfigurationRoute(
   request: Request,
   env: Env
 ) {
+  // =========================
+  // AUTH
+  // =========================
   const session = await requireAuthUser(request, env);
   if (!session) {
-    return json({ ok: false, error: "UNAUTHORIZED" }, request, env, 401);
+    return json(
+      { ok: false, error: "UNAUTHORIZED" },
+      request,
+      env,
+      401
+    );
   }
 
+  // =========================
+  // INPUT
+  // =========================
   let body: { configurationId?: string };
   try {
     body = await request.json();
   } catch {
-    return json({ ok: false, error: "INVALID_BODY" }, request, env, 400);
+    return json(
+      { ok: false, error: "INVALID_BODY" },
+      request,
+      env,
+      400
+    );
   }
 
   if (!body.configurationId) {
@@ -128,6 +173,9 @@ export async function commitConfigurationRoute(
     );
   }
 
+  // =========================
+  // EXECUTE
+  // =========================
   try {
     await commitConfiguration(
       env,

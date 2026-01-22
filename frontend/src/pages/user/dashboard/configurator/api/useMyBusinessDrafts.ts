@@ -1,92 +1,78 @@
 // ======================================================
-// FE || TYPE || BackendEntity (PARACADUTE)
+// FE || HOOK || useMyBusinesses (CANONICAL)
 // ======================================================
 //
 // RUOLO:
-// - Rappresenta QUALSIASI entità BE
-// - Accetta qualunque campo
-// - L'id viene gestito separatamente
+// - Deriva Business dalla Configuration
+// - Business = configuration READY + businessDraft completo
 //
-// ======================================================
-
-export type BackendEntity<T extends object = {}> = {
-    id?: string;          // opzionale, mai usato direttamente
-  } & T & Record<string, unknown>;
-  
-  // ======================================================
-// FE || UTILS || normalizeBackendEntity
-// ======================================================
-//
-// RUOLO:
-// - Riceve un oggetto BE
-// - Rimuove l'id
-// - Ritorna TUTTO il resto intatto
-//
-// ======================================================
-
-export function normalizeBackendEntity<T extends object>(
-    raw: T & { id?: string }
-  ): Omit<T, "id"> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, ...rest } = raw;
-    return rest;
-  }
-  
-  // ======================================================
-// FE || HOOK || useMyBusinessDraft (ESTENSIBILE)
-// ======================================================
-//
-// RUOLO:
-// - Legge il Business Draft dell’utente
-// - Espone TUTTI i campi BE (tranne id)
-//
-// ======================================================
-// ======================================================
-// FE || HOOK || useMyBusinessDrafts (ESTENSIBILE)
-// ======================================================
-// ======================================================
-// FE || HOOK || useBusinessDraft
-// ======================================================
-//
-// RUOLO:
-// - Carica il BusinessDraft di UNA Configuration
-// - Lookup puntuale
+// SOURCE OF TRUTH:
+// - Configuration.status
+// - BusinessDraft.complete
 //
 // ======================================================
 
 import { useEffect, useState } from "react";
+import { useMyConfigurations } from "./useMyConfigurations";
 import { apiFetch } from "../../../../../lib/api";
 
+type BusinessVM = {
+  configurationId: string;
+  businessName: string;
+  complete: boolean;
+};
 
-export function useBusinessDraft(configurationId?: string) {
-  const [draft, setDraft] = useState<any | null>(null);
-  const [loading, setLoading] = useState(false);
+export function useMyBusinesses() {
+  const { items: configurations, loading: cfgLoading } =
+    useMyConfigurations();
+
+  const [completed, setCompleted] = useState<BusinessVM[]>([]);
+  const [inProgress, setInProgress] = useState<BusinessVM[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!configurationId) return;
+    if (cfgLoading) return;
 
-    setLoading(true);
+    async function load() {
+      const readyConfigs = configurations.filter(
+        (c) => c.status === "READY"
+      );
 
-    apiFetch<{
-      ok: boolean;
-      draft?: any;
-    }>(
-      `/api/business/get-base-draft?configurationId=${configurationId}`
-    )
-      .then((res) => {
-        if (!res?.ok || !res.draft) {
-          setDraft(null);
-          return;
+      const results: BusinessVM[] = [];
+
+      for (const c of readyConfigs) {
+        const res = await apiFetch<{
+          ok: boolean;
+          draft?: any;
+        }>(
+          `/api/business/get-base-draft?configurationId=${c.id}`
+        );
+
+        if (res?.ok && res.draft) {
+          results.push({
+            configurationId: c.id,
+            businessName:
+              res.draft.businessName ??
+              c.prefill?.businessName ??
+              "Attività",
+            complete: Boolean(res.draft.complete),
+          });
         }
+      }
 
-        setDraft(normalizeBackendEntity(res.draft));
-      })
-      .finally(() => setLoading(false));
-  }, [configurationId]);
+      setCompleted(results.filter((b) => b.complete));
+      setInProgress(results.filter((b) => !b.complete));
+      setLoading(false);
+    }
+
+    load();
+  }, [configurations, cfgLoading]);
 
   return {
-    draft,
+    completed,
+    inProgress,
     loading,
-    hasDraft: Boolean(draft),
+    hasCompleted: completed.length > 0,
+    hasInProgress: inProgress.length > 0,
   };
 }

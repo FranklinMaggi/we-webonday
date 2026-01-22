@@ -55,18 +55,46 @@ export async function getBusinessDraft(
      LOAD CONFIGURATION
      (SOURCE OF TRUTH)
   ====================== */
-  const configuration = await env.CONFIGURATION_KV.get(
-    `CONFIGURATION:${configurationId}`,
-    "json"
-  ) as { businessDraftId?: string } | null;
+ /* =====================
+   LOAD CONFIGURATION
+====================== */
+const configuration = await env.CONFIGURATION_KV.get(
+  `CONFIGURATION:${configurationId}`,
+  "json"
+) as {
+  businessDraftId?: string;
+  userId?: string;
+} | null;
 
-  if (!configuration?.businessDraftId) {
-    return json(
-      { ok: true, draft: null },
-      request,
-      env
-    );
-  }
+if (!configuration) {
+  return json(
+    { ok: false, error: "CONFIGURATION_NOT_FOUND" },
+    request,
+    env,
+    404
+  );
+}
+
+/* =====================
+   OWNERSHIP CHECK
+====================== */
+if (configuration.userId !== session.user.id) {
+  return json(
+    { ok: false, error: "FORBIDDEN" },
+    request,
+    env,
+    403
+  );
+}
+
+if (!configuration.businessDraftId) {
+  return json(
+    { ok: true, draft: null },
+    request,
+    env
+  );
+}
+
 
   const businessDraftId =
     configuration.businessDraftId;

@@ -2,6 +2,8 @@
 // BE || routes/configuration/index.ts
 // ======================================================
 
+export { setConfigurationDraft } from "./configuration.set-draft";
+
 export { attachOwnerToConfiguration } from "./configuration.attach-owner.ipnut";
 
 export { commitConfigurationRoute} from "./configuration.base.commit";
@@ -23,3 +25,4 @@ export {
     createConfigurationBase,
   } from "./configuration.base.write";
 
+ 

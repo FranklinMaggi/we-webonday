@@ -27,19 +27,16 @@ import { create } from "zustand";
 
 const initialState: ConfigurationSetupStoreDTO = {
   configurationId: undefined,
-  businessDraftId: undefined, 
-  
+  businessDraftId: undefined,
+  sector :"",
   solutionId: "",
   productId: "",
   optionIds: [],
+
   /* =========================
-     OWNER (NEW — FE ONLY)
+     BUSINESS
   ========================= */
-  ownerName: undefined,
-  ownerEmail: undefined,
-  ownerPhone: undefined,
   businessName: "",
-  sector: "",
 
   email: "",
   phone: undefined,
@@ -48,26 +45,40 @@ const initialState: ConfigurationSetupStoreDTO = {
   city: undefined,
   state: undefined,
   zip: undefined,
-  privacy:{
-    accepted: false , 
-    acceptedAt:"", 
-    policyVersion:"" ,
-  },
-  openingHours: undefined,
-  userPurposedServicesTags: undefined,
-  userPurposedDescriptionTags: undefined,
 
-  solutionServiceTags: [],
+  openingHours: undefined,
+
   businessServiceTags: [],
   businessDescriptionTags: [],
 
+  privacy: {
+    accepted: false,
+    acceptedAt: "",
+    policyVersion: "",
+  },
+
+  /* =========================
+     OWNER
+  ========================= */
+  ownerFirstName: "",
+  ownerLastName: "",
+  ownerBirthDate: undefined,
+  ownerSecondaryMail: undefined,
+
+  ownerPrivacy: {
+    accepted: false,
+    acceptedAt: "",
+    policyVersion: "",
+  },
+
+  /* =========================
+     DESIGN
+  ========================= */
   layoutId: undefined,
   style: undefined,
   colorPreset: undefined,
 
   visibility: undefined,
-
- 
 };
 
 type ConfigurationSetupState = {
@@ -97,65 +108,65 @@ export const useConfigurationSetupStore =
   }));
 
 
-export type ConfigurationSetupStoreDTO = {
-  /* =========================
-     CORE (BE)
-  ========================= */
-  configurationId?: string;
-  businessDraftId?:string; 
-  privacy: {
-    accepted: boolean;
-    acceptedAt: string;
-    policyVersion: string;
-  }
-;
-  solutionId: string;
-  productId: string;
-  optionIds: string[];
-/* =========================
-     OWNER (NEW — FE ONLY)
-  ========================= */
-  ownerName?: string;
-  ownerEmail?: string;
-  ownerPhone?: string;
-  /* =========================
-     BUSINESS
-  ========================= */
-  businessName: string;
-  sector: string;
-
-  email: string;
-  phone?: string;
-
-  address?: string;
-  city?: string;
-  state?: string;
-  zip?: string;
-
-  openingHours?: Record<string, string>;
- 
-
-  userPurposedServicesTags?: string;
-  userPurposedDescriptionTags?: string;
-
-  /* =========================
-     TAGS
-  ========================= */
-  solutionServiceTags: string[];
-  businessServiceTags: string[];
-  businessDescriptionTags: string[];
-
-  /* =========================
-     DESIGN
-  ========================= */
-  layoutId?: string;
-  style?: string;
-  colorPreset?: string;
-
-  visibility?: Record<string, boolean>;
-
-  /* =========================
-     META
-  ========================= */
- 
-};
+  export type ConfigurationSetupStoreDTO = {
+    /* =========================
+       CORE (BE — READ / WRITE)
+    ========================= */
+    configurationId?: string;
+    businessDraftId?: string;
+  
+    solutionId: string;
+    productId: string;
+    optionIds: string[];
+  
+    /* =========================
+       BUSINESS
+    ========================= */
+    businessName: string;
+    sector :string,
+    email: string;
+    phone?: string;
+  
+    address?: string;
+    city?: string;
+    state?: string;
+    zip?: string;
+  
+    openingHours?: Record<string, string>;
+  
+    businessServiceTags: string[];
+    businessDescriptionTags: string[];
+  
+    /* =========================
+       BUSINESS PRIVACY
+    ========================= */
+    privacy: {
+      accepted: boolean;
+      acceptedAt: string;
+      policyVersion: string;
+    };
+  
+    /* =========================
+       OWNER (FE ↔ BE)
+    ========================= */
+    ownerFirstName: string;
+    ownerLastName: string;
+    ownerBirthDate?: string;
+    ownerSecondaryMail?: string;
+  
+    ownerPrivacy: {
+      accepted: boolean;
+      acceptedAt: string;
+      policyVersion: string;
+    };
+  
+    /* =========================
+       DESIGN / WORKSPACE
+    ========================= */
+    layoutId?: string;
+    style?: string;
+    colorPreset?: string;
+  
+    visibility?: Record<string, boolean>;
+  };
+  
