@@ -1,0 +1,106 @@
+/*style/admin/products/products*/
+
+ /* =========================
+   ADMIN DRAWER — DARK
+========================= */
+.admin-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 420px;
+  height: 100%;
+  background: #0e0e0e;          /* 🔥 DARK */
+  color: #eee;
+  border-left: 1px solid #333;
+  box-shadow: -6px 0 20px rgba(0,0,0,.6);
+  z-index: 1000;
+}
+
+/* HEADER */
+.admin-drawer__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #333;
+}
+
+.admin-drawer__header h3 {
+  color: #0ff0fc;
+  font-size: 1.1rem;
+}
+
+/* CONTENT */
+.admin-drawer__content {
+  padding: 16px;
+  font-size: 0.95rem;
+  color: #ccc;
+}
+
+.admin-drawer__content p {
+  margin-bottom: 12px;
+  color: #bbb;
+}
+
+.admin-drawer__content ul {
+  padding-left: 18px;
+}
+
+.admin-drawer__content li {
+  margin-bottom: 6px;
+}
+
+/* BUTTONS */
+.admin-drawer button {
+  margin-top: 12px;
+  width: 100%;
+  background: #0ff0fc;
+  color: #000;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-drawer button + button {
+  margin-top: 8px;
+  background: transparent;
+  color: #0ff0fc;
+  border: 1px solid #0ff0fc55;
+}
+.admin-page button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  background: #2563eb;
+  color: #fff;
+}
+
+.admin-page button:hover {
+  background: #1d4ed8;
+}
+
+.admin-page button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background: #dc2626;
+}
+
+.btn-cancel:hover {
+  background: #b91c1c;
+}
+
+.link-button {
+  background: none;
+  color: #2563eb;
+  padding: 0;
+  font-size: 14px;
+  border: none;
+  text-decoration: underline;
+}

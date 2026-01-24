@@ -37,4 +37,5 @@ export interface ProductPublicDTO {
     requiresConfiguration: boolean;
   };
   options: ProductOptionPublicDTO[];
+  
 }

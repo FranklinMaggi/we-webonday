@@ -30,6 +30,7 @@ export interface ProductInternalDTO {
     optionIds: string[];
     status: "DRAFT" | "ACTIVE" | "ARCHIVED";
     configuration: boolean; 
+    isVisitor: boolean;
     createdAt: string;
     updatedAt: string;
   }

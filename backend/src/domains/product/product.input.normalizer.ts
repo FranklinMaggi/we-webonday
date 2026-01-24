@@ -43,11 +43,13 @@ export function normalizeProductInput(raw: any) {
      descriptionKey: raw?.descriptionKey,
     status: raw?.status ?? "DRAFT",
     startupFee: Number(raw?.startupFee ?? 0),
+    
     pricing: {
       yearly: Number(raw?.pricing?.yearly ?? raw?.priceYear ?? 0),
       monthly: Number(raw?.pricing?.monthly ?? raw?.priceMonthly ?? 0),
     },
     configuration:Boolean(raw?.configuration ?? false),
+    isVisitor: Boolean(raw?.isVisitor ?? false),
     createdAt: raw?.createdAt,
     updatedAt: raw?.updatedAt,
     optionIds: Array.isArray(raw?.optionIds) ? raw.optionIds : [],

@@ -1,0 +1,249 @@
+/* =====================================================
+   NAVBAR — CANONICAL (CLEAN)
+===================================================== */
+
+/* =========================
+   SHELL
+========================= */
+.navbar-shell {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  
+    width: 100%;
+    background: var(--wd-footer-bg);
+    color: var(--wd-footer-text);
+  }
+  
+  /* =========================
+     LAYOUT
+  ========================= */
+  .navbar-layout {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+  
+    padding: 12px 20px;
+  }
+  
+  /* =========================
+     ZONES
+  ========================= */
+  .navbar-zone {
+    display: flex;
+    align-items: center;
+  }
+  
+  .navbar-zone--left {
+    justify-content: flex-start;
+  }
+  
+  .navbar-zone--center {
+    justify-content: center;
+    gap: 18px;
+  }
+  
+  .navbar-zone--right {
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  
+  /* =========================
+     BRAND
+  ========================= */
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .navbar-brand-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .navbar-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  
+  .navbar-brand-we {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--wd-navbar-text-muted);
+  }
+  
+  .navbar-brand-name {
+    font-size: 17px;
+    font-weight: 700;
+  }
+  
+  /* =========================
+     NAV LINKS
+  ========================= */
+  .navbar-link {
+    position: relative;
+  
+    padding: 6px 10px;
+    min-height: 40px;
+  
+    font-size: 14px;
+    font-weight: 500;
+  
+    color: var(--wd-footer-link);
+    text-decoration: none;
+    border-radius: 10px;
+  
+    transition:
+      color 0.2s ease,
+      background 0.2s ease,
+      text-shadow 0.2s ease;
+  }
+  
+  .navbar-link:hover {
+    color: var(--wd-footer-link-hover);
+    background: rgba(255,255,255,0.04);
+    text-shadow:
+      0 0 6px rgba(34,211,238,0.6),
+      0 0 12px rgba(34,211,238,0.4);
+  }
+  
+  .navbar-link::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 4px;
+  
+    height: 2px;
+    width: 0;
+  
+    background: var(--wd-footer-link-hover);
+    transition: width 0.2s ease;
+  }
+  
+  .navbar-link:hover::after {
+    width: calc(100% - 20px);
+  }
+  
+  /* =========================
+     LOGOUT BUTTON (CYAN / BLUE)
+  ========================= */
+  .navbar-action {
+    width: 38px;
+    height: 38px;
+  
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 999px;
+  
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--wd-footer-link);
+  
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.15s ease;
+  }
+  
+  /* 🔵 CYAN HOVER */
+  .navbar-action--logout:hover {
+    color: var(--wd-footer-neon-cyan);
+    border-color: var(--wd-footer-neon-cyan);
+  
+    background: rgba(34,211,238,0.08);
+    box-shadow:
+      0 0 8px rgba(34,211,238,0.6),
+      0 0 16px rgba(34,211,238,0.35);
+  }
+  
+  .navbar-action--logout:active {
+    transform: scale(0.95);
+  }
+  
+  /* =========================
+     RESPONSIVE
+  ========================= */
+  @media (max-width: 768px) {
+    .navbar-zone--center {
+      display: none;
+    }
+  
+    .navbar-brand-text {
+      display: none;
+    }
+  }
+  .page-section--navbar {
+    padding: 0 !important;
+    text-align: left !important;
+  }
+  /* ======================================================
+   NAVBAR — ACTION BUTTONS (WD SYSTEM ALIGNMENT)
+====================================================== */
+
+/* Base icon button */
+.navbar-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+
+  background: transparent;
+  color: var(--wd-navbar-text, #e5e7eb);
+
+  cursor: pointer;
+  user-select: none;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.1s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Hover: ghost neon light */
+.navbar-action:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(34,211,238,0.35);
+  box-shadow: 0 0 0 3px rgba(34,211,238,0.12);
+}
+
+/* Active press */
+.navbar-action:active {
+  transform: translateY(1px);
+}
+
+/* Focus (accessibilità) */
+.navbar-action:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(34,211,238,0.18),
+    0 0 0 1px rgba(34,211,238,0.45);
+}
+/* ======================================================
+   NAVBAR — LINKS (ACCESSIBLE)
+====================================================== */
+
+.navbar-link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(34,211,238,0.16);
+  background: rgba(255,255,255,0.05);
+}

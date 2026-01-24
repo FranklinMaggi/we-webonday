@@ -1,0 +1,22 @@
+/* ======================================================
+   PUBLIC — LAYOUT PRIMITIVES
+====================================================== */
+
+.page-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  
+  .page-section {
+    padding: 80px 0;
+  }
+  
+  .page-section--tight {
+    padding: 48px 0;
+  }
+  
+  .page-section--center {
+    text-align: center;
+  }
+  

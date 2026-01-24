@@ -1,0 +1,70 @@
+/* ======================================================
+   FE || STYLE ENTRYPOINT — WebOnDay
+   ======================================================
+
+   ORDINE ARCHITETTURALE (NON VIOLARE):
+
+   1️⃣ TOKENS        → verità assoluta (variabili)
+   2️⃣ BASE          → reset + typography
+   3️⃣ PRIMITIVES    → badge, card, button, ecc.
+   4️⃣ LAYOUT        → navbar, footer, shell
+   5️⃣ COMPONENTS    → componenti complessi
+   6️⃣ PAGES / ADMIN → stili di dominio
+
+   Questo file NON contiene CSS diretto.
+   Serve solo a garantire ordine e stabilità.
+====================================================== */
+
+
+/* ======================================================
+   1️⃣ TOKENS
+====================================================== */
+@import "./user/base/tokens/tokens.css";
+
+
+/* ======================================================
+   2️⃣ BASE
+====================================================== */
+@import "./user/base/typography.css";
+
+
+/* ======================================================
+   3️⃣ PRIMITIVES
+====================================================== */
+@import "./user/base/primitives/badge.css";
+@import "./user/base/primitives/wd-status.css";
+@import "./user/base/primitives/wd-card.css";
+@import "./user/base/primitives/whatsapp.css";
+@import "./user/base/primitives/layout.css";
+@import "./user/base/primitives/button.css";
+
+/* ======================================================
+   4️⃣ LAYOUT (PUBBLICO)
+====================================================== */
+@import "./user/components/navbar.css";
+@import "./user/components/footer.css";
+@import "./user/components/solutions.css";
+@import "./user/components/language-selector.css";
+@import "./user/components/preform.css";
+@import "./user/login.css";
+/* ======================================================
+   5️⃣ COMPONENTS (PUBBLICO)
+====================================================== */
+/* @import "./user/components/navbar/languageSelector.css";
+@import "./user/components/table/pricing-table.css";
+/*@import "./components/business_page/business_page.css";
+
+
+/* ======================================================
+   6️⃣ ADMIN (ISOLATO)
+   ⚠️ l’admin è volutamente in coda
+====================================================== */
+@import "./admin/MainLayout/adminLayout.css";
+@import "./admin/orders/orders.css";
+@import "./admin/products/products.css";
+@import "./admin/products/editProducts.css";
+@import "./admin/products/select.css";
+@import "./admin/login.css";
+@import "./admin/base/admin-card.css";
+@import "./admin/base/admin-table.css";
+@import "./admin/base/admin-drawer.css";

@@ -68,6 +68,7 @@ export const ProductSchema = z.object({
   // ✅ TIMESTAMPS DI DOMINIO
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
+  isVisitor: z.boolean().default(false),
 });
 
 export type Product = z.infer<typeof ProductSchema>;

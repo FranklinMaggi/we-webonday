@@ -1,0 +1,145 @@
+/* ======================================================
+   FE||Style/css/admin/orders/orders.css
+   ======================================================
+
+   AI-SUPERCOMMENT — ADMIN ORDERS VIEW
+
+   RUOLO:
+   - Styling della sezione ordini in dashboard admin
+
+   RESPONSABILITÀ:
+   - Tabelle ordini
+   - Dettaglio ordine
+   - Evidenziazione stati
+
+   NON FA:
+   - Logica di business
+   - Transizioni di stato
+   - Scrittura dati
+
+   CONNECT POINT:
+   - Admin orders FE
+   - Admin main layout
+
+   PERCHÉ ESISTE:
+   - Isolare uno dei domini admin più critici
+   - Mantenere leggibilità e controllo visivo
+====================================================== */
+.admin-dashboard {
+    padding: 20px;
+    font-family: sans-serif;
+  }
+  
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .kpi-card {
+    padding: 20px;
+    background: #1a1a1a;
+    color: #0ff0fc;
+    border-radius: 12px;
+    border: 1px solid #0ff0fc55;
+    text-align: center;
+  }
+  
+  .filters button {
+    margin-right: 8px;
+  }
+
+
+  */
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+  }.admin-order-details {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .order-status {
+    margin-bottom: 1rem;
+  }
+  
+  .order-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #111;
+    border-radius: 8px;
+  }
+  
+  .order-items {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .order-item {
+    border-bottom: 1px solid #333;
+    padding: 1rem 0;
+  }
+  
+  .order-options {
+    margin-left: 1rem;
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+  
+  .item-total {
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
+  
+  .order-total {
+    font-size: 1.2rem;
+    text-align: right;
+    margin-top: 2rem;
+  }
+
+
+.btn-confirm {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-confirm:hover { opacity: 0.9; }
+.btn-cancel:hover { opacity: 0.9; }
+.admin-product-edit {
+  max-width: 900px;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+
+
+
+.admin-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}

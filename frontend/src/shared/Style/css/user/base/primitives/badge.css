@@ -1,0 +1,136 @@
+/* =====================================================
+   PRIMITIVE — BADGE / STATUS
+=====================================================
+
+ORDINE ARCHITETTURALE:
+1️⃣ TOKENS
+2️⃣ BASE
+3️⃣ PRIMITIVES  ← QUI
+4️⃣ LAYOUT
+5️⃣ PAGES
+
+RESPONSABILITÀ:
+- badge numerici
+- pill
+- status (pending, active, ecc.)
+
+UTILIZZO:
+- navbar
+- cart
+- admin
+- liste
+
+DIVIETI:
+- NESSUN layout
+- NESSUNA tabella
+- NESSUNA logica di pagina
+
+Uno status visivo = primitive.
+===================================================== */
+
+/* =========================
+   BASE BADGE
+========================= */
+.wd-badge {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+ 
+   min-width: 20px;
+   height: 20px;
+   padding: 0 6px;
+ 
+   font-size: 12px;
+   font-weight: 600;
+   line-height: 1;
+ 
+   border-radius: 999px;
+ 
+   background: var(--wd-badge-bg, rgba(255, 255, 255, 0.15));
+   color: var(--wd-badge-text, #ffffff);
+ 
+   white-space: nowrap;
+ }
+ 
+ /* =========================
+    BADGE — NUMERIC
+ ========================= */
+ .wd-badge--count {
+   min-width: 18px;
+   height: 18px;
+   padding: 0 5px;
+ 
+   font-size: 11px;
+ }
+ 
+ /* =========================
+    PILL (label testuale)
+ ========================= */
+ .wd-pill {
+   display: inline-flex;
+   align-items: center;
+ 
+   padding: 4px 10px;
+ 
+   font-size: 12px;
+   font-weight: 500;
+ 
+   border-radius: 999px;
+ 
+   background: rgba(255, 255, 255, 0.08);
+   color: var(--wd-text-main);
+ 
+   white-space: nowrap;
+ }
+ 
+ /* =========================
+    STATUS BASE
+ ========================= */
+ .wd-status {
+   display: inline-flex;
+   align-items: center;
+   gap: 6px;
+ 
+   padding: 4px 10px;
+ 
+   font-size: 12px;
+   font-weight: 600;
+ 
+   border-radius: 999px;
+   white-space: nowrap;
+ }
+ 
+ /* =========================
+    STATUS VARIANTS
+ ========================= */
+ 
+ /* ACTIVE / OK */
+ .wd-status--active {
+   background: rgba(34, 197, 94, 0.15);
+   color: #22c55e;
+ }
+ 
+ /* PENDING / REVIEW */
+ .wd-status--pending {
+   background: rgba(234, 179, 8, 0.15);
+   color: #eab308;
+ }
+ 
+ /* DRAFT */
+ .wd-status--draft {
+   background: rgba(148, 163, 184, 0.15);
+   color: #94a3b8;
+ }
+ 
+ /* ERROR / REJECTED */
+ .wd-status--error {
+   background: rgba(220, 38, 38, 0.15);
+   color: #dc2626;
+ }
+ 
+ /* DISABLED / ARCHIVED */
+ .wd-status--disabled {
+   background: rgba(100, 116, 139, 0.15);
+   color: #64748b;
+ }
+ 

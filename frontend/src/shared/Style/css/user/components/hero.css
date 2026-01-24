@@ -1,0 +1,33 @@
+/* ======================================================
+   PUBLIC — HERO
+====================================================== */
+
+.hero {
+    padding: 120px 0 100px;
+  }
+  
+  .hero-inner {
+    display: grid;
+    gap: 32px;
+    max-width: 720px;
+  }
+  
+  .hero h1 {
+    font-size: clamp(2.4rem, 5vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    color: #020617;
+  }
+  
+  .hero p {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: #475569;
+  }
+  
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+  }
+  

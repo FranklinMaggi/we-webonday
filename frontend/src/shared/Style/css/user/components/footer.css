@@ -1,0 +1,191 @@
+/* =====================================================
+   LAYOUT — FOOTER
+=====================================================
+
+ORDINE ARCHITETTURALE:
+1️⃣ TOKENS
+2️⃣ BASE
+3️⃣ PRIMITIVES
+4️⃣ LAYOUT  ← QUI
+5️⃣ PAGES
+
+RESPONSABILITÀ:
+- struttura footer
+- grid colonne
+- titoli e link
+- glow decorativo
+
+DIVIETI:
+- logica di pagina
+- contenuto specifico
+- comportamenti interattivi complessi
+
+Il footer chiude l’esperienza, non la guida.
+===================================================== */
+
+/*// ======================================================
+// FE || components/footer/footer.classes.ts
+// ======================================================
+// FOOTER — CLASS REGISTRY (LOCAL)
+//
+// Responsabilità:
+// - Mappare classi semantiche del footer
+// - Nessun CSS
+// ======================================================
+
+export const footerClasses = {
+    /** SHELL 
+    footerShell: "page-section page-section--footer footer-shell",
+  
+    /** LAYOUT 
+    footerLayout: "footer-layout footer-layout--grid",
+  
+    /** SECTIONS 
+    footerSection: "footer-section",
+  
+    /** ELEMENTS 
+    sectionTitle: "footer-section-title",
+    footerLink: "footer-link",
+  
+    /** META 
+    footerMeta: "footer-meta" 
+/* =====================================================
+   FOOTER — CANONICAL (CLEAN)
+===================================================== */
+
+/* =========================
+   SHELL
+========================= */
+.footer-shell {
+  position: relative;
+  overflow: hidden;
+
+  padding: 48px 32px 24px;
+
+  background: var(--wd-footer-bg);
+  color: var(--wd-footer-text);
+
+  border-top: 1px solid var(--wd-footer-border);
+}
+
+/* =========================
+   GLOW DECORATIVO
+========================= */
+.footer-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: radial-gradient(
+    ellipse at bottom center,
+    rgba(34,211,238,0.25),
+    rgba(236,72,153,0.18),
+    transparent 70%
+  );
+
+  filter: blur(22px);
+  pointer-events: none;
+}
+
+/* =========================
+   LAYOUT GRID
+========================= */
+.footer-layout--grid {
+  position: relative;
+  z-index: 1;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 32px;
+}
+
+/* =========================
+   SECTIONS
+========================= */
+.footer-section {
+  min-width: 0;
+}
+
+/* =========================
+   TITOLI SEZIONE
+========================= */
+.footer-section-title {
+  margin-bottom: 12px;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  color: var(--wd-footer-title);
+
+  text-shadow:
+    0 0 6px rgba(255,255,255,0.6),
+    0 0 14px rgba(34,211,238,0.4);
+}
+
+/* =========================
+   LINK
+========================= */
+.footer-link {
+  display: inline-block;
+  margin-bottom: 8px;
+
+  color: var(--wd-footer-link);
+  text-decoration: none;
+
+  position: relative;
+
+  transition:
+    color 0.25s ease,
+    text-shadow 0.25s ease;
+}
+
+.footer-link:hover {
+  color: var(--wd-footer-link-hover);
+  text-shadow:
+    0 0 8px rgba(34,211,238,0.8),
+    0 0 14px rgba(34,211,238,0.6);
+}
+
+.footer-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+
+  width: 0;
+  height: 2px;
+
+  background: var(--wd-footer-link-hover);
+  transition: width 0.25s ease;
+}
+
+.footer-link:hover::after {
+  width: 100%;
+}
+
+/* =========================
+   META / BOTTOM
+========================= */
+.footer-meta {
+  margin-top: 32px;
+  padding-top: 16px;
+
+  text-align: center;
+  font-size: 0.8rem;
+  opacity: 0.65;
+
+  border-top: 1px solid var(--wd-footer-border);
+}
+
+
+.solution-card__media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(255,255,255,0.0),
+    rgba(0,0,0,0.08)
+  );
+  pointer-events: none;
+}

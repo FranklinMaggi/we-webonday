@@ -1,0 +1,77 @@
+/* ======================================================
+   PUBLIC — BUTTON SYSTEM (CANONICAL)
+====================================================== */
+
+.wd-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  
+    padding: 10px 16px;
+    border-radius: 10px;
+  
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+  
+    border: none;
+    cursor: pointer;
+    user-select: none;
+  
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.1s ease;
+  }
+  .wd-btn--primary {
+    background: #2563eb;
+    color: #ffffff;
+  }
+  
+  .wd-btn--primary:hover {
+    background: #1d4ed8;
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+  }
+  
+  .wd-btn--primary:active {
+    transform: translateY(1px);
+  }
+  .wd-btn--secondary {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+  
+  .wd-btn--secondary:hover {
+    background: #e2e8f0;
+  }
+  .wd-btn--ghost {
+    background: transparent;
+    color: #2563eb;
+    padding: 8px 0;
+  }
+  
+  .wd-btn--ghost:hover {
+    text-decoration: underline;
+  }
+  .wd-btn[disabled],
+.wd-btn--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.wd-btn[disabled]:hover {
+  background: inherit;
+}
+.wd-btn--sm {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  .wd-btn--lg {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+  

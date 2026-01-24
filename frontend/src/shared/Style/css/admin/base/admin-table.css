@@ -1,0 +1,36 @@
+/* ======================================================
+   ADMIN — TABLE (CANONICAL)
+====================================================== */
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #0e0e0e;
+    color: #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #2a2a2a;
+    text-align: left;
+    vertical-align: middle;
+  }
+  
+  .admin-table thead {
+    background: rgba(15, 240, 252, 0.08);
+  }
+  
+  .admin-table th {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0ff0fc;
+    white-space: nowrap;
+  }
+  
+  .admin-table tbody tr:hover {
+    background: rgba(255,255,255,0.03);
+  }
+  

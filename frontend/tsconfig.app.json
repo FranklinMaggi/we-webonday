@@ -1,14 +1,32 @@
 {
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+
     "target": "ES2022",
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "types": ["vite/client"],
     "skipLibCheck": true,
+      "ignoreDeprecations": "6.0",
+    /* ======================
+       PATH ALIAS (CRITICAL)
+    ====================== */
+    "baseUrl": "." ,
+    "paths": {
+      "@src/*": ["src/*"],
+      "@app/*": ["src/app/*"],
+      "@shared/*": ["src/shared/*"],
+      "@user/*": ["src/user/*"],
+      "@admin/*": ["src/admin/*"],
+      "@components/*": ["src/components/*"],
+      "@lib/*": ["src/shared/lib/*"],
+      "@style/*": ["src/shared/Style/*"]
+    },
 
-    /* Bundler mode */
+    /* ======================
+       Bundler mode (Vite)
+    ====================== */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
@@ -16,7 +34,9 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Linting */
+    /* ======================
+       Linting
+    ====================== */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -24,5 +44,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "src/lib/config.ts"]
+
+  "include": ["src"]
 }

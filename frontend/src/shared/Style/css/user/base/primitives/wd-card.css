@@ -1,0 +1,85 @@
+/* =====================================================
+   PRIMITIVE — WD CARD (LOCKED)
+=====================================================
+
+RUOLO:
+- Primitiva visiva universale
+- Base per: product, solution, roadmap, widget
+
+INVARIANTI:
+- Colori da token
+- Nessuna semantica di dominio
+- Nessun override inline
+
+NON FARE:
+- ❌ layout di pagina
+- ❌ testi
+- ❌ spacing contestuale
+===================================================== */
+
+.wd-card {
+    position: relative;
+  
+    display: flex;
+    flex-direction: column;
+  
+    padding: 18px;
+    border-radius: 20px;
+  
+    background:
+      radial-gradient(
+        circle at top,
+        rgba(34,211,238,0.10),
+        transparent 45%
+      ),
+      rgba(255,255,255,0.04);
+  
+    border: 1px solid rgba(255,255,255,0.12);
+  
+    box-shadow:
+      0 20px 50px rgba(0,0,0,0.45),
+      0 0 25px rgba(34,211,238,0.12);
+  
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease;
+  }
+  
+  /* =========================
+     INTERACTION
+  ========================= */
+  
+  .wd-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--wd-cyan-300);
+  
+    box-shadow:
+      0 25px 60px rgba(0,0,0,0.6),
+      0 0 30px rgba(34,211,238,0.35);
+  }
+  
+  /* =========================
+     MODIFIERS
+  ========================= */
+  
+  /* Card cliccabile */
+  .wd-card--clickable {
+    cursor: pointer;
+  }
+  
+  /* Card piatta (no hover) */
+  .wd-card--static,
+  .wd-card--static:hover {
+    transform: none;
+    box-shadow:
+      0 20px 50px rgba(0,0,0,0.45),
+      0 0 25px rgba(34,211,238,0.12);
+  }
+  
+  /* Card compatta */
+  .wd-card--compact {
+    padding: 14px;
+    border-radius: 16px;
+  }
+  

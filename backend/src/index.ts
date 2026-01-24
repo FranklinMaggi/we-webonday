@@ -120,15 +120,15 @@ import { listAllBusinessDrafts } from "@domains/business/routes";
 /* ============================================================
    PRODUCTS
 ============================================================ */
-import { getProductsWithOptions } from "./routes/public/products/products.withOptions";
-import { getProducts } from "./routes/public/products/products";
-import { getProduct } from "./routes/public/products/products";
+import { getProductsWithOptions } from "./domains/product/Routes/products.withOptions";
+import { getProducts } from "./domains/product/Routes/products";
+import { getProduct } from "./domains/product/Routes/products";
 import { registerAdminProduct } from "./routes/admin/products/products.admin.register";
 
 /* ============================================================
    ADMIN — PRODUCTS
 ============================================================ */
-import { getProductWithOptions } from "./routes/public/products/product.withOptions";
+import { getProductWithOptions } from "./domains/product/Routes/product.withOptions";
 
 import {
   listAdminProducts,
@@ -177,9 +177,9 @@ import { getAdminKPI } from "./routes/admin/kpi/kpi.read";
 
 import {  listAdminSolutions,
   getAdminSolution,
-  registerSolution, } from "./routes/solution/admin.solution.operation";
-import { getSolutionDetail } from "./routes/solution/solutions.public.detail";
-import { getSolutions } from "./routes/solution/solutions.public.list";
+  registerSolution, } from "./domains/solution/routes/admin.solution.operation";
+import { getSolutionDetail } from "./domains/solution/routes/solutions.public.detail";
+import { getSolutions } from "./domains/solution/routes/solutions.public.list";
 /* ============================================================
    HTTP HELPERS
 ============================================================ */
