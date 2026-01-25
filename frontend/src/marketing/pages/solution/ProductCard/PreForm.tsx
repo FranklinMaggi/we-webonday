@@ -19,7 +19,7 @@
 
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useConfigurationSetupStore } from "../../../../user/configurator/base_configuration/configuration/configurationSetup.store";
+import { useConfigurationSetupStore } from "@src/shared/domain/user/configurator/configurationSetup.store";
 import { usePreConfigurationStore } from
   "../../../../user/configurator/base_configuration/configuration/pre-configuration.store";
 import type { ProductVM } from
