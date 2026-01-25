@@ -22,8 +22,8 @@
 // ======================================================
 
 import { useEffect } from "react";
-import { useConfigurationSetupStore } from "@src/shared/domain/user/configurator/configurationSetup.store";
-import { DEFAULT_VISIBILITY } from "../../../../../shared/lib/configurationLayout/visibility.defaults";
+import { useConfigurationSetupStore } from "@shared/domain/user/configurator/configurationSetup.store";
+import { DEFAULT_VISIBILITY } from "@shared/lib/configurationLayout/visibility.defaults";
 
 type Props = {
   onNext: () => void;

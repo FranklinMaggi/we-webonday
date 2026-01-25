@@ -16,11 +16,11 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useAuthStore } from "../../shared/lib/store/auth.store";
+import { useAuthStore } from "@shared/lib/store/auth.store";
 import { usePreConfigurationStore } from
   "../configurator/base_configuration/configuration/pre-configuration.store";
-import { useConfigurationSetupStore } from "@src/shared/domain/user/configurator/configurationSetup.store";
-import { apiFetch } from "../../shared/lib/api";
+import { useConfigurationSetupStore } from "@shared/domain/user/configurator/configurationSetup.store";
+import { apiFetch } from "@shared/lib/api";
 
 export default function PostLoginHandoff() {
   const navigate = useNavigate();

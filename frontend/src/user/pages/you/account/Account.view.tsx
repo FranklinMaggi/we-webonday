@@ -8,7 +8,7 @@
 // - Nessuna mutazione
 // ======================================================
 
-import { t } from "@src/shared/aiTranslateGenerator";
+import { t } from "@shared/aiTranslateGenerator";
 
 import { accountClasses } from "./account.classes";
 import type {AccountVM} from "./Account.container"

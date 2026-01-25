@@ -30,7 +30,7 @@ import {type PublicSolutionDTO } from "../../../../marketing/pages/buyflow/api/D
    DTO — SOLUTION (LIST)
    → usato per catalogo / cards
 ====================================================== */
-import { type OpeningHoursFE } from "@src/user/configurator/base_configuration/configuration/configurationSetup.store";
+import { type OpeningHoursFE } from "@src/shared/domain/business/openingHours.types";
 /* ======================================================
    DTO — SOLUTION (DETAIL)
    → usato da configuratore / pagina solution

@@ -29,9 +29,9 @@
 // ⚠️ NON USATO NEL BUYFLOW BASE
 // Questo componente appartiene alla Configuration ESTESA
 
-import type { ProductOptionVM } from "../../../../shared/lib/viewModels/product/Product.view-model";
-import { eur } from "../../../../shared/utils/format";
-import { t } from "@src/shared/aiTranslateGenerator";
+import type { ProductOptionVM } from "@shared/lib/viewModels/product/Product.view-model";
+import { eur } from "@shared/utils/format";
+import { t } from "@shared/aiTranslateGenerator";
 interface Props {
   options: ProductOptionVM[];
   selected: string[];

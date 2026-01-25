@@ -15,7 +15,7 @@
 // ======================================================
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { apiFetch } from "@src/shared/lib/api";
+import { apiFetch } from "@shared/lib/api";
 import { useMyConfigurations } from "../../configurator/base_configuration/configuration/useMyConfigurations";
 
 type BusinessVM = {

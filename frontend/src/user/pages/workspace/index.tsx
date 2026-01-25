@@ -29,8 +29,8 @@ import { useNavigate,useParams } from "react-router-dom";
 import { listMyConfigurations } from "../../configurator/base_configuration/configuration/configuration.user.api";
 import type { ConfigurationConfiguratorDTO } from "../../configurator/base_configuration/configuration/ConfigurationConfiguratorDTO";
 import { getConfigurationForConfigurator } from "../../configurator/base_configuration/configuration/configuration.user.api";
-import { useConfigurationSetupStore } from "@src/shared/domain/user/configurator/configurationSetup.store";
-import { getWdStatusClass } from "@src/shared/utils/statusUi";
+import { useConfigurationSetupStore } from "@shared/domain/user/configurator/configurationSetup.store";
+import { getWdStatusClass } from "@shared/utils/statusUi";
 export default function WorkspaceIndex() {
   const navigate = useNavigate();
 

@@ -15,7 +15,7 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import router from "./app/router/router";
 import { useAuthStore } from "./shared/lib/store/auth.store";
-import "@src/shared/Style/css/index.css";
+import "@shared/Style/css/index.css";
 
 function Bootstrap() {
   const fetchUser = useAuthStore((s) => s.fetchUser);

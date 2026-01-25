@@ -5,7 +5,7 @@
  * - NON usa inferenze
  */
 
-import type { OpeningHoursFE } from "@src/user/configurator/base_configuration/configuration/configurationSetup.store";
+import type { OpeningHoursFE } from "@src/shared/domain/business/openingHours.types";
 
 export type PublicSolutionDTO = {
     id: string;

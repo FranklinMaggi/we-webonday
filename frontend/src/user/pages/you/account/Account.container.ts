@@ -3,7 +3,7 @@
 // ======================================================
 
 import { useAuthStore } from
-  "@src/shared/lib/store/auth.store";
+  "@shared/lib/store/auth.store";
 
 export type AccountVM = {
   userId: string;

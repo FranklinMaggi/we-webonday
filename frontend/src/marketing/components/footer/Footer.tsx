@@ -11,7 +11,7 @@
 
 import { Link } from "react-router-dom";
 import { useAuthStore } from "@shared/lib/store/auth.store";
-import { t } from "@src/shared/aiTranslateGenerator";
+import { t } from "@shared/aiTranslateGenerator";
 import { footerClasses as cls } from "./footer.classes";
 
 export default function Footer() {

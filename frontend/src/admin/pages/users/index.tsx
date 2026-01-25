@@ -20,7 +20,7 @@
 
 import { useEffect, useState } from "react";
 import { getAdminUsers, type AdminUser } from "@admin/adminApi";
-import { getWdStatusClass } from "@src/shared/utils/statusUi";
+import { getWdStatusClass } from "@shared/utils/statusUi";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);

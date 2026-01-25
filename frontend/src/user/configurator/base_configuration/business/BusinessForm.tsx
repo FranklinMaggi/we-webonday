@@ -20,13 +20,13 @@
 // ======================================================
 
 import { useEffect } from "react";
-import type { OpeningHoursFE } from "@src/shared/domain/business/openingHours.types";
+import type { OpeningHoursFE } from "@shared/domain/business/openingHours.types";
 import { useConfigurationSetupStore }from "@shared/domain/user/configurator/configurationSetup.store"
-import { useAuthStore } from "@src/shared/lib/store/auth.store";
+import { useAuthStore } from "@shared/lib/store/auth.store";
 import { OpeningHoursDay } from "./OpeningHoursDay";
-import { apiFetch } from "@src/shared/lib/api";
-import { type SolutionSeed } from "@src/shared/domain/business/buseinssRead.types";
-import { isOpeningHoursEmpty } from "@src/shared/domain/business/openingHours.utils";
+import { apiFetch } from "@shared/lib/api";
+import { type SolutionSeed } from "@shared/domain/business/buseinssRead.types";
+import { isOpeningHoursEmpty } from "@shared/domain/business/openingHours.utils";
 
 
 

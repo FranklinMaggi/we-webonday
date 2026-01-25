@@ -28,7 +28,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getWdStatusClass } from "@src/shared/utils/statusUi";
+import { getWdStatusClass } from "@shared/utils/statusUi";
 /* ============================
    ADMIN API (SOURCE OF TRUTH)
 ============================ */

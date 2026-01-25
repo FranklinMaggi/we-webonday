@@ -17,9 +17,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { useConfigurationSetupStore } from "@src/shared/domain/user/configurator/configurationSetup.store";
-import { fetchAvailableLayouts } from "../../../../../shared/lib/userApi/layout.user.api";
-import { updateConfiguration } from "../../../../configurator/base_configuration/configuration/configuration.user.api";
+import { useConfigurationSetupStore } from "@shared/domain/user/configurator/configurationSetup.store";
+import { fetchAvailableLayouts } from "@shared/lib/userApi/layout.user.api";
+import { updateConfiguration } from "@user/configurator/base_configuration/configuration/configuration.user.api";
 
 import type { LayoutKVDTO } from "../../../../../shared/lib/configurationLayout/layout.dto";
 

@@ -24,7 +24,7 @@ import { apiFetch } from "../../../../../../shared/lib/api";
    TYPES
 ====================================================== */
 
-import { type OpeningHoursFE } from "@src/user/configurator/base_configuration/configuration/configurationSetup.store";
+import { type OpeningHoursFE } from "@src/domain/user/configurator/base_configuration/configuration/configurationSetup.store";
 
 export type PublicSolutionDetailDTO = {
   id: string;

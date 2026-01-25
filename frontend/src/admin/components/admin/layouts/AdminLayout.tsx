@@ -1,5 +1,5 @@
 import { Outlet , NavLink} from "react-router-dom";
-import { adminLogout } from "@src/admin/adminApi";
+import { adminLogout } from "@admin/adminApi";
 
 
 export default function AdminLayout() {

@@ -19,11 +19,11 @@
 
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useConfigurationSetupStore } from "@src/shared/domain/user/configurator/configurationSetup.store";
+import { useConfigurationSetupStore } from "@shared/domain/user/configurator/configurationSetup.store";
 import { usePreConfigurationStore } from
-  "../../../../user/configurator/base_configuration/configuration/pre-configuration.store";
+  "@user/configurator/base_configuration/configuration/pre-configuration.store";
 import type { ProductVM } from
-  "../../../../shared/lib/viewModels/product/Product.view-model";
+  "@shared/lib/viewModels/product/Product.view-model";
 
 interface Props {
   solutionId: string;

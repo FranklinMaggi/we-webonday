@@ -2,16 +2,16 @@
 // FE || STEP DESIGN — PREVIEW ENGINE
 // ======================================================
 
-import { useConfigurationSetupStore } from "../../../../configurator/base_configuration/configuration/configurationSetup.store";
+import { useConfigurationSetupStore } from "@shared/domain/user/configurator/configurationSetup.store";
 
-import { generatePreviewCanvases } from "../../../../../shared/lib/developerEngine/engine.orchestrator";
-import { EnginePreview } from "../../../../../app/webyDevEngine/EnginePreview";
+import { generatePreviewCanvases } from "@shared/lib/developerEngine/engine.orchestrator";
+import { EnginePreview } from "@src/app/webyDevEngine/EnginePreview";
 
-import { COLOR_PRESETS } from "../../../../../shared/lib/configurationLayout/palette.dto";
-import { LAYOUT_STYLES } from "../../../../../shared/lib/configurationLayout/style.dto";
-import type { LayoutKVDTO } from "../../../../../shared/lib/configurationLayout/layout.dto";
+import { COLOR_PRESETS } from "@src/shared/lib/configurationLayout/palette.dto";
+import { LAYOUT_STYLES } from "@src/shared/lib/configurationLayout/style.dto";
+import type { LayoutKVDTO } from "@src/shared/lib/configurationLayout/layout.dto";
 
-import { slugify } from "../../../../../shared/utils/slugify";
+import { slugify } from "@shared/utils/slugify";
 
 
 

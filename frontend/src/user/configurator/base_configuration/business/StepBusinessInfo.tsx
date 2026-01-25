@@ -16,8 +16,8 @@
 // - NON esiste più openingHoursDefault
 // ======================================================
 import { isOpeningHoursEmpty } from "@shared/domain/business/openingHours.utils";
-import { apiFetch } from "@src/shared/lib/api";
-import { getSolutionById } from "../../../../marketing/pages/buyflow/api/publiApi/solutions/solutions.public.api";
+import { apiFetch } from "@shared/lib/api";
+import { getSolutionById } from "@src/marketing/pages/buyflow/api/publiApi/solutions/solutions.public.api";
 import { useEffect, useState } from "react";
 import { useConfigurationSetupStore }from "@shared/domain/user/configurator/configurationSetup.store"
 import BusinessForm from "./BusinessForm";

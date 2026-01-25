@@ -14,7 +14,7 @@
 //
 // ======================================================
 
-import type { OpeningHoursFE } from "@src/shared/domain/business/openingHours.types";
+import type { OpeningHoursFE } from "@shared/domain/business/openingHours.types";
 export interface SolutionConfiguratorSeedApiModel {
   id: string;
 

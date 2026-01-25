@@ -5,7 +5,7 @@ import { OpeningHoursDay } from "./OpeningHoursDay";
 import {
   DAYS_ORDER, 
 } from "@shared/domain/business/openingHours.types";
-import { DAY_LABELS } from "@src/shared/domain/business/openingHours.constants";
+import { DAY_LABELS } from "@shared/domain/business/openingHours.constants";
 
 export default function StepContent({ onNext, onBack }: any) {
   const { data, setField } = useConfigurationSetupStore();

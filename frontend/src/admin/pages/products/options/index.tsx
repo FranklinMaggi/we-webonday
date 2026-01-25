@@ -20,7 +20,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminFetch } from "@src/admin/adminApi/client";
-import { getWdStatusClass } from "@src/shared/utils/statusUi";
+import { getWdStatusClass } from "@shared/utils/statusUi";
 
 
 type AdminOptionListItem = {

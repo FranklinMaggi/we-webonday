@@ -12,7 +12,7 @@
 // ======================================================
 
 import { useEffect, useState } from "react";
-import { apiFetch } from "@src/shared/lib/api";
+import { apiFetch } from "@shared/lib/api";
 
 type OwnerProfileDTO = {
   firstName?: string;

@@ -12,7 +12,7 @@
 // - BusinessDraftSchema (DOMAIN)
 // ======================================================
 
-import { type OpeningHoursFE } from "@src/shared/domain/business/openingHours.types";
+import { type OpeningHoursFE } from "@shared/domain/business/openingHours.types";
 // ⬆️ oppure importa dal punto canonico dove è definito
 
 export type BusinessDraftBaseReadDTO = {

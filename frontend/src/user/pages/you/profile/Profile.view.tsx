@@ -8,7 +8,7 @@
 // ======================================================
 
 import { useState } from "react";
-import { t } from "@src/shared/aiTranslateGenerator";
+import { t } from "@shared/aiTranslateGenerator";
 import { profileClasses } from "./profile.classes";
 
 /* ======================================================

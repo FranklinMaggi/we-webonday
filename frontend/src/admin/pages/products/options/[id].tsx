@@ -38,7 +38,7 @@ REGOLE:
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { adminFetch } from "@src/admin/adminApi";
-import type { AdminOptionApiModel } from "@src/shared/lib/apiModels/admin/Option.api-model";
+import type { AdminOptionApiModel } from "@shared/lib/apiModels/admin/Option.api-model";
 
 export default function AdminEditOptionPage() {
   const { id } = useParams<{ id: string }>();

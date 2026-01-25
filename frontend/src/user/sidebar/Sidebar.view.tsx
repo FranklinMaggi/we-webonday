@@ -15,7 +15,7 @@
 import { NavLink } from "react-router-dom";
 import { type SidebarSectionVM } from "./Sidebar.types";
 import { sidebarClasses } from "./sidebar.classes";
-import { t } from "@src/shared/aiTranslateGenerator";
+import { t } from "@shared/aiTranslateGenerator";
 
 export function SidebarView({
   sections,

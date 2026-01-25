@@ -10,8 +10,8 @@
 //
 // ======================================================
 
-import { getWdStatusClass } from "@src/shared/utils/statusUi";
-import { t } from "@src/shared/aiTranslateGenerator/translateFe/helper/i18n";
+import { getWdStatusClass } from "@shared/utils/statusUi";
+import { t } from "@shared/aiTranslateGenerator/translateFe/helper/i18n";
 import type { DashboardVM } from "./Dashboard.container";
 import { dashboardClasses } from "./dashboard.classes";
 

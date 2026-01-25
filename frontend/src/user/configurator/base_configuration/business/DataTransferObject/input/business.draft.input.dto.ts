@@ -15,7 +15,7 @@ INVARIANTI:
 - Backend = source of truth
 ====================================================== */
 
-import type { OpeningHoursFE } from "@src/shared/domain/business/openingHours.types";
+import type { OpeningHoursFE } from "@shared/domain/business/openingHours.types";
 export interface BusinessDraftInputDTO {
   /* =====================
      LINKAGE

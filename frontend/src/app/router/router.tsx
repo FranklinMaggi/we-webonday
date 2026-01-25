@@ -73,7 +73,7 @@ import PolicyPage from "../../shared/terms/policy/policy";
 ========================= */
 import UserDashboardHome from "../../user/pages/dashboard";
 import UserBusinessDashboard from "../../user/pages";
-import YouDashboardPage from "@src/user/pages/you/hard-driver";
+import YouDashboardPage from "@user/pages/you/hard-driver";
 
 import UserBusinessDetail from "../../user/pages/you/business/[id]";
 import WorkspaceIndex from "../../user/pages/workspace";
@@ -101,7 +101,7 @@ import UserConfigurationWorkspace from "../../user/pages/workspace/[id]";
 import { useParams } from "react-router-dom";
 import ProfilePage from "../../user/pages/you/profile";
 import AccountPage from "../../user/pages/you/account";
-import ConfiguratorLayout from "@src/user/configurator/ConfiguratorLayout";
+import ConfiguratorLayout from "@user/configurator/ConfiguratorLayout";
 function RedirectConfiguratorToDashboard() {
   const { id } = useParams<{ id: string }>();
 

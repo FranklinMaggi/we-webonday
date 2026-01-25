@@ -7,9 +7,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAdminProducts } from "../../adminApi/admin.products.api";
-import type { AdminProductApiModel } from "../../../shared/lib/apiModels/admin/Product.api-model";
-import { getWdStatusClass } from "@src/shared/utils/statusUi";
-import { eur } from "../../../shared/utils/format";
+import type { AdminProductApiModel } from "@shared/lib/apiModels/admin/Product.api-model";
+import { getWdStatusClass } from "@shared/utils/statusUi";
+import { eur } from "@shared/utils/format";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<AdminProductApiModel[]>([]);
