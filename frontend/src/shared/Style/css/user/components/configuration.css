@@ -1,0 +1,344 @@
+/* =========================
+   CONFIGURATOR BASE
+========================= */
+
+.configuration-page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 20px;
+  }
+  
+  .configuration-header {
+    margin-bottom: 32px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 16px;
+  }
+  
+  .configuration-header h1 {
+    font-size: 1.6rem;
+    margin: 0 0 4px 0;
+  }
+  
+  .configuration-subtitle {
+    opacity: 0.65;
+    font-size: 0.95rem;
+  }
+  
+  /* =========================
+     BODY / WIZARD
+  ========================= */
+  
+  .configuration-body {
+    margin-top: 24px;
+  }
+  
+  /* =========================
+     STEPS
+  ========================= */
+  
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  
+  .step h2 {
+    margin-bottom: 8px;
+    font-size: 1.2rem;
+  }
+  
+  .step input,
+  .step textarea,
+  .step select {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background: #fff;
+  }
+  
+  .step textarea {
+    min-height: 90px;
+    resize: vertical;
+  }
+  
+  /* =========================
+     CHECKBOX / EXTRA
+  ========================= */
+  
+  .step label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+  }
+  
+  .step input[type="checkbox"] {
+    transform: scale(1.1);
+  }
+  
+  /* =========================
+     ACTIONS
+  ========================= */
+  
+  .actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  
+  .step button {
+    align-self: flex-start;
+    padding: 10px 18px;
+    border-radius: 6px;
+    border: none;
+    background: #111;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  
+  .step button:hover {
+    opacity: 0.9;
+  }
+  
+  .step button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* =========================
+     REVIEW
+  ========================= */
+  
+  .step pre {
+    background: #f7f7f7;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 0.85rem;
+    overflow-x: auto;
+  }
+  .step-subtitle {
+    font-size: 0.95rem;
+    opacity: 0.75;
+    margin-bottom: 20px;
+  }
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 14px;
+  }
+  
+  .palette-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+  }
+  
+  .palette-card.active {
+    border-color: #111;
+  }
+  
+  .palette-preview {
+    height: 60px;
+    border-radius: 6px;
+    padding: 6px;
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  
+  .palette-primary,
+  .palette-secondary {
+    flex: 1;
+    border-radius: 4px;
+  }
+  
+  .style-grid {
+    display: grid;
+    gap: 14px;
+  }
+  
+  .style-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 14px;
+    background: #fff;
+    text-align: left;
+    cursor: pointer;
+  }
+  
+  .style-card.active {
+    border-color: #111;
+  }
+  
+  /* VARIANTI STILE */
+  
+  .style-modern {
+    font-family: system-ui, sans-serif;
+    letter-spacing: 0.2px;
+  }
+  
+  .style-elegant {
+    font-family: "Georgia", serif;
+    letter-spacing: 0.5px;
+  }
+  
+  .style-minimal {
+    font-family: system-ui, sans-serif;
+    font-weight: 400;
+    opacity: 0.85;
+  }
+  
+  .style-bold {
+    font-family: system-ui, sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .opening-day {
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .opening-presets {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  
+  .preset {
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background: #fafafa;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+  
+  .preset.active {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+  .wizard-progress {
+    margin-bottom: 32px;
+  }
+  
+  .wizard-progress-bar {
+    height: 6px;
+    background: #e5e5e5;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .wizard-progress-fill {
+    height: 100%;
+    background: #111;
+    transition: width 0.3s ease;
+  }
+  
+  .wizard-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+  
+  .wizard-step {
+    background: none;
+    border: none;
+    text-align: center;
+    cursor: default;
+    opacity: 0.4;
+  }
+  
+  .wizard-step.clickable {
+    cursor: pointer;
+    opacity: 1;
+  }
+  
+  .wizard-step.active {
+    font-weight: 600;
+  }
+  
+  .wizard-step-index {
+    display: block;
+    font-size: 12px;
+    color: #666;
+  }
+  
+  .wizard-step-label {
+    font-size: 12px;
+  }
+  
+  /* ======================================================
+   TAG PILLS — BASE
+====================================================== */
+
+.tag-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 16px;
+  }
+  
+  .tag-pills .pill {
+    appearance: none;
+    border: 1px solid #d0d5dd;
+    background: #ffffff;
+    color: #344054;
+  
+    padding: 6px 12px;
+    border-radius: 999px;
+  
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+  
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease,
+      box-shadow 0.15s ease;
+  
+    pointer-events: auto;
+  }
+  
+  /* ================= HOVER ================= */
+  
+  .tag-pills .pill:hover {
+    background: #f9fafb;
+    border-color: #98a2b3;
+  }
+  
+  /* ======================================================
+     TAG PILLS — ACTIVE
+  ====================================================== */
+  
+  .tag-pills .pill.active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+  }
+  
+  .tag-pills .pill.active:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+  }
+  
+  /* ======================================================
+     ACCESSIBILITY — FOCUS
+  ====================================================== */
+  
+  .tag-pills .pill:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35);
+  }
+  

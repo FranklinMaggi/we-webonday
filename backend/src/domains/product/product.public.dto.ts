@@ -21,12 +21,13 @@ export interface ProductOptionPublicDTO {
   id: string;
   label: string;
   price: number;
+  description?:string; 
   type: RecurringType;
 }
 
 export interface ProductPublicDTO {
   id: string;
-  name: string;
+  label: string;
   description: string;
   nameKey?: string;
   descriptionKey?: string;

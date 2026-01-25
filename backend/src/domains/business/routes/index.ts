@@ -17,8 +17,10 @@ export { createBusinessDraft } from "./business.create-draft";
 export { getBusinessDraft } from "./business.get.base-draft";
 
 // ⚠️ FUTURE (quando riattivate):
-export { createBusiness } from "./deprecated/business.create";
+
 export { getBusiness } from "./deprecated/business.get";
 export { listBusinesses } from "./deprecated/business.list";
 export { submitBusiness } from "./deprecated/business.submit";
 export { uploadBusinessMenu } from "./deprecated/uploadMenu";
+
+export { reopenBusinessDraft } from "./business.reopen-draft";

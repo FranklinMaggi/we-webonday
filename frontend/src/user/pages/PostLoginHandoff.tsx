@@ -18,9 +18,9 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuthStore } from "../../shared/lib/store/auth.store";
 import { usePreConfigurationStore } from
-  "./dashboard/configurator/store/pre-configuration.store";
+  "../configurator/base_configuration/configuration/pre-configuration.store";
 import { useConfigurationSetupStore } from
-  "./dashboard/configurator/store/configurationSetup.store";
+  "../configurator/base_configuration/configuration/configurationSetup.store";
 
 import { apiFetch } from "../../shared/lib/api";
 

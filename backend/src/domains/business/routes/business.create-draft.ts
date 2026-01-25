@@ -15,10 +15,25 @@ import { BusinessDraftSchema } from "../schema/business.draft.schema";
 /* ======================================================
    KV KEYS — CANONICAL
 ====================================================== */
-// Draft principale
 const BUSINESS_DRAFT_KEY = (id: string) =>
   `BUSINESS_DRAFT:${id}`;
 
+/* ======================================================
+   COMPLETENESS CHECK — DOMAIN ONLY
+====================================================== */
+function isBusinessDraftComplete(draft: {
+  businessName?: string;
+  openingHours?: unknown;
+  contact?: unknown;
+  privacy?: { accepted?: boolean };
+}) {
+  return Boolean(
+    draft.businessName &&
+    draft.openingHours &&
+    draft.contact &&
+    draft.privacy?.accepted === true
+  );
+}
 
 /* ======================================================
    HANDLER
@@ -27,21 +42,27 @@ export async function createBusinessDraft(
   request: Request,
   env: Env
 ): Promise<Response> {
-
   /* =====================
      1️⃣ AUTH
   ====================== */
   const session = await requireAuthUser(request, env);
   if (!session) {
-    return json({ ok: false, error: "UNAUTHORIZED" }, request, env, 401);
+    return json(
+      { ok: false, error: "UNAUTHORIZED" },
+      request,
+      env,
+      401
+    );
   }
 
   /* =====================
-     2️⃣ INPUT VALIDATION
+     2️⃣ INPUT VALIDATION (ZOD = SOURCE OF TRUTH)
   ====================== */
   let input: z.infer<typeof CreateBusinessDraftSchema>;
   try {
-    input = CreateBusinessDraftSchema.parse(await request.json());
+    input = CreateBusinessDraftSchema.parse(
+      await request.json()
+    );
   } catch (err) {
     return json(
       { ok: false, error: "INVALID_INPUT", details: String(err) },
@@ -52,8 +73,7 @@ export async function createBusinessDraft(
   }
 
   /* =====================
-     3️⃣ LOAD CONFIGURATION
-     SOURCE OF TRUTH
+     3️⃣ LOAD CONFIGURATION (SOURCE OF TRUTH)
   ====================== */
   const configuration = await env.CONFIGURATION_KV.get(
     `CONFIGURATION:${input.configurationId}`,
@@ -78,10 +98,6 @@ export async function createBusinessDraft(
     );
   }
 
-  // 🔒 businessDraftId:
-  // - assegnato SOLO in configuration.base.write
-  // - UUID tecnico puro
-  // - mai generato dal frontend
   if (!configuration.businessDraftId) {
     return json(
       { ok: false, error: "BUSINESS_DRAFT_ID_MISSING" },
@@ -91,7 +107,6 @@ export async function createBusinessDraft(
     );
   }
 
-  // 🔒 Blocco commerciale
   if (
     configuration.solutionId !== input.solutionId ||
     configuration.productId !== input.productId
@@ -108,7 +123,12 @@ export async function createBusinessDraft(
   const now = new Date().toISOString();
 
   /* =====================
-     4️⃣ LOAD EXISTING DRAFT
+     4️⃣ DOMAIN DATA (ALREADY VALIDATED)
+  ====================== */
+  const openingHours = input.openingHours;
+
+  /* =====================
+     5️⃣ LOAD EXISTING DRAFT (IF ANY)
   ====================== */
   const existingRaw = await env.BUSINESS_KV.get(
     BUSINESS_DRAFT_KEY(businessDraftId)
@@ -118,6 +138,13 @@ export async function createBusinessDraft(
      CREATE — FIRST WRITE
   ===================================================== */
   if (!existingRaw) {
+    const complete = isBusinessDraftComplete({
+      businessName: input.businessName,
+      openingHours,
+      contact: input.contact,
+      privacy: input.privacy,
+    });
+
     const candidate = {
       id: businessDraftId,
       configurationId: input.configurationId,
@@ -127,7 +154,9 @@ export async function createBusinessDraft(
       solutionId: input.solutionId,
       productId: input.productId,
 
-      businessOpeningHour: input.businessOpeningHour ?? {},
+      // ✅ dominio canonico
+      openingHours,
+
       contact: input.contact,
 
       businessDescriptionTags: input.businessDescriptionTags ?? [],
@@ -135,17 +164,15 @@ export async function createBusinessDraft(
 
       privacy: input.privacy,
 
-      // ✅ questo endpoint chiude lo STEP BUSINESS
-      complete: true,
-
+      complete,
       verified: false as const,
+
       createdAt: now,
       updatedAt: now,
     };
 
     const draft = BusinessDraftSchema.parse(candidate);
 
-    // Persist draft
     await env.BUSINESS_KV.put(
       BUSINESS_DRAFT_KEY(businessDraftId),
       JSON.stringify(draft)
@@ -161,40 +188,50 @@ export async function createBusinessDraft(
   /* =====================================================
      UPDATE — MERGE + VALIDATE
   ===================================================== */
-  const existing = BusinessDraftSchema.parse(JSON.parse(existingRaw));
+  const existing = BusinessDraftSchema.parse(
+    JSON.parse(existingRaw)
+  );
 
   const merged = {
     ...existing,
 
     businessName: input.businessName ?? existing.businessName,
-    businessOpeningHour:
-      input.businessOpeningHour ?? existing.businessOpeningHour,
+
+    openingHours: input.openingHours ?? existing.openingHours,
+
     contact: input.contact ?? existing.contact,
 
     businessDescriptionTags:
-      input.businessDescriptionTags ?? existing.businessDescriptionTags,
+      input.businessDescriptionTags ??
+      existing.businessDescriptionTags,
+
     businessServiceTags:
-      input.businessServiceTags ?? existing.businessServiceTags,
+      input.businessServiceTags ??
+      existing.businessServiceTags,
 
     privacy: input.privacy ?? existing.privacy,
 
-    // 🔒 invarianti
     solutionId: existing.solutionId,
     productId: existing.productId,
+
     verified: false as const,
     createdAt: existing.createdAt,
-
     updatedAt: now,
   };
 
+  merged.complete = isBusinessDraftComplete({
+    businessName: merged.businessName,
+    openingHours: merged.openingHours,
+    contact: merged.contact,
+    privacy: merged.privacy,
+  });
+
   const validated = BusinessDraftSchema.parse(merged);
 
-  // Persist updated draft
   await env.BUSINESS_KV.put(
     BUSINESS_DRAFT_KEY(businessDraftId),
     JSON.stringify(validated)
   );
-
 
   return json(
     { ok: true, businessDraftId, reused: true },

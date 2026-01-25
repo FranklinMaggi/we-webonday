@@ -10,7 +10,7 @@ export const PersonSchema = z.object({
 
   contact: ContactSchema.optional(),
 
-  verified: z.literal(false),
+  verified: z.boolean().optional(),
 });
 
 export type PersonDTO = z.infer<typeof PersonSchema>;

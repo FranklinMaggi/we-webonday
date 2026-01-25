@@ -12,7 +12,6 @@
 // - Nessuna persistenza
 //
 // ======================================================
-
 import { useState } from "react";
 import type { ProductVM } from "@shared/lib/viewModels/product/Product.view-model";
 import BuyflowPreForm from "./PreForm";
@@ -21,6 +20,7 @@ interface Props {
   solutionId: string;
   product: ProductVM;
 }
+
 export default function ProductCard({ solutionId, product }: Props) {
   const [open, setOpen] = useState(false);
 
@@ -31,7 +31,7 @@ export default function ProductCard({ solutionId, product }: Props) {
         className="product-card__body"
         onClick={(e) => {
           e.stopPropagation();
-          setOpen((v) => !v);
+          setOpen(v => !v);
         }}
       >
         <h2 className="product-card__title">{product.name}</h2>
@@ -42,7 +42,30 @@ export default function ProductCard({ solutionId, product }: Props) {
           </p>
         )}
 
-        {/* ================= CTA HINT ================= */}
+        {/* ================= OPTIONS ================= */}
+        {product.options?.length ? (
+          <ul className="product-card__options">
+            {product.options.map((o) => (
+              <li key={o.id} className="product-card__option">
+                <div className="product-card__option-head">
+                  <strong>{o.label}</strong>
+
+                  <span className="product-card__option-price">
+                    {o.price === 0 ? " Incluso" : `+${o.price}€/${o.type === "yearly" ? "anno" : "mese"}`}
+                  </span>
+                </div>
+
+                {o.description && (
+                  <p className="product-card__option-desc">
+                    {o.description}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+
+        {/* ================= CTA ================= */}
         <p className="product-card__hint">
           Avvia una richiesta guidata per questo prodotto
         </p>

@@ -90,4 +90,10 @@
   .product-card.is-free {
     border-color: #86efac;
   }
+  .you-option-description {
+    margin: 4px 0 0;
+    font-size: 0.9rem;
+    color: var(--wd-color-text-muted);
+    line-height: 1.4;
+  }
   

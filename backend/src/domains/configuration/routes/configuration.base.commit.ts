@@ -15,7 +15,7 @@
 // FLOW:
 // Configurator → Commit → Business visibile in Dashboard
 // ======================================================
-
+//@deprecated - not used 
 import type { Env } from "../../../types/env";
 import type { ConfigurationDTO } from "../schema/configuration.schema";
 import { UserCommitSchema } from "@domains/user/user.commit.schema";

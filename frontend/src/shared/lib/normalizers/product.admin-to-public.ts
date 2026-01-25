@@ -13,24 +13,33 @@
  */
 
 import type { AdminProductApiModel } from "../apiModels/admin/Product.api-model";
-import type { ProductVM, ProductOptionVM } from "../viewModels/product/Product.view-model";
+import type {
+  ProductVM,
+  ProductOptionVM,
+} from "../viewModels/product/Product.view-model";
 
 /* =========================
    OPTION NORMALIZER
 ========================= */
-export function normalizeAdminOption(
-  raw: any
-): ProductOptionVM {
+export function normalizeAdminOption(raw: any): ProductOptionVM {
   return {
     id: raw.id,
-    label:
-      raw.label ??
-      raw.name ??
-      "Opzione",
+
+    // 👇 UI usa label, BE usa name
+    label: raw.label ?? raw.name ?? "Opzione",
+
+    // 👇 description passa SOLO se BE la espone
+    description: raw.description ?? "",
+
     price: Number(raw.price) || 0,
 
-    // 🔒 dominio public
-    type: "monthly",
+    // 👇 NON hardcodare
+    type:
+      raw.type === "yearly"
+        ? "yearly"
+        : raw.type === "one_time"
+        ? "one_time"
+        : "monthly",
   };
 }
 
@@ -43,15 +52,18 @@ export function normalizeAdminProductToPublic(
   return {
     id: raw.id,
     name: raw.name,
-    description: raw.description,
+    description: raw.description ?? "",
 
     startupFee: Number(raw.startupFee) || 0,
+
     pricing: {
       yearly: Number(raw.pricing?.yearly) || 0,
       monthly: Number(raw.pricing?.monthly) || 0,
     },
 
-    
-      requiresConfiguration: raw.requiresConfiguration ?? false,
+    requiresConfiguration: Boolean(raw.requiresConfiguration),
+
+    // 👇 QUI PASSA TUTTO
+    options: raw.options?.map(normalizeAdminOption) ?? [],
   };
 }

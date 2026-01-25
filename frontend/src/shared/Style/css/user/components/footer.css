@@ -126,8 +126,9 @@ export const footerClasses = {
    LINK
 ========================= */
 .footer-link {
-  display: inline-block;
+  display: block;
   margin-bottom: 8px;
+  line-height:1.4;
 
   color: var(--wd-footer-link);
   text-decoration: none;
@@ -138,7 +139,9 @@ export const footerClasses = {
     color 0.25s ease,
     text-shadow 0.25s ease;
 }
-
+.footer-section {
+  padding-bottom: 8px;
+}
 .footer-link:hover {
   color: var(--wd-footer-link-hover);
   text-shadow:

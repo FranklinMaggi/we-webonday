@@ -1,0 +1,167 @@
+/* ======================================================
+   PROFILE — BASE (Aligned with Configurator)
+====================================================== */
+
+.profile-page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 20px;
+  }
+  
+  /* ======================================================
+     HEADER (same as configuration-header)
+  ====================================================== */
+  
+  .profile-header {
+    margin-bottom: 32px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 16px;
+  }
+  
+  .profile-header h1 {
+    font-size: 1.6rem;
+    margin: 0 0 4px 0;
+  }
+  
+  .profile-header p {
+    opacity: 0.65;
+    font-size: 0.95rem;
+  }
+  
+  /* ======================================================
+     CARD = STEP (same rhythm as .step)
+  ====================================================== */
+  
+  .profile-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+    background: #fff;
+  
+    margin-bottom: 24px;
+  }
+  
+  .profile-card h3 {
+    font-size: 1.2rem; /* same as .step h2 */
+    margin-bottom: 8px;
+  }
+  
+  /* ======================================================
+     ROWS (read-only fields)
+  ====================================================== */
+  
+  .profile-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  
+    font-size: 0.95rem;
+  }
+  
+  .profile-label {
+    font-size: 0.85rem;
+    opacity: 0.75;
+  }
+  
+  /* ======================================================
+     STATUS (neutral, wizard-like)
+  ====================================================== */
+  
+  .status-complete {
+    font-weight: 500;
+    color: #16a34a;
+  }
+  
+  .status-verified {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ccc;
+  }
+  
+  .status-dot.is-active {
+    background: #16a34a;
+  }
+  
+  /* ======================================================
+     VERIFY CTA (same spacing as .actions)
+  ====================================================== */
+  
+  .profile-verify-cta {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+  
+  /* ======================================================
+     VERIFY FORM (same as .step form)
+  ====================================================== */
+  
+  .profile-verify-hint {
+    font-size: 0.95rem;
+    opacity: 0.75;
+    margin-bottom: 12px;
+  }
+  
+  .profile-verify-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  
+  /* inputs IDENTICI al configurator */
+  .profile-verify-form input[type="text"],
+  .profile-verify-form input[type="email"],
+  .profile-verify-form input[type="file"] {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background: #fff;
+  }
+  
+  .profile-verify-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.95rem;
+  }
+  
+  /* ======================================================
+     VERIFY ACTIONS = .actions
+  ====================================================== */
+  
+  .profile-verify-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+  
+  /* ======================================================
+     CTA BOTTOM (same as wizard end)
+  ====================================================== */
+  
+  .profile-cta {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+  }
+  

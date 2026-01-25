@@ -43,6 +43,8 @@ export const TagSchema = z
  * - canonici
  * - immediatamente riutilizzabili
  */
+import { OpeningHoursSchema } from "@domains/business/schema/business.schema";
+
 const UserServiceTagStatusSchema = z.enum([
   "PENDING",
   "APPROVED",
@@ -55,11 +57,17 @@ export const UserServiceTagMetaSchema = z.object({
   createdBy: z.string().optional(), // userId
   createdAt: z.string().datetime(),
 });
-export const SolutionSchema = z.object({
-  id: z.string().min(1),           // "food"
-  name: z.string().min(1),         // "Ristoranti & Food"
 
-  description: z.string().min(1).optional(),
+
+/* ======================================================
+   SOLUTION SCHEMA (CANONICAL)
+====================================================== */
+
+export const SolutionSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+
+  description: z.string().optional(),
   longDescription: z.string().optional(),
 
   icon: z.string().optional(),
@@ -67,20 +75,19 @@ export const SolutionSchema = z.object({
 
   descriptionTags: z.array(TagSchema).default([]),
   serviceTags: z.array(TagSchema).default([]),
-  
+
   industries: z.array(z.string()).default([]),
   productIds: z.array(z.string()).default([]),
-  
-  openingHoursDefault: z.object({
-    monday: z.string(),
-    tuesday: z.string(),
-    wednesday: z.string(),
-    thursday: z.string(),
-    friday: z.string(),
-    saturday: z.string(),
-    sunday: z.string(),
-  }).optional(),
-  
+
+  /**
+   * 🔑 OPENING HOURS (SEED)
+   * - Stesso dominio del Business
+   * - Stesso schema
+   * - Stesso tipo
+   * - NON obbligatorio
+   */
+  openingHours: OpeningHoursSchema.optional(),
+
   status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   createdAt: z.string().datetime(),
 });

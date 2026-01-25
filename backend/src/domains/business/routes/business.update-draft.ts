@@ -3,64 +3,56 @@
 // POST /api/business/update-draft
 // ======================================================
 //
-// AI-SUPERCOMMENT — BUSINESS DRAFT UPDATE (PATCH-LIKE)
-//
-// RUOLO:
-// - Aggiorna un BusinessDraft esistente
-// - Usato dal configurator (Step Business)
-//
-// SUPPORTA:
-// - lookup via businessDraftId
-// - lookup via configurationId
-//
-// INVARIANTI:
-// - Auth obbligatoria
-// - verified NON modificabile
-// - solutionId / productId NON modificabili
-// - Nessuna creazione implicita
-// - Backend = source of truth
-//
+// PATCH-LIKE — CANONICAL
 // ======================================================
 
 import { json } from "@domains/auth/route/helper/https";
 import { requireAuthUser } from "@domains/auth";
 import type { Env } from "../../../types/env";
-
 import { UpdateBusinessDraftSchema } from "../schema/business.update-draft.schema";
 import { BusinessDraftSchema } from "../schema/business.draft.schema";
 import type { BusinessDraftBaseReadDTO } from "../DataTransferObject/output/business.draft.read.dto";
 
-// =======================
-// KV KEYS
-// =======================
+/* =======================
+   KV KEYS
+======================= */
 const BUSINESS_DRAFT_KEY = (id: string) =>
   `BUSINESS_DRAFT:${id}`;
 
-const DRAFT_BY_CONFIG_KEY = (configurationId: string) =>
-  `BUSINESS_DRAFT_BY_CONFIGURATION:${configurationId}`;
+/* =======================
+   COMPLETENESS CHECK
+======================= */
+function isBusinessDraftComplete(draft: {
+  businessName?: string;
+  openingHours?: unknown;
+  contact?: unknown;
+  privacy?: { accepted?: boolean };
+}) {
+  return Boolean(
+    draft.businessName &&
+    draft.openingHours &&
+    draft.contact &&
+    draft.privacy?.accepted === true
+  );
+}
 
-// =======================
-// HANDLER
-// =======================
+/* =======================
+   HANDLER
+======================= */
 export async function updateBusinessDraft(
   request: Request,
   env: Env
 ): Promise<Response> {
   /* =====================
-     1️⃣ AUTH (HARD GUARD)
+     1️⃣ AUTH
   ====================== */
   const session = await requireAuthUser(request, env);
   if (!session) {
-    return json(
-      { ok: false, error: "UNAUTHORIZED" },
-      request,
-      env,
-      401
-    );
+    return json({ ok: false, error: "UNAUTHORIZED" }, request, env, 401);
   }
 
   /* =====================
-     2️⃣ PARSE INPUT (ZOD)
+     2️⃣ INPUT (ZOD)
   ====================== */
   let input;
   try {
@@ -69,11 +61,17 @@ export async function updateBusinessDraft(
     );
   } catch (err) {
     return json(
-      {
-        ok: false,
-        error: "INVALID_INPUT",
-        details: String(err),
-      },
+      { ok: false, error: "INVALID_INPUT", details: String(err) },
+      request,
+      env,
+      400
+    );
+  }
+
+  const businessDraftId = input.businessDraftId;
+  if (!businessDraftId) {
+    return json(
+      { ok: false, error: "BUSINESS_DRAFT_ID_REQUIRED" },
       request,
       env,
       400
@@ -81,29 +79,7 @@ export async function updateBusinessDraft(
   }
 
   /* =====================
-     3️⃣ RESOLVE DRAFT ID
-  ====================== */
-  let businessDraftId: string | null = null;
-
-  if (input.businessDraftId) {
-    businessDraftId = input.businessDraftId;
-  } else if (input.configurationId) {
-    businessDraftId = await env.BUSINESS_KV.get(
-      DRAFT_BY_CONFIG_KEY(input.configurationId)
-    );
-  }
-
-  if (!businessDraftId) {
-    return json(
-      { ok: false, error: "BUSINESS_DRAFT_NOT_FOUND" },
-      request,
-      env,
-      404
-    );
-  }
-
-  /* =====================
-     4️⃣ LOAD EXISTING DRAFT
+     3️⃣ LOAD EXISTING DRAFT
   ====================== */
   const raw = await env.BUSINESS_KV.get(
     BUSINESS_DRAFT_KEY(businessDraftId)
@@ -118,11 +94,9 @@ export async function updateBusinessDraft(
     );
   }
 
-  let existingDraft;
+  let existing;
   try {
-    existingDraft = BusinessDraftSchema.parse(
-      JSON.parse(raw)
-    );
+    existing = BusinessDraftSchema.parse(JSON.parse(raw));
   } catch {
     return json(
       { ok: false, error: "CORRUPTED_BUSINESS_DRAFT" },
@@ -133,44 +107,50 @@ export async function updateBusinessDraft(
   }
 
   /* =====================
-     5️⃣ MERGE (PATCH-LIKE)
+     4️⃣ MERGE (PATCH-LIKE)
   ====================== */
   const now = new Date().toISOString();
 
-  const mergedDraft = {
-    ...existingDraft,
+  const merged = {
+    ...existing,
 
-    // ---- Editable fields only ----
+    // ---- Editable ----
     businessName:
-      input.businessName ?? existingDraft.businessName,
+      input.businessName ?? existing.businessName,
 
-    businessOpeningHour:
-      input.businessOpeningHour ??
-      existingDraft.businessOpeningHour,
+    openingHours:
+      input.openingHours ?? existing.openingHours,
 
     contact:
-      input.contact ?? existingDraft.contact,
+      input.contact ?? existing.contact,
 
     businessDescriptionTags:
       input.businessDescriptionTags ??
-      existingDraft.businessDescriptionTags,
+      existing.businessDescriptionTags,
 
     businessServiceTags:
       input.businessServiceTags ??
-      existingDraft.businessServiceTags,
-    privacy:existingDraft.privacy,
+      existing.businessServiceTags,
+
+    // ---- Invariants ----
+    solutionId: existing.solutionId,
+    productId: existing.productId,
+    verified: false,
+    privacy: existing.privacy,
+    createdAt: existing.createdAt,
+
     // ---- Meta ----
     updatedAt: now,
   };
 
+  merged.complete = isBusinessDraftComplete(merged);
+
   /* =====================
-     6️⃣ VALIDATE DOMAIN
+     5️⃣ VALIDATE DOMAIN
   ====================== */
-  let validatedDraft;
+  let validated;
   try {
-    validatedDraft = BusinessDraftSchema.parse(
-      mergedDraft
-    );
+    validated = BusinessDraftSchema.parse(merged);
   } catch (err) {
     return json(
       {
@@ -185,44 +165,30 @@ export async function updateBusinessDraft(
   }
 
   /* =====================
-     7️⃣ PERSIST (ATOMIC)
+     6️⃣ PERSIST
   ====================== */
   await env.BUSINESS_KV.put(
     BUSINESS_DRAFT_KEY(businessDraftId),
-    JSON.stringify(validatedDraft)
+    JSON.stringify(validated)
   );
 
   /* =====================
-     8️⃣ MAP → READ DTO
+     7️⃣ MAP → READ DTO
   ====================== */
   const response: BusinessDraftBaseReadDTO = {
-    businessDraftId: validatedDraft.id,
-    businessName: validatedDraft.businessName,
-    solutionId: validatedDraft.solutionId,
-    productId: validatedDraft.productId,
-    businessOpeningHour:
-      validatedDraft.businessOpeningHour,
-      contact: {
-        mail: validatedDraft.contact.mail,
-        phoneNumber: validatedDraft.contact.phoneNumber,
-        pec: validatedDraft.contact.pec,
-        address: validatedDraft.contact.address,
-      },
-    businessDescriptionTags:
-      validatedDraft.businessDescriptionTags,
-    businessServiceTags:
-      validatedDraft.businessServiceTags,
-    verified: false,
+    businessDraftId: validated.id,
+    businessName: validated.businessName,
+    solutionId: validated.solutionId,
+    productId: validated.productId,
+    openingHours: validated.openingHours,
+    contact: validated.contact,
+    businessDescriptionTags: validated.businessDescriptionTags,
+    businessServiceTags: validated.businessServiceTags,
+    verified: validated.verified,
   };
 
-  /* =====================
-     9️⃣ RESPONSE
-  ====================== */
   return json(
-    {
-      ok: true,
-      draft: response,
-    },
+    { ok: true, draft: response },
     request,
     env
   );

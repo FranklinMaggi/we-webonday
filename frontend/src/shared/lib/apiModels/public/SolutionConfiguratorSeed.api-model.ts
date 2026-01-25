@@ -14,12 +14,14 @@
 //
 // ======================================================
 
+import type { OpeningHoursFE } from
+  "../../../../user/configurator/base_configuration/configuration/configurationSetup.store";
+
 export interface SolutionConfiguratorSeedApiModel {
-    id: string;
-  
-    descriptionTags: string[];
-    serviceTags: string[];
-  
-    openingHoursDefault?: Record<string, string>;
-  }
-  
+  id: string;
+
+  descriptionTags: string[];
+  serviceTags: string[];
+
+  openingHours?: OpeningHoursFE;
+}

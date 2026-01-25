@@ -36,7 +36,7 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 /* =========================
    LAYOUTS
 ========================= */
-import { MainLayout } from "../../user/pages/dashboard/configurator/setup/steps/layouts/MainLayout";
+import { MainLayout } from "../../user/pages/setup/MainLayout";
 import UserDashboardShell from "../../user/pages/dashboard/UserDashboardShell";
 //import ConfiguratorLayout from "../pages/user/dashboard/configurator/setup/steps/layouts/ConfiguratorLayout";
 import AdminLayout from "../../admin/components/admin/layouts/AdminLayout";
@@ -59,7 +59,7 @@ import Price from "../../marketing/pages/pricing";
 import Solutions from "../../marketing/pages/solution/soltuionpage";
 import HomeSolutionPage from "../../marketing/pages/solution/soltuionpage/[id]";
 
-import UserLogin from "../../user/pages/auth";
+import UserLogin from "../../user/auth";
 
 /* =========================
    POLICY
@@ -72,16 +72,16 @@ import PolicyPage from "../../shared/terms/policy/policy";
    USER — DASHBOARD & FLOWS
 ========================= */
 import UserDashboardHome from "../../user/pages/dashboard";
-import UserBusinessDashboard from "../../user/pages/dashboard/business";
-import YouDashboardPage from "@src/user/pages/you";
+import UserBusinessDashboard from "../../user/pages";
+import YouDashboardPage from "@src/user/pages/you/hard-driver";
 
-import UserBusinessDetail from "../../user/pages/dashboard/business/[id]";
-import WorkspaceIndex from "../../user/pages/dashboard/workspace";
+import UserBusinessDetail from "../../user/pages/you/business/[id]";
+import WorkspaceIndex from "../../user/pages/workspace";
 /* =========================
    USER — CONFIGURATOR
 ========================= */
 //import UserConfiguratorIndex from "../pages/user/dashboard/configurator/index";
-import ConfigurationIndex from "../../user/pages/dashboard/configurator/index";
+import ConfigurationIndex from "../../user/configurator/[id]";
 import PostLoginHandoff from "../../user/pages/PostLoginHandoff";
 /* =========================
    ADMIN
@@ -97,9 +97,10 @@ import AdminOptionsPage from "../../admin/pages/products/options";
 import AdminEditOptionPage from "../../admin/pages/products/options/[id]";
 import SolutionsList from "../../admin/pages/solutions";
 import SolutionEditor from "../../admin/pages/solutions/[id]";
-import UserConfigurationWorkspace from "../../user/pages/dashboard/workspace/[id]";
+import UserConfigurationWorkspace from "../../user/pages/workspace/[id]";
 import { useParams } from "react-router-dom";
-
+import ProfilePage from "../../user/pages/you/profile";
+import AccountPage from "../../user/pages/you/account";
 function RedirectConfiguratorToDashboard() {
   const { id } = useParams<{ id: string }>();
 
@@ -166,7 +167,20 @@ const router = createBrowserRouter([
 
               /* ===== HOME ===== */
               { index: true, element: <UserDashboardHome /> },
-              { path: "you", element: <YouDashboardPage /> },
+              {
+                path: "you",
+                element: <Outlet />,
+                children: [
+                  { index: true, element: <YouDashboardPage /> },
+                  { path: "profile", element: <ProfilePage /> },
+                  { path: "account", element: <AccountPage /> },
+                  {
+                    path: "settings",
+                    element: <p>Impostazioni YOU (future)</p>,
+                  },
+                ],
+              },
+              
               /* ===== BUSINESS ===== */
               {
                 path: "business",

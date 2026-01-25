@@ -24,15 +24,7 @@ import { apiFetch } from "../../../../../../shared/lib/api";
    TYPES
 ====================================================== */
 
-export type OpeningHoursDefault = {
-  monday: string;
-  tuesday: string;
-  wednesday: string;
-  thursday: string;
-  friday: string;
-  saturday: string;
-  sunday: string;
-};
+import { type OpeningHoursFE } from "@src/user/configurator/base_configuration/configuration/configurationSetup.store";
 
 export type PublicSolutionDetailDTO = {
   id: string;
@@ -48,7 +40,7 @@ export type PublicSolutionDetailDTO = {
   descriptionTags: string[];
   serviceTags: string[];
 
-  openingHoursDefault?: OpeningHoursDefault;
+  openingHours:OpeningHoursFE;
 
   status: "DRAFT" | "ACTIVE" | "ARCHIVED";
   createdAt: string;

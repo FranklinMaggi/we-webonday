@@ -37,18 +37,19 @@ export interface ProductPricingVM {
    */
   monthly: number;
 }
-
+export type RecurringType = "monthly"|"yearly"|"one_time";
 export interface ProductOptionVM {
   id: string;
   label: string;
   price: number;
+  description:string; 
 
   /**
    * Dominio PUBLIC:
    * - tutte le option sono recurring
    * - billing mensile
    */
-  type: "monthly";
+  type: RecurringType;
 }
 
 export interface ProductVM {
@@ -73,6 +74,6 @@ export interface ProductVM {
    */
   pricing: ProductPricingVM;
 
-
+  options?: ProductOptionVM[];
   requiresConfiguration: boolean;
 }

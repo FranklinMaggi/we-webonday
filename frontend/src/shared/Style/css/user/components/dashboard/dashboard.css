@@ -1,0 +1,24 @@
+/* ===============================
+   DASHBOARD SHELL LAYOUT
+================================ */
+
+.dashboard-shell {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+  }
+  
+  /* SIDEBAR */
+  .dashboard-sidebar-wrap {
+    width: 260px;          /* fissa, prevedibile */
+    flex-shrink: 0;
+    border-right: 1px solid #e5e7eb;
+  }
+  
+  /* MAIN CONTENT */
+  .dashboard-content {
+    flex: 1;
+    padding: 24px;
+    overflow-x: hidden;
+  }
+  

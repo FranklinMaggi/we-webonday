@@ -9,7 +9,7 @@
 //
 // INVARIANTI:
 // - Auth obbligatoria
-// - Read only
+// - Read-only
 // - Backend = source of truth
 // ======================================================
 
@@ -21,9 +21,9 @@ import { BusinessDraftSchema } from "../schema/business.draft.schema";
 export async function getBusinessDraft(
   request: Request,
   env: Env
-) {
+): Promise<Response> {
   /* =====================
-     AUTH
+     1️⃣ AUTH
   ====================== */
   const session = await requireAuthUser(request, env);
   if (!session) {
@@ -36,11 +36,10 @@ export async function getBusinessDraft(
   }
 
   /* =====================
-     INPUT
+     2️⃣ INPUT
   ====================== */
-  const url = new URL(request.url);
-  const configurationId =
-    url.searchParams.get("configurationId");
+  const configurationId = new URL(request.url)
+    .searchParams.get("configurationId");
 
   if (!configurationId) {
     return json(
@@ -52,58 +51,51 @@ export async function getBusinessDraft(
   }
 
   /* =====================
-     LOAD CONFIGURATION
+     3️⃣ LOAD CONFIGURATION
      (SOURCE OF TRUTH)
   ====================== */
- /* =====================
-   LOAD CONFIGURATION
-====================== */
-const configuration = await env.CONFIGURATION_KV.get(
-  `CONFIGURATION:${configurationId}`,
-  "json"
-) as {
-  businessDraftId?: string;
-  userId?: string;
-} | null;
+  const configuration = await env.CONFIGURATION_KV.get(
+    `CONFIGURATION:${configurationId}`,
+    "json"
+  ) as {
+    businessDraftId?: string;
+    userId?: string;
+  } | null;
 
-if (!configuration) {
-  return json(
-    { ok: false, error: "CONFIGURATION_NOT_FOUND" },
-    request,
-    env,
-    404
-  );
-}
-
-/* =====================
-   OWNERSHIP CHECK
-====================== */
-if (configuration.userId !== session.user.id) {
-  return json(
-    { ok: false, error: "FORBIDDEN" },
-    request,
-    env,
-    403
-  );
-}
-
-if (!configuration.businessDraftId) {
-  return json(
-    { ok: true, draft: null },
-    request,
-    env
-  );
-}
-
-
-  const businessDraftId =
-    configuration.businessDraftId;
+  if (!configuration) {
+    return json(
+      { ok: false, error: "CONFIGURATION_NOT_FOUND" },
+      request,
+      env,
+      404
+    );
+  }
 
   /* =====================
-     LOAD BUSINESS DRAFT
+     4️⃣ OWNERSHIP CHECK
+  ====================== */
+  if (configuration.userId !== session.user.id) {
+    return json(
+      { ok: false, error: "FORBIDDEN" },
+      request,
+      env,
+      403
+    );
+  }
+
+  if (!configuration.businessDraftId) {
+    return json(
+      { ok: true, draft: null },
+      request,
+      env
+    );
+  }
+
+  /* =====================
+     5️⃣ LOAD BUSINESS DRAFT
   ====================== */
   const raw = await env.BUSINESS_KV.get(
-    `BUSINESS_DRAFT:${businessDraftId}`
+    `BUSINESS_DRAFT:${configuration.businessDraftId}`
   );
 
   if (!raw) {
@@ -115,19 +107,16 @@ if (!configuration.businessDraftId) {
   }
 
   /* =====================
-     VALIDATE (DOMAIN)
+     6️⃣ VALIDATE (DOMAIN)
   ====================== */
   let draft;
   try {
     draft = BusinessDraftSchema.parse(
       JSON.parse(raw)
     );
-  } catch (err) {
+  } catch {
     return json(
-      {
-        ok: false,
-        error: "BUSINESS_DRAFT_CORRUPTED",
-      },
+      { ok: false, error: "BUSINESS_DRAFT_CORRUPTED" },
       request,
       env,
       500
@@ -135,7 +124,7 @@ if (!configuration.businessDraftId) {
   }
 
   /* =====================
-     RESPONSE
+     7️⃣ RESPONSE
   ====================== */
   return json(
     { ok: true, draft },

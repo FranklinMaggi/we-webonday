@@ -36,10 +36,11 @@ import {
 ============================================================ */
 
 import { createConfigurationBase ,getUserConfiguration, listAllConfigurations ,listUserConfigurations , setConfigurationDraft} from "@domains/configuration/routes";
-import { createBusinessDraft , getBusinessDraft ,updateBusinessDraft } from "@domains/business/routes";
+import { createBusinessDraft , getBusinessDraft ,updateBusinessDraft, reopenBusinessDraft } from "@domains/business/routes";
 import {
   createBusinessOwnerDraft,
   getBusinessOwnerDraft,
+ 
 } from "@domains/business/owner/routes";
 /* ============================================================
    COOKIES — CONSENSO
@@ -105,7 +106,7 @@ import { listPolicyVersions } from "./routes/policy";
    BUSINESS — USER
 ============================================================ */
 import { attachOwnerToConfiguration } from "@domains/configuration/routes/";
-import { createBusiness ,
+import { 
   getBusiness ,
   listBusinesses ,
   submitBusiness,
@@ -404,7 +405,16 @@ if (
     env
   );
 }
-
+if (
+  pathname === "/api/business/reopen-draft" &&
+  method === "POST"
+) {
+  return withCors(
+    await reopenBusinessDraft(request, env),
+    request,
+    env
+  );
+}
 // UPDATE (PATCH-like)
 if (pathname === "/api/business/update-draft" && method === "POST") {
   return withCors(
@@ -415,9 +425,7 @@ if (pathname === "/api/business/update-draft" && method === "POST") {
 }
 
       
-      if (pathname === "/api/business/create" && method === "POST")
-        return withCors(await createBusiness(request, env), request, env);
-       
+
       if (pathname === "/api/business" && method === "GET")
         return withCors(await listBusinesses(request, env), request, env);
 

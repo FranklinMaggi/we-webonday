@@ -15,33 +15,30 @@
 
 import { z } from "zod";
 import { BusinessContactSchema } from "./business.contact.schema";
-
-
+import { OpeningHoursSchema } from "./business.schema";
 export const UpdateBusinessDraftSchema = z.object({
-  /* ---------- Identity ---------- */
-  businessDraftId: z.string().optional(),
-  configurationId: z.string().min(1).optional(),
+  businessDraftId: z.string(),
 
-  /* ---------- Editable fields ---------- */
-  businessName: z.string().min(1).optional(),
+  businessName: z.string().optional(),
 
-  businessOpeningHour: z
-    .record(z.unknown())
+  openingHours: OpeningHoursSchema.optional(),
+
+  contact: z
+    .object({
+      mail: z.string().email(),
+      phoneNumber: z.string().optional(),
+      pec: z.string().optional(),
+      address: z
+        .object({
+          street: z.string().optional(),
+          city: z.string().optional(),
+          province: z.string().optional(),
+          zip: z.string().optional(),
+        })
+        .optional(),
+    })
     .optional(),
 
-  contact: BusinessContactSchema,
-complete:z.boolean(),
   businessDescriptionTags: z.array(z.string()).optional(),
   businessServiceTags: z.array(z.string()).optional(),
-})
-.refine(
-  (data) => data.businessDraftId || data.configurationId,
-  {
-    message:
-      "Either businessDraftId or configurationId is required",
-  }
-);
-
-export type UpdateBusinessDraftDTO = z.infer<
-  typeof UpdateBusinessDraftSchema
->;
+});

@@ -11,11 +11,9 @@
 // - listMyConfigurations()
 //
 // ======================================================
-
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { listMyConfigurations } from "./configurator/api/configuration.user.api";
-import type { ConfigurationConfiguratorDTO } from "./configurator/models/ConfigurationConfiguratorDTO";
+import { useMyConfigurations } from "../../configurator/base_configuration/configuration/useMyConfigurations";
+import type { ConfigurationConfiguratorDTO } from "../../configurator/base_configuration/configuration/ConfigurationConfiguratorDTO";
 
 export type DashboardVM = {
   configs: ConfigurationConfiguratorDTO[];
@@ -26,30 +24,12 @@ export type DashboardVM = {
 
 export function useDashboardContainer(): DashboardVM {
   const navigate = useNavigate();
-
-  const [configs, setConfigs] = useState<ConfigurationConfiguratorDTO[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    listMyConfigurations()
-      .then((res) => {
-        if (!res.ok) throw new Error("LOAD_FAILED");
-        setConfigs(res.items ?? []);
-      })
-      .catch(() => {
-        setError("dashboard.error.load");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+  const { items: configs, loading, error } = useMyConfigurations();
 
   return {
     configs,
     loading,
     error,
-    onOpenConfig: (id) =>
-      navigate(`/user/dashboard/workspace/${id}`),
+    onOpenConfig: (id) => navigate(`/user/dashboard/workspace/${id}`),
   };
 }

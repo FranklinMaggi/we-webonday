@@ -5,6 +5,8 @@
  * - NON usa inferenze
  */
 
+import type { OpeningHoursFE } from "@src/user/configurator/base_configuration/configuration/configurationSetup.store";
+
 export type PublicSolutionDTO = {
     id: string;
     name: string;
@@ -13,14 +15,7 @@ export type PublicSolutionDTO = {
     icon?: string;
     industries: string[];
   
-    openingHoursDefault?: {
-      monday: string;
-      tuesday: string;
-      wednesday: string;
-      thursday: string;
-      friday: string;
-      saturday: string;
-      sunday: string;
-    };
+  openingHours:OpeningHoursFE;
+    
   };
   

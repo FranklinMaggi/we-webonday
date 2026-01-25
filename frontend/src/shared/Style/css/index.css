@@ -43,10 +43,17 @@
 ====================================================== */
 @import "./user/components/navbar.css";
 @import "./user/components/footer.css";
+@import "./user/components/dashboard/dashboard.css";
 @import "./user/components/solutions.css";
 @import "./user/components/language-selector.css";
 @import "./user/components/preform.css";
+@import "./user/components/configuration.css";
+@import "./user/components/sidebar.css";
+@import "./user//pages/profile/profile.css";
+
+
 @import "./user/login.css";
+
 /* ======================================================
    5️⃣ COMPONENTS (PUBBLICO)
 ====================================================== */

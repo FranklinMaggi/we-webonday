@@ -25,6 +25,7 @@ import { SolutionSchema } from "../schema/solution.schema";
 import { ProductSchema } from "../../product/product.schema";
 import { getSolutionImageUrl } from "../../../utils/assets";
 import { getSolutionImages } from "../../../utils/assets";
+import { OpeningHoursDTO } from "@domains/business/schema/business.schema";
 /* ======================================================
    DOMAIN OUTPUT TYPES
 ====================================================== */
@@ -47,15 +48,7 @@ export type SolutionDetailResult =
           card: string;
           
         };
-        openingHoursDefault?: {
-          monday: string;
-          tuesday: string;
-          wednesday: string;
-          thursday: string;
-          friday: string;
-          saturday: string;
-          sunday: string;
-        };
+        openingHours?: OpeningHoursDTO;
         
         /** @deprecated */
         icon?: string;
@@ -148,7 +141,7 @@ export async function getSolutionDetail(
       name: solution.name,
       description: solution.description,
       longDescription: solution.longDescription,
-      openingHoursDefault : solution.openingHoursDefault ,
+      openingHours : solution.openingHours ,
       image: getSolutionImages(solution.imageKey),
     
       icon: solution.icon, // legacy

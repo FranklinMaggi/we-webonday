@@ -1,37 +1,27 @@
 // ======================================================
-// FE || USER DASHBOARD || SHELL (ROUTING LAYOUT)
+// FE || USER DASHBOARD || SHELL
 // ======================================================
 //
-// AI-SUPERCOMMENT
-//
 // RUOLO:
-// - Layout strutturale area Dashboard Utente
-// - Sidebar persistente
-// - Content dinamico via <Outlet />
+// - Layout strutturale dashboard
+// - Sidebar a sinistra
+// - Contenuto a destra
 //
-// SOURCE:
-// - React Router (nested routes)
-//
-// NON FA:
-// - Fetch dati
-// - Logica business
-// - Autenticazione
-//
-// CONNECT POINT:
-// - sidebar/Sidebar.container.tsx
-// - Tutte le route /user/dashboard/*
-//
+// INVARIANTE:
+// - Layout orizzontale (flex)
 // ======================================================
 
 import { Outlet } from "react-router-dom";
-import SidebarContainer from "./sidebar/Sidebar.container";
+import SidebarContainer from "../../sidebar/Sidebar.container";
 
 export default function UserDashboardShell() {
   return (
-    <div className="user-dashboard-shell">
-      <SidebarContainer />
+    <div className="dashboard-shell">
+      <aside className="dashboard-sidebar-wrap">
+        <SidebarContainer />
+      </aside>
 
-      <main className="user-dashboard-content">
+      <main className="dashboard-content">
         <Outlet />
       </main>
     </div>

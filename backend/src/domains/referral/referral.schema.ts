@@ -35,13 +35,20 @@ IMPATTO MODIFICHE:
   - routes/admin/referral
 ====================================================== */
 import { z } from "zod";
-
 export const ReferralDomainSchema = z.object({
-  code: z.string(),
-  ownerUserId: z.string(),
-  createdAt: z.string(),
-  status: z.enum(["issued","redeemed","confirmed","expired"]),
-  invitedBusinessIds: z.array(z.string()),
-});
+  id: z.string().uuid(),
 
-export type ReferralDTO = z.infer<typeof ReferralDomainSchema>;
+  code: z.string(), // pubblico
+  ownerUserId: z.string().uuid(),
+
+  createdAt: z.string(),
+
+  status: z.enum([
+    "issued",
+    "redeemed",
+    "confirmed",
+    "expired",
+  ]),
+
+  invitedBusinessIds: z.array(z.string().uuid()),
+});

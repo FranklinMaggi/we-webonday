@@ -30,7 +30,7 @@ import {type PublicSolutionDTO } from "../../../../marketing/pages/buyflow/api/D
    DTO — SOLUTION (LIST)
    → usato per catalogo / cards
 ====================================================== */
-
+import { type OpeningHoursFE } from "@src/user/configurator/base_configuration/configuration/configurationSetup.store";
 /* ======================================================
    DTO — SOLUTION (DETAIL)
    → usato da configuratore / pagina solution
@@ -54,15 +54,7 @@ export type PublicSolutionDetailDTO = {
   descriptionTags: string[];
   serviceTags: string[];
 
-  openingHoursDefault?: {
-    monday: string;
-    tuesday: string;
-    wednesday: string;
-    thursday: string;
-    friday: string;
-    saturday: string;
-    sunday: string;
-  };
+  openingHours : OpeningHoursFE;
 };
 
 /* ======================================================
