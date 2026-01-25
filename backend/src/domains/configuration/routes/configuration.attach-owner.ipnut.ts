@@ -155,12 +155,12 @@ export async function attachOwnerToConfiguration(
       env
     );
   }
-  if (configuration.status === "READY") {
+  if (configuration.status === "CONFIGURATION_IN_PROGRESS") {
     return json(
       {
         ok: true,
         configurationId: configuration.id,
-        status: "READY",
+        status: "CONFIGURATION_IN_PROGRESS",
         alreadyReady: true,
       },
       request,
@@ -175,7 +175,7 @@ export async function attachOwnerToConfiguration(
   const updatedConfiguration = {
     ...configuration,
     ownerUserId: userId,
-    status: "READY", // oppure NEXT_STATE
+    status: "CONFIGURATION_IN_PROGRESS", // oppure NEXT_STATE
     updatedAt: now,
   };
 

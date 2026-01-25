@@ -59,7 +59,7 @@ export default function PostLoginHandoff() {
     if (data.configurationId) {
       console.log("[POST_LOGIN][4] configuration already exists");
       navigate(
-        `/user/dashboard/workspace/${data.configurationId}`,
+        `/user/dashboard/configurator/${data.configurationId}`,
         { replace: true }
       );
       return;
@@ -134,7 +134,7 @@ export default function PostLoginHandoff() {
         );
 
         navigate(
-          `/user/dashboard/workspace/${res.configurationId}`,
+          `/user/dashboard/configurator/${res.configurationId}`,
           { replace: true }
         );
       } catch (err) {

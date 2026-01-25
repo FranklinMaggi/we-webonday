@@ -83,7 +83,7 @@ export default function UserBusinessDashboard() {
      HANDLERS
   ====================== */
   function goToConfigurator(configurationId: string) {
-    navigate(`/user/dashboard/configuration/${configurationId}`)
+    navigate(`/user/dashboard/configurator/${configurationId}`)
   }
 
   function goToBusinessView(businessId: string) {

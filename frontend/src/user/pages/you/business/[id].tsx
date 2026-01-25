@@ -173,7 +173,7 @@ export default function UserBusinessDetail() {
               body: JSON.stringify({ configurationId }),
             });
 
-            navigate(`/user/dashboard/workspace/${configurationId}`);
+            navigate(`/user/dashboard/configurator/${configurationId}`);
           }}
         >
           ✏️ Modifica informazioni

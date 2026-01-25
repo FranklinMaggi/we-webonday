@@ -1,27 +1,19 @@
 // ======================================================
 // FE || USER DASHBOARD || YOU — VIEW (FINAL)
 // ======================================================
-//
-// RUOLO:
-// - Dashboard di orientamento Business
-// - Stato business + CTA di upgrade
-//
-// INVARIANTI:
-// - SOLO lettura
-// - Niente configurazione
-// - Niente checkout
-// ======================================================
 
 import { t } from "@src/shared/aiTranslateGenerator";
 import { getWdStatusClass } from "@src/shared/utils/statusUi";
 import type { YouDashboardVM } from "./You.container";
 import { youClasses } from "./you.classes";
 import { useNavigate } from "react-router-dom";
+
 export function YouDashboardView({
   configurations,
   businesses,
 }: YouDashboardVM) {
   const navigate = useNavigate();
+
   const totalConfigs = configurations.length;
   const activeBusinesses = businesses.length;
 
@@ -34,15 +26,15 @@ export function YouDashboardView({
         <p className={youClasses.subtitle}>
           Business attivi: {activeBusinesses} / {totalConfigs}
         </p>
-<button
-  className="wd-btn wd-btn--secondary"
-  onClick={() =>
-    navigate(`/user/dashboard/you/upgrade/${b.configurationId}`)
-  }
->
-  🚀 Upgrade Business
-</button>
 
+        <button
+          className="wd-btn wd-btn--secondary"
+          onClick={() =>
+            navigate("/user/dashboard/you/upgrade/")
+          }
+        >
+          🚀 Upgrade Business
+        </button>
       </header>
 
       {/* ================= BUSINESS LIST ================= */}
@@ -55,66 +47,94 @@ export function YouDashboardView({
           businesses.map((b) => (
             <div
               key={b.configurationId}
-              className={youClasses.card}
+              className={youClasses.businessRow}
             >
-              {/* ---------- HEADER CARD ---------- */}
-              <header className={youClasses.cardHeader}>
-                <h3>{b.businessName}</h3>
+              {/* ================= BUSINESS CARD ================= */}
+              <div className={youClasses.card}>
+                <header className={youClasses.cardHeader}>
+                  <h3>{b.businessName}</h3>
 
-                <span className={getWdStatusClass(b.status)}>
-                  {b.status === "ACTIVE"
-                    ? "COMPLETATO"
-                    : b.status}
-                </span>
-              </header>
+                  <span className={getWdStatusClass(b.status)}>
+                    {b.status === "ACTIVE"
+                      ? "ATTIVO"
+                      : b.status}
+                  </span>
+                </header>
 
-              {/* ---------- META ---------- */}
-              <div className={youClasses.meta}>
-                <strong>Piano attuale</strong>
-                <p className={youClasses.planMuted}>
-                  {b.activePlan?.name ??
-                    "Iscrizione gratuita"}
-                </p>
+                <div className={youClasses.meta}>
+                  <strong>Stato</strong>
+                  <p className={youClasses.planMuted}>
+                    Business configurato
+                  </p>
+                </div>
+
+                {/* ---------- CTA ---------- */}
+                <div className={youClasses.cardActions}>
+                  <button
+                    className="wd-btn wd-btn--secondary"
+                    onClick={() =>
+                      navigate(
+                        `/user/dashboard/you/upgrade/${b.configurationId}`
+                      )
+                    }
+                  >
+                    🚀 Upgrade Business
+                  </button>
+                </div>
               </div>
 
-              {/* ---------- OPTIONS (READ ONLY) ---------- */}
-              {b.activePlan?.options?.length ? (
-                <ul className="you-plan-options">
-                  {b.activePlan.options.map((o) => (
-                    <li
-                      key={o.id}
-                      className="you-plan-option"
-                    >
-                      <strong>
-                        {o.label}
-                      </strong>
+              {/* ================= BUSINESS PREVIEW ================= */}
+              <aside className={youClasses.preview}>
+                <h4 className={youClasses.previewTitle}>
+                  Anteprima anagrafica
+                </h4>
 
-                      {o.description && (
-                        <p className="you-plan-option__description">
-                          {o.description}
-                        </p>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className={youClasses.optionsHint}>
-                  Funzionalità base attive
-                </p>
-              )}
+                <div className={youClasses.previewBlock}>
+                  <strong>Indirizzo</strong>
+                  <p>
+                    {b.preview?.address?.street ?? "—"}
+                  </p>
+                  <p>
+                    {b.preview?.address?.zip ?? ""}{" "}
+                    {b.preview?.address?.city ?? ""}{" "}
+                    {b.preview?.address?.province ?? ""}
+                  </p>
+                </div>
 
-              {/* ---------- CTA ---------- */}
-              <div className={youClasses.cardActions}>
-              <button
-  className="wd-btn wd-btn--secondary"
-  onClick={() =>
-    navigate(`/user/dashboard/you/upgrade/${b.configurationId}`)
-  }
->
-  🚀 Upgrade Business
-</button>
+                <div className={youClasses.previewBlock}>
+                  <strong>Contatti</strong>
+                  <p>
+                    📞 {b.preview?.phoneNumber ?? "—"}
+                  </p>
+                  <p>
+                    ✉️ {b.preview?.mail ?? "—"}
+                  </p>
+                </div>
 
-              </div>
+                <div className={youClasses.previewBlock}>
+                  <strong>Orari</strong>
+
+                  {b.preview?.openingHours ? (
+                    Object.entries(
+                      b.preview.openingHours
+                    ).map(([day, slots]) => (
+                      <p key={day}>
+                        {day}:{" "}
+                        {slots.length
+                          ? slots
+                              .map(
+                                (s) =>
+                                  `${s.from}–${s.to}`
+                              )
+                              .join(", ")
+                          : "Chiuso"}
+                      </p>
+                    ))
+                  ) : (
+                    <p>Non disponibili</p>
+                  )}
+                </div>
+              </aside>
             </div>
           ))
         )}

@@ -30,6 +30,6 @@ export function useDashboardContainer(): DashboardVM {
     configs,
     loading,
     error,
-    onOpenConfig: (id) => navigate(`/user/dashboard/workspace/${id}`),
+    onOpenConfig: (id) => navigate(`/user/dashboard/configurator/${id}`),
   };
 }

@@ -86,7 +86,7 @@ export default function StepReview({ onBack }: Props) {
 
       // 🔁 HANDOFF (scegline uno)
       // navigate(`/user/checkout/${configurationId}`);
-      navigate(`/user/dashboard/configuration/${configurationId}`);
+      navigate(`/user/dashboard/configurator/${configurationId}`);
     } catch (e: any) {
       setError(e.message ?? "Errore salvataggio configurazione");
     } finally {

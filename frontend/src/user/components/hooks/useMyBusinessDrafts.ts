@@ -35,7 +35,7 @@ export function useMyBusinesses() {
   // signature stabile: se gli id READY non cambiano, non rifare fetch
   const readyIdsSignature = useMemo(() => {
     const ids = configurations
-      .filter((c) => c.status === "READY")
+      .filter((c) => c.status === "CONFIGURATION_IN_PROGRESS")
       .map((c) => c.id)
       .sort();
     return ids.join("|");
@@ -62,7 +62,7 @@ export function useMyBusinesses() {
     let alive = true;
     setLoading(true);
 
-    const readyConfigs = configurations.filter((c) => c.status === "READY");
+    const readyConfigs = configurations.filter((c) => c.status === "CONFIGURATION_IN_PROGRESS");
 
     (async () => {
       try {

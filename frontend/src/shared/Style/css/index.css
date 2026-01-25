@@ -50,7 +50,7 @@
 @import "./user/components/configuration.css";
 @import "./user/components/sidebar.css";
 @import "./user//pages/profile/profile.css";
-
+@import "./user//pages/profile/you.css";
 
 @import "./user/login.css";
 

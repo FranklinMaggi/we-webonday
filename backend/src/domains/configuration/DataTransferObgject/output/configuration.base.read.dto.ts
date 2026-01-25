@@ -13,7 +13,7 @@
 
 export type ConfigurationBaseReadDTO = {
     id: string;
-    status: "DRAFT" | "BUSINESS_READY";
+    status: "DRAFT" | "CONFIGURATION_IN_PROGRESS";
     solutionId: string;
     productId: string;
     businessName?: string;  // da prefill

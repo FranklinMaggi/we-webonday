@@ -1,0 +1,46 @@
+.you-business-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  /* CARD */
+  .you-card {
+    background: var(--wd-card-bg);
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: var(--wd-shadow-sm);
+  }
+  
+  /* PREVIEW */
+  .you-preview {
+    background: #fafafa;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 1.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .you-preview-title {
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+    opacity: 0.8;
+  }
+  
+  .you-preview-block {
+    margin-bottom: 0.75rem;
+  }
+  
+  .you-preview-block p {
+    margin: 0.15rem 0;
+    opacity: 0.85;
+  }
+  
+  /* Responsive */
+  @media (max-width: 900px) {
+    .you-business-row {
+      grid-template-columns: 1fr;
+    }
+  }
+  

@@ -3,21 +3,22 @@
    ====================================================== */
 
    export const youClasses = {
-    root: "you-dashboard",
-  
-    header: "you-header",
-    subtitle: "you-subtitle", // 👈 AGGIUNTA
-  
-    section: "you-section",
-  
-    card: "you-card",
-    cardHeader: "you-card-header",
-  
-    meta: "you-card-meta",
-  
-    planMuted: "you-plan-muted", // 👈 AGGIUNTA
-    optionsHint: "you-options-hint", // 👈 AGGIUNTA
-  
-    cardActions: "you-card-actions", // 👈 AGGIUNTA
+    root: "you-root",
+  header: "you-header",
+  subtitle: "you-subtitle",
+  section: "you-section",
+
+  businessRow: "you-business-row",
+
+  card: "you-card",
+  cardHeader: "you-card-header",
+  meta: "you-meta",
+  planMuted: "you-plan-muted",
+  optionsHint: "you-options-hint",
+  cardActions: "you-card-actions",
+
+  preview: "you-preview",
+  previewTitle: "you-preview-title",
+  previewBlock: "you-preview-block",// 👈 AGGIUNTA
   };
   

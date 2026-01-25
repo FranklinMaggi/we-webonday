@@ -31,7 +31,7 @@ export default function SidebarContainer() {
      NORMALIZZAZIONE
   ========================= */
   const businessReady = useMemo(
-    () => configurations.filter((c) => c.status === "READY"),
+    () => configurations.filter((c) => c.status === "CONFIGURATION_IN_PROGRESS"),
     [configurations]
   );
 
@@ -44,7 +44,7 @@ export default function SidebarContainer() {
     const map = new Map<string, string>();
   
     configurations.forEach((c) => {
-      if (c.status === "READY") {
+      if (c.status === "CONFIGURATION_IN_PROGRESS") {
         map.set(
           c.id,
           c.prefill?.businessName ?? "Attività"
@@ -86,23 +86,26 @@ export default function SidebarContainer() {
       ],
     },
 
-    /* ===== CONFIGURATIONS ===== */
-    {
-      titleKey: "sidebar.section.configurations",
-      items:
-        configurationDrafts.length > 0
-          ? configurationDrafts.map((c) => ({
-              to: `/user/dashboard/workspace/${c.id}`,
-              labelKey: businessNameByConfigurationId.get(c.id) ??
-              "sidebar.config.default",
-            }))
-          : [
-              {
-                to: "/solution",
-                labelKey: "sidebar.config.start",
-              },
-            ],
-    },
+   /* ===== CONFIGURATIONS ===== */
+{
+  titleKey: "sidebar.section.configurations",
+  titleTo: "/user/dashboard/configurator",
+  items:
+    configurationDrafts.length > 0
+      ? configurationDrafts.map((c) => ({
+          to: `/user/dashboard/configurator/${c.id}`,
+          labelKey:
+            businessNameByConfigurationId.get(c.id) ??
+            "sidebar.config.default",
+        }))
+      : [
+          {
+            to: "/solution",
+            labelKey: "sidebar.config.start",
+          },
+        ],
+},
+
 
     /* ===== BUSINESS ===== */
     {
@@ -137,24 +140,26 @@ export default function SidebarContainer() {
           ],
     },
 
-    /* ===== WORKSPACE (CONTESTO) ===== */
-    {
-      titleKey: "sidebar.section.workspace",
-      items: configurationId
-        ? [
-            {
-              to: `/user/dashboard/workspace/${configurationId}`,
-              labelKey: "sidebar.workspace.editor",
-            },
-          ]
-        : [
-            {
-              to: "#",
-              labelKey: "sidebar.workspace.empty",
-              disabled: true,
-            },
-          ],
-    },
+/* ===== WORKSPACE (CONTESTO) ===== */
+{
+  titleKey: "sidebar.section.workspace",
+  items:
+    configurationId
+      ? [
+          {
+            to: `/user/dashboard/configurator/${configurationId}`,
+            labelKey: "sidebar.workspace.open",
+          },
+        ]
+      : [
+          {
+            to: "#",
+            labelKey: "sidebar.workspace.empty",
+            disabled: true,
+          },
+        ],
+},
+
 
     /* ===== PLANS ===== */
     {

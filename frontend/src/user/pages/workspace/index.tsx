@@ -1,5 +1,5 @@
 // ======================================================
-// FE || pages/user/dashboard/workspace/index.tsx
+// FE || pages/user/dashboard/configurator/index.tsx
 // ======================================================
 //
 // AI-SUPERCOMMENT — CONFIGURATION WORKSPACE LIST
@@ -83,8 +83,7 @@ useEffect(() => {
         setField("configurationId", cfg.id);
         setField("solutionId", cfg.solutionId);
         setField("productId", cfg.productId);
-        setField("optionIds", cfg.options ?? []);
-       
+     
 
         // prefill UX (non obbligatorio)
         setField(
@@ -141,7 +140,7 @@ useEffect(() => {
             key={config.id}
             className="workspace-card"
             onClick={() =>
-              navigate(`/user/dashboard/workspace/${config.id}`)
+              navigate(`/user/dashboard/configurator/${config.id}`)
             }
           >
             <div className="workspace-card__header">

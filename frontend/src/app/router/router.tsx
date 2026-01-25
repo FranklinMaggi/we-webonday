@@ -101,6 +101,7 @@ import UserConfigurationWorkspace from "../../user/pages/workspace/[id]";
 import { useParams } from "react-router-dom";
 import ProfilePage from "../../user/pages/you/profile";
 import AccountPage from "../../user/pages/you/account";
+import ConfiguratorLayout from "@src/user/configurator/ConfiguratorLayout";
 function RedirectConfiguratorToDashboard() {
   const { id } = useParams<{ id: string }>();
 
@@ -109,7 +110,7 @@ function RedirectConfiguratorToDashboard() {
   }
 
   return (
-    <Navigate to={`/user/dashboard/configuration/${id}`} replace />
+    <Navigate to={`/user/dashboard/configurator/${id}`} replace />
   );
 }
 
@@ -190,10 +191,29 @@ const router = createBrowserRouter([
                   { path: ":id", element: <UserBusinessDetail /> },
                 ],
               },
+
+              /* ===== CONFIGURATOR (CANONICAL) ===== */
+{
+  path: "configurator",
+  element: <ConfiguratorLayout />,
+  children: [
+    {
+      index: true,
+      element: <WorkspaceIndex />, 
+      // ⬆️ temporaneamente riusiamo la lista workspace
+    },
+    {
+      path: ":id",
+      element: <ConfigurationIndex />, // wizard vero
+    },
+  ],
+},
+
+
                 /* ===== CONFIGURATOR (EMBEDDED IN DASHBOARD) ===== */
 {
-  path: "configuration/:id",
-  element: <ConfigurationIndex />, // riusa l’entry del configurator
+  //path: "configuration/:id",
+  //element: <ConfigurationIndex />, // riusa l’entry del configurator
 },
               /* ===== CONFIGURATION WORKSPACE (POST-WIZARD) ===== */
               {

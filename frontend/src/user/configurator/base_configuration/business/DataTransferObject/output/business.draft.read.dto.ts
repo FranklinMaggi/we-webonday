@@ -12,7 +12,7 @@
 // - BusinessDraftSchema (DOMAIN)
 // ======================================================
 
-import type { OpeningHoursDTO } from "@domains/business/schema/business.schema";
+import { type OpeningHoursFE } from "../../../configuration/configurationSetup.store";
 // ⬆️ oppure importa dal punto canonico dove è definito
 
 export type BusinessDraftBaseReadDTO = {
@@ -25,7 +25,7 @@ export type BusinessDraftBaseReadDTO = {
   /* =====================
      DOMAIN — CANONICAL
   ====================== */
-  openingHours: OpeningHoursDTO;
+  openingHours: OpeningHoursFE;
 
   /* =====================
      CONTACT

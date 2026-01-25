@@ -1,5 +1,5 @@
 // ======================================================
-// FE || pages/user/dashboard/workspace/[id].tsx
+// FE || pages/user/dashboard/configurator/[id].tsx
 // ======================================================
 //
 // AI-SUPERCOMMENT — CONFIGURATION WORKSPACE DETAIL
@@ -34,7 +34,7 @@ export default function UserConfigurationWorkspace() {
   const [loading, setLoading] = useState(true);
 
   if (!id) {
-    return <Navigate to="/user/dashboard/workspace" replace />;
+    return <Navigate to="/user/dashboard/configurator" replace />;
   }
 
   /* =========================
@@ -80,7 +80,7 @@ export default function UserConfigurationWorkspace() {
           className="user-cta primary"
           onClick={() =>
             navigate(
-              `/user/dashboard/configuration/${configuration.id}`
+              `/user/dashboard/configurator/${configuration.id}`
             )
           }
         >

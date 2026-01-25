@@ -94,7 +94,7 @@ export async function reopenBusinessDraft(
       JSON.stringify({
         ...ownerDraft,
         complete: false,
-        verified: false,
+       
         updatedAt: new Date().toISOString(),
       })
     );
