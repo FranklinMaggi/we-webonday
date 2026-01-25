@@ -7,7 +7,7 @@
 export const solutionsSectionClasses = {
     /** ROOT */
     section: "solutions-section",
-    title: "solutions-section__title",
+    title: "solutions.section.title",
   
     /** STATES */
     loading: "solutions-section__loading",
