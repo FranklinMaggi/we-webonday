@@ -47,7 +47,7 @@
  */
 
 import { apiFetch } from "../api";
-import { type ConfigurationSetupStoreDTO } from "../../../user/configurator/ConfigurationSetup.store-model";
+import { type ConfigurationSetupStoreDTO } from "@src/user/configurator/base_configuration/configuration/configurationSetup.store";
 
 /**
  * POST /api/order/setup?orderId=XXX

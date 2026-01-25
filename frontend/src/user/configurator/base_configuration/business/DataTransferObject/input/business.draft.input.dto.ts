@@ -15,8 +15,7 @@ INVARIANTI:
 - Backend = source of truth
 ====================================================== */
 
-import type { OpeningHoursDTO } from "@domains/business/schema/business.schema";
-
+import type { OpeningHoursFE } from "@src/shared/domain/business/openingHours.types";
 export interface BusinessDraftInputDTO {
   /* =====================
      LINKAGE
@@ -33,7 +32,7 @@ export interface BusinessDraftInputDTO {
   /* =====================
      DOMAIN (CANONICAL)
   ====================== */
-  openingHours: OpeningHoursDTO;
+  openingHours: OpeningHoursFE;
 
   /* =====================
      CONTACT

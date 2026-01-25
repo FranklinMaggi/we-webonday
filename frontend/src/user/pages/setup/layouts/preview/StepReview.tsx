@@ -17,7 +17,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { useConfigurationSetupStore } from "../../../../configurator/base_configuration/configuration/configurationSetup.store";
+import { useConfigurationSetupStore } from "@src/shared/domain/user/configurator/configurationSetup.store";
 import { fetchAvailableLayouts } from "../../../../../shared/lib/userApi/layout.user.api";
 import { updateConfiguration } from "../../../../configurator/base_configuration/configuration/configuration.user.api";
 

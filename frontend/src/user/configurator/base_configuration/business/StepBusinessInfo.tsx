@@ -15,54 +15,18 @@
 // - openingHours arriva GIÀ strutturato dal BE
 // - NON esiste più openingHoursDefault
 // ======================================================
-
-import { useEffect, useState } from "react";
-
-import { useConfigurationSetupStore } from "../configuration/configurationSetup.store";
-import BusinessForm from "./BusinessForm";
-import {
-  type OpeningHoursFE,
-} from "../configuration/configurationSetup.store";
-import { isOpeningHoursEmpty } from "./StepContent";
-import { getSolutionById } from "../../../../marketing/pages/buyflow/api/publiApi/solutions/solutions.public.api";
+import { isOpeningHoursEmpty } from "@shared/domain/business/openingHours.utils";
 import { apiFetch } from "@src/shared/lib/api";
+import { getSolutionById } from "../../../../marketing/pages/buyflow/api/publiApi/solutions/solutions.public.api";
+import { useEffect, useState } from "react";
+import { useConfigurationSetupStore }from "@shared/domain/user/configurator/configurationSetup.store"
+import BusinessForm from "./BusinessForm";
+import type {
+  SolutionSeed,
+  BusinessDraftReadDTO,
+} from "@shared/domain/business/buseinssRead.types";
 
-/* ======================================================
-   LOCAL TYPES
-====================================================== */
-
-export type SolutionSeed = {
-  descriptionTags: string[];
-  serviceTags: string[];
-  openingHours: OpeningHoursFE | null;
-};
-
-type BusinessDraftReadDTO = {
-  businessDraftId: string;
-  businessName: string;
-  openingHours: OpeningHoursFE | null;
-  contact?: {
-    mail?: string;
-    phoneNumber?: string;
-    address?: {
-      street?: string;
-      city?: string;
-      province?: string;
-      zip?: string;
-    };
-  };
-
-  privacy?: {
-    accepted: boolean;
-    acceptedAt: string;
-    policyVersion: string;
-  };
-
-  businessDescriptionTags?: string[];
-  businessServiceTags?: string[];
-};
-
-/* ======================================================
+/*====================================================
    COMPONENT
 ====================================================== */
 

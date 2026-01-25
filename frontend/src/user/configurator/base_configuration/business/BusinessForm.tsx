@@ -20,20 +20,15 @@
 // ======================================================
 
 import { useEffect } from "react";
-import type { OpeningHoursFE } from "../configuration/configurationSetup.store";
-import { useConfigurationSetupStore } from "../configuration/configurationSetup.store";
+import type { OpeningHoursFE } from "@src/shared/domain/business/openingHours.types";
+import { useConfigurationSetupStore }from "@shared/domain/user/configurator/configurationSetup.store"
 import { useAuthStore } from "@src/shared/lib/store/auth.store";
 import { OpeningHoursDay } from "./OpeningHoursDay";
 import { apiFetch } from "@src/shared/lib/api";
-/* ======================================================
-   TYPES
-====================================================== */
-export type SolutionSeed = {
-  descriptionTags: string[];
-  serviceTags: string[];
-  openingHours: OpeningHoursFE | null;
+import { type SolutionSeed } from "@src/shared/domain/business/buseinssRead.types";
+import { isOpeningHoursEmpty } from "@src/shared/domain/business/openingHours.utils";
 
-};
+
 
 type BusinessFormProps = {
   onComplete: () => void;
@@ -91,22 +86,19 @@ export default function BusinessForm({
      - SOLO se store vuoto
      - NON distruttivo
   ====================================================== */
-  useEffect(() => {
-    if (
-      solutionSeed?.openingHours &&
-      Object.values(data.openingHours).every(
-        (dayRanges) => dayRanges.length === 0
-      )
-    ) {
-      console.log(
-        "[BUSINESS_FORM][OPENING_HOURS][PREFILL_FROM_SOLUTION]",
-        solutionSeed.openingHours
-      );
-      setField("openingHours", solutionSeed.openingHours);
-    }
-    
-  }, [solutionSeed, data.openingHours, setField]);
-  
+      useEffect(() => {
+        if (
+          solutionSeed?.openingHours &&
+          isOpeningHoursEmpty(data.openingHours)
+        ) {
+          console.log(
+            "[BUSINESS_FORM][OPENING_HOURS][PREFILL_FROM_SOLUTION]",
+            solutionSeed.openingHours
+          );
+          setField("openingHours", solutionSeed.openingHours);
+        }
+      }, [solutionSeed, data.openingHours, setField]);
+      
   useEffect(() => {
     console.log("[BUSINESS_FORM][STORE][PRIVACY_STATE]", data.privacy);
   }, [data.privacy]);

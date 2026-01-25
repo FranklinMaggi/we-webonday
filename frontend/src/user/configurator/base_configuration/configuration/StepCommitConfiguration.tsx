@@ -16,8 +16,7 @@
 
 import { useState } from "react";
 import { attachOwnerToConfiguration } from "../business/business/configuration.draft.complete";
-import { useConfigurationSetupStore } from "./configurationSetup.store";
-
+import { useConfigurationSetupStore }from "@shared/domain/user/configurator/configurationSetup.store"
 export default function StepCommitConfiguration({
   onBack,
   onNext, 

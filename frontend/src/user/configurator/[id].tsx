@@ -21,7 +21,7 @@ import {
   getConfigurationForConfigurator,
 } from "./base_configuration/configuration/configuration.user.api";
 
-import { useConfigurationSetupStore } from "./base_configuration/configuration/configurationSetup.store";
+import { useConfigurationSetupStore }from "@shared/domain/user/configurator/configurationSetup.store"
 import ConfigurationSetupPage from "./base_configuration/configuration/ConfigurationSetupPage";
 
 export default function ConfigurationIndex() {

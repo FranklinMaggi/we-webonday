@@ -4,23 +4,10 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../../shared/lib/api";
-import { useConfigurationSetupStore } from "../base_configuration/configuration/configurationSetup.store";
-import OwnerForm from "./OwnerForm";
+import { useConfigurationSetupStore } from "@shared/domain/user/configurator/configurationSetup.store";
 
-type OwnerDraftReadDTO = {
-  firstName?: string;
-  lastName?: string;
-  birthDate?: string;
-  contact?: {
-    secondaryMail?: string;
-  };
-  privacy?: {
-    accepted: boolean;
-    acceptedAt: string;
-    policyVersion: string;
-  };
-  complete: boolean;
-};
+import OwnerForm from "./OwnerForm";
+import type { OwnerDraftReadDTO } from "@shared/domain/owner/owner.read.types";
 
 export default function StepOwnerInfo({
   onBack,

@@ -17,16 +17,13 @@
 //
 // ======================================================
 
-type TimeRange = {
-  from: string;
-  to: string;
-};
+import type { TimeRangeFE } from "@shared/domain/business/openingHours.types";
 
 type OpeningHoursDayProps = {
   dayKey: string;
   dayLabel: string;
-  value: TimeRange[];
-  onChange: (value: TimeRange[]) => void;
+  value: TimeRangeFE[];
+  onChange: (value: TimeRangeFE[]) => void;
   disabled?: boolean;
 };
 
@@ -72,7 +69,7 @@ export function OpeningHoursDay({
 
   function updateRange(
     index: number,
-    patch: Partial<TimeRange>
+    patch: Partial<TimeRangeFE>
   ) {
     const next = [...ranges];
     next[index] = { ...next[index], ...patch };

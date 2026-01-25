@@ -13,8 +13,7 @@
 // ======================================================
 
 import { useNavigate } from "react-router-dom";
-import { useConfigurationSetupStore } from "./configurationSetup.store";
-
+import { useConfigurationSetupStore }from "@shared/domain/user/configurator/configurationSetup.store"
 export default function StepComplete() {
   const navigate = useNavigate();
   const { data } = useConfigurationSetupStore();

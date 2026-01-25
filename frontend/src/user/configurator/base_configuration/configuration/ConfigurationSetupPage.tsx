@@ -27,8 +27,7 @@
 // ======================================================
 
 import { useState } from "react";
-import { useConfigurationSetupStore } from "./configurationSetup.store";
-
+import { useConfigurationSetupStore }from "@shared/domain/user/configurator/configurationSetup.store"
 //import StepProductIntro from "./steps/StepProductIntro";
 import StepBusinessInfo from "../business/StepBusinessInfo";
 import StepOwnerInfo from "../../owner/StepOwnerInfo";

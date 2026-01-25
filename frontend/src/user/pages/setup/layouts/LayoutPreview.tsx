@@ -1,38 +1,40 @@
+
 // ======================================================
 // AI-SUPERCOMMENT — LAYOUT PREVIEW (VENDITA)
+// ======================================================
 //
 // RUOLO:
 // - Visualizzare il layout che verrà ACQUISTATO
 //
-// ATTENZIONE:
-// - Questa preview NON è decorativa
-// - Rappresenta il layout incluso nel prodotto venduto
-//
 // INVARIANTI:
-// - Deve riflettere fedelmente layoutId
-// - Nessuna logica di prezzo qui
-// - Nessuna mutazione di Configuration
-//
-// RELAZIONE:
-// - StepReview seleziona
-// - Configuration persiste
-// - Checkout/Order leggono
+// - Read only
+// - Nessuna mutazione
+// - Nessuna logica di prezzo
 // ======================================================
 
 import type { LayoutKVDTO } from "../../../../shared/lib/configurationLayout/layout.dto";
-import type { ConfigurationSetupStoreDTO } from "../../../../ConfigurationSetup.store-model";
+
+/* ======================================================
+   LOCAL DTO — PREVIEW DATA
+====================================================== */
+type LayoutPreviewData = {
+  businessName?: string;
+  phone?: string;
+
+  description?: string;
+  services?: string;
+
+  style?: string;
+  colorPreset?: string;
+};
 
 type LayoutPreviewProps = {
   layout: LayoutKVDTO;
-  data: Partial<ConfigurationSetupStoreDTO>;
+  data: LayoutPreviewData;
 };
 
 export function LayoutPreview({ layout, data }: LayoutPreviewProps) {
-  const {
-    structure,
-    bindings,
-    render,
-  } = layout;
+  const { structure, bindings, render } = layout;
 
   return (
     <div

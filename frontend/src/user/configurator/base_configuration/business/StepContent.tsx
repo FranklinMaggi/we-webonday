@@ -1,32 +1,11 @@
-
-
-
-
-
-import { useConfigurationSetupStore } from "../configuration/configurationSetup.store";
+import { useConfigurationSetupStore }from "@shared/domain/user/configurator/configurationSetup.store"
 import { OpeningHoursDay } from "./OpeningHoursDay";
-import type { OpeningHoursFE } from "../configuration/configurationSetup.store";
 
-/**
- * TRUE se TUTTI i giorni sono vuoti
- */
-export function isOpeningHoursEmpty(
-  openingHours: OpeningHoursFE
-): boolean {
-  return Object.values(openingHours).every(
-    (ranges) => ranges.length === 0
-  );
-}
 
-const DAYS = [
-  ["monday", "Lunedì"],
-  ["tuesday", "Martedì"],
-  ["wednesday", "Mercoledì"],
-  ["thursday", "Giovedì"],
-  ["friday", "Venerdì"],
-  ["saturday", "Sabato"],
-  ["sunday", "Domenica"],
-] as const;
+import {
+  DAYS_ORDER, 
+} from "@shared/domain/business/openingHours.types";
+import { DAY_LABELS } from "@src/shared/domain/business/openingHours.constants";
 
 export default function StepContent({ onNext, onBack }: any) {
   const { data, setField } = useConfigurationSetupStore();
@@ -39,11 +18,11 @@ export default function StepContent({ onNext, onBack }: any) {
 
       <h3>Orari di apertura</h3>
 
-      {DAYS.map(([dayKey, dayLabel]) => (
+      { DAYS_ORDER.map((dayKey) => (
         <OpeningHoursDay
           key={dayKey}
           dayKey={dayKey}
-          dayLabel={dayLabel}
+          dayLabel={DAY_LABELS[dayKey] ?? []}
           value={data.openingHours?.[dayKey] ?? []}
           onChange={(value) =>
             setField("openingHours", {

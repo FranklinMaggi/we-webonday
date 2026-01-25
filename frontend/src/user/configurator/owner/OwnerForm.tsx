@@ -1,8 +1,7 @@
 // ======================================================
 // FE || OWNER FORM (CANONICAL, STORE-DRIVEN)
 // ======================================================
-
-import { useConfigurationSetupStore } from "../base_configuration/configuration/configurationSetup.store";
+import { useConfigurationSetupStore } from "@shared/domain/user/configurator/configurationSetup.store";
 import { apiFetch } from "../../../shared/lib/api";
 
 export default function OwnerForm({
@@ -31,6 +30,7 @@ export default function OwnerForm({
     }
 
     const payload = {
+      configurationId: data.configurationId,
       firstName: data.ownerFirstName,
       lastName: data.ownerLastName,
       birthDate: data.ownerBirthDate || undefined,
