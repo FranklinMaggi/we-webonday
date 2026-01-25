@@ -21,7 +21,7 @@ import { useConfigurationSetupStore } from "@shared/domain/user/configurator/con
 import { fetchAvailableLayouts } from "@shared/lib/userApi/layout.user.api";
 import { updateConfiguration } from "@user/configurator/base_configuration/configuration/configuration.user.api";
 
-import type { LayoutKVDTO } from "../../../../../shared/lib/configurationLayout/layout.dto";
+import type { LayoutKVDTO } from "../../configurationLayout/layout.dto";
 
 type Props = {
   onBack: () => void;

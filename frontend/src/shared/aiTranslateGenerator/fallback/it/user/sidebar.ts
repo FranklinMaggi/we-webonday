@@ -30,9 +30,9 @@
      "sidebar.plans.empty": "Nessun piano disponibile",
    
      /* WORKSPACE */
-     "sidebar.workspace.setup": "Set Up",
-     "sidebar.workspace.engine": "Weby Engine Dev",
-     "sidebar.workspace.ai": "Weby + AI",
+
+  "sidebar.workspace.empty": "Nessun workspace attivo",
+  "sidebar.workspace.active": "Workspace attivo",
    
      /* SETTINGS */
      "sidebar.settings.disabled": "Impostazioni",

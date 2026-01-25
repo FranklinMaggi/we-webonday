@@ -2,7 +2,7 @@
 // FE || DEVELOPER ENGINE — ENGINE PREVIEW
 // ======================================================
 
-import type { EngineCanvas } from "../../shared/lib/developerEngine/engine.schema.fe";
+import type { EngineCanvas } from "./developerEngine/engine.schema.fe";
 import { NavbarRenderer } from "./sections/NavbarRenderer";
 import { HeroRenderer } from "./sections/HeroRenderer";
 import { GalleryRenderer } from "./sections/GalleryRenderer";

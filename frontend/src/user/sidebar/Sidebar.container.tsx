@@ -140,24 +140,29 @@ export default function SidebarContainer() {
           ],
     },
 
-/* ===== WORKSPACE (CONTESTO) ===== */
+/* ===== WORKSPACE (CONTESTO ATTIVO) ===== */
 {
   titleKey: "sidebar.section.workspace",
-  items:
-    configurationId
-      ? [
-          {
-            to: `/user/dashboard/configurator/${configurationId}`,
-            labelKey: "sidebar.workspace.open",
-          },
-        ]
-      : [
-          {
-            to: "#",
-            labelKey: "sidebar.workspace.empty",
-            disabled: true,
-          },
-        ],
+  titleTo: configurationId
+    ? `/user/dashboard/workspace/${configurationId}`
+    : undefined,
+
+  items: configurationId
+    ? [
+        {
+          to: `/user/dashboard/workspace/${configurationId}`,
+          labelKey:
+            businessNameByConfigurationId.get(configurationId) ??
+            "sidebar.workspace.active",
+        },
+      ]
+    : [
+        {
+          to: "#",
+          labelKey: "sidebar.workspace.empty",
+          disabled: true,
+        },
+      ],
 },
 
 

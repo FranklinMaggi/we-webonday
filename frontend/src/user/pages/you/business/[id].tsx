@@ -18,6 +18,11 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../../../shared/lib/api";
+import { buildCanvas } from "@app/webyDevEngine/developerEngine/engine.builder";
+import { EnginePreview } from "@app/webyDevEngine/EnginePreview";
+import { AVAILABLE_LAYOUTS } from "@user/workspace/tools/layout_mock/layouts.mock";
+import { adaptBusinessDraftBEToEngineInput } from "./businessDraft.adapter";
+
 
 /* =====================
    TYPES (LOCAL VIEW)
@@ -87,6 +92,16 @@ export default function UserBusinessDetail() {
   /* =====================
      RENDER
   ====================== */
+  
+const engineInput = adaptBusinessDraftBEToEngineInput({
+  configurationId,
+  draft: business,
+  layout: AVAILABLE_LAYOUTS[0],
+});
+
+const canvas = buildCanvas(engineInput);
+
+  
   return (
     <main className="business-page">
       {/* =====================
@@ -160,7 +175,10 @@ export default function UserBusinessDetail() {
       </section>
 
       <hr />
-
+      <section className="business-page__preview">
+  <h2>Anteprima sito</h2>
+  <EnginePreview canvas={canvas} />
+</section>
       {/* =====================
          ACTIONS
       ====================== */}

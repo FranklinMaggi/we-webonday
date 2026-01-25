@@ -19,7 +19,7 @@
 // ======================================================
 
 import { apiFetch } from "../api/client";
-import type { LayoutKVDTO } from "../configurationLayout/layout.dto";
+import type { LayoutKVDTO } from "../../../app/webyDevEngine/configurationLayout/layout.dto";
 
 export type FetchAvailableLayoutsParams = {
   solutionId: string;

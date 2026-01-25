@@ -4,12 +4,12 @@
 
 import { useConfigurationSetupStore } from "@shared/domain/user/configurator/configurationSetup.store";
 
-import { generatePreviewCanvases } from "@shared/lib/developerEngine/engine.orchestrator";
+import { generatePreviewCanvases } from "@src/app/webyDevEngine/developerEngine/engine.orchestrator";
 import { EnginePreview } from "@src/app/webyDevEngine/EnginePreview";
 
-import { COLOR_PRESETS } from "@src/shared/lib/configurationLayout/palette.dto";
-import { LAYOUT_STYLES } from "@src/shared/lib/configurationLayout/style.dto";
-import type { LayoutKVDTO } from "@src/shared/lib/configurationLayout/layout.dto";
+import { COLOR_PRESETS } from "@src/app/webyDevEngine/configurationLayout/palette.dto";
+import { LAYOUT_STYLES } from "@src/app/webyDevEngine/configurationLayout/style.dto";
+import type { LayoutKVDTO } from "@src/app/webyDevEngine/configurationLayout/layout.dto";
 
 import { slugify } from "@shared/utils/slugify";
 

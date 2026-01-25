@@ -12,7 +12,7 @@
 // - Nessuna logica di prezzo
 // ======================================================
 
-import type { LayoutKVDTO } from "../../../../shared/lib/configurationLayout/layout.dto";
+import type { LayoutKVDTO } from "../configurationLayout/layout.dto";
 
 /* ======================================================
    LOCAL DTO — PREVIEW DATA
