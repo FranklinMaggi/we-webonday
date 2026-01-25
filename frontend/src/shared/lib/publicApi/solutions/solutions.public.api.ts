@@ -25,12 +25,12 @@
 import { apiFetch } from "../../api";
 import { API_BASE } from "../../config";
 
-import {type PublicSolutionDTO } from "../../../../marketing/pages/buyflow/api/DataTransferObject/solution.public.dto";
+import { type PublicSolutionDTO } from "@src/marketing/pages/buyflow/api/DataTransferObject/solution.public.dto";
 /* ======================================================
    DTO — SOLUTION (LIST)
    → usato per catalogo / cards
 ====================================================== */
-import { type OpeningHoursFE } from "@src/shared/domain/business/openingHours.types";
+import { type OpeningHoursFE } from "@shared/domain/business/openingHours.types";
 /* ======================================================
    DTO — SOLUTION (DETAIL)
    → usato da configuratore / pagina solution
