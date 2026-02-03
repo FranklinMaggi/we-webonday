@@ -42,6 +42,6 @@ export interface BusinessDraftInputDTO {
    businessDescriptionTags: string[];
    businessServiceTags: string[];
  
-   verified: false;
+
  }
  

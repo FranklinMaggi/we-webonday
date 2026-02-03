@@ -2,6 +2,8 @@ import { z } from "zod";
 import { OpeningHoursSchema } from "@domains/GeneralSchema/hours.opening.schema";
 import { ContactSchema } from "@domains/GeneralSchema/contact.schema";
 import { AddressSchema } from "@domains/GeneralSchema/address.schema";
+import type { VerificationState } from "@domains/GeneralSchema/verification-state.type";
+
 export const CreateBusinessDraftSchema = z.object({
   configurationId: z.string(),
   solutionId: z.string(),

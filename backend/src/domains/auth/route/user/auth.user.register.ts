@@ -3,16 +3,6 @@
  * REGISTER USER (PASSWORD)
  * POST /api/user/register
  * ============================================================
- *
- * RUOLO:
- * - Registrare un nuovo utente password-based
- * - Delegare TUTTA la creazione account a createUser
- *
- * INVARIANTI:
- * - Nessuna scrittura KV diretta
- * - Nessuna validazione UserSchema qui
- * - createUser è la Source of Truth
- * ============================================================
  */
 
 import { z } from "zod";
@@ -20,11 +10,36 @@ import type { Env } from "../../../../types/env";
 
 import { buildSessionCookie } from "../../session/auth.session.cookies";
 import { mapPasswordLogin, createUser } from "@domains/auth";
-import { json } from "../helper/https";
+import { getCorsHeaders } from "@domains/auth/cors/auth.cors";
+
+/**
+ * Helper JSON response standard + CORS
+ */
+function json(
+  body: unknown,
+  request: Request,
+  env: Env,
+  status = 200,
+  extraHeaders?: HeadersInit
+): Response {
+  const headers = new Headers({
+    "Content-Type": "application/json",
+    ...extraHeaders,
+  });
+
+  const cors = getCorsHeaders(request, env, "HARD");
+  for (const [k, v] of Object.entries(cors)) {
+    headers.set(k, v);
+  }
+
+  return new Response(JSON.stringify(body), {
+    status,
+    headers,
+  });
+}
 
 /**
  * Input schema — SOLO per questa route
- * (NON dominio User)
  */
 const RegisterInputSchema = z.object({
   email: z.string().email(),
@@ -34,7 +49,10 @@ const RegisterInputSchema = z.object({
 export async function registerUser(
   request: Request,
   env: Env
-) {
+): Promise<Response> {
+  /* =====================
+     1️⃣ READ BODY
+  ====================== */
   let raw: string;
 
   try {
@@ -48,11 +66,13 @@ export async function registerUser(
     );
   }
 
+  /* =====================
+     2️⃣ VALIDATE INPUT
+  ====================== */
   let input;
   try {
     input = RegisterInputSchema.parse(JSON.parse(raw));
   } catch (err) {
-    console.log("[REGISTER][INVALID_INPUT]", raw, err);
     return json(
       {
         ok: false,
@@ -67,9 +87,9 @@ export async function registerUser(
 
   const { email, password } = input;
 
-  // =====================
-  // 2️⃣ Hash password
-  // =====================
+  /* =====================
+     3️⃣ HASH PASSWORD
+  ====================== */
   const hashBuf = await crypto.subtle.digest(
     "SHA-256",
     new TextEncoder().encode(password)
@@ -79,41 +99,47 @@ export async function registerUser(
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 
-  // =====================
-  // 3️⃣ Build AuthIdentity
-  // =====================
+  /* =====================
+     4️⃣ BUILD IDENTITY
+  ====================== */
   const identity = mapPasswordLogin(
-    email,
-    passwordHash
+    email
   );
 
-  // =====================
-  // 4️⃣ Create or resolve user
-  // =====================
-  const { userId, isNew } = await createUser(env, identity);
-
-if (!isNew) {
-  return json(
-    {
-      ok: false,
-      error: "EMAIL_ALREADY_REGISTERED",
-    },
-    request,
+  /* =====================
+     5️⃣ CREATE USER
+  ====================== */
+  const { userId, isNew } = await createUser(
     env,
-    409
+    identity,
+    {passwordHash}
   );
-}
 
-  // =====================
-  // 5️⃣ Create session
-  // =====================
+  if (!isNew) {
+    return json(
+      {
+        ok: false,
+        error: "EMAIL_ALREADY_REGISTERED",
+      },
+      request,
+      env,
+      409
+    );
+  }
+
+  /* =====================
+     6️⃣ CREATE SESSION
+  ====================== */
   const cookie = buildSessionCookie(
     env,
     userId,
     request
   );
 
-  const response = json(
+  /* =====================
+     7️⃣ RESPONSE
+  ====================== */
+  return json(
     {
       ok: true,
       userId,
@@ -122,8 +148,7 @@ if (!isNew) {
     },
     request,
     env,
-    201
+    201,
+    { "Set-Cookie": cookie }
   );
-  response.headers.set("Set-Cookie", cookie);
-  return response;
 }

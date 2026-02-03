@@ -10,6 +10,14 @@
 // - Sidebar NON fa fetch per-item
 // ======================================================
 
+// ======================================================
+// SIDEBAR DOMAIN
+// - Profile-driven
+// - Owner is a sub-domain
+// - "YOU" è deprecato semanticamente
+// ======================================================
+
+
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 
@@ -103,20 +111,20 @@ export default function SidebarContainer() {
   const sections: SidebarSectionVM[] = [
     /* ===== YOU ===== */
     {
-      titleKey: "sidebar.section.you",
+      titleKey: "sidebar.section.profile",
       titleTo: "/user/dashboard/you",
       items: [
         {
           to: "/user/dashboard/you/profile",
-          labelKey: "sidebar.you.profile",
+          labelKey: "sidebar.profile.owner",
         },
         {
           to: "/user/dashboard/you/account",
-          labelKey: "sidebar.you.account",
+          labelKey: "sidebar.profile.account",
         },
         {
           to: verificationTo,
-          labelKey: "sidebar.you.verification",
+          labelKey: "sidebar.profile.verification",
         },
       ],
     },

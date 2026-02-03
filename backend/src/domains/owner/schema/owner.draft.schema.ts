@@ -33,7 +33,11 @@ export const OwnerDraftSchema = z.object({
   /* META */
   source: z.enum(["google", "manual"]),
  
-  verified: z.boolean().default(false),
+  verification: z.enum([
+    "PENDING",
+    "ACCEPTED",
+    "REJECTED",
+  ]).default("PENDING"),
   complete: z.boolean(),
 
   createdAt: z.string(),

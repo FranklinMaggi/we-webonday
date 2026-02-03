@@ -29,7 +29,7 @@ import { requireAuthUser } from "@domains/auth";
 import type { Env } from "../../../types/env";
 import { BusinessDraftSchema } from "../schema/business.draft.schema";
 import { OwnerDraftSchema } from "@domains/owner/schema/owner.draft.schema";
-
+import { OWNER_DRAFT_KEY } from "@domains/owner/keys";
 /* =========================
    INPUT SCHEMA
 ========================= */
@@ -137,7 +137,7 @@ export async function reopenBusinessDraft(
     `BUSINESS_DRAFT:${configurationId}`,
     JSON.stringify({
       ...parsedBusiness.data,
-      // forza riapertura del flusso guidato
+      verification: "PENDING", 
       complete: false,
       updatedAt: new Date().toISOString(),
     })
@@ -150,7 +150,7 @@ export async function reopenBusinessDraft(
   // NB:
   // OwnerDraft è attualmente globale per user.
   // Se in futuro diventa per-business, la key va versionata.
-  const ownerKey = `BUSINESS_OWNER_DRAFT:${session.user.id}`;
+  const ownerKey = OWNER_DRAFT_KEY(configurationId);
   const rawOwner = await env.BUSINESS_KV.get(ownerKey);
 
   if (rawOwner) {
@@ -162,6 +162,7 @@ export async function reopenBusinessDraft(
       ownerKey,
       JSON.stringify({
         ...ownerDraft,
+        verification: "PENDING",   // reset stato verifica
         complete: false,
         updatedAt: new Date().toISOString(),
       })

@@ -59,5 +59,5 @@ export interface BusinessDraftInputDTO {
   /* =====================
      STATUS (INVARIANT)
   ====================== */
-  verified: false;
+verification: "PENDING" | "ACCEPTED" | "REJECTED";
 }

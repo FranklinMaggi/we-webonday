@@ -20,7 +20,7 @@ import { type OwnerDraftReadResponse } from "../DataTransferObject/owner-draft.o
 ====================================================== */
 export function useMyOwnerDraft(configurationId?: string) {
   const [data, setData] =
-    useState<OwnerDraftReadResponse["ownerDraft"] | null>(null);
+    useState<OwnerDraftReadResponse["owner"] | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,8 +45,8 @@ export function useMyOwnerDraft(configurationId?: string) {
 
         if (!alive) return;
 
-        if (res?.ok && res.ownerDraft) {
-          setData(res.ownerDraft);
+        if (res?.ok && res.owner) {
+          setData(res.owner);
         } else {
           setData(null);
         }

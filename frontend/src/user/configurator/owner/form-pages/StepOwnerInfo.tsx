@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useConfigurationSetupStore } from
   "@shared/domain/user/configurator/configurationSetup.store";
-  import { useMyOwnerDraft } from "../api/get.my-owner-draft";
+import { useMyOwnerDraft } from "../api/get.my-owner-draft";
 import OwnerForm from "./OwnerForm";
 
 export default function StepOwnerInfo({
@@ -29,6 +29,13 @@ export default function StepOwnerInfo({
       setField("ownerPhone", ownerDraft.contact.phoneNumber);
     }
 
+    if (ownerDraft.contact?.secondaryMail) {
+      setField(
+        "ownerSecondaryMail",
+        ownerDraft.contact.secondaryMail
+      );
+    }
+
     if (ownerDraft.address) {
       setField("ownerAddress", {
         street: ownerDraft.address.street ?? "",
@@ -38,14 +45,6 @@ export default function StepOwnerInfo({
         region: ownerDraft.address.region ?? "",
         zip: ownerDraft.address.zip ?? "",
         country: ownerDraft.address.country ?? "",
-      });
-    }
-
-    if (ownerDraft.privacy) {
-      setField("ownerPrivacy", {
-        accepted: ownerDraft.privacy.accepted,
-        acceptedAt: ownerDraft.privacy.acceptedAt,
-        policyVersion: ownerDraft.privacy.policyVersion,
       });
     }
   }, [ownerDraft, setField]);

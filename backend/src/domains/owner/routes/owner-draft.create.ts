@@ -99,7 +99,7 @@ export async function createBusinessOwnerDraft(
     source: input.source ?? existing?.source ?? "manual",
 
 
-    verified: false,
+    verification:"PENDING",
     complete: isOwnerDraftComplete({
       firstName: input.firstName ?? existing?.firstName,
       lastName: input.lastName ?? existing?.lastName,

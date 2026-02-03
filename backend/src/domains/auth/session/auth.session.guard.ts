@@ -22,6 +22,7 @@
 import type { Env } from "../../../types/env";
 import { getUserIdFromSession } from "./auth.session.reader";
 import { emitAuthLifecycleEvent } from "../lifecycle/auth.lifecycle.ar";
+import { USER_KEY } from "@domains/legal/user/keys";
 /**
  * HARD AUTH GUARD
  * Usare SOLO per endpoint protetti
@@ -33,7 +34,9 @@ export async function requireAuthUser(
   const userId = getUserIdFromSession(request);
   if (!userId) return null;
 
-  const raw = await env.ON_USERS_KV.get(`USER:${userId}`);
+  const raw = await env.ON_USERS_KV.get(
+    USER_KEY(userId)
+  );
   if (!raw) return null;
 
   try {

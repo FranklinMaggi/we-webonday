@@ -1,21 +1,24 @@
 // @/domains/business/keys.ts
 // ======================================================
-// DOMAIN || BUSINESS || KV KEYS (PACK)
+// DOMAIN || BUSINESS || KV KEYS (CANONICAL)
 // ======================================================
 //
-// RUOLO:
-// - Single source of truth per tutte le chiavi KV business
-// - Vietato definire chiavi inline nei file
-//
-// USO:
-// import { BUSINESS_DRAFT_KEY } from "../keys";
+// REGOLE:
+// - Tutte le entità Business sono OWNED da Configuration
+// - Nessuna key per userId
+// - configurationId = ID canonico
 // ======================================================
 
+/**
+ * Draft del Business (fase configuratore)
+ * ID === configurationId
+ */
 export const BUSINESS_DRAFT_KEY = (configurationId: string) =>
-    `BUSINESS_DRAFT:${configurationId}`;
-  
-  export const BUSINESS_KEY = (businessId: string) =>
-    `BUSINESS:${businessId}`;
-  
-  export const BUSINESS_OWNER_DRAFT_KEY = (userId: string) =>
-    `BUSINESS_OWNER_DRAFT:${userId}`;// @/domains/business/keys.ts
+  `BUSINESS_DRAFT:${configurationId}`;
+
+/**
+ * Business finale (post-verifica)
+ * ID === configurationId
+ */
+export const BUSINESS_KEY = (configurationId: string) =>
+  `BUSINESS:${configurationId}`;

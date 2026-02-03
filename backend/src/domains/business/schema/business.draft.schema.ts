@@ -5,7 +5,7 @@ import { z } from "zod";
 import { OpeningHoursSchema } from "@domains/GeneralSchema/hours.opening.schema";
 import { ContactSchema } from "@domains/GeneralSchema/contact.schema";
 import { AddressSchema } from "@domains/GeneralSchema/address.schema";
-
+import { VerificationState } from "@domains/GeneralSchema/verification-state.type";
 export const BusinessDraftSchema = z.object({
   /* Identity */
   id: z.string().min(1),
@@ -33,7 +33,12 @@ export const BusinessDraftSchema = z.object({
   
 
   /* Status */
-  verified: z.literal(false),
+  verification: z.enum([
+    "PENDING",
+    "ACCEPTED",
+    "REJECTED",
+  ]).default("PENDING"),
+  
   complete: z.boolean().default(false),
 
   createdAt: z.string().datetime(),

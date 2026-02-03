@@ -51,9 +51,5 @@ export type BusinessDraftBaseReadDTO = {
   businessDescriptionTags: string[];
   businessServiceTags: string[];
 
-  /* =====================
-     STATUS
-  ====================== */
-  verified: false;
-  complete:boolean; 
+
 };

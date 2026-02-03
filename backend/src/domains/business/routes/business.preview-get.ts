@@ -13,7 +13,7 @@
 import { json } from "@domains/auth/route/helper/https";
 import { requireAuthUser } from "@domains/auth";
 import type { Env } from "../../../types/env";
-
+import { OWNER_DRAFT_KEY } from "@domains/owner/keys";
 import { BusinessDraftSchema } from "../schema/business.draft.schema";
 import { OwnerDraftSchema } from "@domains/owner/schema/owner.draft.schema";
 import { mapBusinessPreview } from "../mappers/business.preview.mapper";
@@ -97,7 +97,7 @@ export async function getBusinessPreview(
   ====================== */
   let ownerDraft;
   const rawOwner = await env.BUSINESS_KV.get(
-    `BUSINESS_OWNER_DRAFT:${session.user.id}`
+    OWNER_DRAFT_KEY(configurationId),
   );
 
   if (rawOwner) {

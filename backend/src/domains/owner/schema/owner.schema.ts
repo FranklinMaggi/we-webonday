@@ -20,12 +20,11 @@ export const OwnerSchema = OwnerDraftSchema.extend({
   /* =========================
      STATO REALE
   ========================= */
-  status: z.enum([
-    "pending",     // draft completo ma non verificato
-    "verified",    // documenti approvati
-    "rejected",    // verifica fallita
-    "suspended",
-  ]),
+  verification: z.enum([
+   "PENDING",
+   "ACCEPTED",
+   "REJECTED",
+ ]).default("PENDING"),
 
   verifiedAt: z.string().datetime().optional(),
 });

@@ -1,6 +1,6 @@
 export type OwnerDraftReadResponse = {
   ok: true;
-  ownerDraft: {
+  owner: {
     id: string;
     firstName: string;
     lastName: string;

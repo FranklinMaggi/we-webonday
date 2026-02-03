@@ -34,12 +34,12 @@ export const BusinessSchema = BusinessDraftSchema.extend({
   /* =========================
      STATUS (REALE)
   ========================= */
-  status: z.enum([
-    "pending",     // creato ma non verificato
-    "verified",    // documenti approvati
-    "active",      // operativo
-    "suspended",
-  ]),
+  verification: z.enum([
+   "PENDING",
+   "ACCEPTED",
+   "REJECTED",
+ ]).default("PENDING"),
+ 
 
   verifiedAt: z.string().datetime().optional(),
 });

@@ -26,7 +26,7 @@ import type { Env } from "../../../types/env";
 import { BusinessSchema } from "../schema/business.schema";
 import { BusinessDraftSchema } from "../schema/business.draft.schema";
 import { OwnerDraftSchema } from "@domains/owner/schema/owner.draft.schema";
-
+import { OWNER_DRAFT_KEY } from "@domains/owner/keys";
 /* =========================
    KV KEYS
 ========================= */
@@ -158,8 +158,7 @@ export async function initBusinessVerification(
      (GLOBAL PER USER)
   ====================== */
   const ownerRaw = await env.BUSINESS_KV.get(
-    `BUSINESS_OWNER_DRAFT:${userId}`
-  );
+    OWNER_DRAFT_KEY(configurationId));
 
   if (!ownerRaw) {
     return json(
@@ -249,7 +248,7 @@ export async function initBusinessVerification(
     {
       ok: true,
       businessId: business.id,
-      status: business.status,
+      status: business.verification,
     },
     request,
     env

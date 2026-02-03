@@ -32,10 +32,6 @@ const { suggestions, hasSuggestions } =
       return;
     }
 
-    if (!data.ownerPrivacy.accepted) {
-      alert("Devi accettare la privacy");
-      return;
-    }
     if (
       !data.ownerAddress?.street?.trim() ||
       !data.ownerAddress?.number?.trim() ||
@@ -62,11 +58,7 @@ const { suggestions, hasSuggestions } =
         phoneNumber: data.ownerPhone || undefined,
       },
     
-      privacy: {
-        ...data.ownerPrivacy,
-        subject: "owner",
-        source: "owner-form",
-      },
+     
     };
     
 
@@ -242,23 +234,6 @@ const { suggestions, hasSuggestions } =
 </div>
 
 
-      {/* PRIVACY */}
-      <label>
-      <input
-  type="checkbox"
-  checked={data.ownerPrivacy?.accepted ?? false}
-  onChange={(e) =>
-    setField("ownerPrivacy", {
-      accepted: e.target.checked,
-      acceptedAt: e.target.checked
-        ? new Date().toISOString()
-        : "",
-      policyVersion: "v1",
-    })
-  }
-/>
-        Accetto il trattamento dei dati personali
-      </label>
 
       <div className="actions">
         <button onClick={onBack}>Indietro</button>

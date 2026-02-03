@@ -52,11 +52,11 @@ export const ConfigurationSchema = z.object({
   data: ConfigurationWorkspaceSchema.default({}),
 
   status: z.enum(CONFIGURATION_STATUS),
-
+  complete:z.boolean().default(false),  
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
   deletedAt: z.string().optional(),
 });
-
+complete: z.boolean().default(false)
 export type ConfigurationDTO =
   z.infer<typeof ConfigurationSchema>;

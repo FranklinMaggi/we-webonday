@@ -1,8 +1,8 @@
 # STRUTTURA FUNZIONI SIDEBAR USER
-
+###obiettivo : rendere leggibile il codice , vediamo cosa spostare , per le api usiamo come stile di nome lo stesso del BE 
 ###prima etnità generata è **CONFIGURATION:configurationId** nella chiave **CONFIGURATION_KV** ogni configuration rispetta lo schema ; 
 ###Ogni configurationId viene salvato contestualmente in **USER_CONFIGURATIONS:UserId**
-###ogni configurazione nella fase iniziale di creazione asusme:
+### ogni configurazione nella fase iniziale di creazione asusme:
 ConfigurationBaseInputSchema = z.object({
   solutionId: z.string().min(1),
   productId: z.string().min(1),
@@ -46,14 +46,82 @@ export const UserSchema = z.object({
 }); 
 Il quale attualmente non riceve configurationIds: z.array(z.string().uuid()).optional(); quindi da user attualmete non posso ricevere la lista di configuration che riesco a leggere in USER_CONFIGURATIONS:"UserId" , però attualmente UserId combacia con la lista di configurazioni per user 
 
+# Sidebar Domain — Decisione Architetturale
 
+- Sidebar è un DOMINIO stabile
+- Governa la navigazione del profilo utente
+- NON dipende da pages/*
+- Le pagine collegate alla sidebar rappresentano il dominio PROFILE
+
+Mappa concettuale:
+- Profile overview (ex YOU)
+- Owner profile
+- Account
+- Verification
+
+Qualsiasi nuova sezione utente passa da qui.
 
 
 ##LISTA FUNZIONI ASSOCIATE A SIDEBAR
 
 
-mostra lista dei business **copmlete** nella sidebar
+mostra lista dei business **complete** nella sidebar - sezione business
 
-sidebar.read-copmlete-business-list.ts
+sidebar.read-user-configuration-list.ts
+Mostra tutte le configurations associate ad un User ; 
 
-quindi per prima cosa dobbiamo rendere leggibile il codice , vediamo cosa spostare , per le api usiamo come stile di nome lo stesso del BE , quindi sidebar.read-complete-business-list.ts , sidebar.read-single-complete-business.ts , sidebar.read-user-account.ts , sidebar.read-incomplete-configuration-list , sidebar.read-single-active-co nfiguration.ts , e via dicendo ci serve una struttura simile per account(che corrisponde a userId) : funzioni read-my-account , edit-my-account( privacy e rtemini , mail , passowrd ) , , profilo (che corrisponde a owner), business (che corrisponde a businessDraft , configuration(che 
+per ogni configuration facciamo 
+
+sidebar.read-business-complete-list.ts
+Mostra solo business che hanno (BUSINESS_DRAFT:configurationId.copmlete:true && 
+OWNER_DRAFT:configurationId.complete:true )
+e se 
+(BUSINESS_DRAFT:configurationId.verification:"ACCEPTED")  
+nella sidebar item businessName:green
+(BUSINESS_DRAFT:configurationId.verification:"PENDING") 
+nella sidebar item businessName:green
+(BUSINESS_DRAFT:configurationId.verification:"REJECTED") 
+
+MODIFICHE DA FARE : INSERIRE IN BusinessDraftSchema verification:z.enum("tre stati")alla creazione di businessDraft -> verification:"PENDING"
+modificare anche lettura e update ? 
+
+
+
+sidebar.read-owner-complete-list.ts
+Mostra in Profile solo owner che hanno (BUSINESS_DRAFT:configurationId.copmlete:true && 
+OWNER_DRAFT:configurationId.copmlete:true )
+e se 
+(OWNER_DRAFT:configurationId.verification:"ACCEPTED")  
+nella sidebar item businessName:green
+(OWNER_DRAFT:configurationId.verification:"PENDING") 
+nella sidebar item businessName:green
+(OWNER_DRAFT:configurationId.verification:"REJECTED") 
+
+MODIFICHE DA FARE : INSERIRE IN ownerDraftSchema verification:z.enum("tre stati")alla creazione di businessDraft -> verification:"PENDING"
+
+modificato attualmente 
+
+1)  Backend , 
+
+tre status , creation , e lettura , update per BUSINESS_DRAFT e OWNER_DRAFT , 
+
+1) Frontend , 
+Associare lettura per generazione dinamica di sidebar 
+
+2) Backend , 
+Inserire slot documenti in ONWER_DRAFT BUSINESS_DRAFT  per ssociare processo di verifica -> cambiare solo funzioni di upload ownerdocuemnt , e upload business document 
+
+
+
+
+
+
+sidebar.read-user-uncomplete-list.ts
+Mostra solo i business con complete:false -> li posizioniamo sotto element : 
+sidebar.read-single-complete-business.ts->
+
+
+
+
+
+ sidebar.read-user-account.ts , sidebar.read-incomplete-configuration-list , sidebar.read-single-active-co nfiguration.ts , e via dicendo ci serve una struttura simile per account(che corrisponde a userId) : funzioni read-my-account , edit-my-account( privacy e rtemini , mail , passowrd ) , , profilo (che corrisponde a owner), business (che corrisponde a businessDraft , configuration(che 

@@ -67,7 +67,7 @@ export async function getBusinessOwnerDraft(
     contact: parsed.contact,
 
     source: parsed.source,
-    verified: parsed.verified,
+    verification:parsed.verification,
     complete: parsed.complete,
   };
 

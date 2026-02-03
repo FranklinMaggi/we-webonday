@@ -135,11 +135,7 @@ export default function BusinessForm({
       return;
     }
 
-    if (!data.privacy?.accepted) {
-      alert("Devi accettare il trattamento dei dati");
-      console.groupEnd();
-      return;
-    }
+   
 
     if (!hasAtLeastOneOpeningRange(data.openingHours)) {
       alert("Inserisci almeno un orario di apertura");
@@ -207,11 +203,7 @@ export default function BusinessForm({
       businessDescriptionTags: data.businessDescriptionTags,
       businessServiceTags: data.businessServiceTags,
 
-      privacy: {
-        accepted: true,
-        acceptedAt: data.privacy.acceptedAt,
-        policyVersion: data.privacy.policyVersion,
-      },
+    
     };
 
     console.log("PAYLOAD → BE", payload);
@@ -265,24 +257,6 @@ export default function BusinessForm({
         onChange={(e) => setField("phone", e.target.value)}
       />
 
-      {/* ================= PRIVACY ================= */}
-
-      <label>
-        <input
-          type="checkbox"
-          checked={data.privacy.accepted}
-          onChange={(e) =>
-            setField("privacy", {
-              accepted: e.target.checked,
-              acceptedAt: e.target.checked
-                ? new Date().toISOString()
-                : "",
-              policyVersion: "v1",
-            })
-          }
-        />
-        Accetto il trattamento dei dati personali
-      </label>
 
       {/* ================= INDIRIZZO ================= */}
       <fieldset className="business-address">

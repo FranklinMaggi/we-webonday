@@ -47,9 +47,9 @@ export type BusinessDraftBaseReadDTO = {
   ====================== */
   businessDescriptionTags: string[];
   businessServiceTags: string[];
-
+  complete: boolean;
   /* =====================
      STATUS
   ====================== */
-  verified: false;
+  verification: "PENDING" | "ACCEPTED" | "REJECTED";
 };

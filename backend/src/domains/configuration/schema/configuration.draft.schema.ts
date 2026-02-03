@@ -18,8 +18,6 @@ export const ConfigurationBaseInputSchema = z.object({
 
   solutionId: z.string().min(1),
   productId: z.string().min(1),
- 
-  // PREFILL VISITOR (non certificato)
   businessName: z.string().min(2).max(80),
 
 });

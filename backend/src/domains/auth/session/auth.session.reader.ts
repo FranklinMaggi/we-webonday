@@ -13,7 +13,7 @@ import type { Env } from "../../../types/env";
    - Questo file NON gestisce visitor.
    - Questo file NON fa fallback automatici.
 ====================================================== */
-
+import { USER_KEY } from "@domains/legal/user/keys";
 /* ======================================================
    LOW LEVEL — parse cookie only
 ====================================================== */
@@ -36,7 +36,9 @@ export async function getUserFromSession(
   const userId = getUserIdFromSession(request);
   if (!userId) return null;
 
-  const raw = await env.ON_USERS_KV.get(`USER:${userId}`);
+  const raw = await env.ON_USERS_KV.get(
+    USER_KEY(userId)
+  );
   if (!raw) return null;
 
   try {

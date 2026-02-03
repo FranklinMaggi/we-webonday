@@ -3,37 +3,40 @@
 // ======================================================
 
 import {
-  USER_KEY,
-  USER_EMAIL_INDEX,
-  USER_PROVIDER_INDEX,
-} from "../../../legal/user/keys";
+  AUTH_USER_KEY,
+  AUTH_USER_EMAIL_INDEX,
+  AUTH_USER_PROVIDER_INDEX,
+} from "@domains/auth/keys";
+
 import { UserBaseSchema } from "./schema/user.base.schema";
 import type { AuthIdentity } from "../../identity/auth.identity.types";
 import type { Env } from "../../../../types/env";
 
 export async function createUser(
   env: Env,
-  identity: AuthIdentity
+  identity: AuthIdentity,
+  options?: {
+    passwordHash?: string;
+  }
 ): Promise<{ userId: string; isNew: boolean }> {
   const email = identity.email.toLowerCase();
 
-  // =====================
-  // 1️⃣ PROVIDER LOOKUP
-  // =====================
-  const providerKey = USER_PROVIDER_INDEX(
+  /* =====================
+     1️⃣ PROVIDER LOOKUP
+  ====================== */
+  const providerKey = AUTH_USER_PROVIDER_INDEX(
     identity.provider,
     identity.providerUserId
   );
 
   const existingUserId = await env.ON_USERS_KV.get(providerKey);
-
   if (existingUserId) {
     return { userId: existingUserId, isNew: false };
   }
 
-  // =====================
-  // 2️⃣ BUILD USER (RAW)
-  // =====================
+  /* =====================
+     2️⃣ BUILD USER (RAW)
+  ====================== */
   const userId = crypto.randomUUID();
   const now = new Date().toISOString();
 
@@ -41,11 +44,11 @@ export async function createUser(
     id: userId,
     email,
 
-    // ✅ PASSWORD HASH SOLO SE PROVIDER = password
-  ...(identity.provider === "password"
-    ? { passwordHash: identity.providerUserId }
-    : {}),
-    
+    // ✅ passwordHash SOLO se passato esplicitamente
+    ...(options?.passwordHash
+      ? { passwordHash: options.passwordHash }
+      : {}),
+
     authProviders: [
       {
         provider: identity.provider,
@@ -68,9 +71,9 @@ export async function createUser(
     createdAt: now,
   };
 
-  // =====================
-  // 3️⃣ VALIDATION (SCHEMA)
-  // =====================
+  /* =====================
+     3️⃣ VALIDATION (SCHEMA)
+  ====================== */
   let user;
   try {
     user = UserBaseSchema.parse(userRaw);
@@ -79,19 +82,17 @@ export async function createUser(
     throw new Error("USER_SCHEMA_INVALID");
   }
 
-  console.log("[CREATE_USER] userId =", user.id);
-
-  // =====================
-  // 4️⃣ PERSISTENCE (KV)
-  // =====================
+  /* =====================
+     4️⃣ PERSISTENCE (KV)
+  ====================== */
   await Promise.all([
     env.ON_USERS_KV.put(
-      USER_KEY(user.id),
+      AUTH_USER_KEY(user.id),
       JSON.stringify(user)
     ),
 
     env.ON_USERS_KV.put(
-      USER_EMAIL_INDEX(user.email),
+      AUTH_USER_EMAIL_INDEX(user.email),
       user.id
     ),
 
@@ -101,10 +102,8 @@ export async function createUser(
     ),
   ]);
 
-  console.log("[CREATE_USER] done");
-
-  // =====================
-  // 5️⃣ RESPONSE
-  // =====================
+  /* =====================
+     5️⃣ RESPONSE
+  ====================== */
   return { userId: user.id, isNew: true };
 }

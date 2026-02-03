@@ -179,7 +179,7 @@ export async function createBusinessDraft(
     
 
       complete,
-      verified: false as const,
+      verification: "PENDING",
 
       createdAt: now,
       updatedAt: now,
@@ -226,14 +226,9 @@ export async function createBusinessDraft(
     businessServiceTags:
       input.businessServiceTags ??
       existing.businessServiceTags,
-
- 
-
-    // invarianti
+// invarianti
     solutionId: existing.solutionId,
     productId: existing.productId,
-
-    verified: false as const,
     createdAt: existing.createdAt,
     updatedAt: now,
   };

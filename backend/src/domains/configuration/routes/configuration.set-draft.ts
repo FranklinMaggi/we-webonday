@@ -1,73 +1,50 @@
 // ======================================================
-// BE || CONFIGURATION — SET DRAFT
+// BE || CONFIGURATION — SET DRAFT (TECHNICAL ONLY)
 // ======================================================
 //
 // RUOLO:
-// - Riporta una Configuration allo stato DRAFT
-// - Consente la riapertura del configurator
+// - Riporta l’utente nel WORKSPACE tecnico
+// - NON riapre semanticamente Business / Owner
 //
 // INVARIANTI:
-// - Auth obbligatoria
-// - Configuration = source of truth
+// - complete è DERIVATO (NON toccato)
+// - Draft sono source of truth
 // - Operazione IDEMPOTENTE
-// - NON modifica BusinessDraft
-// - NON modifica OwnerDraft
-//
-// FLOW:
-// Business View → "Modifica sito" → SET DRAFT → WORKSPACE
 // ======================================================
 
 import type { Env } from "../../../types/env";
 import type { ConfigurationDTO } from "../schema/configuration.schema";
 import { requireAuthUser } from "@domains/auth";
 import { json } from "@domains/auth/route/helper/https";
+import { CONFIGURATION_KEY } from "../keys";
 
-// =========================
-// INPUT DTO
-// =========================
+/* =========================
+   INPUT DTO
+========================= */
 type SetDraftInputDTO = {
   configurationId: string;
 };
 
-// =========================
-// KV HELPERS
-// =========================
-const configurationKey = (id: string) =>
-  `CONFIGURATION:${id}`;
-
-// ======================================================
-// HANDLER
-// ======================================================
 export async function setConfigurationDraft(
   request: Request,
   env: Env
-) {
-  // =========================
-  // AUTH
-  // =========================
+): Promise<Response> {
+  /* =====================
+     1️⃣ AUTH
+  ====================== */
   const session = await requireAuthUser(request, env);
   if (!session) {
-    return json(
-      { ok: false, error: "UNAUTHORIZED" },
-      request,
-      env,
-      401
-    );
+    return json({ ok: false, error: "UNAUTHORIZED" }, request, env, 401);
   }
 
-  // =========================
-  // INPUT
-  // =========================
+  /* =====================
+     2️⃣ INPUT
+  ====================== */
   let body: SetDraftInputDTO;
   try {
     body = await request.json();
   } catch {
-    return json(
-      { ok: false, error: "INVALID_JSON" },
-      request,
-      env,
-      400
-    );
+    return json({ ok: false, error: "INVALID_JSON" }, request, env, 400);
   }
 
   if (!body?.configurationId) {
@@ -79,12 +56,12 @@ export async function setConfigurationDraft(
     );
   }
 
-  // =========================
-  // LOAD CONFIGURATION
-  // =========================
+  /* =====================
+     3️⃣ LOAD CONFIGURATION
+  ====================== */
   const configuration =
     (await env.CONFIGURATION_KV.get(
-      configurationKey(body.configurationId),
+      CONFIGURATION_KEY(body.configurationId),
       "json"
     )) as ConfigurationDTO | null;
 
@@ -106,9 +83,9 @@ export async function setConfigurationDraft(
     );
   }
 
-  // =========================
-  // GUARD — IDEMPOTENZA
-  // =========================
+  /* =====================
+     4️⃣ IDEMPOTENCY
+  ====================== */
   if (configuration.status === "DRAFT") {
     return json(
       {
@@ -121,31 +98,29 @@ export async function setConfigurationDraft(
       env
     );
   }
-  // =========================
-  // SET DRAFT
-  // =========================
-  const now = new Date().toISOString();
 
+  /* =====================
+     5️⃣ UPDATE (TECHNICAL)
+  ====================== */
   const updated: ConfigurationDTO = {
     ...configuration,
-    status: "CONFIGURATION_IN_PROGRESS",
-    updatedAt: now,
+    status: "DRAFT", // ⚠️ solo routing / UI
+    updatedAt: new Date().toISOString(),
   };
 
   await env.CONFIGURATION_KV.put(
-    configurationKey(body.configurationId),
+    CONFIGURATION_KEY(configuration.id),
     JSON.stringify(updated)
   );
 
-
-  // =========================
-  // RESPONSE
-  // =========================
+  /* =====================
+     6️⃣ RESPONSE
+  ====================== */
   return json(
     {
       ok: true,
       configurationId: configuration.id,
-      status: "CONFIGURATION_IN_PROGRESS",
+      status: "DRAFT",
     },
     request,
     env

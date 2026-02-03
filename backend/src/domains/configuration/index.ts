@@ -26,14 +26,6 @@ export type {
   ConfigurationDTO,
 } from "./schema/configuration.schema";
 
-/* ======================================================
-   KV KEYS + READ HELPERS
-====================================================== */
-export {
-  configurationKey,
-  userConfigurationsKey,
-  getConfiguration,
-} from "./keys.ts";
 
 /* ======================================================
    FACTORY / ID
@@ -50,13 +42,6 @@ export type {
   ConfigurationPublicDTO,
 } from "./DataTransferObgject/configuration.dto";
 
-/* ======================================================
-   ROUTES — USER
-====================================================== */
-export {
-  listUserConfigurations,
-  getUserConfiguration,
-} from "./routes/configuration.read";
 
 export {
   deleteUserConfiguration,

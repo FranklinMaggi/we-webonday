@@ -18,6 +18,6 @@ export interface OwnerDraftReadDTO {
 
 
   source: "google" | "manual";
-  verified: boolean;
+  verification: "PENDING" | "ACCEPTED" | "REJECTED";
   complete: boolean;
 }

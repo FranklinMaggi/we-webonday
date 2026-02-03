@@ -3,37 +3,40 @@
 // ======================================================
 //
 // RUOLO:
-// - Creare una Configuration BASE (workspace vuoto)
+// - Crea una Configuration BASE (workspace vuoto)
 // - Primo punto di ingresso post-login
 //
 // INVARIANTI:
 // - NON legge Business
 // - NON scrive Business
-// - NON gestisce contenuti
-// - NON gestisce pricing
+// - NON crea Draft
+// - NON deriva complete
 // - Backend = source of truth
 //
-// FLOW:
-// BuyFlow → LOGIN → CREATE BASE → DASHBOARD
+// NOTE ARCHITETTURALI:
+// - Configuration nasce SEMPRE incompleta
+// - complete verrà DERIVATO successivamente
 // ======================================================
 
-import { ConfigurationBaseInputSchema } from "../schema/configuration.draft.schema";
 import type { Env } from "../../../types/env";
 import { requireAuthUser } from "@domains/auth";
 import { json } from "@domains/auth/route/helper/https";
-import {
-  configurationKey,
-  userConfigurationsKey,
-} from  "../keys.ts";
+
+import { ConfigurationBaseInputSchema } from "../schema/configuration.draft.schema";
 import type { ConfigurationDTO } from "../schema/configuration.schema";
+
+import {
+  CONFIGURATION_KEY,
+  USER_CONFIGURATIONS_KEY,
+} from "../keys";
 
 export async function createConfigurationBase(
   request: Request,
   env: Env
-) {
-  // =========================
-  // AUTH
-  // =========================
+): Promise<Response> {
+  /* =====================
+     1️⃣ AUTH
+  ====================== */
   const session = await requireAuthUser(request, env);
   if (!session) {
     return json(
@@ -44,72 +47,72 @@ export async function createConfigurationBase(
     );
   }
 
-  // =========================
-  // INPUT
-  // =========================
-  const body = ConfigurationBaseInputSchema.parse(
-    await request.json()
-  );
-  const businessDraftId = crypto.randomUUID();
-
-  // =========================
-  // BUILD CONFIGURATION ID
-  // =========================
-  const configurationId = crypto.randomUUID();
-
-  const key = configurationKey(configurationId);
-
-  // =========================
-  // GUARD — IDEMPOTENZA
-  // =========================
-  const existing =
-    (await env.CONFIGURATION_KV.get(
-      key,
-      "json"
-    )) as ConfigurationDTO | null;
-
-  if (existing) {
+  /* =====================
+     2️⃣ INPUT
+  ====================== */
+  let body;
+  try {
+    body = ConfigurationBaseInputSchema.parse(
+      await request.json()
+    );
+  } catch {
     return json(
-      { ok: true, configurationId },
+      { ok: false, error: "INVALID_INPUT" },
       request,
-      env
+      env,
+      400
     );
   }
 
-  // =========================
-  // CREATE BASE CONFIGURATION
-  // =========================
+  /* =====================
+     3️⃣ BUILD ID
+     (NON deterministico, workspace isolato)
+  ====================== */
+  const configurationId = crypto.randomUUID();
   const now = new Date().toISOString();
 
+  /* =====================
+     4️⃣ BUILD CONFIGURATION (BASE)
+  ====================== */
   const configuration: ConfigurationDTO = {
-    //identityId,  // Qui dovremmo usare WOD 
     id: configurationId,
     userId: session.user.id,
-  
+
     solutionId: body.solutionId,
     productId: body.productId,
-  
+
     prefill: {
       businessName: body.businessName,
     },
-    status: "DRAFT",
+
     options: [],
     data: {},
-  
-      
+
+    // ⚠️ non governa il flusso
+    status: "DRAFT",
+
+    // ⚠️ verrà derivato più avanti
+    complete: false,
+
     createdAt: now,
     updatedAt: now,
   };
-  
+
+  /* =====================
+     5️⃣ PERSIST CONFIGURATION
+  ====================== */
   await env.CONFIGURATION_KV.put(
-    key,
+    CONFIGURATION_KEY(configurationId),
     JSON.stringify(configuration)
   );
 
-  // =========================
-  // INDEX USER → CONFIGURATIONS
-  // =========================
-  const listKey = userConfigurationsKey(session.user.id);
+  /* =====================
+     6️⃣ INDEX USER → CONFIGURATIONS
+  ====================== */
+  const listKey = USER_CONFIGURATIONS_KEY(
+    session.user.id
+  );
+
   const list: string[] =
     (await env.CONFIGURATION_KV.get(
       listKey,
@@ -117,19 +120,19 @@ export async function createConfigurationBase(
     )) ?? [];
 
   if (!list.includes(configurationId)) {
-    list.push(configurationId);
     await env.CONFIGURATION_KV.put(
       listKey,
-      JSON.stringify(list)
+      JSON.stringify([...list, configurationId])
     );
   }
 
-  // =========================
-  // RESPONSE
-  // =========================
+  /* =====================
+     7️⃣ RESPONSE
+  ====================== */
   return json(
     { ok: true, configurationId },
     request,
-    env
+    env,
+    201
   );
 }
