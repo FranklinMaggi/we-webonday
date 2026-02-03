@@ -42,5 +42,6 @@ export function mapPasswordLogin(
     providerUserId: email.toLowerCase(), // ✅ FIX
     email: email.toLowerCase(),
     passwordHash,
+    emailVerified: false,
   };
 }

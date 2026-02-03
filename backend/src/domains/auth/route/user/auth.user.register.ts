@@ -114,12 +114,16 @@ if (!isNew) {
   );
 
   const response = json(
-    { ok: true, userId },
+    {
+      ok: true,
+      userId,
+      membershipLevel: "copper",
+      isNew: true,
+    },
     request,
     env,
     201
   );
-  
   response.headers.set("Set-Cookie", cookie);
   return response;
 }

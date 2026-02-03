@@ -2,7 +2,7 @@ import type { Env } from "../../../../types/env";
 import { logActivity } from "../../../legal/activity/router/logActivity";
 import { buildSessionCookie } from "../../session/auth.session.cookies";
 import { getCorsHeaders } from "@domains/auth/cors/auth.cors";
-
+import { USER_EMAIL_INDEX,USER_KEY } from "@domains/legal/user/keys";
 /**
  * Helper JSON response standard + CORS
  */
@@ -52,12 +52,13 @@ export async function loginUser(request: Request, env: Env) {
     const email = body.email.toLowerCase();
   
     // 2️⃣ Lookup via email index
-    const userId = await env.ON_USERS_KV.get(`EMAIL:${email}`);
+    const userId = await env.ON_USERS_KV.get(
+      USER_EMAIL_INDEX(email));
     if (!userId) {
       return json({ error: "Invalid credentials" }, request, env, 401);
     }
   
-    const stored = await env.ON_USERS_KV.get(`USER:${userId}`);
+    const stored = await env.ON_USERS_KV.get(USER_KEY(userId));
     if (!stored) {
       return json({ error: "Invalid credentials" }, request, env, 401
 

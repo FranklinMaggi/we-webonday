@@ -41,7 +41,11 @@ export async function createUser(
     id: userId,
     email,
 
-   
+    // ✅ PASSWORD HASH SOLO SE PROVIDER = password
+  ...(identity.provider === "password"
+    ? { passwordHash: identity.providerUserId }
+    : {}),
+    
     authProviders: [
       {
         provider: identity.provider,
