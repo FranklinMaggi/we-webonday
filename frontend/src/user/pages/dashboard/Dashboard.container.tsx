@@ -12,7 +12,7 @@
 //
 // ======================================================
 import { useNavigate } from "react-router-dom";
-import { useMyConfigurations } from "../../configurator/base_configuration/configuration/useMyConfigurations";
+import { useMyConfigurations } from "../../configurator/base_configuration/configuration/api/configuration.my-configuration-get-list";
 import type { ConfigurationConfiguratorDTO } from "../../configurator/base_configuration/configuration/ConfigurationConfiguratorDTO";
 
 export type DashboardVM = {

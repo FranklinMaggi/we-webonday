@@ -32,11 +32,15 @@ export type ConfigurationSetupDTO = {
   email: string;
   phone?: string;
 
-  address?: string;
-  city?: string;
-  state?: string;
-  zip?: string;
-
+  businessAddress?: {
+    street?: string;
+    number?: string;
+    city?: string;
+    province?: string;
+    region?: string;   // FE-only
+    country?: string;  // FE-only
+    zip?: string;
+  };
   openingHours: OpeningHoursFE;
 
   businessServiceTags: string[];
@@ -53,13 +57,25 @@ export type ConfigurationSetupDTO = {
   ownerLastName: string;
   ownerBirthDate?: string;
   ownerSecondaryMail?: string;
-
+  ownerPhone?: string;
+  
+    ownerAddress?: {
+    street?: string;
+    city?: string;
+    number?:string; 
+    province?: string;
+    region?:string; 
+    zip?: string;
+    country?: string;
+  };
+  
   ownerPrivacy: {
     accepted: boolean;
     acceptedAt: string;
     policyVersion: string;
   };
-
+ /* ================= VERIFICATION (FE ONLY) ================= */
+ ownerStepCompleted?: boolean;
   /* ================= WORKSPACE ================= */
   layoutId?: string;
   style?: string;

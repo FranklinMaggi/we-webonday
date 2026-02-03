@@ -45,24 +45,30 @@
 @import "./user/components/footer.css";
 @import "./user/components/dashboard/dashboard.css";
 @import "./user/components/solutions.css";
+
+@import "./user/components/cookie-banner.css";
+@import "./user/components/hero.css";
+
+@import "./user/components/policy/policy.css";
+
 @import "./user/components/language-selector.css";
-@import "./user/components/preform.css";
+
 @import "./user/components/configuration.css";
 @import "./user/components/sidebar.css";
-@import "./user//pages/profile/profile.css";
-@import "./user//pages/profile/you.css";
+@import "./user/pages/profile/profile.css";
+@import "./user/pages/profile/you.css";
 
 @import "./user/login.css";
 
 /* ======================================================
    5️⃣ COMPONENTS (PUBBLICO)
-====================================================== */
-/* @import "./user/components/navbar/languageSelector.css";
+======================================================
+ @import "./user/components/navbar/languageSelector.css";
 @import "./user/components/table/pricing-table.css";
-/*@import "./components/business_page/business_page.css";
+@import "./components/business_page/business_page.css";
 
 
-/* ======================================================
+======================================================
    6️⃣ ADMIN (ISOLATO)
    ⚠️ l’admin è volutamente in coda
 ====================================================== */

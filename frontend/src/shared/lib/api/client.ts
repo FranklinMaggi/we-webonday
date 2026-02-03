@@ -65,36 +65,47 @@ export async function apiFetch<T = unknown>(
   path: string,
   options: RequestInit = {}
 ): Promise<T | null> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    credentials: "include", // solo per auth/session
-  });
-
-  if (!res.ok) {
-    const msg = await res.text();
-    throw new Error(`API ${res.status}: ${msg}`);
-  }
+  let res: Response;
 
   try {
-    return (await res.json()) as T;
-  } catch {
-    return null;
+    res = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+      credentials: "include",
+    });
+  } catch (networkError) {
+    // errore di rete (offline, DNS, ecc.)
+    console.error("[apiFetch] NETWORK_ERROR", networkError);
+    throw new Error("NETWORK_ERROR");
   }
+
+  let data: any = null;
+
+  try {
+    data = await res.json();
+  } catch {
+    data = null;
+  }
+
+  // ❗️CASO API OK MA ok:false (DOMINIO)
+  if (res.ok && data?.ok === false) {
+    const err = data.error ?? "DOMAIN_ERROR";
+    throw new Error(err);
+  }
+
+  // ❗️CASO HTTP ERROR
+  if (!res.ok) {
+    const err =
+      data?.error ??
+      `HTTP_${res.status}`;
+    throw new Error(err);
+  }
+
+  return data as T;
 }
-/**
- * AI-SUPERCOMMENT — COOKIE CONSENT (FE)
- *
- * RUOLO:
- * - Invia evento di consenso
- *
- * NOTE:
- * - Best effort
- * - Errori NON bloccanti
- */
 
 export async function acceptCookies(
   analytics: boolean,

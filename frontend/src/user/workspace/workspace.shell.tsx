@@ -3,37 +3,36 @@
 // ======================================================
 //
 // RUOLO:
-// - Layout principale del Workspace
-// - Sidebar + Tools + Preview persistente
+// - Layout base del Workspace
+// - Sidebar + Preview persistenti
 //
 // INVARIANTI:
-// - Preview SEMPRE montata
-// - Tools cambiano a destra
+// - Nessuna logica di dominio
+// - Solo composizione UI
 // ======================================================
 
-import {type  ReactNode } from "react";
-import WorkspaceSidebar from "./workspace/workspace.sidebar";
-import SiteContainer from "./preview/site.container";
+import type { ReactNode } from "react";
 
 type Props = {
-  toolPanel: ReactNode;
+  sidebar: ReactNode;
+  preview: ReactNode;
 };
 
-export default function WorkspaceShell({ toolPanel }: Props) {
+export default function WorkspaceShell({
+  sidebar,
+  preview,
+}: Props) {
   return (
     <div className="workspace-shell">
       {/* SIDEBAR */}
-      <WorkspaceSidebar />
-
-      {/* TOOL AREA */}
-      <main className="workspace-main">
-        {toolPanel}
-      </main>
-
-      {/* PREVIEW — SEMPRE VIVA */}
-      <aside className="workspace-preview">
-        <SiteContainer />
+      <aside className="workspace-sidebar">
+        {sidebar}
       </aside>
+
+      {/* PREVIEW */}
+      <main className="workspace-preview">
+        {preview}
+      </main>
     </div>
   );
 }

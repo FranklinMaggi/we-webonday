@@ -2,21 +2,36 @@
 // BE || BUSINESS || CREATE / UPDATE DRAFT (FASE 1)
 // POST /api/business/create-draft
 // ======================================================
-
+//
+// AI-SUPERCOMMENT
+//
+// RUOLO:
+// - Crea o aggiorna il BusinessDraft
+// - Il BusinessDraft è OWNED dalla Configuration
+//
+// INVARIANTI ARCHITETTURALI (NON NEGOZIABILI):
+// - ID del BusinessDraft === configurationId
+// - Nessun businessDraftId separato
+// - KV key: BUSINESS_DRAFT:{configurationId}
+// - Backend = source of truth
+//
+// PERCHÉ:
+// - Riduce lookup incrociati
+// - Semplifica preview e workspace
+// - Elimina ambiguità tra Draft e Configuration
+// ======================================================
+import {
+  BUSINESS_DRAFT_KEY } from "../keys";
 import { z } from "zod";
 import { json } from "@domains/auth/route/helper/https";
 import { requireAuthUser } from "@domains/auth";
 import type { Env } from "../../../types/env";
 
-import type { ConfigurationDTO } from "@domains/configuration";
+import type { ConfigurationDTO } from "@domains/configuration/schema/configuration.schema";
+
 import { CreateBusinessDraftSchema } from "../schema/business.create-draft.schema";
 import { BusinessDraftSchema } from "../schema/business.draft.schema";
 
-/* ======================================================
-   KV KEYS — CANONICAL
-====================================================== */
-const BUSINESS_DRAFT_KEY = (id: string) =>
-  `BUSINESS_DRAFT:${id}`;
 
 /* ======================================================
    COMPLETENESS CHECK — DOMAIN ONLY
@@ -24,15 +39,21 @@ const BUSINESS_DRAFT_KEY = (id: string) =>
 function isBusinessDraftComplete(draft: {
   businessName?: string;
   openingHours?: unknown;
-  contact?: unknown;
-  privacy?: { accepted?: boolean };
+  contact?: { mail?: string };
+  address?: {
+    street?: string;
+    number?: string;
+    city?: string;
+  };
+
 }) {
   return Boolean(
     draft.businessName &&
     draft.openingHours &&
-    draft.contact &&
-    draft.privacy?.accepted === true
-  );
+    draft.contact?.mail &&
+    draft.address?.street &&
+    draft.address?.number &&
+    draft.address?.city );
 }
 
 /* ======================================================
@@ -56,7 +77,7 @@ export async function createBusinessDraft(
   }
 
   /* =====================
-     2️⃣ INPUT VALIDATION (ZOD = SOURCE OF TRUTH)
+     2️⃣ INPUT VALIDATION
   ====================== */
   let input: z.infer<typeof CreateBusinessDraftSchema>;
   try {
@@ -73,7 +94,8 @@ export async function createBusinessDraft(
   }
 
   /* =====================
-     3️⃣ LOAD CONFIGURATION (SOURCE OF TRUTH)
+     3️⃣ LOAD CONFIGURATION
+     (SOURCE OF TRUTH)
   ====================== */
   const configuration = await env.CONFIGURATION_KV.get(
     `CONFIGURATION:${input.configurationId}`,
@@ -98,15 +120,6 @@ export async function createBusinessDraft(
     );
   }
 
-  if (!configuration.businessDraftId) {
-    return json(
-      { ok: false, error: "BUSINESS_DRAFT_ID_MISSING" },
-      request,
-      env,
-      409
-    );
-  }
-
   if (
     configuration.solutionId !== input.solutionId ||
     configuration.productId !== input.productId
@@ -119,19 +132,18 @@ export async function createBusinessDraft(
     );
   }
 
-  const businessDraftId = configuration.businessDraftId;
+  /* =====================
+     4️⃣ CANONICAL ID
+     BusinessDraft === Configuration
+  ====================== */
+  const configurationId = configuration.id;
   const now = new Date().toISOString();
 
   /* =====================
-     4️⃣ DOMAIN DATA (ALREADY VALIDATED)
-  ====================== */
-  const openingHours = input.openingHours;
-
-  /* =====================
-     5️⃣ LOAD EXISTING DRAFT (IF ANY)
+     5️⃣ LOAD EXISTING DRAFT
   ====================== */
   const existingRaw = await env.BUSINESS_KV.get(
-    BUSINESS_DRAFT_KEY(businessDraftId)
+    BUSINESS_DRAFT_KEY(configurationId)
   );
 
   /* =====================================================
@@ -140,29 +152,31 @@ export async function createBusinessDraft(
   if (!existingRaw) {
     const complete = isBusinessDraftComplete({
       businessName: input.businessName,
-      openingHours,
+      openingHours: input.openingHours,
       contact: input.contact,
-      privacy: input.privacy,
+      address: input.address,
+     
     });
 
     const candidate = {
-      id: businessDraftId,
-      configurationId: input.configurationId,
+      id: configurationId,
+      configurationId,
+
       userId: session.user.id,
 
       businessName: input.businessName,
       solutionId: input.solutionId,
       productId: input.productId,
 
-      // ✅ dominio canonico
-      openingHours,
+      address: input.address,
+      openingHours: input.openingHours,
 
       contact: input.contact,
 
       businessDescriptionTags: input.businessDescriptionTags ?? [],
       businessServiceTags: input.businessServiceTags ?? [],
 
-      privacy: input.privacy,
+    
 
       complete,
       verified: false as const,
@@ -174,12 +188,17 @@ export async function createBusinessDraft(
     const draft = BusinessDraftSchema.parse(candidate);
 
     await env.BUSINESS_KV.put(
-      BUSINESS_DRAFT_KEY(businessDraftId),
+      BUSINESS_DRAFT_KEY(configurationId),
       JSON.stringify(draft)
     );
 
     return json(
-      { ok: true, businessDraftId, reused: false },
+      {
+        ok: true,
+        configurationId,
+        businessDraftId: configurationId, // alias legacy FE
+        reused: false,
+      },
       request,
       env
     );
@@ -196,10 +215,9 @@ export async function createBusinessDraft(
     ...existing,
 
     businessName: input.businessName ?? existing.businessName,
-
     openingHours: input.openingHours ?? existing.openingHours,
-
     contact: input.contact ?? existing.contact,
+    address: input.address ?? existing.address,
 
     businessDescriptionTags:
       input.businessDescriptionTags ??
@@ -209,8 +227,9 @@ export async function createBusinessDraft(
       input.businessServiceTags ??
       existing.businessServiceTags,
 
-    privacy: input.privacy ?? existing.privacy,
+ 
 
+    // invarianti
     solutionId: existing.solutionId,
     productId: existing.productId,
 
@@ -219,22 +238,22 @@ export async function createBusinessDraft(
     updatedAt: now,
   };
 
-  merged.complete = isBusinessDraftComplete({
-    businessName: merged.businessName,
-    openingHours: merged.openingHours,
-    contact: merged.contact,
-    privacy: merged.privacy,
-  });
+  merged.complete = isBusinessDraftComplete(merged);
 
   const validated = BusinessDraftSchema.parse(merged);
 
   await env.BUSINESS_KV.put(
-    BUSINESS_DRAFT_KEY(businessDraftId),
+    BUSINESS_DRAFT_KEY(configurationId),
     JSON.stringify(validated)
   );
 
   return json(
-    { ok: true, businessDraftId, reused: true },
+    {
+      ok: true,
+      configurationId,
+      businessDraftId: configurationId, // alias legacy FE
+      reused: true,
+    },
     request,
     env
   );

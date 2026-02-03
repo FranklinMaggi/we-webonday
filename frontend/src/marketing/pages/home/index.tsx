@@ -18,29 +18,14 @@
 // - Nessuna fetch duplicata
 // ======================================================
 
-import Solutions from "../solution/soltuionpage";
-import Mission from "../mission";
-import Vision from "../vision";
-
+import HomeHeroConfigurator from "./HomeHeroConfigurator";
 export default function MarketingIndex() {
   return (
     <main className="page-shell page-marketing">
       <div className="page-layout page-layout--vertical">
 
-        {/* ================= SOLUTIONS ================= */}
-        <section id="solutions">
-          <Solutions />
-        </section>
-
-        {/* ================= MISSION ================= */}
-        <section id="mission">
-          <Mission />
-        </section>
-
-        {/* ================= VISION ================= */}
-        <section id="vision">
-          <Vision />
-        </section>
+       {/* ================= HERO ================= */}
+       <HomeHeroConfigurator />
 
       </div>
     </main>

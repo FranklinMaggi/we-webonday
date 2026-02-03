@@ -1,5 +1,5 @@
 import type { Env } from "../../../../types/env";
-import { logActivity } from "../../../activity/router/logActivity";
+import { logActivity } from "../../../legal/activity/router/logActivity";
 import { buildSessionCookie } from "../../session/auth.session.cookies";
 import { getCorsHeaders } from "@domains/auth/cors/auth.cors";
 

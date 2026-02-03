@@ -211,3 +211,26 @@
     padding: 32px 20px;
   }
 }
+
+
+.solution-card[data-selected="true"] {
+  transform: translateY(-6px);
+  transform: translateY(-6px);
+
+  box-shadow:
+    0 22px 48px  rgba(0,0,0,0.6),
+    0 0 30px rgba(34,211,238,0.35);
+
+}
+.solutions-section__login {
+  margin-top: 4rem;
+  padding: 2rem;
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+.solutions-section__login-title {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}

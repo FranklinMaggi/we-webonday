@@ -37,8 +37,8 @@ import type { Env } from "../../../../types/env.js";
 import { requireAuthUser } from "@domains/auth";
 
 import { SolutionSchema } from "../../../solution/schema/solution.schema.js";
-import { ProductSchema } from "../../../product/product.schema.js";
-import { OptionSchema } from "../../../option/option.schema.ts.js";
+import { ProductSchema } from "../../../product/schema/product.schema.js";
+import { OptionSchema } from "../../../product/schema/option.schema.js";
 
 import {
   ConfigurationSchema,

@@ -36,8 +36,8 @@
 
 
 import type { Env } from "../../../types/env";
-import { ProductSchema } from "../product.schema";
-import { OptionSchema } from "../../option/option.schema.ts";
+import { ProductSchema } from "../schema/product.schema";
+import { OptionSchema } from "../schema/option.schema";
 
 function response(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {

@@ -7,29 +7,15 @@ import { json } from "@domains/auth/route/helper/https";
 import { requireAuthUser } from "@domains/auth";
 import type { Env } from "../../../types/env";
 
-// ======================================================
-// DOMAIN || CONFIGURATION || ATTACH OWNER || INPUT
-// ======================================================
-
+/* ======================================================
+   KV KEYS — PACK
+====================================================== */
+import { configurationKey } from "@domains/configuration/keys.ts";
+import { OWNER_DRAFT_KEY } from "@domains/owner/keys";
 export interface AttachOwnerToConfigurationInputDTO {
-    configurationId: string;
-  }
-  
-// ======================================================
-// KV HELPERS
-// ======================================================
-const OWNER_DRAFT_KEY = (userId: string) =>
-  `BUSINESS_OWNER_DRAFT:${userId}`;
+  configurationId: string;
+}
 
-const BUSINESS_DRAFT_KEY = (businessDraftId: string) =>
-  `BUSINESS_DRAFT:${businessDraftId}`;
-
-const CONFIGURATION_KEY = (configurationId: string) =>
-  `CONFIGURATION:${configurationId}`;
-
-// ======================================================
-// HANDLER
-// ======================================================
 export async function attachOwnerToConfiguration(
   request: Request,
   env: Env
@@ -42,8 +28,6 @@ export async function attachOwnerToConfiguration(
   if (!session) {
     return json({ ok: false, error: "UNAUTHORIZED" }, request, env, 401);
   }
-
-  const userId = session.user.id;
 
   /* =====================
      2️⃣ INPUT
@@ -60,11 +44,13 @@ export async function attachOwnerToConfiguration(
     );
   }
 
+  const configurationId = input.configurationId;
+
   /* =====================
      3️⃣ LOAD CONFIGURATION
   ====================== */
   const configRaw = await env.CONFIGURATION_KV.get(
-    CONFIGURATION_KEY(input.configurationId)
+    configurationKey(configurationId)
   );
 
   if (!configRaw) {
@@ -78,7 +64,7 @@ export async function attachOwnerToConfiguration(
 
   const configuration = JSON.parse(configRaw);
 
-  if (configuration.userId !== userId) {
+  if (configuration.userId !== session.user.id) {
     return json(
       { ok: false, error: "FORBIDDEN" },
       request,
@@ -91,7 +77,7 @@ export async function attachOwnerToConfiguration(
      4️⃣ LOAD OWNER DRAFT
   ====================== */
   const ownerRaw = await env.BUSINESS_KV.get(
-    OWNER_DRAFT_KEY(userId)
+    OWNER_DRAFT_KEY(configurationId)
   );
 
   if (!ownerRaw) {
@@ -115,88 +101,30 @@ export async function attachOwnerToConfiguration(
   }
 
   /* =====================
-     5️⃣ LOAD BUSINESS DRAFT
-  ====================== */
-  const businessRaw = await env.BUSINESS_KV.get(
-    BUSINESS_DRAFT_KEY(configuration.businessDraftId)
-  );
-
-  if (!businessRaw) {
-    return json(
-      { ok: false, error: "BUSINESS_DRAFT_NOT_FOUND" },
-      request,
-      env,
-      404
-    );
-  }
-
-  const businessDraft = JSON.parse(businessRaw);
-
-  if (!businessDraft.complete) {
-    return json(
-      { ok: false, error: "BUSINESS_DRAFT_NOT_COMPLETE" },
-      request,
-      env,
-      409
-    );
-  }
-  /* =====================
-     5️⃣.1 ALREADY ATTACHED? (IDEMPOTENT)
-  ====================== */
-  if (configuration.ownerUserId) {
-    return json(
-      {
-        ok: true,
-        configurationId: configuration.id,
-        status: configuration.status,
-        alreadyAttached: true,
-      },
-      request,
-      env
-    );
-  }
-  if (configuration.status === "CONFIGURATION_IN_PROGRESS") {
-    return json(
-      {
-        ok: true,
-        configurationId: configuration.id,
-        status: "CONFIGURATION_IN_PROGRESS",
-        alreadyReady: true,
-      },
-      request,
-      env
-    );
-  }
-  /* =====================
-     6️⃣ ATTACH OWNER
+     5️⃣ ATTACH OWNER (IDEMPOTENTE)
   ====================== */
   const now = new Date().toISOString();
 
   const updatedConfiguration = {
     ...configuration,
-    ownerUserId: userId,
-    status: "CONFIGURATION_IN_PROGRESS", // oppure NEXT_STATE
+    ownerDraftId: configuration.ownerDraftId ?? configurationId,
+    ownerUserId: configuration.ownerUserId ?? session.user.id,
+    status: "CONFIGURATION_IN_PROGRESS",
     updatedAt: now,
   };
 
   await env.CONFIGURATION_KV.put(
-    CONFIGURATION_KEY(configuration.id),
-    JSON.stringify(updatedConfiguration),
-    {
-      metadata: {
-        ...configuration.metadata,
-        ownerAttachedAt: now,
-      },
-    }
+    configurationKey(configurationId),
+    JSON.stringify(updatedConfiguration)
   );
 
   /* =====================
-     7️⃣ RESPONSE
+     6️⃣ RESPONSE
   ====================== */
   return json(
     {
       ok: true,
-      configurationId: configuration.id,
+      configurationId,
       status: updatedConfiguration.status,
     },
     request,

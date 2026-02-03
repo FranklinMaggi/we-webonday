@@ -95,3 +95,6 @@ id = "47f5579302014b59a8167fdd2e8081de"
 [[r2_buckets]]
 binding = "BUSINESS_MENU_BUCKET"
 bucket_name = "business-menus"
+[[r2_buckets]]
+binding = "USER_IMAGES"
+bucket_name = "user-images"

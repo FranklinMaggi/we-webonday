@@ -3,13 +3,13 @@
 // ======================================================
 
 const marketingSolutionsIt = {
-    "solutions.h1": "Le nostre soluzioni",
+    "solutions.h1": "Prossimo Passo ! ",
   
     "solutions.intro.p1":
-      "Le Solutions WebOnDay sono modelli di sito pensati per rispondere a esigenze specifiche di attività diverse. Ogni solution fornisce una base strutturata, pronta per essere adattata e realizzata attraverso i prodotti disponibili.",
-      "solutions.section.title": "Osserva , sceglia e vai on line !",
+      "Attualmente sono disponibili idee e prodotti per i seguenti generi di attività !",
+      "solutions.section.title": "Scegli la Tua Solution",
     "solutions.intro.p2":
-      "Scegli la solution più vicina alla tua attività per capire come possiamo costruire il tuo sito in modo semplice e guidato.",
+      "La configurazione di una soluzione ci pemretterà di poter creare un sito web compatibile con le esigenza della tua clientela ",
   };
   
   export default marketingSolutionsIt;

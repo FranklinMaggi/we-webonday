@@ -14,14 +14,14 @@
 // ======================================================
 import { useState } from "react";
 import type { ProductVM } from "@shared/lib/viewModels/product/Product.view-model";
-import BuyflowPreForm from "./PreForm";
+//import BuyflowPreForm from "./PreForm";
 
 interface Props {
   solutionId: string;
   product: ProductVM;
 }
 
-export default function ProductCard({ solutionId, product }: Props) {
+export default function ProductCard({ product }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -70,16 +70,16 @@ export default function ProductCard({ solutionId, product }: Props) {
           Avvia una richiesta guidata per questo prodotto
         </p>
 
-        <button
+        {/**<button
           type="button"
           className="wd-btn wd-btn--secondary"
         >
           Contattaci
         </button>
-      </div>
+   **/}   </div>
 
       {/* ================= NEXT STEP ================= */}
-      {open && (
+      {/**open && (
         <div
           className="product-card__panel"
           onClick={(e) => e.stopPropagation()}
@@ -95,7 +95,7 @@ export default function ProductCard({ solutionId, product }: Props) {
             product={product}
           />
         </div>
-      )}
+      )*/}
     </div>
   );
 }

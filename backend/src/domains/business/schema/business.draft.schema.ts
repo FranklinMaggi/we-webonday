@@ -2,42 +2,37 @@
 
 
 import { z } from "zod";
-import { BusinessContactSchema } from "./business.contact.schema";
-import { OpeningHoursSchema } from "./business.schema";
+import { OpeningHoursSchema } from "@domains/GeneralSchema/hours.opening.schema";
+import { ContactSchema } from "@domains/GeneralSchema/contact.schema";
+import { AddressSchema } from "@domains/GeneralSchema/address.schema";
+
 export const BusinessDraftSchema = z.object({
-  /* ---------- Identity ---------- */
+  /* Identity */
   id: z.string().min(1),
   configurationId: z.string().min(1),
   userId: z.string(),
 
-  /* ---------- Core ---------- */
+  /* Core */
   businessName: z.string().min(1),
 
-  /* ---------- Commercial origin ---------- */
+  /* Commercial */
   solutionId: z.string().min(1),
   productId: z.string().min(1),
 
-  /* ---------- Opening hours ---------- */
-
-
-
-  // ✅ DOMINIO — SOURCE OF TRUTH
+  /* Domain */
   openingHours: OpeningHoursSchema,
 
-  /* ---------- Contact ---------- */
-  contact: BusinessContactSchema,
+  /* ✅ CONTACT & ADDRESS (NEW CANONICAL) */
+  contact: ContactSchema,
+  address: AddressSchema.optional(),
 
-  /* ---------- Classification ---------- */
+  /* Classification */
   businessDescriptionTags: z.array(z.string()).default([]),
   businessServiceTags: z.array(z.string()).default([]),
 
-  privacy: z.object({
-    accepted: z.boolean(),
-    acceptedAt: z.string(),
-    policyVersion: z.string(),
-  }),
+  
 
-  /* ---------- Status ---------- */
+  /* Status */
   verified: z.literal(false),
   complete: z.boolean().default(false),
 

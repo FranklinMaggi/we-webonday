@@ -20,18 +20,21 @@ type PublicSolutionCard = {
 
 type Props = {
   solution: PublicSolutionCard;
+  selected?:boolean;
+  onSelect?:()=>void; 
 };
 
-export default function SolutionCard({ solution }: Props) {
+export default function SolutionCard({ solution,selected, onSelect }: Props) {
   const navigate = useNavigate();
 
   return (
     <article
-      className={cls.card}
-      onClick={() => navigate(`/solution/${solution.id}`)}
-      role="button"
-      tabIndex={0}
-    >
+  className={cls.card}
+  data-selected={selected}
+  role="button"
+  tabIndex={0}
+  onClick={onSelect}
+>
       {/* ================= MEDIA ================= */}
       <div className={cls.media}>
         {solution.image && (
@@ -52,9 +55,15 @@ export default function SolutionCard({ solution }: Props) {
           {solution.description}
         </p>
 
-        <span className={cls.cta}>
-          Scopri di più →
-        </span>
+        <span
+  className={cls.cta}
+  onClick={(e) => {
+    e.stopPropagation();
+    navigate(`/solution/${solution.id}`);
+  }}
+>
+  Scopri di più →
+</span>
       </div>
     </article>
   );

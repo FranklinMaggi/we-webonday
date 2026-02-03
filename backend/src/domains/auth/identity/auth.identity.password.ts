@@ -32,15 +32,15 @@
 import type { AuthIdentity } from "./auth.identity.types";
 
 
+// auth/identity/mapPasswordLogin.ts
 export function mapPasswordLogin(
-    email: string,
-    passwordHash: string
-  ): AuthIdentity {
-    return {
-      provider: "password",
-      providerUserId: passwordHash,
-      email: email.toLowerCase(),
-      emailVerified: true,
-    };
-  }
-  
+  email: string,
+  passwordHash: string
+) {
+  return {
+    provider: "password" as const,
+    providerUserId: email.toLowerCase(), // ✅ FIX
+    email: email.toLowerCase(),
+    passwordHash,
+  };
+}

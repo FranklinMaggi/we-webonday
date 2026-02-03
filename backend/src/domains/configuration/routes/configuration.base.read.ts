@@ -13,7 +13,7 @@
 import type { Env } from "../../../types/env";
 import { requireAuthUser } from "@domains/auth";
 import { json } from "@domains/auth/route/helper/https";
-import { getConfiguration } from "..";
+import { getConfiguration } from "../keys.ts";
 import { toBaseReadDTO } from "../mappers/configuration.draft.mapper";
 
 export async function readConfigurationBase(

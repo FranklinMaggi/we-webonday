@@ -18,13 +18,13 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import {
-  getConfigurationForConfigurator,
-} from "./base_configuration/configuration/configuration.user.api";
+  getPreConfiguration,
+} from "./base_configuration/configuration/api/get.my-pre-configuration";
 
 import { useConfigurationSetupStore }from "@shared/domain/user/configurator/configurationSetup.store"
-import ConfigurationSetupPage from "./base_configuration/configuration/ConfigurationSetupPage";
+import ConfigurationSetupPage from "./base_configuration/configuration-pages/ConfigurationSetupPage";
 
-export default function ConfigurationIndex() {
+export default function ConfigurationEntryPage() {
   const { id: configurationId } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ export default function ConfigurationIndex() {
     // 🔁 evita stati fantasma
     reset();
 
-    getConfigurationForConfigurator(configurationId)
+    getPreConfiguration(configurationId)
       .then((res) => {
         const cfg = res.configuration;
 

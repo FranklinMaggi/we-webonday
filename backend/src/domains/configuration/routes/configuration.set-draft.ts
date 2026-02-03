@@ -128,7 +128,7 @@ export async function setConfigurationDraft(
 
   const updated: ConfigurationDTO = {
     ...configuration,
-    status: "DRAFT",
+    status: "CONFIGURATION_IN_PROGRESS",
     updatedAt: now,
   };
 
@@ -145,7 +145,7 @@ export async function setConfigurationDraft(
     {
       ok: true,
       configurationId: configuration.id,
-      status: "DRAFT",
+      status: "CONFIGURATION_IN_PROGRESS",
     },
     request,
     env

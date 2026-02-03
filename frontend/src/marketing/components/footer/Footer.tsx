@@ -27,19 +27,19 @@ export default function Footer() {
           <h4 className={cls.sectionTitle}>
             {t("footer.policy.title")}
           </h4>
+          <Link className={cls.footerLink} to="/policy/cookies">
+          {t("footer.policy.cookies")}
+        </Link>
+        <Link className={cls.footerLink} to="/policy/terms">
+          {t("footer.policy.terms")}
+        </Link>
 
-          <Link className={cls.footerLink} to="/terms">
-            {t("footer.policy.terms")}
-          </Link>
+        <Link className={cls.footerLink} to="/policy/privacy">
+          {t("footer.policy.privacy")}
+        </Link>
 
-          <Link className={cls.footerLink} to="/policy">
-            {t("footer.policy.general")}
-          </Link>
-
-          <Link className={cls.footerLink} to="/policy/privacy">
-            {t("footer.policy.privacy")}
-          </Link>
-        </section>
+       
+          </section>
 
         {/* ================= IDENTITY ================= */}
         <section className={cls.footerSection}>

@@ -15,7 +15,7 @@
 import { useEffect, useState } from "react";
 import { eur } from "../../../../../shared/utils/format";
 import PaymentPaypal from "./PaymentPaypal";
-import { fetchLatestPolicy } from "../../../../../shared/lib/userApi/policy.user.api";
+import { fetchLatestPolicy } from "../../../../../marketing/components/policy/api/policy.user.api";
 
 interface PricingLine {
   label: string;

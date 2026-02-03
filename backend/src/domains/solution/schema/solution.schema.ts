@@ -13,7 +13,7 @@
  */
 
 import { z } from "zod";
-
+import { OpeningHoursSchema } from "@domains/GeneralSchema/hours.opening.schema";
 /**
  * ======================================================
  * SEO TAG (BASE)
@@ -43,7 +43,6 @@ export const TagSchema = z
  * - canonici
  * - immediatamente riutilizzabili
  */
-import { OpeningHoursSchema } from "@domains/business/schema/business.schema";
 
 const UserServiceTagStatusSchema = z.enum([
   "PENDING",

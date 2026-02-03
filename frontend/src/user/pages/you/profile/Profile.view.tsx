@@ -1,65 +1,81 @@
 // ======================================================
 // FE || USER DASHBOARD || PROFILE — VIEW
 // ======================================================
-//
-// RUOLO:
-// - Rendering PROFILO OWNER
-// - READ ONLY
-// ======================================================
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { t } from "@shared/aiTranslateGenerator";
 import { profileClasses } from "./profile.classes";
+import type { OwnerDraftReadDTO } from
+  "@shared/domain/owner/owner.read.types";
+import { useConfigurationSetupStore } from
+  "@src/shared/domain/user/configurator/configurationSetup.store";
 
-/* ======================================================
-   UI ATOMS
-====================================================== */
-
-function StatusDot({ active }: { active: boolean }) {
-  return (
-    <span
-      className={`status-dot ${active ? "is-active" : "is-inactive"}`}
-      aria-label={active ? "verificato" : "non verificato"}
-    />
-  );
-}
-
-/* ======================================================
-   TYPES
-====================================================== */
-
-type OwnerProfileDTO = {
-  firstName?: string;
-  lastName?: string;
-  birthDate?: string;
-
-  contact?: {
-    secondaryMail?: string;
-  };
-
-  privacy?: {
-    accepted: boolean;
-    acceptedAt: string;
-    policyVersion: string;
-  };
-
-  verified?: boolean;
-  complete?: boolean;
-  createdAt?: string;
-};
-
-interface Props {
-  user: OwnerProfileDTO | null;
-}
+import {
+  OwnerVerificationStep1,
+  OwnerVerificationStep2,
+} from "./verification";
+import type { ConfigurationReadDTO } from "./DataTransferObject/configuration-read.type";
 
 /* ======================================================
    VIEW
 ====================================================== */
 
-export function ProfileView({ user }: Props) {
-  // ✅ STATO LOCALE CORRETTO
+export function ProfileView({
+  user,
+  reloadProfile,
+  configuration, 
+}: {
+  user: OwnerDraftReadDTO | null;
+  configuration: ConfigurationReadDTO |null; 
+  reloadProfile: () => Promise<void>;
+}) {
   const [showVerification, setShowVerification] = useState(false);
+  const [step, setStep] = useState<1 | 2>(1);
 
+  /* =====================
+     STORE (OWNER DRAFT)
+  ====================== */
+  const { data, setField } = useConfigurationSetupStore();
+
+  /* =====================
+     PREFILL STORE FROM READ MODEL
+  ====================== */
+  useEffect(() => {
+    if (!user) return;
+
+    setField("ownerFirstName", user.firstName ?? "");
+    setField("ownerLastName", user.lastName ?? "");
+    setField("ownerBirthDate", user.birthDate ?? "");
+    setField(
+      "ownerSecondaryMail",
+      user.contact?.secondaryMail ?? ""
+    );
+    setField("ownerPhone", user.contact?.phoneNumber ?? "");
+
+    if (user.address) {
+      setField("ownerAddress", {
+        street: user.address.street ?? "",
+        number: user.address.number ?? "",
+        city: user.address.city ?? "",
+        province: user.address.province ?? "",
+        region: user.address.region ?? "",
+        zip: user.address.zip ?? "",
+        country: user.address.country ?? "Italia",
+      });
+    }
+
+    if (user.privacy) {
+      setField("ownerPrivacy", {
+        accepted: user.privacy.accepted === true,
+        acceptedAt: user.privacy.acceptedAt ?? "",
+        policyVersion: user.privacy.policyVersion ?? "v1",
+      });
+    }
+  }, [user, setField]);
+
+  /* =====================
+     HARD GUARD
+  ====================== */
   if (!user) {
     return (
       <section className={profileClasses.root}>
@@ -67,171 +83,110 @@ export function ProfileView({ user }: Props) {
       </section>
     );
   }
+  const status = configuration?.status;
 
+  const canStartVerification =
+  status === "CONFIGURATION_IN_PROGRESS" ||
+  status === "REJECTED";
+
+/**
+ * Step 2 DEVE essere possibile
+ * finché la configuration NON è locked
+ */
+const canUploadBusinessDocs =
+  status === "CONFIGURATION_IN_PROGRESS" ||
+  status === "REJECTED";
+
+  
+  const isLocked =
+    status === "CONFIGURATION_READY" ||
+    status === "ACCEPTED";
+  
+  
+  
+  /* =====================
+     RENDER
+  ====================== */
   return (
     <section className={profileClasses.root}>
+      {/* HEADER */}
       <header className={profileClasses.header}>
         <h1>{t("profile.title")}</h1>
         <p>{t("profile.subtitle")}</p>
       </header>
 
-      {/* ================= ANAGRAFICA ================= */}
       <div className={profileClasses.card}>
-        <h3>{t("profile.section.identity")}</h3>
+  <h3>Stato profilo</h3>
 
-        {user.firstName && (
-          <div className={profileClasses.row}>
-            <span className={profileClasses.label}>
-              {t("profile.firstName")}
-            </span>
-            <span>{user.firstName}</span>
-          </div>
-        )}
+  <div className={profileClasses.row}>
+    <span className={profileClasses.label}>
+      Stato verifica
+    </span>
 
-        {user.lastName && (
-          <div className={profileClasses.row}>
-            <span className={profileClasses.label}>
-              {t("profile.lastName")}
-            </span>
-            <span>{user.lastName}</span>
-          </div>
-        )}
+    <span className={profileClasses.value}>
+      {status === "CONFIGURATION_IN_PROGRESS" &&
+        "Profilo da verificare"}
 
-        {user.birthDate && (
-          <div className={profileClasses.row}>
-            <span className={profileClasses.label}>
-              {t("profile.birthDate")}
-            </span>
-            <span>
-              {new Date(user.birthDate).toLocaleDateString("it-IT")}
-            </span>
-          </div>
-        )}
-      </div>
+      {status === "BUSINESS_READY" &&
+        "Carica visura camerale"}
 
-      {/* ================= STATO PROFILO ================= */}
-      <div className={profileClasses.card}>
-        <h3>{t("profile.section.status")}</h3>
+      {status === "CONFIGURATION_READY" &&
+        "Documenti in verifica"}
 
-        {/* COMPLETE — SEMPRE TRUE (LOCK UI) */}
-        <div className={profileClasses.row}>
-          <span className={profileClasses.label}>
-            {t("profile.status")}
-          </span>
-          <span className="status-complete">
-            {t("profile.status.complete")}
-          </span>
-        </div>
+      {status === "ACCEPTED" && "Profilo verificato"}
 
-        {/* VERIFIED */}
-        <div className={profileClasses.row}>
-          <span className={profileClasses.label}>
-            {t("profile.verified")}
-          </span>
+      {status === "REJECTED" &&
+        "Verifica respinta — ricarica documenti"}
+    </span>
+  </div>
 
-          <span className="status-verified">
-            <StatusDot active={!!user.verified} />
-            {user.verified
-              ? t("profile.verified.yes")
-              : t("profile.verified.no")}
-          </span>
-        </div>
+  {canStartVerification && (
+    <button
+      className="wd-btn wd-btn--primary wd-btn--sm"
+      onClick={() => {
+        setStep(1);
+        setShowVerification(true);
+      }}
+    >
+      Avvia verifica
+    </button>
+  )}
 
-        {!user.verified && (
-          <div className="profile-verify-cta">
-            <button
-              type="button"
-              className="wd-btn wd-btn--secondary wd-btn--sm"
-              onClick={() => setShowVerification(true)}
-            >
-              {t("profile.verify.cta")}
-            </button>
-          </div>
-        )}
-      </div>
+  {status === "CONFIGURATION_READY" && (
+    <p className={profileClasses.verifyHint}>
+      Stiamo verificando i tuoi documenti.
+    </p>
+  )}
+</div>
 
-      {/* ================= VERIFICA IDENTITÀ ================= */}
-      {showVerification && (
-        <div className={profileClasses.card}>
-          <h3>{t("profile.verify.title")}</h3>
-          <p className="profile-verify-hint">
-            {t("profile.verify.subtitle")}
-          </p>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              // TODO: handleSubmit (definiremo dopo)
-            }}
-            className="profile-verify-form"
-          >
-            <div className="form-grid">
-              <label>
-                {t("profile.firstName")}
-                <input
-                  type="text"
-                  defaultValue={user.firstName}
-                />
-              </label>
+      {/* VERIFICATION FLOW */}
+      {showVerification && !isLocked && (
+  <div className={profileClasses.card}>
+    {step === 1 && canStartVerification && (
+      <OwnerVerificationStep1
+        data={data}
+        setField={setField}
+        onComplete={async () => {
+       
+          setStep(2);
+        }}
+      />
+    )}
 
-              <label>
-                {t("profile.lastName")}
-                <input
-                  type="text"
-                  defaultValue={user.lastName}
-                />
-              </label>
-            </div>
+{step === 2 &&
+  canUploadBusinessDocs &&
+  data.configurationId &&
+  data.ownerStepCompleted && (
+    <OwnerVerificationStep2
+      configurationId={data.configurationId}
+      onCompleted={reloadProfile}
+    />
+)}
 
-            <label>
-              {t("profile.verify.idFront")}
-              <input type="file" accept="image/*" />
-            </label>
+  </div>
+)}
 
-            <label>
-              {t("profile.verify.idBack")}
-              <input type="file" accept="image/*" />
-            </label>
-
-            <label>
-              {t("profile.verify.vat")}
-              <input type="text" />
-            </label>
-
-            <label>
-              {t("profile.verify.chamber")}
-              <input type="file" accept="application/pdf,image/*" />
-            </label>
-
-            <label>
-              {t("profile.verify.pec")}
-              <input type="email" />
-            </label>
-
-            <label>
-              {t("profile.verify.address")}
-              <input type="text" />
-            </label>
-
-            <div className="profile-verify-actions">
-              <button
-                type="button"
-                className="wd-btn wd-btn--ghost"
-                onClick={() => setShowVerification(false)}
-              >
-                {t("common.cancel")}
-              </button>
-
-              <button
-                type="submit"
-                className="wd-btn wd-btn--primary"
-              >
-                {t("profile.verify.submit")}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
     </section>
   );
 }

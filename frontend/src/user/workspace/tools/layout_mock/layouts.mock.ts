@@ -1,4 +1,4 @@
-import type { LayoutKVDTO } from "@app/webyDevEngine/configurationLayout/layout.dto";
+import type { LayoutKVDTO } from "@src/user/workspace/tools/webyDevEngine/configurationLayout/layout.dto";
 
 export const AVAILABLE_LAYOUTS: LayoutKVDTO[] = [
   {

@@ -1,7 +1,39 @@
 // ======================================================
-// FE || USER DASHBOARD || YOU — VIEW (FINAL)
+// AI-SUPERCOMMENT — YOU VIEW
 // ======================================================
-
+//
+// RUOLO (CHE COSA FA):
+// - Renderizzazione PURA della pagina YOU
+// - Consuma esclusivamente il ViewModel
+// - Nessuna logica di dominio
+//
+// RESPONSABILITÀ:
+// - Mostrare:
+//   • elenco configuration/business
+//   • stato derivato
+//   • preview anagrafica (se presente)
+// - Gestire CTA di upgrade
+//
+// COSA **NON** DEVE FARE:
+// - NON chiamare API
+// - NON filtrare stati
+// - NON interpretare status di dominio
+// - NON costruire dati mancanti
+//
+// INVARIANTI UI:
+// - Deve funzionare anche con preview parziale o assente
+// - Fallback visivi ("—") sono OBBLIGATORI
+// - Nessun errore visivo se preview undefined
+//
+// NOTA ARCHITETTURALE:
+// - Questa View è intenzionalmente “stupida”
+// - Ogni logica va nel Container
+//
+// ⚠️ NON AGGIUNGERE:
+// - useEffect
+// - useState
+// - chiamate API
+// ======================================================
 import { t } from "@src/shared/aiTranslateGenerator";
 import { getWdStatusClass } from "@src/shared/utils/statusUi";
 import type { YouDashboardVM } from "./You.container";
@@ -15,8 +47,11 @@ export function YouDashboardView({
   const navigate = useNavigate();
 
   const totalConfigs = configurations.length;
-  const activeBusinesses = businesses.length;
-
+  const activeBusinesses =
+  businesses.filter(
+    (b) => b.status === "ACTIVE"
+  ).length;
+  
   return (
     <section className={youClasses.root}>
       {/* ================= HEADER ================= */}
@@ -54,10 +89,13 @@ export function YouDashboardView({
                 <header className={youClasses.cardHeader}>
                   <h3>{b.businessName}</h3>
 
-                  <span className={getWdStatusClass(b.status)}>
-                    {b.status === "ACTIVE"
-                      ? "ATTIVO"
-                      : b.status}
+                  <span
+  className={getWdStatusClass(
+    b.status === "ACTIVE"
+      ? "ACTIVE"
+      : "DRAFT"
+  )}
+>
                   </span>
                 </header>
 

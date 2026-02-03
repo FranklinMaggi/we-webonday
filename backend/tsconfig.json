@@ -19,5 +19,5 @@
       "@types/*": ["types/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "../frontend/src/marketing/components/policy/api/policy.tupes.ts", "src/domains/legal/visitor/routes/read.visitor.ts"]
 }

@@ -26,8 +26,8 @@
 
 
 import type { Env } from "../../../types/env";
-import { ProductSchema } from "../product.schema";
-import { OptionSchema } from "../../option/option.schema.ts";
+import { ProductSchema } from "../schema/product.schema";
+import { OptionSchema } from "../schema/option.schema";
 
 export async function getProductsWithOptions(
   env: Env

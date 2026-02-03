@@ -17,12 +17,12 @@
    SCHEMA + TYPES
 ====================================================== */
 export {
-  CONFIGURATION_STATUS,
+
   ConfigurationSchema,
 } from "./schema/configuration.schema";
 
 export type {
-  ConfigurationStatus,
+
   ConfigurationDTO,
 } from "./schema/configuration.schema";
 
@@ -33,7 +33,7 @@ export {
   configurationKey,
   userConfigurationsKey,
   getConfiguration,
-} from "./configuration.keys";
+} from "./keys.ts";
 
 /* ======================================================
    FACTORY / ID
@@ -68,13 +68,6 @@ export {
 export {
   createConfigurationBase,
 } from "./routes/configuration.base.write";
-
-/* ======================================================
-   ROUTES — BUSINESS ↔ CONFIGURATION BRIDGE
-====================================================== */
-export {
-  upsertConfigurationFromBusiness,
-} from "./routes/configuration.business.write";
 
 /* ======================================================
    ROUTES — ADMIN

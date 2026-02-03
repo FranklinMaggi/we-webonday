@@ -26,6 +26,25 @@ const marketingHomeIt: CopyMap = {
 
   "home.why.link.pricing": "Scopri i servizi disponibili",
   "home.why.link.referral": "Come funziona il referral",
+  /* ================= HERO CONFIGURATOR ================= */
+
+"home.hero.configurator.title":
+"Il tuo sito web.\nWebOnDay.",
+
+"home.hero.configurator.subtitle":
+"Configura il tuo sito partendo dalla tua attività.\nGratis, insieme a noi.",
+
+"home.hero.configurator.label":
+"Parlaci della tua attività",
+
+"home.hero.configurator.placeholder":
+"Come si chiama la tua attività?",
+
+"home.hero.configurator.hint.cookies":
+"Per iniziare dobbiamo salvare la tua configurazione.\nAccetta i cookie per continuare.",
+
+"home.hero.configurator.cta":
+"Configura il tuo sito web, gratis con noi →",
 };
 
 export default marketingHomeIt;

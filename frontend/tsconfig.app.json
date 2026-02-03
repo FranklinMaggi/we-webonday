@@ -45,5 +45,5 @@
     "noUncheckedSideEffectImports": true
   },
 
-  "include": ["src"]
+  "include": ["src", "../backend/src/domains/auth/context/visitor.ts", "../backend/src/domains/legal/visitor/routes/read.visitor.ts"]
 }

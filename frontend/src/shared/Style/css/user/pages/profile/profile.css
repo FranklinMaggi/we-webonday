@@ -164,4 +164,195 @@
     justify-content: flex-end;
     margin-top: 24px;
   }
-  
+  /* ======================================================
+   PROFILE — STEPS (Wizard-like)
+====================================================== */
+
+.profile-step-indicator {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.profile-step-indicator span {
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+.profile-step-active {
+  font-weight: 600;
+  opacity: 1;
+}
+
+.profile-step-completed {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+/* ======================================================
+   PROFILE — FORM (EDIT MODE, same as configurator)
+====================================================== */
+
+.profile-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-form-label {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.profile-form-input {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+/* ======================================================
+   PROFILE — PRIVACY (READ ONLY)
+====================================================== */
+
+.profile-privacy-hint {
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
+.profile-privacy-link {
+  color: #2563eb;
+  text-decoration: underline;
+  font-size: 0.9rem;
+}
+.profile-upload-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+.profile-upload-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+
+  padding: 0.75rem;
+  border: 2px dashed var(--wd-border-muted, #d0d5dd);
+  border-radius: 12px;
+
+  background: var(--wd-bg-soft, #fafafa);
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.profile-upload-box:hover {
+  border-color: var(--wd-primary, #4f46e5);
+  background-color: #f5f7ff;
+  transform: translateY(-2px);
+}
+.profile-upload-image {
+  width: 100%;
+  max-width: 180px;
+  aspect-ratio: 3 / 4; /* documento realistico */
+  object-fit: contain;
+
+  border-radius: 8px;
+  background: white;
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.04);
+}
+.profile-upload-box span {
+  font-size: 0.85rem;
+  color: var(--wd-text-muted, #667085);
+  text-align: center;
+}
+@media (max-width: 480px) {
+  .profile-upload-grid {
+    gap: 0.75rem;
+  }
+
+  .profile-upload-image {
+    max-width: 140px;
+  }
+}
+.profile-upload-box {
+  position: relative;
+}
+
+.upload-delete,
+.upload-rotate {
+  position: absolute;
+  top: 8px;
+  z-index: 10;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.upload-delete {
+  right: 8px;
+}
+
+.upload-rotate {
+  right: 48px;
+}
+.upload-rotate {
+  position: absolute;
+  top: 8px;
+  right: 48px;
+  z-index: 10;
+  background: rgba(0,0,0,0.65);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+/* =========================
+   STATUS DOT
+========================= */
+.profile-status-dot,
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* 🟠 IN VERIFICA */
+.status-pending {
+  background-color: #ff9800;
+}
+
+/* 🟢 VERIFICATO */
+.status-verified {
+  background-color: #4caf50;
+}
+
+/* 🔴 RESPINTO */
+.status-rejected {
+  background-color: #f44336;
+}
+
+/* =========================
+   STATUS TEXT
+========================= */
+.profile-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

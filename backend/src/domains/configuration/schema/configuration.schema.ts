@@ -1,59 +1,25 @@
+// @/domains/configuration/schema/configuration.schema.ts
 // ======================================================
-// BE || domains/configuration/configuration.schema.ts
+// DOMAIN || CONFIGURATION || SCHEMA
 // ======================================================
 //
-// CONFIGURATION — CORE DOMAIN (WORKSPACE PRE-ORDER)
+// AI-SUPERCOMMENT
 //
 // RUOLO:
-// - Single Source of Truth della Configuration
-// - Workspace mutabile fino all’ordine
+// - Validazione strutturale della Configuration
+// - NON definisce lo stato
 //
-// INVARIANTI:
-// - Configuration ≠ Business
-// - Configuration ≠ Order
-// - userId derivato SOLO da sessione
-// - Business nasce SOLO dopo StepBusiness + Policy
+// REGOLA:
+// - Lo stato è importato dal pack configuration.status
 // ======================================================
 
 import { z } from "zod";
+import {
+  CONFIGURATION_STATUS,
+} from "../mappers/configuration.status";
 
 /* ======================================================
-   CONFIGURATION STATUS — CANONICAL STATE MACHINE
-====================================================== */
-
-export const CONFIGURATION_STATUS = [
-  // BOOTSTRAP
-  "DRAFT",
-
-  // BUSINESS SETUP
-  "BUSINESS_READY",
-
-  // CONFIGURATION SETUP
-  "CONFIGURATION_IN_PROGRESS",
-  "CONFIGURATION_READY",
-
-  // PREVIEW & VALIDATION
-  "PREVIEW",
-  "ACCEPTED",
-
-  // COMMERCIALE
-  "ORDERED",
-
-  // POST-ORDER
-  "IN_PRODUCTION",
-  "DELIVERED",
-
-  // TERMINALI
-  "CANCELLED",
-  "ARCHIVED",
-] as const;
-
-export type ConfigurationStatus =
-  (typeof CONFIGURATION_STATUS)[number];
-
-/* ======================================================
-   PREFILL (VISITOR / BUYFLOW)
-   ⚠️ NON È BUSINESS
+   PREFILL
 ====================================================== */
 
 export const ConfigurationPrefillSchema = z.object({
@@ -61,7 +27,7 @@ export const ConfigurationPrefillSchema = z.object({
 });
 
 /* ======================================================
-   WORKSPACE DATA (UI-DRIVEN)
+   WORKSPACE DATA
 ====================================================== */
 
 export const ConfigurationWorkspaceSchema = z.object({
@@ -71,38 +37,26 @@ export const ConfigurationWorkspaceSchema = z.object({
 });
 
 /* ======================================================
-   MAIN CONFIGURATION SCHEMA
+   MAIN SCHEMA
 ====================================================== */
 
 export const ConfigurationSchema = z.object({
-  /* ---------- Identity ---------- */
   id: z.string().uuid(),
   userId: z.string().optional(),
 
-  /* ---------- Business linkage (POST-STEP) ---------- */
-  businessId: z.string().optional(),
-/* ---------- Business draft linkage (PRE-BUSINESS) ---------- */
-businessDraftId: z.string().optional(),
-  /* ---------- Commercial origin ---------- */
   solutionId: z.string().min(1),
   productId: z.string().min(1),
 
-  /* ---------- Prefill (BuyFlow) ---------- */
   prefill: ConfigurationPrefillSchema.optional(),
-
-  /* ---------- Options ---------- */
   options: z.array(z.string()).default([]),
-
-  /* ---------- Workspace ---------- */
   data: ConfigurationWorkspaceSchema.default({}),
 
-  /* ---------- Status ---------- */
-  status: z.enum(CONFIGURATION_STATUS).default("DRAFT"),
+  status: z.enum(CONFIGURATION_STATUS),
 
-  /* ---------- Timestamps ---------- */
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
   deletedAt: z.string().optional(),
 });
 
-export type ConfigurationDTO = z.infer<typeof ConfigurationSchema>;
+export type ConfigurationDTO =
+  z.infer<typeof ConfigurationSchema>;

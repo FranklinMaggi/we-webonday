@@ -14,7 +14,7 @@ import { requireAuthUser
     userConfigurationsKey,
     getConfiguration,
  
-  } from "..";
+  } from  "../keys.ts";
 
 
   export async function deleteUserConfiguration(

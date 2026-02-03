@@ -22,10 +22,10 @@
 
 import type { Env } from "../../../types/env";
 import { SolutionSchema } from "../schema/solution.schema";
-import { ProductSchema } from "../../product/product.schema";
-import { getSolutionImageUrl } from "../../../utils/assets";
-import { getSolutionImages } from "../../../utils/assets";
-import { OpeningHoursDTO } from "@domains/business/schema/business.schema";
+import { ProductSchema } from "../../product/schema/product.schema";
+import { getSolutionImageUrl } from "@domains/image/assets";
+import { getSolutionImages } from "@domains/image/assets";
+import { OpeningHoursDTO } from "@domains/GeneralSchema/hours.opening.schema";
 /* ======================================================
    DOMAIN OUTPUT TYPES
 ====================================================== */
@@ -46,8 +46,7 @@ export type SolutionDetailResult =
         image?: {
           hero: string;
           card: string;
-          
-        };
+         };
         openingHours?: OpeningHoursDTO;
         
         /** @deprecated */

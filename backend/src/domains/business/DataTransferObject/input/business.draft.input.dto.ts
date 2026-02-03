@@ -15,7 +15,7 @@ INVARIANTI:
 - Backend = source of truth
 ====================================================== */
 
-import type { OpeningHoursDTO } from "@domains/business/schema/business.schema";
+import type { OpeningHoursDTO } from "@domains/GeneralSchema/hours.opening.schema";
 
 export interface BusinessDraftInputDTO {
   /* =====================

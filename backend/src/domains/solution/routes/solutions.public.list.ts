@@ -22,7 +22,7 @@
 
 import type { Env } from "../../../types/env";
 import { SolutionSchema } from "../schema/solution.schema";
-import { getSolutionImageUrl } from "@utils/assets";
+import { getSolutionImageUrl } from "@domains/image/assets";
 /* ======================================================
    DOMAIN OUTPUT TYPE
 ====================================================== */

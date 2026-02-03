@@ -56,32 +56,31 @@ import Vision from "../../marketing/pages/vision";
 import FounderPage from "../../marketing/pages/founder";
 import Price from "../../marketing/pages/pricing";
 
-import Solutions from "../../marketing/pages/solution/soltuionpage";
-import HomeSolutionPage from "../../marketing/pages/solution/soltuionpage/[id]";
+import Solutions from "../../marketing/pages/solution/solution-page";
+import HomeSolutionPage from "../../marketing/pages/solution/solution-page/[id]";
 
 import UserLogin from "../../user/auth";
 
 /* =========================
    POLICY
 ========================= */
-import Privacy from "../../shared/terms/policy/privacy";
-import Terms from "../../shared/terms/policy/terms";
-import PolicyPage from "../../shared/terms/policy/policy";
-
+import CookiePolicyPage from "../../marketing/components/policy/cookie-policy/CookiePolicyPage";
+import PrivacyPage from "../../marketing/components/policy/privacy-policy/PrivacyPage";
+import TermsPage from "../../marketing/components/policy/terms-policy/TermsPage";
 /* =========================
    USER — DASHBOARD & FLOWS
 ========================= */
 import UserDashboardHome from "../../user/pages/dashboard";
 import UserBusinessDashboard from "../../user/pages";
-import YouDashboardPage from "@user/pages/you/hard-driver";
+import YouDashboardPage from "@src/user/pages/you/hard-driver";
 
 import UserBusinessDetail from "../../user/pages/you/business/[id]";
-import WorkspaceIndex from "../../user/pages/workspace";
+import ListConfigurationIndex from "@src/user/configurator";
 /* =========================
    USER — CONFIGURATOR
 ========================= */
 //import UserConfiguratorIndex from "../pages/user/dashboard/configurator/index";
-import ConfigurationIndex from "../../user/configurator/[id]";
+import ConfigurationEntryPage from "../../user/configurator/[id]";
 import PostLoginHandoff from "../../user/pages/PostLoginHandoff";
 /* =========================
    ADMIN
@@ -97,11 +96,15 @@ import AdminOptionsPage from "../../admin/pages/products/options";
 import AdminEditOptionPage from "../../admin/pages/products/options/[id]";
 import SolutionsList from "../../admin/pages/solutions";
 import SolutionEditor from "../../admin/pages/solutions/[id]";
-import UserConfigurationWorkspace from "../../user/pages/workspace/[id]";
+import AdminConfigurationDetail from "@src/admin/pages/configuration/[id]";
+import AdminConfigurationsPage from "@src/admin/pages/configuration";
+
+//import ConfigurationEntryPage from "../../user/pages/workspace/[id]";
 import { useParams } from "react-router-dom";
 import ProfilePage from "../../user/pages/you/profile";
 import AccountPage from "../../user/pages/you/account";
 import ConfiguratorLayout from "@user/configurator/ConfiguratorLayout";
+import WorkspaceByBusiness from "@src/user/workspace/business";
 function RedirectConfiguratorToDashboard() {
   const { id } = useParams<{ id: string }>();
 
@@ -139,10 +142,11 @@ const router = createBrowserRouter([
       /* ===== AUTH ===== */
       { path: "user/login", element: <UserLogin /> },
 
-      /* ===== POLICY ===== */
-      { path: "policy/privacy", element: <Privacy /> },
-      { path: "policy/terms", element: <Terms /> },
-      { path: "policy", element: <PolicyPage /> },
+     
+/* ===== POLICY (PUBLIC, READ-ONLY) ===== */
+{ path: "policy/cookies", element: <CookiePolicyPage /> },
+{ path: "policy/privacy", element: <PrivacyPage /> },
+{ path: "policy/terms", element: <TermsPage /> },
     ],
   },
 
@@ -193,21 +197,21 @@ const router = createBrowserRouter([
               },
 
               /* ===== CONFIGURATOR (CANONICAL) ===== */
-{
-  path: "configurator",
-  element: <ConfiguratorLayout />,
-  children: [
-    {
-      index: true,
-      element: <WorkspaceIndex />, 
-      // ⬆️ temporaneamente riusiamo la lista workspace
-    },
-    {
-      path: ":id",
-      element: <ConfigurationIndex />, // wizard vero
-    },
-  ],
-},
+              {
+                path: "configurator",
+                element: <ConfiguratorLayout />,
+                children: [
+                  {
+                    index: true,
+                    element: <ListConfigurationIndex />,
+                  
+                  },
+                  {
+                    path: ":id",
+                    element: <ConfigurationEntryPage />, // wizard verodiventa configurationEntryPage
+                  },
+                ],
+              },
 
 
                 /* ===== CONFIGURATOR (EMBEDDED IN DASHBOARD) ===== */
@@ -216,20 +220,12 @@ const router = createBrowserRouter([
   //element: <ConfigurationIndex />, // riusa l’entry del configurator
 },
               /* ===== CONFIGURATION WORKSPACE (POST-WIZARD) ===== */
-              {
-                path: "workspace",
-                children: [
-                  {
-                    index: true,
-                    element: <WorkspaceIndex />,
-                  },
-                  {
-                    path: ":id",
-                    element: <UserConfigurationWorkspace />,
-                  },
-                ],
-              },
-              
+             /* ===== WORKSPACE (SITE EDITING) ===== */
+            {
+              path: "workspace/:id/*",
+              element: <WorkspaceByBusiness />,
+            },
+                          
 
               /* ===== ORDERS (PLACEHOLDER CANONICO) ===== */
               {
@@ -297,6 +293,9 @@ const router = createBrowserRouter([
               { path: "products/:id", element: <AdminEditProductPage /> },
               { path: "options", element: <AdminOptionsPage /> },
               { path: "options/:id", element: <AdminEditOptionPage /> },
+              { path: "configurations", element: <AdminConfigurationsPage /> },
+               {path:"configurations/:id",element:<AdminConfigurationDetail />
+              },
             ],
           },
         ],

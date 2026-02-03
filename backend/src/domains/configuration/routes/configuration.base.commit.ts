@@ -18,7 +18,7 @@
 //@deprecated - not used 
 import type { Env } from "../../../types/env";
 import type { ConfigurationDTO } from "../schema/configuration.schema";
-import { UserCommitSchema } from "@domains/user/user.commit.schema";
+import { OwnerSchema } from "@domains/owner/schema/verified-owner.schema";
 import { requireAuthUser } from "@domains/auth";
 import { json } from "@domains/auth/route/helper/https";
 
@@ -111,7 +111,7 @@ export async function commitConfiguration(
     source: "configuration_commit",
   };
 
-  const parsed = UserCommitSchema.safeParse(commitRaw);
+  const parsed = OwnerSchema.safeParse(commitRaw);
   if (!parsed.success) {
     throw new Error("INVALID_USER_COMMIT");
   }

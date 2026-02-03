@@ -4,17 +4,18 @@
 //
 // AI-SUPERCOMMENT
 // - Sezione FE autonoma (data-fetch + render)
+// - Orchestratore funnel: selection → login
 // - Nessuna conoscenza del layout di pagina
-// - UI-safe (guard su description)
 // ============================================================
 
 import { useEffect, useState } from "react";
 import { fetchPublicSolutions } from
   "../../../../shared/lib/publicApi/solutions/solutions.public.api";
-
+import { useConfigurationSetupStore } from "@src/shared/domain/user/configurator/configurationSetup.store";
 import SolutionCard from "./SolutionCard";
 import { solutionsSectionClasses as cls } from "./solutionsSection.classes";
 import { t } from "@shared/aiTranslateGenerator";
+import { UserLoginForm } from "@src/marketing/components/auth/UserLoginForm";
 
 type PublicSolutionCard = {
   id: string;
@@ -27,7 +28,8 @@ export default function SolutionsSection() {
   const [solutions, setSolutions] = useState<PublicSolutionCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const { setField } = useConfigurationSetupStore();
   /* ===========================
      LOAD SOLUTIONS (PUBLIC)
   =========================== */
@@ -90,14 +92,40 @@ export default function SolutionsSection() {
       )}
 
       {!loading && !error && solutions.length > 0 && (
-        <div className={cls.grid}>
-          {solutions.map((solution) => (
-            <SolutionCard
-              key={solution.id}
-              solution={solution}
-            />
-          ))}
-        </div>
+        <>
+          {/* ================= GRID ================= */}
+          <div className={cls.grid}>
+  {solutions.map((solution) => (
+    <SolutionCard
+      key={solution.id}
+      solution={solution}
+      selected={solution.id === selectedId}
+      onSelect={() => {
+        setSelectedId(solution.id);
+        setField("solutionId", solution.id);
+        setField("productId", "iscrizione-gratuita");
+      }}
+    />
+  ))}
+</div>
+
+          {/* ================= LOGIN (GATED) ================= */}
+          {selectedId && (
+            <section
+              id="solution-login"
+              className={cls.loginSection}
+            >
+              <h3 className={cls.loginTitle}>
+                {t("solutions.login.title")}
+              </h3>
+
+              <UserLoginForm
+                context="solution"
+                redirect={`/user/post-login?solution=${selectedId}`}
+              />
+            </section>
+          )}
+        </>
       )}
     </section>
   );

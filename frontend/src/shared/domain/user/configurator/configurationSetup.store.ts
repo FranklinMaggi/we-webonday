@@ -21,10 +21,15 @@ const initialState: ConfigurationSetupDTO = {
   email: "",
   phone: undefined,
 
-  address: undefined,
-  city: undefined,
-  state: undefined,
-  zip: undefined,
+  businessAddress: {
+    street: "",
+    number: "",
+    city: "",
+    province: "",
+    region: "",
+    country: "",
+    zip: "",
+  },
 
   openingHours: EMPTY_OPENING_HOURS,
 
@@ -41,13 +46,24 @@ const initialState: ConfigurationSetupDTO = {
   ownerLastName: "",
   ownerBirthDate: undefined,
   ownerSecondaryMail: undefined,
+  
+  ownerAddress: {
+    street: "",
+    number: "",
+    city: "",
+    province: "",
+    region: "",
+    zip: "",
+    country: "Italia",
+  },
 
+  
   ownerPrivacy: {
     accepted: false,
     acceptedAt: "",
     policyVersion: "",
   },
-
+  ownerStepCompleted: false,
   layoutId: undefined,
   style: undefined,
   colorPreset: undefined,

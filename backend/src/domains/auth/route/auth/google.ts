@@ -2,8 +2,8 @@
 
 import type { Env } from "../../../../types/env";
 import { getCorsHeaders } from "@domains/auth/cors/auth.cors";
-import { logActivity } from "../../../activity/router/logActivity";
-import { resolveOrCreateUser } from "../../user/auth.user.service";
+import { logActivity } from "../../../legal/activity/router/logActivity";
+import { createUser } from "../user/auth.user.create-user";
 import { mapGooglePayload } from "@domains/auth/identity/auth.identity.google";
 import { buildSessionCookie } from "../../session/auth.session.cookies";
 import { getFrontendBaseUrl } from "../helper/frontendBase";
@@ -107,7 +107,7 @@ export async function googleCallback(
   // USER RESOLUTION
   // ===============================
   const identity = mapGooglePayload(payload);
-  const { userId } = await resolveOrCreateUser(env, identity);
+  const { userId } = await createUser(env, identity);
   
   await logActivity(env, "LOGIN", userId, {
     provider: "google",

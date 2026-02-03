@@ -1,19 +1,23 @@
 // ======================================================
 // FE || components/navbar/Navbar.tsx
 // ======================================================
-// NAVBAR — GLOBAL (MARKETING / PRE-LOGIN)
+// NAVBAR — MARKETING MINIMAL
 //
-// AI COMMENT (STRUTTURA):
-// - Incapsulamento semantico: shell → layout → zones
-// - Nessuna modifica UX o flusso
-// - Predisposto per estensioni (cart toggle) senza attivarle
+// RUOLO:
+// - Ridurre attrito cognitivo
+// - Supportare SOLO il flusso di ingresso
+//
+// MOSTRA:
+// - Brand
+// - Login / Logout
+// - Language selector
 // ======================================================
 
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 import LanguageSelector from "./LanguageSelector";
-import { logout } from "@shared/lib/userApi/auth.user.api";
+import { logout } from "@src/user/auth/api/auth.user.api";
 import { useAuthStore } from "@shared/lib/store/auth.store";
 import { t } from "@shared/aiTranslateGenerator";
 
@@ -27,35 +31,24 @@ export default function Navbar() {
   const ready = useAuthStore(s => s.ready);
   const clearUser = useAuthStore(s => s.clearUser);
 
-  const userMode = localStorage.getItem("user_mode");
-  const activeBusinessId = localStorage.getItem("active_business_id");
-
-  const [isMobile, setIsMobile] = useState(
-    window.matchMedia("(max-width: 768px)").matches
-  );
-
-  useEffect(() => {
-    function onResize() {
-      setIsMobile(window.matchMedia("(max-width: 768px)").matches);
-    }
-    window.addEventListener("resize", onResize, { passive: true });
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
   async function handleLogout() {
     await logout();
     clearUser();
-    localStorage.removeItem("user_mode");
     navigate("/", { replace: true });
   }
 
   return (
-    <nav ref={navRef} className={cls.navShell} aria-label="Primary navigation">
+    <nav
+      ref={navRef}
+      className={cls.navShell}
+      aria-label="Primary navigation"
+    >
       <div className={cls.navLayout}>
-        {/* ================= LEFT / BRAND ================= */}
+
+        {/* ================= BRAND ================= */}
         <div className={cls.navZoneLeft}>
           <Link
-            to={user ? "/user/dashboard" : "/"}
+            to="/"
             className={cls.brandLink}
             aria-label="WebOnDay Home"
           >
@@ -65,53 +58,21 @@ export default function Navbar() {
               className={cls.brandIcon}
             />
 
-            {!isMobile && (
-              <div className={cls.brandText}>
-                <span className={cls.brandWe}>We</span>
-                <span className={cls.brandName}>WebOnDay</span>
-              </div>
-            )}
+            <div className={cls.brandText}>
+              <span className={cls.brandWe}>We</span>
+              <span className={cls.brandName}>WebOnDay</span>
+            </div>
           </Link>
         </div>
 
-        {/* ================= CENTER / NAV ================= */}
-        <div className={cls.navZoneCenter}>
-          {ready && user && (
-            <Link to="/user/dashboard" className={cls.navLink}>
-              {t("navbar.dashboard")}
-            </Link>
-          )}
-
-          {userMode === "configurator" && activeBusinessId && (
-            <Link
-              to={`/user/dashboard/${activeBusinessId}`}
-              className={cls.navLink}
-            >
-              {t("navbar.dashboard.active_business")}
-            </Link>
-          )}
-
-          <Link to="/solution" className={cls.navLink}>
-            {t("navbar.solutions")}
-          </Link>
-
-          <Link to="/mission" className={cls.navLink}>
-            {t("navbar.mission")}
-          </Link>
-
-          <Link to="/vision" className={cls.navLink}>
-            {t("navbar.vision")}
-          </Link>
-
+        {/* ================= ACTIONS ================= */}
+        <div className={cls.navZoneRight}>
           {ready && !user && (
             <Link to="/user/login" className={cls.navLink}>
               {t("navbar.login")}
             </Link>
           )}
-        </div>
 
-        {/* ================= RIGHT / ACTIONS ================= */}
-        <div className={cls.navZoneRight}>
           {ready && user && (
             <button
               type="button"
@@ -123,13 +84,6 @@ export default function Navbar() {
               ⏻
             </button>
           )}
-
-          {/* CART TOGGLE — HOOK (NON ATTIVO)
-             - spazio riservato
-             - hidden via CSS/flag
-             - nessuna logica montata
-          */}
-          <div className={cls.cartHook} aria-hidden />
 
           <LanguageSelector />
         </div>

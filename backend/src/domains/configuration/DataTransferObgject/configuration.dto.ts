@@ -1,14 +1,10 @@
-/**Output API */
+import type { ConfigurationStatus } from "../mappers/configuration.status";
 
-/**
- * Output API per FE
- * - mai identico allo schema interno
- */
 export type ConfigurationPublicDTO = {
-    id: string;
-    status: string;
-    solutionId: string;
-    productId: string;
-    businessId?: string;
-  };
-  
+  id: string;
+  status: ConfigurationStatus;
+  solutionId: string;
+  productId: string;
+};
+
+

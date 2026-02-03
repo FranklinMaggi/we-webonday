@@ -8,6 +8,7 @@ export const solutionsSectionClasses = {
     /** ROOT */
     section: "solutions-section",
     title: "solutions.section.title",
+    link: "solutions.card.discover",
   
     /** STATES */
     loading: "solutions-section__loading",
@@ -16,5 +17,9 @@ export const solutionsSectionClasses = {
   
     /** GRID */
     grid: "solutions-section__grid wd-grid",
+
+  // 👇 AGGIUNTA
+  loginSection: "solutions-section__login",
+  loginTitle: "solutions-section__login-title",
   };
   

@@ -1,10 +1,43 @@
 // ======================================================
-// FE || USER DASHBOARD || YOU — CONTAINER
+// AI-SUPERCOMMENT — YOU CONTAINER
 // ======================================================
-
+//
+// RUOLO (CHE COSA FA):
+// - È il layer di ORCHESTRAZIONE della pagina YOU
+// - Punto di aggregazione USER → CONFIGURATION → (BUSINESS opzionale)
+// - Trasforma dati grezzi in ViewModel pronti per la View
+//
+// SOURCE OF TRUTH:
+// - CONFIGURATION è la base (useMyConfigurations)
+// - BUSINESS è un ARRICCHIMENTO opzionale (best-effort)
+//
+// COSA FA ESATTAMENTE:
+// 1. Carica TUTTE le configuration dell’utente (non terminali)
+// 2. Per ciascuna configuration:
+//    - prova a caricare il business draft
+//    - se ESISTE → arricchisce con preview anagrafica
+//    - se NON esiste → restituisce comunque la configuration
+// 3. Garantisce che la pagina YOU non sia MAI vuota
+//
+// COSA **NON** DEVE FARE:
+// - NON decide flussi di navigazione
+// - NON filtra per stati commerciali
+// - NON crea o muta business
+// - NON dipende da sidebar o routing
+//
+// INVARIANTI CRITICI:
+// - YOU è CONFIGURATION-CENTRIC
+// - L’assenza del business NON è un errore
+// - Business.status è derivato, non persistito
+// - Qualsiasi failure di fetch business è SILENZIOSA
+//
+// ⚠️ ATTENZIONE FUTURA:
+// - Qualsiasi refactor che renda YOU business-centrico
+//   rompe il flusso user → workspace → preview
+// ======================================================
 import { useEffect, useState } from "react";
 import { useMyConfigurations } from
-  "../../../configurator/base_configuration/configuration/useMyConfigurations";
+  "../../../configurator/base_configuration/configuration/api/configuration.my-configuration-get-list";
 import { apiFetch } from "@shared/lib/api";
 
 /* ======================================================
@@ -58,16 +91,26 @@ export function useYouDashboardContainer(): YouDashboardVM {
   /* =========================
      LOAD BUSINESS PREVIEW
   ========================= */
-  useEffect(() => {
-    let cancelled = false;
+/* =========================
+   LOAD BUSINESS PREVIEW (OPTIONAL)
+   PERCHÉ:
+   - YOU è configuration-centric
+   - Business è un arricchimento
+========================= */
+useEffect(() => {
+  let cancelled = false;
 
-    async function loadBusinesses() {
-      const activeConfigs = configurations.filter(
-        (c) => c.status === "CONFIGURATION_IN_PROGRESS"
-      );
+  async function loadBusinesses() {
+    // 🔑 TUTTE le configuration non terminali
+    const activeConfigs = configurations.filter(
+      (c) =>
+        c.status !== "CANCELLED" &&
+        c.status !== "ARCHIVED"
+    );
 
-      const results = await Promise.all(
-        activeConfigs.map(async (c) => {
+    const results = await Promise.all(
+      activeConfigs.map(async (c) => {
+        try {
           const res = await apiFetch<{
             ok: boolean;
             draft?: any;
@@ -75,13 +118,24 @@ export function useYouDashboardContainer(): YouDashboardVM {
             `/api/business/get-base-draft?configurationId=${c.id}`
           );
 
-          if (!res?.ok || !res.draft) return null;
+          // ❗ Se NON esiste business → mostriamo comunque la configuration
+          if (!res?.ok || !res.draft) {
+            return {
+              configurationId: c.id,
+              businessName:
+                c.prefill?.businessName ?? "Attività",
+              status: "DRAFT",
+            } as BusinessWithPlanVM;
+          }
 
           const d = res.draft;
 
           return {
             configurationId: c.id,
-            businessName: d.businessName ?? "Attività",
+            businessName:
+              d.businessName ??
+              c.prefill?.businessName ??
+              "Attività",
             status: d.complete ? "ACTIVE" : "DRAFT",
             preview: {
               address: d.contact?.address,
@@ -90,23 +144,25 @@ export function useYouDashboardContainer(): YouDashboardVM {
               openingHours: d.openingHours,
             },
           } as BusinessWithPlanVM;
-        })
+        } catch {
+          return null;
+        }
+      })
+    );
+
+    if (!cancelled) {
+      setBusinesses(
+        results.filter(Boolean) as BusinessWithPlanVM[]
       );
-
-      if (!cancelled) {
-        setBusinesses(
-          results.filter(Boolean) as BusinessWithPlanVM[]
-        );
-      }
     }
+  }
 
-    loadBusinesses();
+  loadBusinesses();
 
-    return () => {
-      cancelled = true;
-    };
-  }, [configurations]);
-
+  return () => {
+    cancelled = true;
+  };
+}, [configurations]);
   return {
     configurations,
     businesses,

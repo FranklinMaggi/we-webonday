@@ -21,7 +21,7 @@ PERCHÉ:
 import type { Env } from "../../../../types/env";
 
 import { BusinessSchema } from "../../schema/business.schema";
-import { logActivity } from "../../../activity/router/logActivity";
+import { logActivity } from "../../../legal/activity/router/logActivity";
 
 import { BUSINESS_KEY } from "../../../../lib/kv";
 import { requireAuthUser } from "@domains/auth";
@@ -124,18 +124,6 @@ export async function submitBusiness(
     );
   }
 
-  if (business.status !== "draft") {
-    return json(
-      {
-        ok: false,
-        error: "INVALID_BUSINESS_STATE",
-        currentStatus: business.status,
-      },
-      request,
-      env,
-      409
-    );
-  }
 
   /* =====================
      6️⃣ STATE TRANSITION

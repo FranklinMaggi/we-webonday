@@ -67,8 +67,12 @@ export async function adminFetch<T>(
   });
 
   if (res.status === 401) {
-    adminLogout();
+    // logout SOLO se non siamo già su /admin/login
+    if (!window.location.pathname.startsWith("/admin/login")) {
+      adminLogout();
+    }
   }
+  
 
   if (!res.ok) {
     const text = await res.text();

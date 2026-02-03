@@ -1,38 +1,49 @@
-import { z } from "zod";
-import { OpeningHoursSchema } from "./schema/business.schema";
-
-type RawOpeningHours = Record<string, unknown>;
-type NormalizedOpeningHours = z.infer<typeof OpeningHoursSchema>;
-
+import { OpeningHoursSchema, type OpeningHoursDTO } from "@domains/GeneralSchema/hours.opening.schema"
+ /**  Normalizza OpeningHours legacy / parziali
+ *
+ * - Garantisce tutti i giorni
+ * - Scarta valori invalidi
+ * - NON interpreta stringhe magiche
+ * - Source of truth: OpeningHoursSchema
+ */
 export function normalizeDraftOpeningHours(
-  raw: RawOpeningHours | undefined
-): NormalizedOpeningHours {
-  const days = [
-    "monday","tuesday","wednesday",
-    "thursday","friday","saturday","sunday",
-  ] as const;
+  raw?: Partial<Record<string, unknown>>
+): OpeningHoursDTO {
 
-  const result = {} as NormalizedOpeningHours;
+  const result: OpeningHoursDTO = {
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+    saturday: [],
+    sunday: [],
+  };
 
-  for (const day of days) {
-    const value = String(raw?.[day] ?? "").trim();
+  if (!raw) {
+    return OpeningHoursSchema.parse(result);
+  }
 
-    if (!value || value === "Chiuso") {
+  for (const day of Object.keys(result) as (keyof OpeningHoursDTO)[]) {
+    const value = raw[day];
+
+    if (!Array.isArray(value)) {
       result[day] = [];
       continue;
     }
 
-    if (value === "H24") {
-      result[day] = [{ from: "00:00", to: "24:00" }];
-      continue;
-    }
-
-    const ranges = value.split(" / ");
-
-    result[day] = ranges.map((r) => {
-      const [from, to] = r.split(" - ");
-      return { from, to };
-    });
+    result[day] = value
+      .filter(
+        (r): r is { from: string; to: string } =>
+          typeof r === "object" &&
+          r !== null &&
+          typeof (r as any).from === "string" &&
+          typeof (r as any).to === "string"
+      )
+      .map((r) => ({
+        from: r.from.trim(),
+        to: r.to.trim(),
+      }));
   }
 
   return OpeningHoursSchema.parse(result);

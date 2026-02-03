@@ -1,22 +1,35 @@
 // ======================================================
-// BE || BUSINESS || GET BASE DRAFT
+// BE || BUSINESS || GET BASE DRAFT (FASE 1)
 // GET /api/business/draft?configurationId=
 // ======================================================
 //
+// AI-SUPERCOMMENT
+//
 // RUOLO:
 // - Recupera il BusinessDraft associato a una Configuration
-// - Usato per PREFILL dello step Business
+// - Usato per il PREFILL dello step Business nel configuratore
+//
+// MODELLO DATI (POST-FASE-1):
+// - BusinessDraft è OWNED dalla Configuration
+// - ID BusinessDraft === configurationId
+// - KV key: BUSINESS_DRAFT:{configurationId}
 //
 // INVARIANTI:
 // - Auth obbligatoria
 // - Read-only
 // - Backend = source of truth
+//
+// PERCHÉ:
+// - Evita lookup indiretti
+// - Semplifica preview e flusso guidato
+// - Elimina mismatch concettuali tra Draft e Configuration
 // ======================================================
 
 import type { Env } from "../../../types/env";
 import { requireAuthUser } from "@domains/auth";
 import { json } from "@domains/auth/route/helper/https";
 import { BusinessDraftSchema } from "../schema/business.draft.schema";
+import type { ConfigurationDTO } from "@domains/configuration/schema/configuration.schema";
 
 export async function getBusinessDraft(
   request: Request,
@@ -57,10 +70,7 @@ export async function getBusinessDraft(
   const configuration = await env.CONFIGURATION_KV.get(
     `CONFIGURATION:${configurationId}`,
     "json"
-  ) as {
-    businessDraftId?: string;
-    userId?: string;
-  } | null;
+  ) as ConfigurationDTO | null;
 
   if (!configuration) {
     return json(
@@ -83,21 +93,15 @@ export async function getBusinessDraft(
     );
   }
 
-  if (!configuration.businessDraftId) {
-    return json(
-      { ok: true, draft: null },
-      request,
-      env
-    );
-  }
-
   /* =====================
      5️⃣ LOAD BUSINESS DRAFT
+     (OWNED BY CONFIGURATION)
   ====================== */
   const raw = await env.BUSINESS_KV.get(
-    `BUSINESS_DRAFT:${configuration.businessDraftId}`
+    `BUSINESS_DRAFT:${configurationId}`
   );
 
+  // Draft non ancora creato → flusso valido
   if (!raw) {
     return json(
       { ok: true, draft: null },

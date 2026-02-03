@@ -3,8 +3,7 @@ import { useEffect } from "react";
 import Navbar from "../../../marketing/components/navbar/Navbar";
 import Footer from "../../../marketing/components/footer/Footer";
 import WhatsAppButton from "../../../marketing/components/whatsapp/WhatsAppButton";
-import { CookieBanner } from "../../../shared/cookie/CookieBanner";
-import CartSticker from "../../../marketing/pages/buyflow/cart/CartSticker";
+import { CookieBanner } from "../../../marketing/components/cookie/CookieBanner";
 import { setDocumentTitle } from "../../../shared/utils/seo";
 
 
@@ -37,7 +36,7 @@ export function MainLayout({
       {/* Componenti flottanti globali */}
       <WhatsAppButton />
       <CookieBanner />
-      <CartSticker />
+    
 
       <Footer />
     </div>

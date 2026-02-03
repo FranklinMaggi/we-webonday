@@ -13,7 +13,7 @@
 // ======================================================
 
 import type { Env } from "../../../types/env";
-import { withVisitor } from "../visitor/visitor.response";
+import { withVisitor } from "@domains/legal/visitor/routes";
 export type CorsMode = "PUBLIC" | "SOFT" | "HARD";
 
 export function getCorsHeaders(

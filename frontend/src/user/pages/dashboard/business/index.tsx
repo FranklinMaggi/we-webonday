@@ -20,7 +20,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { listMyBusinesses } from "@user/configurator/api/business.user.api";
+import { listMyBusinesses } from "@src/user/configurator/business/api/business.user.api";
 
 /* =========================
    VIEW MODEL (FE)

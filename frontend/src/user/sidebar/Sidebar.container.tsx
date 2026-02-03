@@ -1,37 +1,51 @@
 // ======================================================
-// FE || USER DASHBOARD || SIDEBAR CONTAINER
+// FE || USER DASHBOARD || SIDEBAR CONTAINER (OPTIMIZED)
+// ======================================================
+//
+// INVARIANTI:
+// - Sidebar configuration-centric
+// - Workspace = Configuration
+// - Preview vive nel Workspace
+// - Business è derivato (non prerequisito)
+// - Sidebar NON fa fetch per-item
 // ======================================================
 
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 
 import { SidebarView } from "./Sidebar.view";
-import { type SidebarSectionVM } from "./Sidebar.types";
+import type { SidebarSectionVM } from "./Sidebar.types";
 
-import { useMyConfigurations } from "../configurator/base_configuration/configuration/useMyConfigurations";
-import { useActiveProductsWithOptions } from "../configurator/base_configuration/configuration/useActiveProducts";
+import { useMyConfigurations } from
+  "../configurator/base_configuration/configuration/api/configuration.my-configuration-get-list";
+import { useMyBusinesses } from "../configurator/business/api/useMyBusinessDrafts";
+import { useActiveProductsWithOptions } from
+  "../configurator/base_configuration/configuration/api/useActiveProducts";
 
 export default function SidebarContainer() {
-  
   /* =========================
      ROUTE CONTEXT
   ========================= */
-  const { businessId, configurationId } = useParams<{
-    businessId?: string;
-    configurationId?: string;
-  }>();
+  const { businessId } = useParams<{ businessId?: string }>();
 
   /* =========================
-     DATA HOOKS
+     DATA HOOKS (AGGREGATED)
   ========================= */
   const { items: configurations = [] } = useMyConfigurations();
+  const { completed, inProgress } = useMyBusinesses();
   const { products = [] } = useActiveProductsWithOptions();
 
   /* =========================
-     NORMALIZZAZIONE
+     CONFIGURATION VISIBILITY
+     - Escludiamo solo stati terminali
   ========================= */
-  const businessReady = useMemo(
-    () => configurations.filter((c) => c.status === "CONFIGURATION_IN_PROGRESS"),
+  const workspaceConfigurations = useMemo(
+    () =>
+      configurations.filter(
+        (c) =>
+          c.status !== "CANCELLED" &&
+          c.status !== "ARCHIVED"
+      ),
     [configurations]
   );
 
@@ -40,35 +54,51 @@ export default function SidebarContainer() {
     [configurations]
   );
 
-  const businessNameById = useMemo(() => {
+  /* =========================
+     NAME MAP (Configuration)
+  ========================= */
+  const configurationNameById = useMemo(() => {
     const map = new Map<string, string>();
-  
-    configurations.forEach((c) => {
-      if (c.status === "CONFIGURATION_IN_PROGRESS") {
-        map.set(
-          c.id,
-          c.prefill?.businessName ?? "Attività"
-        );
-      }
-    });
-  
-    return map;
-  }, [configurations]);
-  const businessNameByConfigurationId = useMemo(() => {
-    const map = new Map<string, string>();
-  
     configurations.forEach((c) => {
       map.set(
         c.id,
         c.prefill?.businessName ?? "Attività"
       );
     });
-  
     return map;
   }, [configurations]);
-  
+
   /* =========================
-     VIEW MODEL
+     BUSINESS LOOKUP (O(1))
+     - Risolto UNA VOLTA
+  ========================= */
+  const businessByConfigId = useMemo(() => {
+    const map = new Map<
+      string,
+      { businessName: string; complete: boolean }
+    >();
+
+    [...completed, ...inProgress].forEach((b) => {
+      map.set(b.configurationId, b);
+    });
+
+    return map;
+  }, [completed, inProgress]);
+
+  /* =========================
+     VERIFICATION TARGET
+  ========================= */
+  const firstWorkspaceId = workspaceConfigurations[0]?.id;
+
+  const verificationTargetId =
+    businessId ?? firstWorkspaceId;
+
+  const verificationTo = verificationTargetId
+    ? `/user/dashboard/business/${verificationTargetId}`
+    : "/user/dashboard/configurator";
+
+  /* =========================
+     VIEW MODEL (SIDEBAR)
   ========================= */
   const sections: SidebarSectionVM[] = [
     /* ===== YOU ===== */
@@ -76,95 +106,98 @@ export default function SidebarContainer() {
       titleKey: "sidebar.section.you",
       titleTo: "/user/dashboard/you",
       items: [
-        { to: "/user/dashboard/you/profile", labelKey: "sidebar.you.profile" },
-        { to: "/user/dashboard/you/account", labelKey: "sidebar.you.account" },
         {
-          to: "/user/dashboard/you/settings",
-          labelKey: "sidebar.you.settings",
-          disabled: true,
+          to: "/user/dashboard/you/profile",
+          labelKey: "sidebar.you.profile",
+        },
+        {
+          to: "/user/dashboard/you/account",
+          labelKey: "sidebar.you.account",
+        },
+        {
+          to: verificationTo,
+          labelKey: "sidebar.you.verification",
         },
       ],
     },
-
-   /* ===== CONFIGURATIONS ===== */
-{
-  titleKey: "sidebar.section.configurations",
-  titleTo: "/user/dashboard/configurator",
-  items:
-    configurationDrafts.length > 0
-      ? configurationDrafts.map((c) => ({
-          to: `/user/dashboard/configurator/${c.id}`,
-          labelKey:
-            businessNameByConfigurationId.get(c.id) ??
-            "sidebar.config.default",
-        }))
-      : [
-          {
-            to: "/solution",
-            labelKey: "sidebar.config.start",
-          },
-        ],
-},
-
 
     /* ===== BUSINESS ===== */
     {
       titleKey: "sidebar.section.business",
-      titleTo: businessId
-        ? `/user/dashboard/business/${businessId}`
-        : undefined,
-
-      items: businessId
-        ? [
-            {
-              to: `/user/dashboard/business/${businessId}`,
-              labelKey: "sidebar.business.overview",
-            },
-            {
-              to: `/user/dashboard/business/${businessId}/settings`,
-              labelKey: "sidebar.business.settings",
-            },
-          ]
-        : businessReady.length > 0
-        ? businessReady.map((c) => ({
-            to: `/user/dashboard/business/${c.id}`,
-            labelKey:  businessNameById.get(c.id) ??
-            "sidebar.business.default",
-          }))
-        : [
-            {
-              to: "#",
-              labelKey: "sidebar.business.empty",
-              disabled: true,
-            },
-          ],
+      items:
+        completed.length > 0
+          ? completed.map((b) => ({
+              to: `/user/dashboard/business/${b.configurationId}`,
+              labelKey: b.businessName,
+            }))
+          : [
+              {
+                to: "#",
+                labelKey: "sidebar.business.empty",
+                disabled: true,
+              },
+            ],
     },
 
-/* ===== WORKSPACE (CONTESTO ATTIVO) ===== */
-{
-  titleKey: "sidebar.section.workspace",
-  titleTo: configurationId
-    ? `/user/dashboard/workspace/${configurationId}`
-    : undefined,
+    /* ===== WORKSPACE ===== */
+    {
+      titleKey: "sidebar.section.workspace",
+      items:
+        workspaceConfigurations.length > 0
+          ? workspaceConfigurations.map((c) => ({
+              to: `/user/dashboard/workspace/${c.id}`,
+              labelKey:
+                configurationNameById.get(c.id) ??
+                "sidebar.workspace.site",
+            }))
+          : [
+              {
+                to: "#",
+                labelKey: "sidebar.workspace.empty",
+                disabled: true,
+              },
+            ],
+    },
 
-  items: configurationId
-    ? [
-        {
-          to: `/user/dashboard/workspace/${configurationId}`,
-          labelKey:
-            businessNameByConfigurationId.get(configurationId) ??
-            "sidebar.workspace.active",
-        },
-      ]
-    : [
-        {
-          to: "#",
-          labelKey: "sidebar.workspace.empty",
-          disabled: true,
-        },
-      ],
-},
+    /* ===== PREVIEW ===== */
+    {
+      titleKey: "sidebar.section.preview",
+      items:
+        workspaceConfigurations.length > 0
+          ? workspaceConfigurations.map((c) => ({
+              to: `/user/dashboard/workspace/${c.id}/preview`,
+              labelKey:
+                configurationNameById.get(c.id) ??
+                "sidebar.preview.site",
+            }))
+          : [
+              {
+                to: "#",
+                labelKey: "sidebar.preview.empty",
+                disabled: true,
+              },
+            ],
+    },
 
+    /* ===== CONFIGURATIONS (DRAFTS) ===== */
+    {
+      titleKey: "sidebar.section.configurations",
+      titleTo: "/user/dashboard/configurator",
+      items:
+        configurationDrafts.length > 0
+          ? configurationDrafts.map((c) => ({
+              to: `/user/dashboard/configurator/${c.id}`,
+              labelKey:
+                configurationNameById.get(c.id) ??
+                "sidebar.config.default",
+            }))
+          : [
+              {
+                to: "/solution",
+                labelKey: "sidebar.config.start",
+              },
+            ],
+    },
 
     /* ===== PLANS ===== */
     {

@@ -39,7 +39,7 @@ export type {
 /* ======================================================
    USER SERVICE (resolve / create user)
 ====================================================== */
-export { resolveOrCreateUser } from "./user/auth.user.service";
+export { createUser } from "./route/user/auth.user.create-user";
 
 /* ======================================================
    SESSION — COOKIE (HARD AUTH ONLY)

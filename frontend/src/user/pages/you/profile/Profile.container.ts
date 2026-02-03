@@ -1,63 +1,62 @@
-// ======================================================
-// FE || USER DASHBOARD || PROFILE — CONTAINER
-// ======================================================
-//
-// SOURCE OF TRUTH:
-// - USER / OWNER (no configuration)
-// - endpoint: /api/owner/get-draft
-//
-// RUOLO:
-// - read-only profile
-// - no side effects
-// ======================================================
+import { useCallback, useEffect, useState } from "react";
+import { apiFetch } from "@src/shared/lib/api";
 
-import { useEffect, useState } from "react";
-import { apiFetch } from "@shared/lib/api";
+import type { OwnerDraftReadDTO } from
+  "@src/shared/domain/owner/owner.read.types";
 
-type OwnerProfileDTO = {
-  firstName?: string;
-  lastName?: string;
-  birthDate?: string;
-  contact?: {
-    secondaryMail?: string;
-  };
-  privacy?: {
-    accepted: boolean;
-    acceptedAt: string;
-    policyVersion: string;
-  };
-  verified?: boolean;
-  complete?: boolean;
-  createdAt?: string;
-};
+import type { ConfigurationReadDTO } from "./DataTransferObject/configuration-read.type";
+import { useConfigurationSetupStore } from
+  "@src/shared/domain/user/configurator/configurationSetup.store";
 
 export function useProfileContainer() {
-  const [user, setUser] = useState<OwnerProfileDTO | null>(null);
+  const [user, setUser] =
+    useState<OwnerDraftReadDTO | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
+  const [configuration, setConfiguration] =
+    useState<ConfigurationReadDTO | null>(null);
 
-    async function loadProfile() {
-      try {
-        const res = await apiFetch<{
-          ok: boolean;
-          owner?: OwnerProfileDTO;
-        }>("/api/owner/get-draft");
+  const { setField } = useConfigurationSetupStore();
 
-        if (!cancelled && res?.owner) {
-          setUser(res.owner);
-        }
-      } catch {
-        if (!cancelled) setUser(null);
-      }
+  const loadProfile = useCallback(async () => {
+    /* ================= OWNER ================= */
+    const ownerRes = await apiFetch<{
+      ok: boolean;
+      owner?: OwnerDraftReadDTO;
+    }>("/api/owner/get-draft");
+
+    if (!ownerRes?.owner) {
+      setUser(null);
+      setConfiguration(null);
+      return;
     }
 
+    const owner = ownerRes.owner;
+    setUser(owner);
+
+    if (owner.configurationId) {
+      setField("configurationId", owner.configurationId);
+
+      /* ================= CONFIGURATION READ ================= */
+      const cfgRes = await apiFetch<{
+        ok: boolean;
+        configuration?: ConfigurationReadDTO;
+      }>(
+        `/api/configuration/${owner.configurationId}`
+      );
+
+      setConfiguration(cfgRes?.configuration ?? null);
+    } else {
+      setConfiguration(null);
+    }
+  }, [setField]);
+
+  useEffect(() => {
     loadProfile();
+  }, [loadProfile]);
 
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return user;
+  return {
+    user,
+    configuration,
+    reloadProfile: loadProfile,
+  };
 }

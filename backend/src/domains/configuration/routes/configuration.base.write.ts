@@ -22,10 +22,9 @@ import type { Env } from "../../../types/env";
 import { requireAuthUser } from "@domains/auth";
 import { json } from "@domains/auth/route/helper/https";
 import {
-  buildConfigurationId,
   configurationKey,
   userConfigurationsKey,
-} from "../index";
+} from  "../keys.ts";
 import type { ConfigurationDTO } from "../schema/configuration.schema";
 
 export async function createConfigurationBase(
@@ -93,12 +92,11 @@ export async function createConfigurationBase(
     prefill: {
       businessName: body.businessName,
     },
-    businessDraftId ,
+    status: "DRAFT",
     options: [],
     data: {},
   
-    status: "DRAFT",
-  
+      
     createdAt: now,
     updatedAt: now,
   };
