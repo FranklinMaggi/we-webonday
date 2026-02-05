@@ -9,16 +9,6 @@
 // - configurationId = ID canonico
 // ======================================================
 
-/**
- * Draft del Business (fase configuratore)
- * ID === configurationId
- */
-export const BUSINESS_DRAFT_KEY = (configurationId: string) =>
-  `BUSINESS_DRAFT:${configurationId}`;
 
-/**
- * Business finale (post-verifica)
- * ID === configurationId
- */
 export const BUSINESS_KEY = (configurationId: string) =>
   `BUSINESS:${configurationId}`;

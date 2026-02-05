@@ -36,8 +36,8 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 /* =========================
    LAYOUTS
 ========================= */
-import { MainLayout } from "../../user/pages/setup/MainLayout";
-import UserDashboardShell from "../../user/pages/dashboard/UserDashboardShell";
+import { MainLayout } from "./MainLayout";
+import UserDashboardShell from "../../user/dashboard/UserDashboardShell";
 //import ConfiguratorLayout from "../pages/user/dashboard/configurator/setup/steps/layouts/ConfiguratorLayout";
 import AdminLayout from "../../admin/components/admin/layouts/AdminLayout";
 import Mission from "../../marketing/pages/mission";
@@ -70,17 +70,17 @@ import TermsPage from "../../marketing/components/policy/terms-policy/TermsPage"
 /* =========================
    USER — DASHBOARD & FLOWS
 ========================= */
-import UserDashboardHome from "../../user/pages/dashboard";
-import UserBusinessDashboard from "../../user/pages";
-import YouDashboardPage from "@src/user/pages/you/hard-driver";
+import UserDashboardHome from "../../user/dashboard";
+import UserBusinessDashboard from "../../user/dashboard/you/business";
+import YouDashboardPage from "@src/user/dashboard/you/hard-driver";
 
-import UserBusinessDetail from "../../user/pages/you/business/[id]";
-import ListConfigurationIndex from "@src/user/configurator";
+import UserBusinessDetail from "../../user/dashboard/you/business/[id]";
+import ListConfigurationIndex from "@src/user/configurator/ConfigurationWorkspaceList.page";
 /* =========================
    USER — CONFIGURATOR
 ========================= */
 //import UserConfiguratorIndex from "../pages/user/dashboard/configurator/index";
-import ConfigurationEntryPage from "../../user/configurator/[id]";
+import ConfigurationEntryPage from "../../user/configurator/EntryConfiguration.page";
 import PostLoginHandoff from "../../user/pages/PostLoginHandoff";
 /* =========================
    ADMIN
@@ -101,8 +101,8 @@ import AdminConfigurationsPage from "@src/admin/pages/configuration";
 
 //import ConfigurationEntryPage from "../../user/pages/workspace/[id]";
 import { useParams } from "react-router-dom";
-import ProfilePage from "../../user/pages/you/profile";
-import AccountPage from "../../user/pages/you/account";
+import ProfilePage from "../../user/dashboard/you/profile";
+import AccountPage from "../../user/dashboard/you/account";
 import ConfiguratorLayout from "@user/configurator/ConfiguratorLayout";
 import WorkspaceByBusiness from "@src/user/workspace/business";
 function RedirectConfiguratorToDashboard() {
@@ -113,8 +113,10 @@ function RedirectConfiguratorToDashboard() {
   }
 
   return (
-    <Navigate to={`/user/dashboard/configurator/${id}`} replace />
-  );
+    <Navigate
+    to={`/user/dashboard/configurator/${id}?r=${Date.now()}`}
+    replace
+  />);
 }
 
 /* =====================================================

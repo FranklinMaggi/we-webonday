@@ -1,5 +1,4 @@
-
-export type ConfigurationConfiguratorDTO = {
+export type ConfigurationUserSummaryDTO = {
   id: string;
 
   solutionId: string;
@@ -7,12 +6,18 @@ export type ConfigurationConfiguratorDTO = {
   optionIds?: string[];
 
   status?: string;
-
+  complete: boolean;
   createdAt?: string;
   updatedAt?: string;
 
-  // opzionale: prefill UX
+  // UX-only (titoli, card, sidebar)
+  businessName?: string;
+
   prefill?: {
+    businessName?: string;
+  };
+
+  display?: {
     businessName?: string;
   };
 };

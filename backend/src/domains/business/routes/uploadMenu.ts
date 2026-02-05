@@ -168,7 +168,7 @@ const user = session.user;
   const updatedBusiness = {
     ...business,
     menuPdfUrl,
-    status: "pending",
+   verification :"PENDING"
   };
 
   await env.BUSINESS_KV.put(
@@ -184,7 +184,7 @@ const user = session.user;
       ok: true,
       businessId,
       menuPdfUrl,
-      status: "pending",
+    verification:"PENDING"
     },
     request,
     env

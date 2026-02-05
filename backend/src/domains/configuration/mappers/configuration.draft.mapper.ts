@@ -17,5 +17,6 @@ export function toBaseReadDTO(
     solutionId: config.solutionId,
     productId: config.productId,
     businessName: config.prefill?.businessName,
+    complete: config.complete === true
   };
 }

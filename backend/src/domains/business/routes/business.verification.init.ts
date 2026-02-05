@@ -1,38 +1,15 @@
-// ======================================================
-// BE || BUSINESS || VERIFICATION INIT (FASE 1)
-// POST /api/business/verification/init
-// ======================================================
-//
-// AI-SUPERCOMMENT
-//
-// RUOLO:
-// - Inizializza la fase di VERIFICA del Business
-// - Trasforma un BusinessDraft COMPLETO in Business (pending)
-//
-// MODELLO DI FLUSSO (POST-FASE-1):
-// - BusinessDraft.complete === true
-// - OwnerDraft.complete === true
-// - Nessuna dipendenza da Configuration.status
-//
-// INVARIANTI:
-// - Auth obbligatoria
-// - Ownership verificata via Configuration
-// - Backend = source of truth
-// ======================================================
-
 import { json } from "@domains/auth/route/helper/https";
 import { requireAuthUser } from "@domains/auth";
 import type { Env } from "../../../types/env";
-import { BusinessSchema } from "../schema/business.schema";
-import { BusinessDraftSchema } from "../schema/business.draft.schema";
-import { OwnerDraftSchema } from "@domains/owner/schema/owner.draft.schema";
-import { OWNER_DRAFT_KEY } from "@domains/owner/keys";
-/* =========================
-   KV KEYS
-========================= */
-const CONFIGURATION_KEY = (id: string) => `CONFIGURATION:${id}`;
-const BUSINESS_DRAFT_KEY = (id: string) => `BUSINESS_DRAFT:${id}`;
-const BUSINESS_KEY = (id: string) => `BUSINESS:${id}`;
+import { CONFIGURATION_KEY } from "@domains/configuration/keys";
+import { initBusinessVerificationInternal } from "./business.verification.internal.init";
+
+/* ======================================================
+   INPUT DTO
+====================================================== */
+type InitBusinessVerificationInputDTO = {
+  configurationId: string;
+};
 
 /* ======================================================
    HANDLER
@@ -54,18 +31,13 @@ export async function initBusinessVerification(
     );
   }
 
-  const userId = session.user.id;
-
   /* =====================
      2️⃣ INPUT
   ====================== */
-  let configurationId: string;
+  let body: InitBusinessVerificationInputDTO;
 
   try {
-    const body = (await request.json()) as {
-      configurationId?: string;
-    };
-    configurationId = body.configurationId ?? "";
+    body = (await request.json()) as InitBusinessVerificationInputDTO;
   } catch {
     return json(
       { ok: false, error: "INVALID_JSON_BODY" },
@@ -74,6 +46,8 @@ export async function initBusinessVerification(
       400
     );
   }
+
+  const { configurationId } = body;
 
   if (!configurationId) {
     return json(
@@ -85,14 +59,14 @@ export async function initBusinessVerification(
   }
 
   /* =====================
-     3️⃣ LOAD CONFIGURATION
-     (OWNERSHIP ONLY)
+     3️⃣ OWNERSHIP (CONFIGURATION)
   ====================== */
-  const configRaw = await env.CONFIGURATION_KV.get(
-    CONFIGURATION_KEY(configurationId)
-  );
+  const configuration = await env.CONFIGURATION_KV.get(
+    CONFIGURATION_KEY(configurationId),
+    "json"
+  ) as { userId: string } | null;
 
-  if (!configRaw) {
+  if (!configuration) {
     return json(
       { ok: false, error: "CONFIGURATION_NOT_FOUND" },
       request,
@@ -101,9 +75,7 @@ export async function initBusinessVerification(
     );
   }
 
-  const configuration = JSON.parse(configRaw);
-
-  if (configuration.userId !== userId) {
+  if (configuration.userId !== session.user.id) {
     return json(
       { ok: false, error: "FORBIDDEN" },
       request,
@@ -113,142 +85,21 @@ export async function initBusinessVerification(
   }
 
   /* =====================
-     4️⃣ LOAD BUSINESS DRAFT
-     (OWNED BY CONFIGURATION)
+     4️⃣ INTERNAL VERIFICATION
   ====================== */
-  const draftRaw = await env.BUSINESS_KV.get(
-    BUSINESS_DRAFT_KEY(configurationId)
-  );
-
-  if (!draftRaw) {
-    return json(
-      { ok: false, error: "BUSINESS_DRAFT_NOT_FOUND" },
-      request,
-      env,
-      404
-    );
-  }
-
-  const parsedDraft = BusinessDraftSchema.safeParse(
-    JSON.parse(draftRaw)
-  );
-
-  if (!parsedDraft.success) {
-    return json(
-      { ok: false, error: "BUSINESS_DRAFT_CORRUPTED" },
-      request,
-      env,
-      500
-    );
-  }
-
-  const businessDraft = parsedDraft.data;
-
-  if (businessDraft.complete !== true) {
-    return json(
-      { ok: false, error: "BUSINESS_DRAFT_NOT_COMPLETE" },
-      request,
-      env,
-      409
-    );
-  }
-
-  /* =====================
-     5️⃣ LOAD OWNER DRAFT
-     (GLOBAL PER USER)
-  ====================== */
-  const ownerRaw = await env.BUSINESS_KV.get(
-    OWNER_DRAFT_KEY(configurationId));
-
-  if (!ownerRaw) {
-    return json(
-      { ok: false, error: "OWNER_DRAFT_NOT_FOUND" },
-      request,
-      env,
-      404
-    );
-  }
-
-  const parsedOwner = OwnerDraftSchema.safeParse(
-    JSON.parse(ownerRaw)
-  );
-
-  if (!parsedOwner.success) {
-    return json(
-      { ok: false, error: "OWNER_DRAFT_CORRUPTED" },
-      request,
-      env,
-      500
-    );
-  }
-
-  const ownerDraft = parsedOwner.data;
-
-  if (ownerDraft.complete !== true) {
-    return json(
-      { ok: false, error: "OWNER_DRAFT_NOT_COMPLETE" },
-      request,
-      env,
-      409
-    );
-  }
-
-  /* =====================
-     6️⃣ IDEMPOTENCY CHECK
-  ====================== */
-  const existing = await env.BUSINESS_KV.get(
-    BUSINESS_KEY(configurationId)
-  );
-
-  if (existing) {
-    return json(
-      { ok: true, status: "ALREADY_INITIALIZED" },
-      request,
-      env
-    );
-  }
-
-  /* =====================
-     7️⃣ CREATE BUSINESS (PENDING)
-  ====================== */
-  const now = new Date().toISOString();
-
-  const business = BusinessSchema.parse({
-    ...businessDraft,
-
-    id: configurationId,
-    publicId:
-      businessDraft.id ??
-      configurationId,
-
-    ownerUserId: userId,
-    createdByUserId: userId,
-    editorUserIds: [],
-
-    logo: null,
-    coverImage: null,
-    gallery: [],
-    documents: [],
-
-    status: "pending",
-
-    createdAt: now,
-    updatedAt: now,
-  });
-
-  await env.BUSINESS_KV.put(
-    BUSINESS_KEY(business.id),
-    JSON.stringify(business)
+  const result = await initBusinessVerificationInternal(
+    env,
+    configurationId,
+    session.user.id
   );
 
   /* =====================
-     8️⃣ RESPONSE
+     5️⃣ RESPONSE
   ====================== */
   return json(
     {
       ok: true,
-      businessId: business.id,
-      status: business.verification,
+      result, // "CREATED" | "SKIPPED"
     },
     request,
     env

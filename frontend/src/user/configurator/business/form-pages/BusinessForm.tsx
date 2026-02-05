@@ -209,6 +209,10 @@ export default function BusinessForm({
     console.log("PAYLOAD → BE", payload);
 
     try {
+      // NOTA:
+// - Questa operazione NON crea Business
+// - Scrive solo BusinessDraft
+// - La creazione BUsiness avviene SOLO via attachOwnerToConfiguration
       const res = await apiFetch<{
         ok: true;
         businessDraftId: string;

@@ -22,12 +22,10 @@ import { requireAuthUser } from "@domains/auth";
 import type { Env } from "types/env";
 
 import { OwnerDocumentsSchema } from "../schema/owner.document.schema";
-
+import { OWNER_KEY , OWNER_DOCUMENTS_KEY } from "../keys";
 
 const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp"];
 
-const OWNER_DOCUMENTS_KEY = (configurationId: string) =>
-  `OWNER_DOCUMENTS:${configurationId}`;
 
 export async function uploadOwnerDocument(
   request: Request,
@@ -45,6 +43,7 @@ export async function uploadOwnerDocument(
       401
     );
   }
+  const userId = session.user.id; 
 
   /* =====================
      2️⃣ INPUT (MULTIPART)
@@ -122,7 +121,7 @@ export async function uploadOwnerDocument(
      🔒 ZOD = DOMINIO BLINDATO
   ====================== */
   const now = new Date().toISOString();
-  const kvKey = OWNER_DOCUMENTS_KEY(configurationId);
+  const kvKey = OWNER_DOCUMENTS_KEY(userId); // ✅ user-scoped
 
   // 🔹 carico stato esistente (se presente)
   const existingRaw =

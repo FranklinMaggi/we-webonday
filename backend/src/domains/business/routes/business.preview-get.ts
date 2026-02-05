@@ -1,22 +1,13 @@
-// ======================================================
-// BE || BUSINESS || PREVIEW
-// GET /api/business/preview?configurationId=
-// ======================================================
-//
-// AI-SUPERCOMMENT
-//
-// RUOLO:
-// - Ritorna la preview live del Business
-// - Basata esclusivamente su BusinessDraft (+ OwnerDraft)
-// ======================================================
-
 import { json } from "@domains/auth/route/helper/https";
 import { requireAuthUser } from "@domains/auth";
 import type { Env } from "../../../types/env";
-import { OWNER_DRAFT_KEY } from "@domains/owner/keys";
-import { BusinessDraftSchema } from "../schema/business.draft.schema";
-import { OwnerDraftSchema } from "@domains/owner/schema/owner.draft.schema";
+
+import { OWNER_KEY } from "@domains/owner/keys";
+import { OwnerSchema } from "@domains/owner/schema/owner.schema";
+
+import { BusinessSchema } from "../schema/business.schema";
 import { mapBusinessPreview } from "../mappers/business.preview.mapper";
+import { BUSINESS_KEY } from "../keys";
 
 export async function getBusinessPreview(
   request: Request,
@@ -51,12 +42,12 @@ export async function getBusinessPreview(
   }
 
   /* =====================
-     3️⃣ OWNERSHIP (CONFIG)
+     3️⃣ OWNERSHIP (CONFIGURATION)
   ====================== */
   const configuration = await env.CONFIGURATION_KV.get(
     `CONFIGURATION:${configurationId}`,
     "json"
-  ) as any;
+  ) as { userId?: string } | null;
 
   if (!configuration || configuration.userId !== session.user.id) {
     return json(
@@ -68,20 +59,20 @@ export async function getBusinessPreview(
   }
 
   /* =====================
-     4️⃣ LOAD BUSINESS DRAFT
+     4️⃣ LOAD BUSINESS (STATE-BASED)
   ====================== */
-  const rawDraft = await env.BUSINESS_KV.get(
-    `BUSINESS_DRAFT:${configurationId}`
+  const rawBusiness = await env.BUSINESS_KV.get(
+    BUSINESS_KEY(configurationId)
   );
 
-  if (!rawDraft) {
-    // preview vuota → flusso valido
+  // Business non ancora creato → preview vuota (draft iniziale)
+  if (!rawBusiness) {
     return json(
       {
         ok: true,
         preview: {
           configurationId,
-          complete: false,
+          businessDataComplete: false,
         },
       },
       request,
@@ -89,33 +80,30 @@ export async function getBusinessPreview(
     );
   }
 
-  const businessDraft =
-    BusinessDraftSchema.parse(JSON.parse(rawDraft));
+  /* =====================
+     5️⃣ VALIDATE (FASE 1)
+  ====================== */
+  const business = BusinessSchema.parse(
+    JSON.parse(rawBusiness)
+  );
 
   /* =====================
-     5️⃣ LOAD OWNER DRAFT (OPTIONAL)
+     6️⃣ LOAD OWNER (USER-SCOPED)
   ====================== */
-  let ownerDraft;
   const rawOwner = await env.BUSINESS_KV.get(
-    OWNER_DRAFT_KEY(configurationId),
+    OWNER_KEY(session.user.id),
+    "json"
   );
 
-  if (rawOwner) {
-    ownerDraft =
-      OwnerDraftSchema.parse(JSON.parse(rawOwner));
-  }
+  const owner = rawOwner
+    ? OwnerSchema.parse(rawOwner)
+    : undefined;
 
   /* =====================
-     6️⃣ MAP → PREVIEW
+     7️⃣ MAP PREVIEW
   ====================== */
-  const preview = mapBusinessPreview(
-    businessDraft,
-    ownerDraft
-  );
+  const preview = mapBusinessPreview(business, owner);
 
-  /* =====================
-     7️⃣ RESPONSE
-  ====================== */
   return json(
     { ok: true, preview },
     request,

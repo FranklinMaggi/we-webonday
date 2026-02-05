@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 
 import { useConfigurationSetupStore } from "@shared/domain/user/configurator/configurationSetup.store";
 import { fetchAvailableLayouts } from "@shared/lib/userApi/layout.user.api";
-import { updateConfiguration } from "@src/user/configurator/base_configuration/configuration/api/get.my-pre-configuration";
+import { updateConfiguration } from "@src/user/configurator/base_configuration/configuration/api/configuration.list.user.api";
 
 import type { LayoutKVDTO } from "../../configurationLayout/layout.dto";
 

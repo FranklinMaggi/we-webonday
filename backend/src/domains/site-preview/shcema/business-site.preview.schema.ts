@@ -29,5 +29,5 @@ export type BusinessPreviewDTO = {
     lastName?: string;
   };
 
-  complete: boolean;
+  businessDataComplete: boolean;
 };

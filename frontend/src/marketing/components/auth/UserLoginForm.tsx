@@ -41,9 +41,8 @@
 
                 async function register() {
                 if (loading) return;
-                setLoading(true);
-                setErrorMsg(null);
-
+                    setLoading(true);
+                    setErrorMsg(null);
                 try {
                     await apiFetch("/api/user/register", {
                     method: "POST",

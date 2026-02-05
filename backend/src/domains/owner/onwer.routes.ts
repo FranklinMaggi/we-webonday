@@ -20,10 +20,8 @@ import type { Env } from "../../types/env";
 import { withCors } from "@domains/auth";
 
 import {
-  createBusinessOwnerDraft,
-  getBusinessOwnerDraft,
-  confirmBusinessOwner,
-  initOwnerVerification,
+  upsertOwner ,
+  getBusinessOwner,
   uploadOwnerDocument,
 } from "./routes";
 
@@ -40,7 +38,7 @@ export async function handleOwnerRoutes(
 
   if (pathname === "/api/owner/create-draft" && method === "POST") {
     return withCors(
-      await createBusinessOwnerDraft(request, env),
+      await upsertOwner(request, env),
       request,
       env
     );
@@ -48,34 +46,17 @@ export async function handleOwnerRoutes(
 
   if (pathname === "/api/owner/get-draft" && method === "GET") {
     return withCors(
-      await getBusinessOwnerDraft(request, env),
+      await getBusinessOwner(request, env),
       request,
       env
     );
   }
 
-  if (pathname === "/api/owner/confirm" && method === "POST") {
-    return withCors(
-      await confirmBusinessOwner(request, env),
-      request,
-      env
-    );
-  }
 
   /* ======================================================
      OWNER — VERIFICATION
   ====================================================== */
 
-  if (
-    pathname === "/api/owner/verification/init" &&
-    method === "POST"
-  ) {
-    return withCors(
-      await initOwnerVerification(request, env),
-      request,
-      env
-    );
-  }
 
   /* ======================================================
      OWNER — DOCUMENTS (WRITE ONLY)

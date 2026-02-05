@@ -1,16 +1,20 @@
-// ======================================================
-// IT FALLBACK — MARKETING / SOLUTIONS PAGE
-// ======================================================
-
 const marketingSolutionsIt = {
-    "solutions.h1": "Prossimo Passo ! ",
-  
-    "solutions.intro.p1":
-      "Attualmente sono disponibili idee e prodotti per i seguenti generi di attività !",
-      "solutions.section.title": "Scegli la Tua Solution",
-    "solutions.intro.p2":
-      "La configurazione di una soluzione ci pemretterà di poter creare un sito web compatibile con le esigenza della tua clientela ",
-  };
-  
-  export default marketingSolutionsIt;
-  
+  "solutions.h1": "Prossimo passo",
+
+  "solutions.section.title": "Scegli la tua solution",
+
+  "solutions.intro.p1":
+    "Attualmente sono disponibili idee e prodotti per i seguenti tipi di attività.",
+
+  "solutions.intro.p2":
+    "La scelta di una solution ci permette di creare un sito compatibile con le esigenze della tua clientela.",
+
+  /* ===== STATES ===== */
+  "solutions.loading": "Caricamento soluzioni…",
+  "solutions.empty": "Nessuna solution disponibile al momento.",
+  "solutions.error.generic":
+    "Si è verificato un errore nel caricamento delle soluzioni.",
+    "solutions.start.title": "Inizia dalla tua attività",
+    "solutions.login.title": "Accedi per continuare", };
+
+export default marketingSolutionsIt;

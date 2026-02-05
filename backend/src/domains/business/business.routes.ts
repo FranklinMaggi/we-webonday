@@ -21,8 +21,8 @@ import { withCors } from "@domains/auth";
 
 import {
   createBusinessDraft,
-  getBusinessDraft,
-  listAllBusinessDrafts,
+  getBusiness,
+  listAllBusiness,
   reopenBusinessDraft,
   initBusinessVerification,
   uploadBusinessMenu,
@@ -51,7 +51,7 @@ export async function handleBusinessRoutes(
   ====================================================== */
   if (pathname === "/api/business/get-base-draft" && method === "GET") {
     return withCors(
-      await getBusinessDraft(request, env),
+      await getBusiness(request, env),
       request,
       env
     );
@@ -62,7 +62,7 @@ export async function handleBusinessRoutes(
   ====================================================== */
   if (pathname === "/api/business/draft/get-list" && method === "GET") {
     return withCors(
-      await listAllBusinessDrafts(request, env),
+      await listAllBusiness(request, env),
       request,
       env
     );

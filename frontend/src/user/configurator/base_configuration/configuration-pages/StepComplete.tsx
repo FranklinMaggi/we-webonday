@@ -45,19 +45,23 @@ export default function StepComplete() {
         La configurazione non è più modificabile finché il sito
         non viene rimesso in modalità modifica.
       </p>
-
+      // INVARIANTE:
+// - Questa navigazione è optimistic
+// - La dashboard/sidebar filtra i Business su configuration.complete === true
+// - Se il Business non è ancora pronto, l’utente NON lo vedrà
       <div className="actions">
-        <button
-          className="wd-btn-primary"
-          onClick={() => {
-            navigate(
-              `/user/dashboard/business/${configurationId}`,
-              { replace: true }
-            );
-          }}
-        >
-          Vai al tuo business →
-        </button>
+      <button
+  className="wd-btn-primary"
+  onClick={() => {
+    navigate(
+      `/user/dashboard/business/${configurationId}`,
+      { replace: true }
+    );
+   // navigate(0); // Da non fare : 🔄 forza reload della route
+  }}
+>
+  Vai al tuo business →
+</button>
       </div>
     </div>
   );

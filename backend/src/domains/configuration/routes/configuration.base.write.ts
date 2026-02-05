@@ -75,16 +75,17 @@ export async function createConfigurationBase(
      4️⃣ BUILD CONFIGURATION (BASE)
   ====================== */
   const configuration: ConfigurationDTO = {
+    prefill: {
+      businessName: body.businessName,
+    },
+
     id: configurationId,
     userId: session.user.id,
 
     solutionId: body.solutionId,
     productId: body.productId,
 
-    prefill: {
-      businessName: body.businessName,
-    },
-
+    
     options: [],
     data: {},
 

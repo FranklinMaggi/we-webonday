@@ -20,7 +20,7 @@ export type BusinessSummaryDTO = {
   businessId: string;
   publicId: string;
   name: string;
-  status: "draft" | "pending" | "active" | "suspended";
+  status: "DRAFT" | "PENDING" | "active" | "suspended";
   createdAt: string;
 };
 
@@ -88,7 +88,7 @@ export async function createBusiness(
     ok: boolean;
     businessId: string;
     status: "draft";
-  }>("/api/business/create", {
+  }>("/api/business/create-draft", {
     method: "POST",
     body: JSON.stringify(payload),
   });

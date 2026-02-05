@@ -25,7 +25,10 @@
 // - configurationSetupStore (Zustand)
 //
 // ======================================================
-
+// INVARIANTE:
+// - L’ordine degli step è SOLO UX
+// - Non riflette lo stato reale della Configuration
+// - Il backend può essere ahead/behind rispetto al wizard
 import { useState } from "react";
 import { useConfigurationSetupStore }from "@shared/domain/user/configurator/configurationSetup.store"
 //import StepProductIntro from "./steps/StepProductIntro";

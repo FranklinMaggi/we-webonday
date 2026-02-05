@@ -6,7 +6,7 @@ export {createConfigurationBase, } from "./configuration.base.write";
 
 export { handleConfigurationRoutes } from "../configuration.routes";
 
-export { attachOwnerToConfiguration } from "./configuration.attach-owner";
+export { configurationDeriveState } from "./configuration.derive.state";
 
 export { listUserConfigurations } from "./configuration.read-list";
 

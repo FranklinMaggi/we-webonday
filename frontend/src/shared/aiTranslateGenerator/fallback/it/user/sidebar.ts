@@ -5,38 +5,59 @@
    import type { CopyMap } from "../../../core/types";
 
    const sidebarCopyIt: CopyMap = {
-     /* SECTIONS */
-     "sidebar.section.you": "You On",
-     "sidebar.section.configurations": "Configurations",
-     "sidebar.section.business": "Business",
-     "sidebar.section.plans": "Plans",
-     "sidebar.section.workspace": "Workspace",
-     "sidebar.section.settings": "Settings",
+     /* ==================================================
+        SECTIONS
+     ================================================== */
+     "sidebar.section.profile": "Profilo",
+     "sidebar.section.business": "Attività",
+     "sidebar.section.workspace": "Sito",
+     "sidebar.section.configurations": "Configurazioni",
+     "sidebar.section.plans": "Piani",
+     "sidebar.section.settings": "Impostazioni",
    
-     /* YOU */
-     "sidebar.you.profile": "Profilo",
-     "sidebar.you.account": "Account",
-     "sidebar.you.settings": "Settings",
+     /* ==================================================
+        PROFILE
+     ================================================== */
+     "sidebar.profile.owner": "Titolare",
+     "sidebar.profile.account": "Account",
    
-     /* CONFIGURATIONS */
-     "sidebar.config.start": "Inizia una configurazione →",
-     "sidebar.config.default": "Configurazione",
+     /* ==================================================
+        BUSINESS
+     ================================================== */
+     "sidebar.business.list": "Le tue attività",
+     "sidebar.business.empty": "Nessuna attività",
    
-     /* BUSINESS */
-     "sidebar.business.default": "Attività",
-     "sidebar.business.empty": "Nessun business attivo",
+     /* ==================================================
+        WORKSPACE
+     ================================================== */
+     "sidebar.workspace.list": "I tuoi siti",
+     "sidebar.workspace.start": "Crea il tuo sito",
    
-     /* PLANS */
+     /* ==================================================
+        CONFIGURATIONS
+     ================================================== */
+     "sidebar.config.list": "Configurazioni in corso",
+     "sidebar.config.start": "Inizia una configurazione",
+   
+     /* ==================================================
+        PLANS
+     ================================================== */
      "sidebar.plans.empty": "Nessun piano disponibile",
    
-     /* WORKSPACE */
+     /* ==================================================
+        SETTINGS
+     ================================================== */
+     "sidebar.settings.disabled": "Impostazioni (non disponibili)",
+    
+      /* ================= SECTIONS ================= */
+      "sidebar.section.you": "Tu",
+  
+    
+      /* ================= YOU ================= */
+      "sidebar.you.profile": "Profilo",
+      "sidebar.you.account": "Account",
+    
+    };
 
-  "sidebar.workspace.empty": "Nessun workspace attivo",
-  "sidebar.workspace.active": "Workspace attivo",
-   
-     /* SETTINGS */
-     "sidebar.settings.disabled": "Impostazioni",
-   };
    
    export default sidebarCopyIt;
-   

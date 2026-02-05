@@ -14,11 +14,11 @@
 // ======================================================
 
 import { useEffect, useState } from "react";
-import { listMyConfigurations } from "./get.my-pre-configuration";
-import {type ConfigurationConfiguratorDTO } from "../ConfigurationConfiguratorDTO";
+import { listMyConfigurations } from "./configuration.list.user.api";
+import {type ConfigurationUserSummaryDTO} from "../ConfigurationConfiguratorDTO";
 type CacheState = {
   ts: number;
-  items: ConfigurationConfiguratorDTO[];
+  items: ConfigurationUserSummaryDTO[];
 };
 
 const TTL_MS = 15_000;
@@ -28,7 +28,7 @@ let cache: CacheState | null = null;
 
 // promessa in flight condivisa (dedupe)
 let inflight:
-  | Promise<{ ok: boolean; items?: ConfigurationConfiguratorDTO[] }>
+  | Promise<{ ok: boolean; items?: ConfigurationUserSummaryDTO[] }>
   | null = null;
 
 async function loadOnce() {
@@ -58,7 +58,7 @@ async function loadOnce() {
 }
 
 export function useMyConfigurations() {
-  const [items, setItems] = useState<ConfigurationConfiguratorDTO[]>(
+  const [items, setItems] = useState<ConfigurationUserSummaryDTO[]>(
     cache?.items ?? []
   );
   const [loading, setLoading] = useState(!cache);

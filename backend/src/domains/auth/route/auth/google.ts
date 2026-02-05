@@ -111,7 +111,7 @@ export async function googleCallback(
      USER RESOLUTION
   ====================== */
   const identity = mapGooglePayload(payload);
-  const { userId } = await createUser(env, identity);
+  const { userId ,isNew } = await createUser(env, identity);
 
   await logActivity(env, "LOGIN", userId, {
     provider: "google",
@@ -123,9 +123,14 @@ export async function googleCallback(
   ====================== */
   const cookie = buildSessionCookie(env, userId, request);
 
+  let finalRedirect = redirectState;
+  // 🔒 GUARD LEGALE — SOLO PRIMO ACCESSO GOOGLE
+  if (isNew) {
+  finalRedirect = "/user/legal-required";
+    }
   const frontendBase = getFrontendBaseUrl(request, env);
   const redirectUrl = new URL(
-    redirectState,
+    finalRedirect,
     frontendBase
   ).toString();
 

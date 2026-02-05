@@ -1,63 +1,19 @@
-/* ======================================================
-   DOMAIN || BUSINESS || DRAFT INPUT DTO (CANONICAL)
-======================================================
+import { z } from 'zod';      
+import { OpeningHoursSchema } from '@domains/GeneralSchema/hours.opening.schema';
+import { ContactSchema } from '@domains/GeneralSchema/contact.schema';
+import { AddressSchema } from '@domains/GeneralSchema/address.schema';
+import { BusinessSchema } from '@domains/business/schema/business.schema';
 
-RUOLO:
-- DTO canonico per CREAZIONE / UPDATE BusinessDraft
-- Usato da:
-  - FE (BusinessForm)
-  - POST /api/business/create-draft
-  - POST /api/business/update-draft
 
-INVARIANTI:
-- Dominio = TimeRange (NO stringhe, NO legacy)
-- businessDraftId NON richiesto in create
-- Backend = source of truth
-====================================================== */
-
-import type { OpeningHoursDTO } from "@domains/GeneralSchema/hours.opening.schema";
-
-export interface BusinessDraftInputDTO {
-  /* =====================
-     LINKAGE
-  ====================== */
-  configurationId: string;
-
-  /* =====================
-     CORE
-  ====================== */
-  businessName: string;
-  solutionId: string;
-  productId: string;
-
-  /* =====================
-     DOMAIN (CANONICAL)
-  ====================== */
-  openingHours: OpeningHoursDTO;
-
-  /* =====================
-     CONTACT
-  ====================== */
-  contact: {
-    address?: {
-      street?: string;
-      city?: string;
-      province?: string;
-      zip?: string;
-    };
-    phoneNumber?: string;
-    mail: string;
-    pec?: string;
-  };
-
-  /* =====================
-     CLASSIFICATION
-  ====================== */
-  businessDescriptionTags: string[];
-  businessServiceTags: string[];
-
-  /* =====================
-     STATUS (INVARIANT)
-  ====================== */
-verification: "PENDING" | "ACCEPTED" | "REJECTED";
-}
+export const BusinessUpsertInputSchema = z.object({
+   configurationId: z.string(),
+ 
+   businessName: z.string().min(1).optional(),
+   openingHours: OpeningHoursSchema.optional(),
+   contact: ContactSchema.optional(),
+   address: AddressSchema.optional(),
+ 
+   businessDescriptionTags: z.array(z.string()).optional(),
+   businessServiceTags: z.array(z.string()).optional(),
+ });
+ export type BusinessReadDTO = z.infer<typeof BusinessSchema>;

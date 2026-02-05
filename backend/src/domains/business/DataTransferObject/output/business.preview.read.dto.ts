@@ -1,18 +1,3 @@
-// ======================================================
-// BE || DTO || BusinessPreviewReadDTO (CANONICAL)
-// ======================================================
-//
-// RUOLO:
-// - DTO UNICO per Site Preview
-// - Usato dal Workspace FE
-// - Derivato da BusinessDraft (FASE 1)
-//
-// INVARIANTI:
-// - NO layout
-// - NO palette
-// - SOLO contenuto
-// - Tollerante (draft incompleti)
-// ======================================================
 
 import type { OpeningHoursDTO } from
   "@domains/GeneralSchema/hours.opening.schema";

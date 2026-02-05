@@ -43,7 +43,7 @@ export const ConfigurationWorkspaceSchema = z.object({
 export const ConfigurationSchema = z.object({
   id: z.string().uuid(),
   userId: z.string().optional(),
-
+// owner === userId (ownership implicita)
   solutionId: z.string().min(1),
   productId: z.string().min(1),
 

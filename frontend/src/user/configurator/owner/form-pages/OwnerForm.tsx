@@ -60,7 +60,10 @@ const { suggestions, hasSuggestions } =
     
      
     };
-    
+    // NOTA:
+// - Questa operazione NON crea Owner
+// - Scrive solo OwnerDraft
+// - La creazione Owner avviene SOLO via attachOwnerToConfiguration
 
     await apiFetch("/api/owner/create-draft", {
       method: "POST",

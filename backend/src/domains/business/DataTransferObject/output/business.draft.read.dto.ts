@@ -12,44 +12,35 @@
 // - BusinessDraftSchema (DOMAIN)
 // ======================================================
 
-import type { OpeningHoursDTO } from "@domains/GeneralSchema/hours.opening.schema";
-// ⬆️ oppure importa dal punto canonico dove è definito
+import { OpeningHoursFE } from "@domains/GeneralSchema/hours.opening.schema";
+
 
 export type BusinessDraftBaseReadDTO = {
-  businessDraftId: string;
-
-  businessName: string;
-  solutionId: string;
-  productId: string;
-
-  /* =====================
-     DOMAIN — CANONICAL
-  ====================== */
-  openingHours: OpeningHoursDTO;
-
-  /* =====================
-     CONTACT
-  ====================== */
-  contact: {
-    address?: {
-      street?: string;
-      city?: string;
-      province?: string;
-      zip?: string;
-    };
-    phoneNumber?: string;
-    mail: string;
-    pec?: string;
-  };
-
-  /* =====================
-     CLASSIFICATION
-  ====================== */
-  businessDescriptionTags: string[];
-  businessServiceTags: string[];
-  complete: boolean;
-  /* =====================
-     STATUS
-  ====================== */
-  verification: "PENDING" | "ACCEPTED" | "REJECTED";
-};
+   businessDraftId: string;
+ 
+   businessName: string;
+   solutionId: string;
+   productId: string;
+ 
+   openingHours: OpeningHoursFE;
+ 
+   contact: {
+     mail: string;
+     phoneNumber?: string;
+     pec?: string;
+   };
+ 
+   address?: {
+     street?: string;
+     number?: string;
+     city?: string;
+     province?: string;
+     zip?: string;
+   };
+ 
+   businessDescriptionTags: string[];
+   businessServiceTags: string[];
+   verification: "DRAFT"|"PENDING" | "ACCEPTED" | "REJECTED";      
+   /** 🔑 SOURCE OF TRUTH */
+   businessDataComplete: boolean;
+ };

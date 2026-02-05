@@ -25,7 +25,7 @@ import {
   listUserConfigurations,
   setConfigurationDraft,
   readConfigurationBase,
-  attachOwnerToConfiguration
+  configurationDeriveState
 } from "./routes";
 export async function handleConfigurationRoutes(
     request: Request,
@@ -89,11 +89,11 @@ export async function handleConfigurationRoutes(
 
     // ATTACH OWNER
 if (
-  pathname === "/api/configuration/attach-owner" &&
+  pathname === "/api/configuration/derive-state" &&
   method === "POST"
 ) {
   return withCors(
-    await attachOwnerToConfiguration(request, env),
+    await configurationDeriveState(request, env),
     request,
     env
   );

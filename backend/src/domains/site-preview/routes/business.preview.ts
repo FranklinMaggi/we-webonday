@@ -137,7 +137,7 @@ const preview: BusinessPreviewDTO = {
  serviceTags:
     business.businessServiceTags ?? [],
 
-    complete:true , 
+    businessDataComplete:true , 
 };
   /* =====================
      6️⃣ RESPONSE

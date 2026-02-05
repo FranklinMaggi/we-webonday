@@ -15,9 +15,12 @@
 
 
 import { useState } from "react";
-import { attachOwnerToConfiguration } from "../../owner/api/attach-owner-draft.configuration";
+import { deriveState } from "../configuration/api/configuration.derive-state";
 import { useConfigurationSetupStore }from "@shared/domain/user/configurator/configurationSetup.store"
-
+// INVARIANTE:
+// - attachOwnerToConfiguration NON garantisce complete === true
+// - complete è DERIVATO lato BE
+// - StepComplete è UI optimistic, la sidebar si riallinea dal BE
 
 
 export default function StepCommitConfiguration({
@@ -36,10 +39,15 @@ export default function StepCommitConfiguration({
 
   async function handleCommit() {
     if (!configurationId) return;
-
+   
     setLoading(true);
     setError(null);
-
+    console.log("[ATTACH_OWNER][STORE_SNAPSHOT]", {
+      configurationId: data.configurationId,
+      solutionId: data.solutionId,
+      productId: data.productId,
+      businessDraftId: data.businessDraftId,
+    });
     try {
       /* =====================
          COMMIT (BACKEND)
@@ -47,15 +55,19 @@ export default function StepCommitConfiguration({
          - BusinessDraft completo
          - Attach + state advance
       ====================== */
-      const res = await attachOwnerToConfiguration({
+      const res = await deriveState({
         configurationId,
     
-      });
+      });if (!configurationId) {
+        console.error("[ATTACH_OWNER][BLOCKED] missing configurationId");
+        setError("Configurazione non valida. Ricarica la pagina.");
+        return;
+      }
 
       if (!res || res.ok === false) {
         throw new Error(res?.error ?? "ATTACH_OWNER_FAILED");
       }
-      
+      if (res.ok !== true) return;
       // 🔒 non fidarti di campi opzionali
       onNext();
       

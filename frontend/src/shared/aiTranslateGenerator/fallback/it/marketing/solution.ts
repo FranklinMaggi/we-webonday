@@ -49,6 +49,13 @@ const marketingSolutionDetailIt = {
   
     "solution.detail.error.generic":
       "Si è verificato un errore nel caricamento della soluzione.",
+       /* ===== CONFIG START (LOGGED USER) ===== */
+  "solution.businessName.label": "Nome della tua attività",
+  "solution.businessName.placeholder":
+    "Inserisci il nome della tua attività",
+
+  "solution.startConfiguration":
+    "Inizia la configurazione →",
   };
   
   export default marketingSolutionDetailIt;

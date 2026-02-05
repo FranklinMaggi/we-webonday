@@ -1,23 +1,12 @@
-// ======================================================
-// DOMAIN || BUSINESS || PREVIEW MAPPER
-// ======================================================
-//
-// RUOLO:
-// - Converte BusinessDraft (+ OwnerDraft) in PreviewDTO
-// - Nessuna validazione forte
-// - Tollerante a draft incompleti
-// ======================================================
-
 import type { BusinessPreviewDTO } from "@domains/site-preview/shcema/business-site.preview.schema";
 import type { z } from "zod";
-import { BusinessDraftSchema } from
-  "../schema/business.draft.schema";
-import { OwnerDraftSchema } from
-  "@domains/owner/schema/owner.draft.schema";
+
+import { BusinessSchema } from "../schema/business.schema";
+import { OwnerSchema } from "@domains/owner/schema/owner.schema";
 
 export function mapBusinessPreview(
-  businessDraft: z.infer<typeof BusinessDraftSchema>,
-  ownerDraft?: z.infer<typeof OwnerDraftSchema>
+  businessDraft: z.infer<typeof BusinessSchema>,
+  owner?: z.infer<typeof OwnerSchema>
 ): BusinessPreviewDTO {
   return {
     configurationId: businessDraft.configurationId,
@@ -27,22 +16,19 @@ export function mapBusinessPreview(
 
     address: businessDraft.address,
     contact: businessDraft.contact,
-
     openingHours: businessDraft.openingHours,
 
-    descriptionTags:
-      businessDraft.businessDescriptionTags ?? [],
+    descriptionTags: businessDraft.businessDescriptionTags ?? [],
+    serviceTags: businessDraft.businessServiceTags ?? [],
 
-    serviceTags:
-      businessDraft.businessServiceTags ?? [],
-
-    owner: ownerDraft
+    owner: owner
       ? {
-          firstName: ownerDraft.firstName,
-          lastName: ownerDraft.lastName,
+          firstName: owner.firstName,
+          lastName: owner.lastName,
         }
       : undefined,
 
-    complete: businessDraft.complete,
+    // ✅ allineato allo schema
+    businessDataComplete: businessDraft.businessDataComplete,
   };
 }

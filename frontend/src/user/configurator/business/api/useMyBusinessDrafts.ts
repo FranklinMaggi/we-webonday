@@ -1,100 +1,105 @@
 // ======================================================
-// FE || HOOK || useMyBusinesses (STABLE + PARALLEL + ANTI-LOOP)
+// FE || HOOK || useMyBusinesses (CONFIGURATION-DRIVEN)
 // File: src/user/pages/dashboard/configurator/api/useMyBusinessDrafts.ts
 // ======================================================
 //
-// PERCHÉ:
-// - Prima: N+1 chiamate sequenziali per ogni READY configuration
-// - Dopo createBusinessDraft / createOwnerDraft può re-run spesso
-// - Risultato: “fetch infiniti” percepiti + UI lenta
+// SOURCE OF TRUTH:
+// - configuration.complete === true
 //
-// FIX:
-// - Dipendenza su signature stabile (ids READY)
-// - Fetch in parallelo (Promise.all)
-// - Guard anti re-run se signature non cambia
+// RESPONSABILITÀ:
+// - Restituire SOLO business navigabili (sidebar BUSINESS)
+// - Arricchimento con businessName (best-effort)
+//
 // ======================================================
-
+// INVARIANTE FE:
+// - Un Business è navigabile SOLO se configuration.complete === true
+// - Nessun fallback, nessuna eccezione
 import { useEffect, useMemo, useRef, useState } from "react";
 import { apiFetch } from "@shared/lib/api";
-import { useMyConfigurations } from "../../base_configuration/configuration/api/configuration.my-configuration-get-list";
+import { useMyConfigurations } from
+  "../../base_configuration/configuration/api/configuration.my-configuration-get-list";
 
 type BusinessVM = {
   configurationId: string;
   businessName: string;
-  complete: boolean;
 };
 
 export function useMyBusinesses() {
   const { items: configurations = [], loading: cfgLoading } =
     useMyConfigurations();
 
-  const [completed, setCompleted] = useState<BusinessVM[]>([]);
-  const [inProgress, setInProgress] = useState<BusinessVM[]>([]);
+  const [businesses, setBusinesses] = useState<BusinessVM[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // signature stabile: se gli id READY non cambiano, non rifare fetch
-  const readyIdsSignature = useMemo(() => {
-    const ids = configurations
-      .filter((c) => c.status === "CONFIGURATION_IN_PROGRESS")
+  /* =========================
+     CONFIGURATION COMPLETE IDS
+  ========================= */
+  const completeConfigs = useMemo(
+    () => configurations.filter((c) => c.complete === true),
+    [configurations]
+  );
+
+  const completeIdsSignature = useMemo(() => {
+    return completeConfigs
       .map((c) => c.id)
-      .sort();
-    return ids.join("|");
-  }, [configurations]);
+      .sort()
+      .join("|");
+  }, [completeConfigs]);
 
   const lastSigRef = useRef<string>("");
 
+  /* =========================
+     FETCH BUSINESS DATA
+  ========================= */
   useEffect(() => {
     if (cfgLoading) return;
 
-    // se non ci sono READY, reset pulito
-    if (!readyIdsSignature) {
-      setCompleted([]);
-      setInProgress([]);
+    if (!completeIdsSignature) {
+      setBusinesses([]);
       setLoading(false);
       lastSigRef.current = "";
       return;
     }
 
-    // anti re-run inutile
-    if (lastSigRef.current === readyIdsSignature) return;
-    lastSigRef.current = readyIdsSignature;
+    if (lastSigRef.current === completeIdsSignature) return;
+    lastSigRef.current = completeIdsSignature;
 
     let alive = true;
     setLoading(true);
 
-    const readyConfigs = configurations.filter((c) => c.status === "CONFIGURATION_IN_PROGRESS");
-
     (async () => {
       try {
         const responses = await Promise.all(
-          readyConfigs.map(async (c) => {
-            const res = await apiFetch<{
-              ok: boolean;
-              draft?: any;
-            }>(`/api/business/get-base-draft?configurationId=${c.id}`);
+          completeConfigs.map(async (c) => {
+            try {
+              const res = await apiFetch<{
+                ok: boolean;
+                draft?: any;
+              }>(
+                `/api/business/get-base-draft?configurationId=${c.id}`
+              );
 
-            if (res?.ok && res.draft) {
               const businessName =
-                res.draft.businessName ??
-                c.prefill?.businessName ??
-                "Attività";
+                res?.ok && res.draft?.businessName
+                  ? res.draft.businessName
+                  : c.display?.businessName ?? "Attività";
 
               return {
                 configurationId: c.id,
                 businessName,
-                complete: Boolean(res.draft.complete),
+              } as BusinessVM;
+            } catch {
+              return {
+                configurationId: c.id,
+                businessName:
+                  c.display?.businessName ?? "Attività",
               } as BusinessVM;
             }
-
-            return null;
           })
         );
 
         if (!alive) return;
-
-        const results = responses.filter(Boolean) as BusinessVM[];
-        setCompleted(results.filter((b) => b.complete));
-        setInProgress(results.filter((b) => !b.complete));
+        setBusinesses(responses);
       } finally {
         if (alive) setLoading(false);
       }
@@ -103,13 +108,11 @@ export function useMyBusinesses() {
     return () => {
       alive = false;
     };
-  }, [cfgLoading, readyIdsSignature, configurations]);
+  }, [cfgLoading, completeIdsSignature, completeConfigs]);
 
   return {
-    completed,
-    inProgress,
+    businesses,
     loading,
-    hasCompleted: completed.length > 0,
-    hasInProgress: inProgress.length > 0,
+    hasBusinesses: businesses.length > 0,
   };
 }

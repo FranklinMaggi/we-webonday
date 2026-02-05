@@ -1,39 +1,45 @@
 // ======================================================
-// BE || BUSINESS || REOPEN DRAFT (FASE 1)
+// BE || BUSINESS || REOPEN (RESET TO DRAFT)
 // POST /api/business/reopen-draft
 // ======================================================
 //
 // AI-SUPERCOMMENT
 //
 // RUOLO:
-// - Riapre il flusso guidato BUSINESS + OWNER
-// - Il controllo di flusso è demandato ESCLUSIVAMENTE ai draft
+// - Riporta il Business allo stato di DRAFT
+// - Riavvia il flusso guidato BUSINESS + OWNER
 //
-// MODELLO DATI (POST-FASE-1):
-// - BusinessDraft è OWNED dalla Configuration
-// - ID BusinessDraft === configurationId
-// - OwnerDraft è attualmente globale per user
+// INVARIANTI CANONICI:
+// - Business è OWNED dalla Configuration
+// - Business ID === configurationId
+// - KV key: BUSINESS:{configurationId}
+// - Draft = STATO, non entità
 //
 // EFFETTI:
-// - BusinessDraft.complete → false
-// - OwnerDraft.complete → false
+// - businessDataComplete → false
+// - verification → PENDING
+// - ownerDataComplete → false
 //
-// NOTA IMPORTANTE:
-// - Configuration.status NON governa il flusso
-// - Configuration è usata solo per ownership e routing
+// NOTE:
+// - Configuration NON governa il flusso
+// - Configuration serve solo per ownership e routing
 // ======================================================
 
 import { z } from "zod";
 import { json } from "@domains/auth/route/helper/https";
 import { requireAuthUser } from "@domains/auth";
 import type { Env } from "../../../types/env";
-import { BusinessDraftSchema } from "../schema/business.draft.schema";
-import { OwnerDraftSchema } from "@domains/owner/schema/owner.draft.schema";
-import { OWNER_DRAFT_KEY } from "@domains/owner/keys";
+
+import { BusinessSchema } from "../schema/business.schema";
+import { BUSINESS_KEY } from "../keys";
+
+import { OwnerSchema } from "@domains/owner/schema/owner.schema";
+import { OWNER_KEY } from "@domains/owner/keys";
+
 /* =========================
    INPUT SCHEMA
 ========================= */
-const ReopenBusinessDraftInputSchema = z.object({
+const ReopenBusinessInputSchema = z.object({
   configurationId: z.string().min(1),
 });
 
@@ -49,12 +55,7 @@ export async function reopenBusinessDraft(
   ====================== */
   const session = await requireAuthUser(request, env);
   if (!session) {
-    return json(
-      { ok: false, error: "UNAUTHORIZED" },
-      request,
-      env,
-      401
-    );
+    return json({ ok: false, error: "UNAUTHORIZED" }, request, env, 401);
   }
 
   /* =====================
@@ -63,17 +64,11 @@ export async function reopenBusinessDraft(
   let configurationId: string;
 
   try {
-    const body = ReopenBusinessDraftInputSchema.parse(
+    ({ configurationId } = ReopenBusinessInputSchema.parse(
       await request.json()
-    );
-    configurationId = body.configurationId;
+    ));
   } catch {
-    return json(
-      { ok: false, error: "INVALID_INPUT" },
-      request,
-      env,
-      400
-    );
+    return json({ ok: false, error: "INVALID_INPUT" }, request, env, 400);
   }
 
   /* =====================
@@ -83,7 +78,7 @@ export async function reopenBusinessDraft(
   const configuration = await env.CONFIGURATION_KV.get(
     `CONFIGURATION:${configurationId}`,
     "json"
-  ) as any;
+  ) as { userId?: string } | null;
 
   if (!configuration) {
     return json(
@@ -95,38 +90,34 @@ export async function reopenBusinessDraft(
   }
 
   if (configuration.userId !== session.user.id) {
-    return json(
-      { ok: false, error: "FORBIDDEN" },
-      request,
-      env,
-      403
-    );
+    return json({ ok: false, error: "FORBIDDEN" }, request, env, 403);
   }
 
+
   /* =====================
-     4️⃣ REOPEN BUSINESS DRAFT
-     (OWNED BY CONFIGURATION)
+     4️⃣ REOPEN BUSINESS
+     (RESET STATE)
   ====================== */
   const rawBusiness = await env.BUSINESS_KV.get(
-    `BUSINESS_DRAFT:${configurationId}`
+    BUSINESS_KEY(configurationId)
   );
 
   if (!rawBusiness) {
     return json(
-      { ok: false, error: "BUSINESS_DRAFT_NOT_FOUND" },
+      { ok: false, error: "BUSINESS_NOT_FOUND" },
       request,
       env,
       404
     );
   }
 
-  const parsedBusiness = BusinessDraftSchema.safeParse(
+  const parsedBusiness = BusinessSchema.safeParse(
     JSON.parse(rawBusiness)
   );
 
   if (!parsedBusiness.success) {
     return json(
-      { ok: false, error: "BUSINESS_DRAFT_CORRUPTED" },
+      { ok: false, error: "BUSINESS_CORRUPTED" },
       request,
       env,
       500
@@ -134,36 +125,31 @@ export async function reopenBusinessDraft(
   }
 
   await env.BUSINESS_KV.put(
-    `BUSINESS_DRAFT:${configurationId}`,
+    BUSINESS_KEY(configurationId),
     JSON.stringify({
       ...parsedBusiness.data,
-      verification: "PENDING", 
-      complete: false,
+      verification: "DRAFT",
+      businessDataComplete: false,
       updatedAt: new Date().toISOString(),
     })
   );
 
   /* =====================
-     5️⃣ REOPEN OWNER DRAFT
-     (GLOBAL PER USER)
+     5️⃣ REOPEN OWNER
+     (USER-SCOPED)
   ====================== */
-  // NB:
-  // OwnerDraft è attualmente globale per user.
-  // Se in futuro diventa per-business, la key va versionata.
-  const ownerKey = OWNER_DRAFT_KEY(configurationId);
+  const ownerKey = OWNER_KEY(session.user.id);
   const rawOwner = await env.BUSINESS_KV.get(ownerKey);
 
   if (rawOwner) {
-    const ownerDraft = OwnerDraftSchema.parse(
-      JSON.parse(rawOwner)
-    );
+    const owner = OwnerSchema.parse(JSON.parse(rawOwner));
 
     await env.BUSINESS_KV.put(
       ownerKey,
       JSON.stringify({
-        ...ownerDraft,
-        verification: "PENDING",   // reset stato verifica
-        complete: false,
+        ...owner,
+        verification: "DRAFT",
+     
         updatedAt: new Date().toISOString(),
       })
     );
@@ -172,9 +158,5 @@ export async function reopenBusinessDraft(
   /* =====================
      6️⃣ RESPONSE
   ====================== */
-  return json(
-    { ok: true },
-    request,
-    env
-  );
+  return json({ ok: true }, request, env);
 }
