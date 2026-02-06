@@ -5,7 +5,7 @@ import type { AddressDTO } from "@domains/GeneralSchema/address.schema";
 
 export type OwnerReadDTO = {
   id: string;
-
+  userId:string; 
   firstName: string;
   lastName: string;
   birthDate?: string;

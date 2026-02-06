@@ -23,6 +23,7 @@ import {
   upsertOwner ,
   getBusinessOwner,
   uploadOwnerDocument,
+  readOwnerMe
 } from "./routes";
 
 export async function handleOwnerRoutes(
@@ -72,6 +73,16 @@ export async function handleOwnerRoutes(
       env
     );
   }
+/* ======================================================
+   OWNER — READ (CANONICAL)
+====================================================== */
 
+if (pathname === "/api/owner/me" && method === "GET") {
+  return withCors(
+    await readOwnerMe(request, env),
+    request,
+    env
+  );
+}
   return null;
 }

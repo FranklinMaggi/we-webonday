@@ -1,117 +1,60 @@
 // ======================================================
-// FE || USER DASHBOARD || PROFILE CONTAINER
+// FE || USER DASHBOARD || PROFILE CONTAINER (CANONICAL)
 // ======================================================
 //
 // RUOLO:
-// - carica OwnerDraft della configuration attiva
-// - carica stato Configuration collegata
+// - carica il profilo Owner dell’utente loggato
+// - source of truth: BE → GET /api/owner/me
 //
 // INVARIANTE:
-// - Profile lavora su UNA configuration
-//   • attiva (setupStore)
-//   • oppure derivata dalle configuration utente
+// - Profile NON dipende da configuration
+// - Owner è user-scoped (1:1)
+//
 // ======================================================
 
 import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "@src/shared/lib/api";
 
-import { useMyConfigurations } from
-  "@src/user/configurator/base_configuration/configuration/api/configuration.my-configuration-get-list";
-
-import type { OwnerDraftReadDTO } from
-  "@src/user/dashboard/you/profile/DataTransferObject/owner.read.types";
-import type { ConfigurationReadDTO } from
-  "./DataTransferObject/configuration-read.type";
-
-import { useConfigurationSetupStore } from
-  "@src/shared/domain/user/configurator/configurationSetup.store";
+import type {
+  OwnerReadDTO
+} from "./DataTransferObject/owner.read.types";
 
 export function useProfileContainer() {
-  /* =====================
-     STATE
-  ====================== */
-  const [user, setUser] =
-    useState<OwnerDraftReadDTO | null>(null);
+  const [owner, setOwner] =
+    useState<OwnerReadDTO | null>(null);
 
-  const [configuration, setConfiguration] =
-    useState<ConfigurationReadDTO | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  /* =====================
-     STORES
-  ====================== */
-  const { data, setField } =
-    useConfigurationSetupStore();
-
-  const { items: configurations = [] } =
-    useMyConfigurations();
-
-  /* =====================
-     DERIVE CONFIGURATION
-  ====================== */
-  const configurationId =
-    data.configurationId ??
-    configurations[0]?.id ??
-    null;
-
-  /* =====================
-     ALIGN STORE (ONCE)
-  ====================== */
-  useEffect(() => {
-    if (!data.configurationId && configurationId) {
-      setField("configurationId", configurationId);
-    }
-  }, [data.configurationId, configurationId, setField]);
-
-  /* =====================
-     LOAD PROFILE
-  ====================== */
   const loadProfile = useCallback(async () => {
-    if (!configurationId) {
-      setUser(null);
-      setConfiguration(null);
-      return;
+    setLoading(true);
+
+    try {
+      const res = await apiFetch<{
+        ok: boolean;
+        owner: OwnerReadDTO | null;
+      }>("/api/owner/me");
+
+      if (res?.ok) {
+        setOwner(res.owner ?? null);
+      } else {
+        setOwner(null);
+      }
+    } catch {
+      setOwner(null);
+    } finally {
+      setLoading(false);
     }
+  }, []);
 
-    /* ---------- OWNER ---------- */
-    const ownerRes = await apiFetch<{
-      ok: boolean;
-      owner?: OwnerDraftReadDTO | null;
-    }>(
-      `/api/owner/get-draft?configurationId=${configurationId}`
-    );
-
-    if (!ownerRes?.ok || !ownerRes.owner) {
-      setUser(null);
-      setConfiguration(null);
-      return;
-    }
-
-    setUser(ownerRes.owner);
-
-    /* ---------- CONFIGURATION ---------- */
-    const cfgRes = await apiFetch<{
-      ok: boolean;
-      configuration?: ConfigurationReadDTO;
-    }>(
-      `/api/configuration/read-base/${configurationId}`
-    );
-
-    setConfiguration(cfgRes?.configuration ?? null);
-  }, [configurationId]);
-
-  /* =====================
-     EFFECT
-  ====================== */
   useEffect(() => {
     loadProfile();
   }, [loadProfile]);
 
-  /* =====================
-     PUBLIC API
-  ====================== */
   return {
-    user,               // OwnerDraft attivo
-    configuration,      // Stato configuration
+    owner,
+    verification:
+      owner?.verification ?? "DRAFT",
+    loading,
     reloadProfile: loadProfile,
   };
 }

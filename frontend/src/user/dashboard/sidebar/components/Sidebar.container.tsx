@@ -16,12 +16,12 @@ import type { SidebarSectionVM } from "../../api/types/sidebarSectionViewModel.t
 import { useSidebarBusinesses } from "../api/business/read/sidebar.read-business-complete-list";
 import { useSidebarConfigurations } from "../api/configuration/read/sidebar.read-user-configurations";
 
-import { useSidebarOwnerItems } from "../api/owner/read/sidebar.read-owner-complete-list";
+import { useSidebarOwner } from "../api/owner/read/useSideBarOwner";
 
 export default function SidebarContainer() {
   const businessItems = useSidebarBusinesses();
   const configurationItems = useSidebarConfigurations();
-  const ownerItems = useSidebarOwnerItems();
+  const ownerItems = useSidebarOwner();
   const sections: SidebarSectionVM[] = [
     {
       titleKey: "sidebar.section.you",

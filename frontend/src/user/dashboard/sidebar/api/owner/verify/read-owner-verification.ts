@@ -1,4 +1,4 @@
-import { useOwnerProfile } from "../read/useOwnerProfile";
+import { useOwnerProfile } from "@src/user/dashboard/you/profile/api/owner/read/useOwnerProfile";
 import type { SidebarBusinessStatus } from
   "@src/user/dashboard/api/types/sidebarLinkViewModel.types";
 

@@ -10,7 +10,7 @@
 
 export type ConfigurationReadDTO = {
     id: string;
-  
+    userId:string; 
     status:
       | "CONFIGURATION_IN_PROGRESS"
       | "BUSINESS_READY"

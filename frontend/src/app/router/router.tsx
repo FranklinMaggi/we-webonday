@@ -101,7 +101,7 @@ import AdminConfigurationsPage from "@src/admin/pages/configuration";
 
 //import ConfigurationEntryPage from "../../user/pages/workspace/[id]";
 import { useParams } from "react-router-dom";
-import ProfilePage from "../../user/dashboard/you/profile";
+import ProfilePage from "../../user/dashboard/you/profile/Profile.page";
 import AccountPage from "../../user/dashboard/you/account";
 import ConfiguratorLayout from "@user/configurator/ConfiguratorLayout";
 import WorkspaceByBusiness from "@src/user/workspace/business";

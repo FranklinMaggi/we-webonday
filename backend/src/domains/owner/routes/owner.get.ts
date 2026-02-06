@@ -67,6 +67,7 @@ export async function getBusinessOwner(
 
   const owner: OwnerReadDTO = {
     id: parsed.id,
+    userId:session.user.id,
     firstName: parsed.firstName ?? "",
     lastName: parsed.lastName ?? "",
     birthDate: parsed.birthDate,

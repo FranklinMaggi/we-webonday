@@ -1,34 +1,46 @@
+// ======================================================
+// FE || OWNER || READ DTO (CONTRACT)
+// ======================================================
+//
+// SOURCE:
+// - BE: /domains/owner/DataTransferObject/output/owner-read.dto.ts
+//
+// NOTA:
+// - DTO duplicato volontariamente
+// - NON importare dal BE
+//
+// ======================================================
 
-// domains/owner/DataTransferObject/output/owner.draft.read.dto.ts
+export type OwnerVerification =
+  | "DRAFT"
+  | "PENDING"
+  | "ACCEPTED"
+  | "REJECTED";
 
-export type OwnerDraftReadDTO = {
+export type OwnerContactDTO = {
+  mail?: string;
+  phone?: string;
+};
+
+export type OwnerAddressDTO = {
+  street?: string;
+  number?: string;
+  city?: string;
+  zip?: string;
+  country?: string;
+};
+
+export type OwnerReadDTO = {
   id: string;
+  userId: string;
 
   firstName: string;
   lastName: string;
   birthDate?: string;
 
-  contact?: {
-    secondaryMail?: string;
-    phoneNumber?: string;
-  };
+  contact?: OwnerContactDTO;
+  address?: OwnerAddressDTO;
 
-  address?: {
-    street?: string;
-    number?: string;
-    city?: string;
-    province?: string;
-    region?: string;
-    zip?: string;
-    country?: string;
-  };
-
-
-source :"google"|"manual";    
-  /** 🔑 SOURCE OF TRUTH */
-    ownerDraftComplete: boolean;
-  
-    verification: "DRAFT" |"PENDING" | "ACCEPTED" | "REJECTED";    
-
-   
+  source?: "google" | "manual";
+  verification: OwnerVerification;
 };

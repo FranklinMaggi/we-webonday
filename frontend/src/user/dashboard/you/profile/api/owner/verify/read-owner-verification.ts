@@ -1,0 +1,58 @@
+import { useOwnerProfile } from "../read/useOwnerProfile";
+import type { SidebarBusinessStatus } from
+  "@src/user/dashboard/api/types/sidebarLinkViewModel.types";
+
+export function useOwnerVerificationStatus(): {
+  verification: SidebarBusinessStatus;
+  canStartVerification: boolean;
+} {
+  const { owner, verification } = useOwnerProfile();
+
+  /* =====================
+     NO OWNER
+  ====================== */
+  if (!owner) {
+    return {
+      verification: "PENDING",
+      canStartVerification: false,
+    };
+  }
+
+  /* =====================
+     NORMALIZE STATUS
+  ====================== */
+  switch (verification) {
+    case "DRAFT":
+      return {
+        verification: "PENDING",
+        canStartVerification: true,
+      };
+
+    case "PENDING":
+      return {
+        verification: "PENDING",
+        canStartVerification: false,
+      };
+
+    case "ACCEPTED":
+      return {
+        verification: "ACCEPTED",
+        canStartVerification: false,
+      };
+
+    case "REJECTED":
+      return {
+        verification: "REJECTED",
+        canStartVerification: true,
+      };
+
+    /* =====================
+       SAFETY NET
+    ====================== */
+    default:
+      return {
+        verification: "PENDING",
+        canStartVerification: false,
+      };
+  }
+}

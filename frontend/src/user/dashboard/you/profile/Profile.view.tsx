@@ -16,12 +16,12 @@ import type { OwnerDraftReadDTO } from
   "@src/user/dashboard/you/profile/DataTransferObject/owner.read.types";
 import { useConfigurationSetupStore } from
   "@src/shared/domain/user/configurator/configurationSetup.store";
-
+  import { useOwnerVerificationStatus } from
+  "@src/user/dashboard/sidebar/api/owner/verify/read-owner-verification";
 import {
   OwnerVerificationStep1,
   OwnerVerificationStep2,
 } from "./verification";
-import type { ConfigurationReadDTO } from "./DataTransferObject/configuration-read.type";
 
 /* ======================================================
    VIEW
@@ -29,16 +29,16 @@ import type { ConfigurationReadDTO } from "./DataTransferObject/configuration-re
 export function ProfileView({
   owner,
   reloadProfile,
-  configuration,
 }: {
   owner: OwnerDraftReadDTO | null;
-  configuration: ConfigurationReadDTO | null;
   reloadProfile: () => Promise<void>;
-}) {
+})
+{
   
   const [showVerification, setShowVerification] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
-
+  const { verification, canStartVerification } =
+  useOwnerVerificationStatus();
   /* =====================
      STORE (OWNER DRAFT)
   ====================== */
@@ -78,110 +78,76 @@ export function ProfileView({
       </section>
     );
   }
-  const status = configuration?.status;
 
-  const canStartVerification =
-  status === "CONFIGURATION_IN_PROGRESS" ||
-  status === "REJECTED";
-
-/**
- * Step 2 DEVE essere possibile
- * finché la configuration NON è locked
- */
-const canUploadBusinessDocs =
-  status === "CONFIGURATION_IN_PROGRESS" ||
-  status === "REJECTED";
-
-  
-  const isLocked =
-    status === "CONFIGURATION_READY" ||
-    status === "ACCEPTED";
-  
-  
-  
-  /* =====================
+/* =====================
      RENDER
   ====================== */
   return (
     <section className={profileClasses.root}>
-      {/* HEADER */}
+      {/* ================= HEADER ================= */}
       <header className={profileClasses.header}>
         <h1>{t("profile.title")}</h1>
         <p>{t("profile.subtitle")}</p>
       </header>
-
+  
+      {/* ================= STATUS CARD ================= */}
       <div className={profileClasses.card}>
-  <h3>Stato profilo</h3>
-
-  <div className={profileClasses.row}>
-    <span className={profileClasses.label}>
-      Stato verifica
-    </span>
-
-    <span className={profileClasses.value}>
-      {status === "CONFIGURATION_IN_PROGRESS" &&
-        "Profilo da verificare"}
-
-      {status === "BUSINESS_READY" &&
-        "Carica visura camerale"}
-
-      {status === "CONFIGURATION_READY" &&
-        "Documenti in verifica"}
-
-      {status === "ACCEPTED" && "Profilo verificato"}
-
-      {status === "REJECTED" &&
-        "Verifica respinta — ricarica documenti"}
-    </span>
-  </div>
-
-  {canStartVerification && (
-    <button
-      className="wd-btn wd-btn--primary wd-btn--sm"
-      onClick={() => {
-        setStep(1);
-        setShowVerification(true);
-      }}
-    >
-      Avvia verifica
-    </button>
-  )}
-
-  {status === "CONFIGURATION_READY" && (
-    <p className={profileClasses.verifyHint}>
-      Stiamo verificando i tuoi documenti.
-    </p>
-  )}
-</div>
-
-
-      {/* VERIFICATION FLOW */}
-      {showVerification && !isLocked && (
-  <div className={profileClasses.card}>
-    {step === 1 && canStartVerification && (
-      <OwnerVerificationStep1
-        data={data}
-        setField={setField}
-        onComplete={async () => {
-       
-          setStep(2);
-        }}
-      />
-    )}
-
-{step === 2 &&
-  canUploadBusinessDocs &&
-  data.configurationId &&
-  data.ownerStepCompleted && (
-    <OwnerVerificationStep2
-      configurationId={data.configurationId}
-      onCompleted={reloadProfile}
-    />
-)}
-
-  </div>
-)}
-
+        <h3>{t("profile.status.title")}</h3>
+  
+        <div className={profileClasses.row}>
+          <span className={profileClasses.label}>
+            {t("profile.status.label")}
+          </span>
+  
+          <span className={profileClasses.value}>
+            {verification === "PENDING" &&
+              t("profile.status.pending")}
+            {verification === "ACCEPTED" &&
+              t("profile.status.accepted")}
+            {verification === "REJECTED" &&
+              t("profile.status.rejected")}
+          </span>
+        </div>
+  
+        {/* CTA */}
+        {canStartVerification && (
+          <button
+            className="wd-btn wd-btn--primary wd-btn--sm"
+            onClick={() => {
+              setStep(1);
+              setShowVerification(true);
+            }}
+          >
+            {t("profile.verify.start")}
+          </button>
+        )}
+      </div>
+  
+      {/* ================= VERIFICATION FLOW ================= */}
+      {showVerification && verification !== "ACCEPTED" && (
+        <div className={profileClasses.card}>
+          {/* STEP 1 — OWNER DATA */}
+          {step === 1 && canStartVerification && (
+            <OwnerVerificationStep1
+              data={data}
+              setField={setField}
+              onComplete={async () => {
+                setStep(2);
+              }}
+            />
+          )}
+  
+          {/* STEP 2 — DOCUMENTI BUSINESS (temporaneamente qui) */}
+          {step === 2 &&
+            data.configurationId &&
+            data.ownerStepCompleted && (
+              <OwnerVerificationStep2
+                configurationId={data.configurationId}
+                onCompleted={reloadProfile}
+              />
+            )}
+        </div>
+      )}
     </section>
   );
-}
+}  
