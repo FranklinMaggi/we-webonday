@@ -1,0 +1,67 @@
+/* ======================================================
+   FE || USER DASHBOARD || ACCOUNT — STYLES
+====================================================== */
+
+.user-dashboard {
+    padding: 32px;
+    max-width: 880px;
+  }
+  
+  /* ================= HEADER ================= */
+  
+  .user-dashboard__header {
+    margin-bottom: 24px;
+  }
+  
+  .user-dashboard__header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+  
+  .user-dashboard__header p {
+    font-size: 14px;
+    color: #6b7280; /* gray-500 */
+    margin: 0;
+  }
+  
+  /* ================= CARD ================= */
+  
+  .user-dashboard__card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb; /* gray-200 */
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  
+  /* ================= ROW ================= */
+  
+  .user-dashboard__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+  }
+  
+  .user-dashboard__row:not(:last-child) {
+    border-bottom: 1px solid #f1f5f9; /* gray-100 */
+  }
+  
+  /* ================= LABEL ================= */
+  
+  .user-dashboard__label {
+    font-size: 13px;
+    color: #6b7280; /* gray-500 */
+    font-weight: 500;
+  }
+  
+  /* ================= HINT ================= */
+  
+  .user-dashboard__hint {
+    font-size: 13px;
+    color: #9ca3af; /* gray-400 */
+    margin-top: 12px;
+    max-width: 520px;
+  }
+  

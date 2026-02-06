@@ -19,12 +19,14 @@ export type OwnerVerification =
 
 export type OwnerContactDTO = {
   mail?: string;
-  phone?: string;
+  phoneNumber?: string;
 };
 
 export type OwnerAddressDTO = {
   street?: string;
   number?: string;
+  province?: string;
+  region?: string;
   city?: string;
   zip?: string;
   country?: string;

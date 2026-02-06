@@ -11,9 +11,9 @@
 // ======================================================
 
 import { useState } from "react";
-import { profileClasses } from "../../profile/profile.classes";
+import { profileClasses } from "../../../profile/profile.classes.ts";
 import { uploadBusinessDocument } from "./businesDocuments.upload.ts.ts";
-import { startVerification } from "../../profile/verification/ownerVerification.request";
+import { startVerification } from "../../../profile/verification/ownerVerification.request.ts";
 import { getPromptImageUrl } from "@shared/utils/assets";
 
 interface Props {

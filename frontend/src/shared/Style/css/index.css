@@ -57,7 +57,7 @@
 @import "./user/components/sidebar.css";
 @import "./user/pages/profile/profile.css";
 @import "./user/pages/profile/you.css";
-
+@import "./user/pages/profile/account.css";
 @import "./user/login.css";
 
 /* ======================================================

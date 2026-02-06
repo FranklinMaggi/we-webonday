@@ -12,12 +12,11 @@
 import { useEffect, useState } from "react";
 import { t } from "@shared/aiTranslateGenerator";
 import { profileClasses } from "./profile.classes";
-import type { OwnerDraftReadDTO } from
-  "@src/user/dashboard/you/profile/DataTransferObject/owner.read.types";
+import type { OwnerReadDTO } from
+  "@src/user/dashboard/profile/DataTransferObject/owner.read.types";
 import { useConfigurationSetupStore } from
   "@src/shared/domain/user/configurator/configurationSetup.store";
-  import { useOwnerVerificationStatus } from
-  "@src/user/dashboard/sidebar/api/owner/verify/read-owner-verification";
+
 import {
   OwnerVerificationStep1,
   OwnerVerificationStep2,
@@ -30,44 +29,57 @@ export function ProfileView({
   owner,
   reloadProfile,
 }: {
-  owner: OwnerDraftReadDTO | null;
+  owner: OwnerReadDTO | null;
   reloadProfile: () => Promise<void>;
 })
 {
   
   const [showVerification, setShowVerification] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
-  const { verification, canStartVerification } =
-  useOwnerVerificationStatus();
+
   /* =====================
      STORE (OWNER DRAFT)
   ====================== */
   const { data, setField } = useConfigurationSetupStore();
+  const verification = owner?.verification ?? "DRAFT";
 
-  useEffect(() => {
-    if (!owner) return;
+  const canStartVerification =
+    verification === "DRAFT" ||
+    verification === "REJECTED";
   
-    setField("ownerFirstName", owner.firstName ?? "");
-    setField("ownerLastName", owner.lastName ?? "");
-    setField("ownerBirthDate", owner.birthDate ?? "");
-    setField(
-      "ownerSecondaryMail",
-      owner.contact?.secondaryMail ?? ""
-    );
-    setField("ownerPhone", owner.contact?.phoneNumber ?? "");
-  
-    if (owner.address) {
+    useEffect(() => {
+      if (!owner) return;
+    
+      // =====================
+      // OWNER — BASIC INFO
+      // =====================
+      setField("ownerFirstName", owner.firstName ?? "");
+      setField("ownerLastName", owner.lastName ?? "");
+      setField("ownerBirthDate", owner.birthDate ?? "");
+    
+      // =====================
+      // OWNER — CONTACT
+      // =====================
+      setField("ownerSecondaryMail", owner.contact?.mail ?? "");
+      setField("ownerPhone", owner.contact?.phoneNumber ?? "");
+    
+      // =====================
+      // OWNER — ADDRESS
+      // =====================
+      // NB:
+      // - province / region NON fanno parte di OwnerReadDTO
+      // - vengono inizializzate vuote per il flow di verifica
       setField("ownerAddress", {
-        street: owner.address.street ?? "",
-        number: owner.address.number ?? "",
-        city: owner.address.city ?? "",
-        province: owner.address.province ?? "",
-        region: owner.address.region ?? "",
-        zip: owner.address.zip ?? "",
-        country: owner.address.country ?? "Italia",
+        street: owner.address?.street ?? "",
+        number: owner.address?.number ?? "",
+        city: owner.address?.city ?? "",
+        province: owner.address?.province ?? "", // FE-only, richiesto dallo store
+        region:owner.address?.region ?? "",   // FE-only, richiesto dallo store
+        zip: owner.address?.zip ?? "",
+        country: owner.address?.country ?? "Italia",
       });
-    }
-  }, [owner, setField]);
+    }, [owner, setField]);
+    
   /* =====================
      HARD GUARD
   ====================== */
