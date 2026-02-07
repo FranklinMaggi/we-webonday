@@ -135,9 +135,10 @@ export default function UserBusinessDetail() {
           navigate(
             `/user/dashboard/configurator/${configurationId}`
           );
+          navigate(0); // Da non fare : 🔄 forza reload della route
         }}
       >
-        ✏️ Modifica informazioni
+        ✏️ Riapri Configuazione 
       </button>
     </main>
   );

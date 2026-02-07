@@ -5,7 +5,7 @@ import type { ConfigurationBaseReadDTO } from
 export function toBaseReadDTO(
   config: ConfigurationDTO
 ): ConfigurationBaseReadDTO {
-  if (config.status !== "DRAFT" && config.status !== "CONFIGURATION_IN_PROGRESS") {
+  if (config.status !== "DRAFT" && config.status !== "_IN_PROGRESS") {
     throw new Error(
       `INVALID_CONFIGURATION_STATE_FOR_BASE_READ: ${config.status}`
     );
@@ -17,6 +17,6 @@ export function toBaseReadDTO(
     solutionId: config.solutionId,
     productId: config.productId,
     businessName: config.prefill?.businessName,
-    complete: config.complete === true
+    dataComplete: config.dataComplete === true
   };
 }

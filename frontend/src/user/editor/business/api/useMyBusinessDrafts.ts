@@ -35,7 +35,7 @@ export function useMyBusinesses() {
      CONFIGURATION COMPLETE IDS
   ========================= */
   const completeConfigs = useMemo(
-    () => configurations.filter((c) => c.complete === true),
+    () => configurations.filter((c) => c.dataComplete === true),
     [configurations]
   );
 

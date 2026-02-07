@@ -10,7 +10,7 @@ export async function getPreConfiguration(
     const res = await apiFetch<{
       ok: true;
       configuration: ConfigurationBaseReadDTO;
-    }>(`/api/configuration/read-base/${configurationId}`, {
+    }>(`/api/configuration/read/${configurationId}`, {
       method: "GET",
       cache: "no-store",
     });

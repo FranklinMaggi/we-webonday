@@ -13,11 +13,11 @@
 
 export type ConfigurationBaseReadDTO = {
   id: string;
-  status: "DRAFT" | "CONFIGURATION_IN_PROGRESS";
+  status: "DRAFT" | "_IN_PROGRESS";
   solutionId: string;
   productId: string;
   businessName?: string;
-  
+  dataComplete: boolean;
 };
 
   

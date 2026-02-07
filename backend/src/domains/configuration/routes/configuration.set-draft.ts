@@ -11,6 +11,10 @@
 // - Draft sono source of truth
 // - Operazione IDEMPOTENTE
 // ======================================================
+/**A DISPOSIZIONE DI ADMIN , SERVIRÀ A DRAFTARE - 
+ * RIPORTARE AL PUNTO DI PARTENZA LA CONIFGURAZIONE 
+ * DAL PANNELLO DI CONTROLLO ADMIN  */
+
 
 import type { Env } from "../../../types/env";
 import type { ConfigurationDTO } from "../schema/configuration.schema";

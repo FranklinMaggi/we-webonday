@@ -1,29 +1,50 @@
 // ======================================================
-// BE || BUSINESS || REOPEN (RESET TO DRAFT)
-// POST /api/business/reopen-draft
+// SEMANTICA DI RENDERING — CANONICAL RULES
 // ======================================================
 //
-// AI-SUPERCOMMENT
+// RESPONSABILITÀ SEPARATE:
 //
-// RUOLO:
-// - Riporta il Business allo stato di DRAFT
-// - Riavvia il flusso guidato BUSINESS + OWNER
+// 1️⃣ CONFIGURATION
+// - Governa ESCLUSIVAMENTE il flusso nella Configuration Bar
+// - Usata per:
+//   • creazione configurazioni
+//   • permessi di editing
+//   • generazione ordini / checkout
+//   • preview
 //
-// INVARIANTI CANONICI:
-// - Business è OWNED dalla Configuration
-// - Business ID === configurationId
-// - KV key: BUSINESS:{configurationId}
-// - Draft = STATO, non entità
+// 2️⃣ BUSINESS
+// - Governa ESCLUSIVAMENTE il flusso nella Business Bar
+// - Usata per:
+//   • visibilità attività
+//   • stato operativo del business
+//   • accesso al workspace
 //
-// EFFETTI:
-// - businessDataComplete → false
-// - verification → PENDING
-// - ownerDataComplete → false
+// 3️⃣ OWNER
+// - Governa ESCLUSIVAMENTE il flusso nella Owner Bar
+// - Usata per:
+//   • profilo proprietario
+//   • verifica identità
+//   • documenti
 //
-// NOTE:
-// - Configuration NON governa il flusso
-// - Configuration serve solo per ownership e routing
+// INVARIANTI:
+// - Nessun dominio decide il rendering degli altri
+// - La sidebar è una composizione di flussi indipendenti
+// - Configuration NON governa il flusso Business o Owner
 // ======================================================
+// SEMANTICA DI RENDERING (CANONICA)
+//
+// - CONFIGURATION governa il flusso nella Configuration Bar
+//   (configurazione, ordini, checkout, preview)
+//
+// - BUSINESS governa il flusso nella Business Bar
+//   (attività, stato business, workspace operativo)
+//
+// - OWNER governa il flusso nella Owner Bar
+//   (profilo, verifica identità, documenti)
+//
+// Ogni dominio è responsabile SOLO della propria barra.
+// Nessun dominio decide il rendering degli altri.
+
 
 import { z } from "zod";
 import { json } from "@domains/auth/route/helper/https";
@@ -35,6 +56,7 @@ import { BUSINESS_KEY } from "../keys";
 
 import { OwnerSchema } from "@domains/owner/schema/owner.schema";
 import { OWNER_KEY } from "@domains/owner/keys";
+
 
 /* =========================
    INPUT SCHEMA
@@ -155,6 +177,16 @@ export async function reopenBusinessDraft(
     );
   }
 
+  await env.CONFIGURATION_KV.put(
+    `CONFIGURATION:${configurationId}`,
+    JSON.stringify({
+      ...configuration,
+      status: "DRAFT",
+      dataComplete: false, // ⬅️ coerente con REOPEN
+      updatedAt: new Date().toISOString(),
+    })
+  );
+  
   /* =====================
      6️⃣ RESPONSE
   ====================== */

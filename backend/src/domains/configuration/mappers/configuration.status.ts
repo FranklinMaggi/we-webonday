@@ -22,7 +22,7 @@
 
 export const CONFIGURATION_STATUS = [
   "DRAFT",
-  "CONFIGURATION_IN_PROGRESS",
+  "_IN_PROGRESS",
   "CONFIGURATION_READY",
   "ACCEPTED",
   "REJECTED",
@@ -60,7 +60,7 @@ export const CONFIGURATION_CAPABILITIES: Record<
     visibleAsBusiness: false,
   },
 
-  CONFIGURATION_IN_PROGRESS: {
+  _IN_PROGRESS: {
     canEdit: true,
     canOpenConfigurator: true,
     canSubmit: true,

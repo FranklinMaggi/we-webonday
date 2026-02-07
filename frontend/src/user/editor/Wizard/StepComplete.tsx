@@ -41,7 +41,7 @@ export default function StepComplete() {
       `/user/dashboard/business/${configurationId}`,
       { replace: true }
     );
-   // navigate(0); // Da non fare : 🔄 forza reload della route
+   navigate(0); // Da non fare : 🔄 forza reload della route
   }}
 >
   Vai al tuo business →

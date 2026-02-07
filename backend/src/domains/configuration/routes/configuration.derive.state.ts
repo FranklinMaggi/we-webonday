@@ -103,21 +103,27 @@ export async function configurationDeriveState(
   const businessReady =
     business.verification === "DRAFT";
     if (ownerReady && businessReady) {
-      /* =====================
-         PROMOTE STATES
-      ====================== */
+    
+      /**
+       * owner e business , vengono promossi a REJECTED, 
+       * in modo da bloccare eventuali modifiche durante la 
+       * fase di configurazione.nella sidebar assumono colore rosso significa che 
+       * ||non hanno mai iniziatio il processo di verifica || sono stati respinti in fase di verifica; 
+       */
+
     //Se Owner è PENDING o ACCEPTED → non viene toccato
-      // 1️⃣ Promote OWNER → PENDING
+      // 1️⃣ Promote OWNER → REJECTED-> 
       if (owner.verification === "DRAFT") {
         await env.BUSINESS_KV.put(
           OWNER_KEY(session.user.id),
           JSON.stringify({
             ...owner,
-            verification: "PENDING",
+            verification: "DRAFT",
             updatedAt: new Date().toISOString(),
           })
         );
       }
+
       // 2️⃣ Promote BUSINESS → PENDING
       if (business.verification === "DRAFT") {
         await env.BUSINESS_KV.put(
@@ -132,14 +138,13 @@ export async function configurationDeriveState(
       // 3️⃣ Promote CONFIGURATION → BUSINESS_READY
       if (
         ownerReady &&
-       businessReady &&
-        configuration.status !== "BUSINESS_READY"
+        businessReady 
       ) {
         await env.CONFIGURATION_KV.put(
           CONFIGURATION_KEY(configurationId),
           JSON.stringify({
             ...configuration,
-            status: "BUSINESS_READY",
+            status: "_IN_PROGRESS",
             dataComplete: true,
             updatedAt: new Date().toISOString(),
           })

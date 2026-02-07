@@ -56,7 +56,7 @@ const { reset } = useConfigurationSetupStore();
             {
               to: "#",
               labelKey: "sidebar.business.empty",
-             // disabled: true,
+             disabled: true,
             },
           ],
     },
