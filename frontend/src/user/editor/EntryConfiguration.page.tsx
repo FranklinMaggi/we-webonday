@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import {
-  getPreConfiguration }from "./api/getPreconfiguration";
+import { getPreConfiguration }from "./api/getPreconfiguration";
 
 
 import { useConfigurationSetupStore }from "@src/user/editor/api/type/configurator/configurationSetup.store"

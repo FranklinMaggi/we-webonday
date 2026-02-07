@@ -131,15 +131,19 @@ export default function UserBusinessDetail() {
             method: "POST",
             body: JSON.stringify({ configurationId }),
           });
-
-          navigate(
-            `/user/dashboard/configurator/${configurationId}`
-          );
-          navigate(0); // Da non fare : 🔄 forza reload della route
-        }}
-      >
+          navigate(`/user/dashboard/configurator/${configurationId}` );
+          navigate(0); // Da non fare?? : 🔄 forza reload della route-> OTTIMA SCELTA FARLO 
+        }}>
         ✏️ Riapri Configuazione 
       </button>
+    { /**
+     * TODO: nel BE chiama reopen-draft 
+    */}
+
+
+
+
+
     </main>
   );
 }
