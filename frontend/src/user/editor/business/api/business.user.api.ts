@@ -1,11 +1,29 @@
 import { apiFetch } from "../../../../shared/lib/api";
 
+export type BusinessVerificationStatus =
+  | "DRAFT"
+  | "PENDING"
+  | "ACCEPTED"
+  | "REJECTED";
 
 export type BusinessSummaryDTO = {
   businessId: string;
-  publicId: string;
+
+  // === IDENTITÀ ===
   name: string;
+  publicId: string;            // slug → mattoni.webonday.it
+
+  // === STATO ===
   status: "DRAFT" | "PENDING" | "active" | "suspended";
+  verification: BusinessVerificationStatus;
+
+  // === COMPLETEZZA DATI ===
+  businessDataComplete: boolean;
+
+  // === COLLEGAMENTO SITO ===
+  configurationId?: string;    // esiste solo se il sito è stato creato
+
+  // === META ===
   createdAt: string;
 };
 

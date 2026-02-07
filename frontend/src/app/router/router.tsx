@@ -104,7 +104,7 @@ import { useParams } from "react-router-dom";
 import ProfilePage from "../../user/dashboard/profile/Profile.page";
 import AccountPage from "../../user/dashboard/account";
 import ConfiguratorLayout from "@src/user/editor/ConfiguratorLayout";
-import WorkspaceByBusiness from "@src/user/workspace/business";
+import WorkspaceByBusiness from "@src/user/site-preview/business";
 function RedirectConfiguratorToDashboard() {
   const { id } = useParams<{ id: string }>();
 

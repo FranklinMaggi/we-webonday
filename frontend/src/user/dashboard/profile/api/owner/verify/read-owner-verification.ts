@@ -1,9 +1,10 @@
 import { useOwnerProfile } from "../read/useOwnerProfile";
-import type { SidebarBusinessStatus } from
-  "@src/user/dashboard/sidebar/api/sidebarLinkViewModel.types";
+import type { SidebarVerificationStatus } from "@src/user/dashboard/sidebar/api/types/sidebarViewModel";
+
+
 
 export function useOwnerVerificationStatus(): {
-  verification: SidebarBusinessStatus;
+  verification: SidebarVerificationStatus;
   canStartVerification: boolean;
 } {
   const { owner, verification } = useOwnerProfile();
@@ -31,7 +32,7 @@ export function useOwnerVerificationStatus(): {
     case "PENDING":
       return {
         verification: "PENDING",
-        canStartVerification: false,
+        canStartVerification: true,
       };
 
     case "ACCEPTED":
