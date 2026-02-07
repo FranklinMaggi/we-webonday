@@ -16,7 +16,7 @@
     const owner = OwnerSchema.parse({
         verification: "DRAFT" ,
         ownerDataComplete: false,
-            id: userId,
+        id: userId,
         userId,
         createdAt: now,
         updatedAt: now,

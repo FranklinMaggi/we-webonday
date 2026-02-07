@@ -3,7 +3,7 @@
 // ======================================================
 
 import type { ConfigurationUserSummaryDTO } from
-  "@src/user/configurator/base_configuration/configuration/ConfigurationConfiguratorDTO";
+  "@src/user/editor/api/DataTransferObject/ConfigurationConfiguratorDTO";
 import { t } from "@shared/aiTranslateGenerator";
 
 export function getConfigurationDisplayName(

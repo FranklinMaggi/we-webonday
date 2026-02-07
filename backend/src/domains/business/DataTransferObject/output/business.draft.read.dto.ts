@@ -36,6 +36,7 @@ export type BusinessDraftBaseReadDTO = {
      city?: string;
      province?: string;
      zip?: string;
+     country?: string;
    };
  
    businessDescriptionTags: string[];

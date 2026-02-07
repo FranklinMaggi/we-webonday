@@ -6,7 +6,7 @@ import { apiFetch } from "@shared/lib/api";
 
 export async function createOwnerDraft(payload: any) {
   const res = await apiFetch<{ ok: boolean }>(
-    "/api/owner/create-draft",
+    "/api/owner/create",
     {
       method: "POST",
       body: JSON.stringify(payload),

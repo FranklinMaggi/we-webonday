@@ -12,8 +12,8 @@
 //
 // ======================================================
 import { useNavigate } from "react-router-dom";
-import { useMyConfigurations } from "../configurator/base_configuration/configuration/api/configuration.my-configuration-get-list";
-import type { ConfigurationUserSummaryDTO } from "@src/user/configurator/base_configuration/configuration/ConfigurationConfiguratorDTO";
+import { useMyConfigurations } from "../editor/api/configuration.my-configuration-get-list";
+import type { ConfigurationUserSummaryDTO } from "@src/user/editor/api/DataTransferObject/ConfigurationConfiguratorDTO";
 
 export type DashboardVM = {
   configs: ConfigurationUserSummaryDTO[];

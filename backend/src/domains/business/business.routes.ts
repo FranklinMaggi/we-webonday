@@ -20,9 +20,9 @@ import type { Env } from "types/env";
 import { withCors } from "@domains/auth";
 
 import {
-  createBusinessDraft,
+  upsertBusiness,
   getBusiness,
-  listAllBusiness,
+  listMyBusinesses,
   reopenBusinessDraft,
   initBusinessVerification,
   uploadBusinessMenu,
@@ -38,9 +38,9 @@ export async function handleBusinessRoutes(
   /* ======================================================
      BUSINESS — DRAFT UPSERT
   ====================================================== */
-  if (pathname === "/api/business/create-draft" && method === "POST") {
+  if (pathname === "/api/business/create" && method === "POST") {
     return withCors(
-      await createBusinessDraft(request, env),
+      await upsertBusiness(request, env),
       request,
       env
     );
@@ -49,7 +49,7 @@ export async function handleBusinessRoutes(
   /* ======================================================
      BUSINESS — DRAFT READ (PREFILL)
   ====================================================== */
-  if (pathname === "/api/business/get-base-draft" && method === "GET") {
+  if (pathname === "/api/business/get" && method === "GET") {
     return withCors(
       await getBusiness(request, env),
       request,
@@ -60,9 +60,9 @@ export async function handleBusinessRoutes(
   /* ======================================================
      BUSINESS — DRAFT LIST
   ====================================================== */
-  if (pathname === "/api/business/draft/get-list" && method === "GET") {
+  if (pathname === "/api/business/list" && method === "GET") {
     return withCors(
-      await listAllBusiness(request, env),
+      await listMyBusinesses(request, env),
       request,
       env
     );

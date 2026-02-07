@@ -19,9 +19,9 @@
 
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useConfigurationSetupStore } from "@shared/domain/user/configurator/configurationSetup.store";
+import { useConfigurationSetupStore } from "@src/user/editor/api/type/configurator/configurationSetup.store";
 import { usePreConfigurationStore } from
-  "@user/configurator/base_configuration/configuration/pre-configuration.store";
+  "@src/user/editor/api/type/pre-configuration.store";
 import type { ProductVM } from
   "@shared/lib/viewModels/product/Product.view-model";
 

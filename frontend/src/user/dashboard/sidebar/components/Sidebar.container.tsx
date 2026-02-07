@@ -11,17 +11,27 @@
 // ======================================================
 
 import { SidebarView } from "./Sidebar.view";
-import type { SidebarSectionVM } from "../../api/types/sidebarSectionViewModel.type";
+import type { SidebarSectionVM } from "../api/types/sidebarViewModel";
 
-import { useSidebarBusinesses } from "../api/business/read/sidebar.read-business-complete-list";
-import { useSidebarConfigurations } from "../api/configuration/read/sidebar.read-user-configurations";
-
+import { useSidebarBusinesses } from "../api/business/read/useSidebarBusiness";
+import { useSidebarConfigurations } from "../api/read/sidebar.read-user-configurations";
+import { useConfigurationSetupStore } from
+  "@src/user/editor/api/type/configurator/configurationSetup.store";
+import { useNavigate } from "react-router-dom";
 import { useSidebarOwner } from "../api/owner/read/useSideBarOwner";
 
 export default function SidebarContainer() {
+  //RECUPERA I LINK BUSINESS + FORMA DATI GIAÄ PRONTI PER LA VIEW
   const businessItems = useSidebarBusinesses();
+//RECUPERA I LINK CONFIGURAZIONI 
   const configurationItems = useSidebarConfigurations();
+  //RECUPERA I LINK PROPRIETARIO + FORMA DATI GIAÄ PRONTI PER LA VIEW 
   const ownerItems = useSidebarOwner();
+  /** */
+  const navigate = useNavigate();
+  /** */
+const { reset } = useConfigurationSetupStore();
+/** definisce la sidebar finale , la view riceve questo */
   const sections: SidebarSectionVM[] = [
     {
       titleKey: "sidebar.section.you",
@@ -38,12 +48,15 @@ export default function SidebarContainer() {
     {
       titleKey: "sidebar.section.business",
       items: businessItems.length
-        ? businessItems
+        ? businessItems.map(item => ({
+            ...item,
+            status: item.status as "PENDING" | "ACCEPTED" | "REJECTED" | undefined,
+          }))
         : [
             {
               to: "#",
               labelKey: "sidebar.business.empty",
-              disabled: true,
+             // disabled: true,
             },
           ],
     },
@@ -53,9 +66,13 @@ export default function SidebarContainer() {
       items: [
         ...configurationItems,
         {
-          to: "/solution",
+          to: "#",
           labelKey: "sidebar.config.start",
-        },
+          onClick: () => {
+            reset();
+            navigate("/solution");
+          },
+        }
       ],
     },
   ];

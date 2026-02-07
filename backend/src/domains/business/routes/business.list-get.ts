@@ -1,24 +1,24 @@
 // ======================================================
-// BE || BUSINESS || LIST (DRAFT STATE)
-// GET /api/business/draft/list-get
+// BE || BUSINESS || LIST (CANONICAL)
+// GET /api/user/business/list
 // ======================================================
 //
 // AI-SUPERCOMMENT
 //
 // RUOLO:
-// - Elenca i Business in stato DRAFT COMPLETO dell’utente
-// - Usato da Dashboard e Workspace
+// - Elenca TUTTI i Business dell’utente
+// - Usato da Sidebar, Dashboard, Workspace
 //
 // MODELLO CANONICO:
 // - Business è OWNED dalla Configuration
 // - Business ID === configurationId
 // - KV key: BUSINESS:{configurationId}
-// - Draft = STATO (verification === "DRAFT")
-//- Completezza = businessDataComplete === true
+// - Stato reale = business.verification
+//
 // INVARIANTI:
 // - Auth obbligatoria
 // - Read-only
-// - Business incompleti esclusi
+// - Nessuna derive su Configuration.status
 // - Backend = source of truth
 // ======================================================
 
@@ -30,24 +30,19 @@ import { BUSINESS_KEY } from "../keys";
 /* =========================
    DTO (OUTPUT)
 ========================= */
-type BusinessDraftListItemDTO = {
+type BusinessListItemDTO = {
   configurationId: string;
-  businessDraftId: string; // alias legacy (=== configurationId)
+  businessId: string; // === configurationId
   businessName: string;
-  status: string;
-  businessDataComplete: true;
-  createdAt: string;
-  updatedAt: string;
-};
-
-type ConfigurationIndexItem = {
-  status?: string;
+  verification: "DRAFT" | "PENDING" | "ACCEPTED" | "REJECTED";
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 /* ======================================================
    HANDLER
 ====================================================== */
-export async function listAllBusiness(
+export async function listMyBusinesses(
   request: Request,
   env: Env
 ): Promise<Response> {
@@ -80,20 +75,11 @@ export async function listAllBusiness(
   }
 
   /* =====================
-     3️⃣ RESOLVE BUSINESS
+     3️⃣ RESOLVE BUSINESS (CONFIG-SCOPED)
   ====================== */
-  const items: BusinessDraftListItemDTO[] = [];
+  const items: BusinessListItemDTO[] = [];
 
   for (const configurationId of userConfigIds) {
-    /* --- load configuration (status only) --- */
-    const configuration = await env.CONFIGURATION_KV.get(
-      `CONFIGURATION:${configurationId}`,
-      "json"
-    ) as ConfigurationIndexItem | null;
-
-    if (!configuration) continue;
-
-    /* --- load business (configuration-scoped) --- */
     const rawBusiness = await env.BUSINESS_KV.get(
       BUSINESS_KEY(configurationId)
     );
@@ -108,17 +94,14 @@ export async function listAllBusiness(
       continue;
     }
 
-    /* =====================
-       DOMAIN GUARD (STATE)
-    ====================== */
-    if (business.businessDataComplete !== true) continue;
+    // guard minimo di dominio
+    if (!business.verification) continue;
 
     items.push({
       configurationId,
-      businessDraftId: configurationId, // alias legacy FE
+      businessId: configurationId,
       businessName: business.businessName ?? "Attività",
-      status: configuration.status ?? "UNKNOWN",
-      businessDataComplete: true,
+      verification: business.verification,
       createdAt: business.createdAt,
       updatedAt: business.updatedAt,
     });

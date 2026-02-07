@@ -20,7 +20,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { listMyBusinesses } from "../../../configurator/business/api/business.user.api";
+import { listMyBusinesses } from "@src/user/editor/business/api/business.list";
 
 /* =========================
    VIEW MODEL (FE)
@@ -105,10 +105,13 @@ export default function UserBusinessDashboard() {
           <div className="actions">
             {/* === EDITING → CONFIGURATOR === */}
             <button
-              onClick={() => goToConfigurator(b.configurationId)}
-            >
-              ✏️ Modifica sito
-            </button>
+  disabled={!b.configurationId}
+  onClick={() =>
+    b.configurationId && goToConfigurator(b.configurationId)
+  }
+>
+  ✏️ Modifica sito
+</button>
 
             {/* === VISTA PASSIVA === */}
             <button

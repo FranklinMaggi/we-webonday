@@ -11,7 +11,7 @@
 // ======================================================
 
 import type { ConfigurationSetupDTO } from
-  "@src/shared/domain/user/configurator/configurationSetup.types";
+  "@src/user/editor/api/type/configurator/configurationSetup.types";
 
 import { t } from "@shared/aiTranslateGenerator";
 import { profileClasses } from "../profile.classes";

@@ -1,62 +1,137 @@
 // ======================================================
-// SHARED || DOMAIN || BUSINESS || READ TYPES (FE)
+// FE || DTO || BusinessReadDTO (CANONICAL)
 // ======================================================
 //
-// RUOLO:
-// - DTO di LETTURA dal BE
-// - Seed FE per configurazione
+// SOURCE OF TRUTH:
+// - BusinessSchema (BE)
 //
 // NOTE:
-// - READ ONLY
-// - NON usato in scrittura
-// - Allineato 1:1 con BusinessDraftSchema (BE)
+// - DTO FE → NON espone campi interni BE
+// - NO draft
+// - NO logica wizard
 // ======================================================
 
-import type { OpeningHoursFE } from "./openingHours.types";
+import type { OpeningHoursFE } from
+  "@shared/domain/business/openingHours.types";
 
-/* ======================================================
-   BUSINESS DRAFT — READ DTO
-====================================================== */
+/* =========================
+   MEDIA DTO
+========================= */
 
-export type BusinessDraftReadDTO = {
-  businessDraftId: string;
+export type BusinessMediaDTO = {
+  objectKey: string;
+  url: string;
+  uploadedAt: string;
+};
 
+export type BusinessGalleryImageDTO = {
+  objectKey: string;
+  url: string;
+  order: number;
+  uploadedAt: string;
+};
+
+export type BusinessDocumentDTO = {
+  type:
+    | "business_register"
+    | "vat_certificate"
+    | "business_license"
+    | "other";
+
+  format: "pdf" | "img";
+
+  objectKey: string;
+  publicUrl?: string;
+
+  verificationStatus:
+    | "pending"
+    | "approved"
+    | "rejected";
+
+  uploadedAt: string;
+  uploadedByUserId: string;
+
+  verifiedAt?: string;
+};
+
+/* =========================
+   MAIN DTO
+========================= */
+
+export type BusinessReadDTO = {
+  /* =====================
+     IDENTITY
+  ====================== */
+  id: string;                 // = configurationId
+  configurationId: string;
+
+  ownerUserId: string;
+
+  publicId: string;
+
+  /* =====================
+     COMMERCIAL (IMMUTABLE)
+  ====================== */
+  solutionId: string;
+  productId: string;
+
+  /* =====================
+     CORE BUSINESS
+  ====================== */
   businessName: string;
 
-  /* DOMAIN */
-  openingHours: OpeningHoursFE | null;
+  openingHours: OpeningHoursFE;
 
-  /* CONTACT (MINIMO) */
-  contact?: {
-    mail?: string;
+  contact: {
+    mail: string;
     phoneNumber?: string;
     pec?: string;
   };
 
-  /* ADDRESS (TOP LEVEL — CANONICAL) */
   address?: {
     street?: string;
     number?: string;
     city?: string;
     province?: string;
+    region?: string;
     zip?: string;
+    country?: string;
   };
 
-  /* PRIVACY */
-  privacy?: {
-    accepted: boolean;
-    acceptedAt: string;
-    policyVersion: string;
+  classification: {
+    descriptionTags: string[];
+    serviceTags: string[];
   };
 
-  /* CLASSIFICATION */
-  businessDescriptionTags?: string[];
-  businessServiceTags?: string[];
+  /* =====================
+     MEDIA
+  ====================== */
+  logo: BusinessMediaDTO | null;
+  coverImage: BusinessMediaDTO | null;
+  gallery: BusinessGalleryImageDTO[];
+
+  /* =====================
+     LEGAL
+  ====================== */
+  documents: BusinessDocumentDTO[];
+
+  /* =====================
+     STATE
+  ====================== */
+
+  businessDescriptionTags: string[];
+  businessServiceTags: string[];
+  verification: "DRAFT"|"PENDING" | "ACCEPTED" | "REJECTED";      
+ 
+  businessDataComplete: boolean;
+  verifiedAt?: string;
+
+  /* =====================
+     AUDIT
+  ====================== */
+  createdAt: string;
+  updatedAt: string;
 };
-
-/* ======================================================
-   SOLUTION SEED (READ ONLY)
-====================================================== */
 
 export type SolutionSeed = {
   descriptionTags: string[];

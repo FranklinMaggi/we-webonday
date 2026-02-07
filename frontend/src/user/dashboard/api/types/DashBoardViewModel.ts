@@ -1,4 +1,4 @@
-import { type ConfigurationUserSummaryDTO } from "@src/user/configurator/base_configuration/configuration/ConfigurationConfiguratorDTO";
+import { type ConfigurationUserSummaryDTO } from "@src/user/editor/api/DataTransferObject/ConfigurationConfiguratorDTO";
 
 export type DashboardVM = {
   configs: ConfigurationUserSummaryDTO[];

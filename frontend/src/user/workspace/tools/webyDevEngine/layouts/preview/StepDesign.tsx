@@ -2,7 +2,7 @@
 // FE || STEP DESIGN — PREVIEW ENGINE
 // ======================================================
 
-import { useConfigurationSetupStore } from "@shared/domain/user/configurator/configurationSetup.store";
+import { useConfigurationSetupStore } from "@src/user/editor/api/type/configurator/configurationSetup.store";
 
 import { generatePreviewCanvases } from "@src/user/workspace/tools/webyDevEngine/developerEngine/engine.orchestrator";
 import { EnginePreview } from "@src/user/workspace/tools/webyDevEngine/EnginePreview";

@@ -43,7 +43,7 @@ export const ConfigurationWorkspaceSchema = z.object({
 export const ConfigurationSchema = z.object({
   id: z.string().uuid(),
   userId: z.string().optional(),
-// owner === userId (ownership implicita)
+
   solutionId: z.string().min(1),
   productId: z.string().min(1),
 
@@ -52,11 +52,11 @@ export const ConfigurationSchema = z.object({
   data: ConfigurationWorkspaceSchema.default({}),
 
   status: z.enum(CONFIGURATION_STATUS),
-  complete:z.boolean().default(false),  
+  dataComplete:z.boolean().default(false),  
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
   deletedAt: z.string().optional(),
 });
-complete: z.boolean().default(false)
+
 export type ConfigurationDTO =
   z.infer<typeof ConfigurationSchema>;

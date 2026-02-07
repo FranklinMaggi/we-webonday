@@ -13,38 +13,16 @@
 // - Idempotente
 //
 // ======================================================
-
+import type { Env } from "../../../types/env";
 import { json } from "@domains/auth/route/helper/https";
 import { requireAuthUser } from "@domains/auth";
-import type { Env } from "../../../types/env";
-
 import { OWNER_KEY } from "../keys";
 import { OwnerSchema } from "../schema/owner.schema";
 import type { OwnerInputDTO } from
   "../DataTransferObject/input/owner.input.dto";
+import { isOwnerDataComplete } from "../service/owner.dataComplete";
 
-  function isOwnerDataComplete(draft: {
-    firstName?: string;
-    lastName?: string;
-    birthDate?: string;
-    contact?: { mail?: string };
-    address?: {
-      street?: string;
-      number?: string;
-      city?: string;
-    };
-  }) {
-    return Boolean(
-      draft.firstName &&
-      draft.lastName &&
-      draft.birthDate &&
-      draft.contact?.mail &&
-      draft.address?.street &&
-      draft.address?.number &&
-      draft.address?.city
-    );
-  }
-  
+
 
 export async function upsertOwner(
   request: Request,
@@ -81,13 +59,16 @@ export async function upsertOwner(
   ? OwnerSchema.parse(existingRaw)
   : null;
 
-
+  const ownerDataComplete = isOwnerDataComplete({
+    input,
+    existing,
+  });
   const now = new Date().toISOString();
 
-  /* =====================
+  {/** =====================
      4️⃣ BUILD OWNER (UPSERT)
-  ====================== */
-  const ownerDraft = {
+  ====================== DEPRECATO CAUSAVA DUPLICAZIONE SECONDO 5.2 DI CHAT GPT 
+  const ownerData = {
     firstName: input.firstName ?? existing?.firstName,
     lastName: input.lastName ?? existing?.lastName,
     birthDate: input.birthDate ?? existing?.birthDate,
@@ -101,10 +82,11 @@ export async function upsertOwner(
       ...existing?.contact,
       ...input.contact,
     },
+  
+    ownerDataComplete,
   };
-  
-  const ownerDataComplete = isOwnerDataComplete(ownerDraft);
-  
+  */}
+ 
   const owner = OwnerSchema.parse({
     id: userId,
     userId,
@@ -132,7 +114,7 @@ export async function upsertOwner(
   
     verification: existing?.verification ?? "DRAFT",
     verifiedAt: existing?.verifiedAt,
-    ownerDataComplete,  
+    ownerDataComplete,   // check with ownerDataComplete
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   });

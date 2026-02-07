@@ -1,5 +1,5 @@
 import type { ConfigurationSetupDTO } from
-  "@src/shared/domain/user/configurator/configurationSetup.types";
+  "@src/user/editor/api/type/configurator/configurationSetup.types";
 
 export function normalizeOwnerAddress(
   a: ConfigurationSetupDTO["ownerAddress"]

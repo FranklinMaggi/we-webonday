@@ -15,7 +15,7 @@
 // ======================================================
 import { useEffect, useState } from "react";
 import { useMyConfigurations } from
-  "../../../configurator/base_configuration/configuration/api/configuration.my-configuration-get-list";
+  "../../../editor/api/configuration.my-configuration-get-list";
 import { apiFetch } from "@shared/lib/api";
 
 /* ======================================================
@@ -93,7 +93,7 @@ useEffect(() => {
             ok: boolean;
             draft?: any;
           }>(
-            `/api/business/get-base-draft?configurationId=${c.id}`
+            `/api/business/get?configurationId=${c.id}`
           );
 
           // ❗ Se NON esiste business → mostriamo comunque la configuration

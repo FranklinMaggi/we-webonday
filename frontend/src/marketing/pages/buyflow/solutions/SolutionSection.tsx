@@ -15,7 +15,7 @@ import { useAuthStore } from "@shared/lib/store/auth.store";
 import { fetchPublicSolutions } from
   "../../../../shared/lib/publicApi/solutions/solutions.public.api";
 import { useConfigurationSetupStore } from
-  "@src/shared/domain/user/configurator/configurationSetup.store";
+  "@src/user/editor/api/type/configurator/configurationSetup.store";
 
 import SolutionCard from "./SolutionCard";
 import { solutionsSectionClasses as cls } from "./solutionsSection.classes";

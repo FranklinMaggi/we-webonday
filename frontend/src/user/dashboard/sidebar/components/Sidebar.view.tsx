@@ -13,13 +13,13 @@
 // - non conosce il dominio
 // ======================================================
 import { NavLink } from "react-router-dom";
-import { type SidebarSectionVM } from "../../api/types/sidebarSectionViewModel.type";
+import { type SidebarSectionVM } from "../api/types/sidebarViewModel";
 import { sidebarClasses } from "./sidebar.classes";
 import { t } from "@shared/aiTranslateGenerator";
 
 
     function getStatusClass(
-      status?: "PENDING" | "ACCEPTED" | "REJECTED"
+      status?: "PENDING" | "ACCEPTED" | "REJECTED"|"DRAFT"
     ) {
       if (status === "ACCEPTED") return "status-green";
       if (status === "PENDING" || status === "REJECTED")
@@ -61,13 +61,28 @@ export function SidebarView({ sections } :
                           {item.label ?? t(item.labelKey!)}
                         </span>        
                   )   :   (
-                        <NavLink to={item.to}
-                        className={({ isActive }) =>
-                        `${sidebarClasses.link}
-                        ${isActive ? sidebarClasses.linkActive : ""}
-                        ${getStatusClass(item.status)}`}>
-                        {item.label ?? t(item.labelKey!)}
-                        </NavLink> )}
+                    <NavLink
+                    to={item.to}
+                    onClick={(e) => {
+                      if (item.onClick) {
+                        e.preventDefault();
+                        item.onClick();
+                      }
+                    }}
+                    className={({ isActive }) =>
+                      [
+                        sidebarClasses.link,
+                        isActive && sidebarClasses.linkActive,
+                        getStatusClass(item.status),
+                        item.className,
+                      ]
+                        .filter(Boolean)
+                        .join(" ")
+                    }
+                  >
+                    {item.label ?? t(item.labelKey!)}
+                  </NavLink>
+                  )}
               </li>))}
             </ul>
           </div>))}

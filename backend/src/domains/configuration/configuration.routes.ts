@@ -54,7 +54,7 @@ export async function handleConfigurationRoutes(
   
     // READ BASE
     if (
-      pathname.startsWith("/api/configuration/read-base/") &&
+      pathname.startsWith("/api/configuration/read-base") &&
       method === "GET"
     ) {
       const id = pathname.split("/").pop()!;
@@ -67,7 +67,7 @@ export async function handleConfigurationRoutes(
   
     // READ FULL
     if (
-      pathname.startsWith("/api/configuration/read/") &&
+      pathname.startsWith("/api/configuration/read") &&
       method === "GET"
     ) {
       const id = pathname.split("/").pop()!;

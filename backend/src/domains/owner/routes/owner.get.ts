@@ -1,6 +1,6 @@
 // ======================================================
 // BE || OWNER || GET (USER-SCOPED)
-// GET /api/owner/get-draft?configurationId=
+// GET /api/owner/get?configurationId=
 // ======================================================
 //
 // RUOLO:

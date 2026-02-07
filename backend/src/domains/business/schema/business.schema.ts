@@ -6,7 +6,7 @@ import { GalleryImageSchema } from "./gallery.schema";
 import { OpeningHoursSchema } from "@domains/GeneralSchema/hours.opening.schema";
 import { ContactSchema } from "@domains/GeneralSchema/contact.schema";
 import { AddressSchema } from "@domains/GeneralSchema/address.schema";
-
+import { LegalIdentitySchema } from "@domains/GeneralSchema/legalIdentitySchema";
 /* ======================================================
  * BUSINESS (FINAL ENTITY)
  * ====================================================== */
@@ -36,6 +36,7 @@ export const BusinessSchema = z.object({
    openingHours: OpeningHoursSchema,
    contact: ContactSchema,
    address: AddressSchema.optional(),
+   legalIdentity:LegalIdentitySchema.optional(),
  
    businessDescriptionTags: z.array(z.string()).default([]),
    businessServiceTags: z.array(z.string()).default([]),

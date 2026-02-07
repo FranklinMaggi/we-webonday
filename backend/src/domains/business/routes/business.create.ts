@@ -56,7 +56,7 @@ function isBusinessDataComplete(draft: {
 /* ======================================================
    HANDLER
 ====================================================== */
-export async function createBusinessDraft(
+export async function upsertBusiness(
   request: Request,
   env: Env
 ): Promise<Response> {

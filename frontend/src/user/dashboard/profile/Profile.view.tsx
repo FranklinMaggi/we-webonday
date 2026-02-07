@@ -15,7 +15,7 @@ import { profileClasses } from "./profile.classes";
 import type { OwnerReadDTO } from
   "@src/user/dashboard/profile/DataTransferObject/owner.read.types";
 import { useConfigurationSetupStore } from
-  "@src/shared/domain/user/configurator/configurationSetup.store";
+  "@src/user/editor/api/type/configurator/configurationSetup.store";
 
 import {
   OwnerVerificationStep1,

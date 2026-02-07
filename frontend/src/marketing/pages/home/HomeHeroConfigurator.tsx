@@ -14,7 +14,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useConfigurationSetupStore } from "@src/shared/domain/user/configurator/configurationSetup.store";
+import { useConfigurationSetupStore } from "@src/user/editor/api/type/configurator/configurationSetup.store";
 import { getLocalConsent } from "@shared/utils/cookieConsent";
 import { t } from "@shared/aiTranslateGenerator";
 import { homePageClasses as cls } from "./home.classes";

@@ -75,12 +75,12 @@ import UserBusinessDashboard from "../../user/dashboard/you/business";
 import YouDashboardPage from "@src/user/dashboard/you/hard-driver";
 
 import UserBusinessDetail from "../../user/dashboard/you/business/[id]";
-import ListConfigurationIndex from "@src/user/configurator/ConfigurationWorkspaceList.page";
+import ListConfigurationIndex from "@src/user/editor/ConfigurationDraftList";
 /* =========================
    USER — CONFIGURATOR
 ========================= */
 //import UserConfiguratorIndex from "../pages/user/dashboard/configurator/index";
-import ConfigurationEntryPage from "../../user/configurator/EntryConfiguration.page";
+import ConfigurationEntryPage from "../../user/editor/EntryConfiguration.page";
 import PostLoginHandoff from "../../user/pages/PostLoginHandoff";
 /* =========================
    ADMIN
@@ -103,7 +103,7 @@ import AdminConfigurationsPage from "@src/admin/pages/configuration";
 import { useParams } from "react-router-dom";
 import ProfilePage from "../../user/dashboard/profile/Profile.page";
 import AccountPage from "../../user/dashboard/account";
-import ConfiguratorLayout from "@user/configurator/ConfiguratorLayout";
+import ConfiguratorLayout from "@src/user/editor/ConfiguratorLayout";
 import WorkspaceByBusiness from "@src/user/workspace/business";
 function RedirectConfiguratorToDashboard() {
   const { id } = useParams<{ id: string }>();

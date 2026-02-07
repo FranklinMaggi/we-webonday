@@ -1,6 +1,6 @@
 import { useOwnerProfile } from "../read/useOwnerProfile";
 import type { SidebarBusinessStatus } from
-  "@src/user/dashboard/api/types/sidebarLinkViewModel.types";
+  "@src/user/dashboard/sidebar/api/sidebarLinkViewModel.types";
 
 export function useOwnerVerificationStatus(): {
   verification: SidebarBusinessStatus;

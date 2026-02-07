@@ -1,9 +1,8 @@
-import { useOwnerProfile } from "@src/user/dashboard/profile/api/owner/read/useOwnerProfile";
-import type { SidebarBusinessStatus } from
-  "@src/user/dashboard/api/types/sidebarLinkViewModel.types";
 
+import {type  OwnerVerificationUIStatus } from "../../types/owner.verification.type";
+import { useOwnerProfile } from "@src/user/dashboard/profile/api/owner/read/useOwnerProfile";
 export function useOwnerVerificationStatus(): {
-  status: SidebarBusinessStatus;
+  status: OwnerVerificationUIStatus;
   canStartVerification: boolean;
 } {
   const owner = useOwnerProfile();
@@ -17,7 +16,7 @@ export function useOwnerVerificationStatus(): {
 
   switch (owner.verification) {
     case "DRAFT":
-      return { status: "PENDING", canStartVerification: true };
+      return { status: "DRAFT", canStartVerification: true };
 
     case "PENDING":
       return { status: "PENDING", canStartVerification: false };

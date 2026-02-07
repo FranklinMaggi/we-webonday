@@ -37,7 +37,7 @@ export async function handleOwnerRoutes(
      OWNER — DRAFT
   ====================================================== */
 
-  if (pathname === "/api/owner/create-draft" && method === "POST") {
+  if (pathname === "/api/owner/create" && method === "POST") {
     return withCors(
       await upsertOwner(request, env),
       request,
@@ -45,7 +45,7 @@ export async function handleOwnerRoutes(
     );
   }
 
-  if (pathname === "/api/owner/get-draft" && method === "GET") {
+  if (pathname === "/api/owner/get" && method === "GET") {
     return withCors(
       await getBusinessOwner(request, env),
       request,

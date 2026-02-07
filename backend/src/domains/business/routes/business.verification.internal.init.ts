@@ -77,7 +77,7 @@ export async function initBusinessVerificationInternal(
     gallery: [],
     documents: [],
 
-    verification: "PENDING", // 🔒 CANONICO
+    verification: "PENDING",
 
     createdAt: now,
     updatedAt: now,

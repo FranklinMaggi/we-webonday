@@ -10,9 +10,9 @@
 // - SOLO route attive (no legacy)
 // ======================================================
 
-export { listAllBusiness } from "./business.list-get";
+export { listMyBusinesses } from "./business.list-get";
 
-export { createBusinessDraft } from "./business.create";
+export { upsertBusiness } from "./business.create";
 export { getBusiness} from "./business.get.base";
 
 

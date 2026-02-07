@@ -22,7 +22,7 @@
 // ======================================================
 
 import { useEffect } from "react";
-import { useConfigurationSetupStore } from "@shared/domain/user/configurator/configurationSetup.store";
+import { useConfigurationSetupStore } from "@src/user/editor/api/type/configurator/configurationSetup.store";
 import { DEFAULT_VISIBILITY } from "@src/user/workspace/tools/webyDevEngine/configurationLayout/visibility.defaults";
 
 type Props = {

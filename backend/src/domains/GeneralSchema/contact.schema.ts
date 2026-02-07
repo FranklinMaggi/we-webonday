@@ -1,6 +1,5 @@
 // DOMAIN || SHARED || CONTACT.schema.ts
 import { z } from "zod";
-import { AddressSchema } from "./address.schema";
 
 /**
  * ContactSchema (CANONICAL)
@@ -10,7 +9,6 @@ import { AddressSchema } from "./address.schema";
  */
 export const ContactSchema = z.object({
   mail: z.string().email().optional(),
-  pec: z.string().email().optional(),
   phoneNumber: z.string().min(1).optional(),
 }).passthrough(); // 🔑 CRITICO
 

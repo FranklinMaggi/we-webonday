@@ -1,168 +1,180 @@
 /* ======================================================
-   SIDEBAR — CANONICAL (NAVBAR-ALIGNED)
+   SIDEBAR — CANONICAL (SEMANTIC-DRIVEN)
 ====================================================== */
 
 /* =========================
    SHELL
 ========================= */
 .dashboard-sidebar {
-    background: var(--wd-footer-bg, #0e0e11);
-    color: var(--wd-footer-text, #e5e7eb);
-  
-    padding: 16px;
-    width: 240px;
-  
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-   height:100%;
-  }
-  
-  /* =========================
-     SECTION
-  ========================= */
-  .sidebar-section {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  
-  /* =========================
-     SECTION TITLE
-  ========================= */
-  .sidebar-title,
-  .sidebar-title-link {
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  
-    color: var(--wd-navbar-text-muted, rgba(255,255,255,0.55));
-    margin-bottom: 6px;
-  
-    text-decoration: none;
-  }
-  
-  /* =========================
-     LIST
-  ========================= */
-  .sidebar-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  
-  /* =========================
-     ITEM
-  ========================= */
-  .sidebar-item {
-    display: block;
-  }
-  
-  /* =========================
-     LINK (BASE)
-  ========================= */
-  .sidebar-link {
-    position: relative;
-  
-    display: block;
-    padding: 8px 10px;
-    border-radius: 10px;
-  
-    font-size: 14px;
-    font-weight: 500;
-  
-    color: var(--wd-footer-link, #e5e7eb);
-    text-decoration: none;
-  
-    transition:
-      background 0.2s ease,
-      color 0.2s ease,
-      box-shadow 0.2s ease;
-  }
-  
-  /* =========================
-     LINK — HOVER (NEON)
-  ========================= */
-  .sidebar-link:hover {
-    background: rgba(255,255,255,0.05);
-    color: var(--wd-footer-link-hover, #22d3ee);
-  
-    box-shadow:
-      0 0 0 3px rgba(34,211,238,0.12);
-  }
-  
-  /* =========================
-     LINK — ACTIVE
-  ========================= */
-  .sidebar-link.active {
-    background: rgba(34,211,238,0.12);
-    color: #ffffff;
-  
-    box-shadow:
-      inset 0 0 0 1px rgba(34,211,238,0.45),
-      0 0 8px rgba(34,211,238,0.25);
-  }
-  
-  /* =========================
-     LINK — DISABLED
-  ========================= */
-  .sidebar-link.disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-  
-  /* =========================
-     ACCESSIBILITY — FOCUS
-  ========================= */
-  .sidebar-link:focus-visible {
-    outline: none;
-    box-shadow:
-      0 0 0 3px rgba(34,211,238,0.18),
-      0 0 0 1px rgba(34,211,238,0.45);
-  }
-  /* BASE */
-.sidebar-link.status-green {
-   color: #2ecc71;
- }
- 
- /* HOVER */
- .sidebar-link.status-green:hover {
-   background: rgba(46, 204, 113, 0.12);
-   color: #eafff3;
-   box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.18);
- }
- 
- /* ACTIVE (cliccato / route attiva) */
- .sidebar-link.status-green.active {
-   background: rgba(46, 204, 113, 0.18);
-   color: #ffffff;
-   box-shadow:
-     inset 0 0 0 1px rgba(46, 204, 113, 0.55),
-     0 0 8px rgba(46, 204, 113, 0.35);
- }
+  background: var(--wd-footer-bg, #0e0e11);
+  color: var(--wd-footer-text, #e5e7eb);
 
- /* BASE */
+  padding: 16px;
+  width: 240px;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* =========================
+   SECTION
+========================= */
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* =========================
+   SECTION TITLE
+========================= */
+.sidebar-title,
+.sidebar-title-link {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  color: var(--wd-navbar-text-muted, rgba(255, 255, 255, 0.55));
+  margin-bottom: 6px;
+  text-decoration: none;
+}
+
+/* =========================
+   LIST / ITEM
+========================= */
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-item {
+  width: 100%;
+}
+
+/* =========================
+   LINK — BASE
+========================= */
+.sidebar-link {
+  position: relative;
+  display: block;
+  width: 100%;
+
+  padding: 8px 10px;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.35;
+
+  color: var(--wd-footer-link, #e5e7eb);
+  text-decoration: none;
+
+  /* leggibilità nomi lunghi */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* =========================
+   LINK — HOVER
+========================= */
+.sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--wd-footer-link-hover, #22d3ee);
+}
+
+/* =========================
+   LINK — ACTIVE (ROUTE)
+========================= */
+.sidebar-link.active {
+  background: rgba(34, 211, 238, 0.12);
+  box-shadow:
+    inset 0 0 0 1px rgba(34, 211, 238, 0.45),
+    0 0 8px rgba(34, 211, 238, 0.25);
+}
+
+/* =========================
+   LINK — DISABLED
+========================= */
+.sidebar-link.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* =========================
+   STATUS (ACCENTI SECONDARI)
+========================= */
+.sidebar-link.status-green {
+  color: #2ecc71;
+}
+
 .sidebar-link.status-orange {
-   color: #f39c12;
- }
- 
- /* HOVER */
- .sidebar-link.status-orange:hover {
-   background: rgba(243, 156, 18, 0.14);
-   color: #fff4e0;
-   box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2);
- }
- 
- /* ACTIVE */
- .sidebar-link.status-orange.active {
-   background: rgba(243, 156, 18, 0.22);
-   color: #ffffff;
-   box-shadow:
-     inset 0 0 0 1px rgba(243, 156, 18, 0.55),
-     0 0 8px rgba(243, 156, 18, 0.35);
- }
+  color: #f39c12;
+}
+
+/* =========================
+   ACTIVITY (SEMANTICA PRIMARIA)
+========================= */
+.sidebar-link--activity {
+  font-weight: 600;
+  color: #fbbf24; /* amber-400 */
+  letter-spacing: 0.2px;
+}
+
+/* bullet attività */
+.sidebar-link--activity::before {
+  content: "●";
+  margin-right: 6px;
+  font-size: 10px;
+  color: #22c55e;
+}
+
+/* hover attività */
+.sidebar-link--activity:hover {
+  background: rgba(34, 197, 94, 0.12);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+/* =========================
+   ACTIVITY + ACTIVE (VINCE SEMPRE)
+========================= */
+.sidebar-link.active.sidebar-link--activity {
+  color: #fbbf24;
+}
+
+/* =========================
+   CTA
+========================= */
+.sidebar-cta {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(34, 211, 238, 0.25),
+    rgba(34, 211, 238, 0.15)
+  );
+
+  color: #ffffff;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+
+  box-shadow:
+    0 0 0 1px rgba(34, 211, 238, 0.35),
+    0 0 12px rgba(34, 211, 238, 0.25);
+}

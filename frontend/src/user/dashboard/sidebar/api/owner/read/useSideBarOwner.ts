@@ -1,6 +1,6 @@
-import type { SidebarBusinessStatus } from "@src/user/dashboard/api/types/sidebarLinkViewModel.types";
+import { useOwnerProfile } from
+  "@src/user/dashboard/profile/api/owner/read/useOwnerProfile";
 
-import { useOwnerProfile } from "@src/user/dashboard/profile/api/owner/read/useOwnerProfile";
 /**
  * OWNER SIDEBAR ITEM (CANONICAL)
  *
@@ -11,24 +11,15 @@ import { useOwnerProfile } from "@src/user/dashboard/profile/api/owner/read/useO
  */
 export function useSidebarOwner() {
   const { owner, verification, loading } = useOwnerProfile();
-  console.log("SIDEBAR OWNER", { owner, loading });
-  // ❌ PRIMA: if (!owner) return [];
-  // ✅ ORA: nascondi SOLO se hai CERTEZZA che non esiste
-  if (!owner && !loading) return [];
 
-  const status: SidebarBusinessStatus =
-    verification === "ACCEPTED"
-      ? "ACCEPTED"
-      : verification === "REJECTED"
-      ? "REJECTED"
-      : "PENDING";
+  if (!owner && !loading) return [];
 
   return [
     {
       to: "/user/dashboard/you/profile",
       labelKey: "sidebar.profile.owner",
-      status,
+      status: verification,      // ← PASS THROUGH
+      disabled: verification === "REJECTED",
     },
   ];
 }
-

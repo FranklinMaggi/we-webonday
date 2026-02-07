@@ -24,5 +24,6 @@ export interface OwnerInputDTO {
   address?: AddressDTO;
   /* Contact */
   contact?: ContactDTO
-
+  
+  
 }

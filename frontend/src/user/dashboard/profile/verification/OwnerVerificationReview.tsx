@@ -14,9 +14,9 @@ import { profileClasses } from "../profile.classes";
 import { getPromptImageUrl } from "@shared/utils/assets";
 
 import { useConfigurationSetupStore } from
-  "@src/shared/domain/user/configurator/configurationSetup.store";
+  "@src/user/editor/api/type/configurator/configurationSetup.store";
 
-import type { OwnerDraftReadDTO } from
+import type { OwnerReadDTO } from
   "../DataTransferObject/owner.read.types";
 
 import { createOwnerDraft } from "./OwnerDraftUpsert";
@@ -30,7 +30,7 @@ export function OwnerVerificationReview({
   owner,
   onComplete,
 }: {
-  owner: OwnerDraftReadDTO;
+  owner: OwnerReadDTO;
   onComplete: () => Promise<void>;
 }) {
   const { data, setField } = useConfigurationSetupStore((s) => ({
@@ -66,7 +66,7 @@ export function OwnerVerificationReview({
 
     setField(
       "ownerSecondaryMail",
-      owner.contact?.secondaryMail ?? ""
+      owner.contact?.mail ?? ""
     );
     setField(
       "ownerPhone",

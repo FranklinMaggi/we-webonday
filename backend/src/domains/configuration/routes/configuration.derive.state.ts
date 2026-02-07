@@ -140,6 +140,7 @@ export async function configurationDeriveState(
           JSON.stringify({
             ...configuration,
             status: "BUSINESS_READY",
+            dataComplete: true,
             updatedAt: new Date().toISOString(),
           })
         );

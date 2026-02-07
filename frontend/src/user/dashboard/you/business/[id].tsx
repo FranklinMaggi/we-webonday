@@ -5,7 +5,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../../../shared/lib/api";
-import type { BusinessDraftReadDTO } from "@src/shared/domain/business/buseinssRead.types";
+import type { BusinessReadDTO } from "@src/shared/domain/business/buseinssRead.types";
 import type { OpeningHoursFE, DayKey } from "@src/shared/domain/business/openingHours.types";
 import { DAYS_ORDER, DAY_LABELS, EMPTY_OPENING_HOURS } from "@src/shared/domain/business/openingHours.constants";
 
@@ -15,7 +15,7 @@ export default function UserBusinessDetail() {
   const navigate = useNavigate();
 
   const [business, setBusiness] =
-    useState<BusinessDraftReadDTO | null>(null);
+    useState<BusinessReadDTO | null>(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -27,8 +27,8 @@ export default function UserBusinessDetail() {
 
     setLoading(true);
 
-    apiFetch<{ ok: boolean; draft?: BusinessDraftReadDTO }>(
-      `/api/business/get-base-draft?configurationId=${configurationId}`
+    apiFetch<{ ok: boolean; draft?: BusinessReadDTO }>(
+      `/api/business/get?configurationId=${configurationId}`
     )
       .then((res) => {
         if (res?.ok && res.draft) {

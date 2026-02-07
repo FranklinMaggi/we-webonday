@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useConfigurationSetupStore } from
-  "@shared/domain/user/configurator/configurationSetup.store";
+  "@src/user/editor/api/type/configurator/configurationSetup.store";
 
 export default function WorkspaceSidebar() {
   const { data } = useConfigurationSetupStore();

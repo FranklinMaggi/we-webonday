@@ -1,23 +1,3 @@
-// ======================================================
-// BE || CONFIGURATION — CREATE BASE (BOOTSTRAP)
-// ======================================================
-//
-// RUOLO:
-// - Crea una Configuration BASE (workspace vuoto)
-// - Primo punto di ingresso post-login
-//
-// INVARIANTI:
-// - NON legge Business
-// - NON scrive Business
-// - NON crea Draft
-// - NON deriva complete
-// - Backend = source of truth
-//
-// NOTE ARCHITETTURALI:
-// - Configuration nasce SEMPRE incompleta
-// - complete verrà DERIVATO successivamente
-// ======================================================
-
 import type { Env } from "../../../types/env";
 import { requireAuthUser } from "@domains/auth";
 import { json } from "@domains/auth/route/helper/https";
@@ -81,19 +61,13 @@ export async function createConfigurationBase(
 
     id: configurationId,
     userId: session.user.id,
-
+    dataComplete:false, 
     solutionId: body.solutionId,
     productId: body.productId,
 
-    
     options: [],
     data: {},
-
-    // ⚠️ non governa il flusso
     status: "DRAFT",
-
-    // ⚠️ verrà derivato più avanti
-    complete: false,
 
     createdAt: now,
     updatedAt: now,

@@ -17,7 +17,7 @@ export type ConfigurationBaseReadDTO = {
   solutionId: string;
   productId: string;
   businessName?: string;
-  complete: boolean;
+  
 };
 
   

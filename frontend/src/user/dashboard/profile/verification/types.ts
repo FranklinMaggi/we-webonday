@@ -8,7 +8,7 @@
 //
 // ======================================================
 
-import type { ConfigurationSetupDTO } from "@src/shared/domain/user/configurator/configurationSetup.types";
+import type { ConfigurationSetupDTO } from "@src/user/editor/api/type/configurator/configurationSetup.types";
 
 export type ConfigurationSetField =
   <K extends keyof ConfigurationSetupDTO>(

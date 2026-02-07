@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuthStore } from "@shared/lib/store/auth.store";
 import { useConfigurationSetupStore } from
-  "@shared/domain/user/configurator/configurationSetup.store";
+  "@src/user/editor/api/type/configurator/configurationSetup.store";
 import { apiFetch } from "@shared/lib/api";
 
 export default function PostLoginHandoff() {
