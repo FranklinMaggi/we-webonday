@@ -19,7 +19,7 @@
 // ======================================================
 
 import { apiFetch } from "../api/client";
-import type { LayoutKVDTO } from "../../../user/site-preview/api/types/layout.dto";
+import type { LayoutKVDTO } from "../../../user/site-engine/engine/api/types/layout.dto";
 
 export type FetchAvailableLayoutsParams = {
   solutionId: string;

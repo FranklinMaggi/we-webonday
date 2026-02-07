@@ -20,7 +20,7 @@ import { useConfigurationSetupStore } from
 import { useNavigate } from "react-router-dom";
 import { useSidebarOwner } from "../api/owner/read/useSideBarOwner";
 import { useSidebarBusinessesPreview } from "../api/preview/read/useSidebarBusinessPreview";
-import { useWorkspaceState } from "@src/user/site-preview/workspace.state";
+import { useWorkspaceState } from "@src/user/site-engine/workspace/workspace.state";
 export default function SidebarContainer() {
   //RECUPERA I LINK BUSINESS + FORMA DATI GIAÄ PRONTI PER LA VIEW
   const businessItems = useSidebarBusinesses();
@@ -30,7 +30,7 @@ export default function SidebarContainer() {
   const ownerItems = useSidebarOwner();
   /** */
   const { activeConfigurationId } = useWorkspaceState();
-  
+
  const previewItems = useSidebarBusinessesPreview();
   /** */
   const navigate = useNavigate();

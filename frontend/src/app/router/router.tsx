@@ -37,7 +37,7 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
    LAYOUTS
 ========================= */
 import { MainLayout } from "./MainLayout";
-import UserDashboardShell from "../../user/dashboard/UserDashboardShell";
+import UserDashboardShell from "../../user/dashboard/components/UserDashboardShell";
 //import ConfiguratorLayout from "../pages/user/dashboard/configurator/setup/steps/layouts/ConfiguratorLayout";
 import AdminLayout from "../../admin/components/admin/layouts/AdminLayout";
 import Mission from "../../marketing/pages/mission";
@@ -104,7 +104,7 @@ import { useParams } from "react-router-dom";
 import ProfilePage from "../../user/dashboard/profile/Profile.page";
 import AccountPage from "../../user/dashboard/account";
 import ConfiguratorLayout from "@src/user/editor/ConfiguratorLayout";
-import WorkspaceByBusiness from "@src/user/site-preview/business";
+import WorkspaceByBusiness from "@src/user/site-engine/business";
 function RedirectConfiguratorToDashboard() {
   const { id } = useParams<{ id: string }>();
 

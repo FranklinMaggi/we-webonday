@@ -1,6 +1,6 @@
 import { listMyBusinesses } from "@src/user/editor/business/api/business.list";
 import { useEffect, useState } from "react";
-import { useWorkspaceState } from "@src/user/site-preview/workspace.state";
+import { useWorkspaceState } from "@src/user/site-engine/workspace/workspace.state";
 // ======================================================
 // FE || SIDEBAR || SITE PREVIEW (BUSINESS-CENTRIC)
 // ======================================================
