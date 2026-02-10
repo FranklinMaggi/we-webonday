@@ -9,6 +9,7 @@ import ProductCard from "../ProductCard/ProductCard";
 import type { ProductVM } from "@shared/lib/viewModels/product/Product.view-model";
 import { solutionDetailClasses as cls } from "../solutionDetail.classes";
 import { UserLoginForm } from "@src/marketing/components/auth/UserLoginForm";
+
 /* =========================
    TIPI PUBLIC
 ========================= */

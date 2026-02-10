@@ -18,7 +18,7 @@
 
 import type { Env } from "./types/env";
 import { testGemini } from "./domains/business/lib/geminiAI/test.gemini";
-
+import { handlePresetRoutes } from "@domains/preset/preset.routes";
 
 /* ============================================================
    AUTH — USER
@@ -188,7 +188,12 @@ const solutionResponse =
 if (solutionResponse) {
   return solutionResponse;
 }
+const presetResponse =
+  await handlePresetRoutes(request, env);
 
+if (presetResponse) {
+  return presetResponse;
+}
 const productResponse =
   await handleProductRoutes(request, env);
 
