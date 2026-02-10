@@ -381,67 +381,72 @@ export default function BusinessForm({
   </div>
 </fieldset>
 
-      {/* ================= TAG ================= */}
+     {/* ================= TAG ================= */}
 
-      {solutionSeed?.descriptionTags?.length ? (
-        <>
-          <h4>Descrizione attività</h4>
-          <div className="tag-pills">
-            {solutionSeed.descriptionTags.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                className={
-                  data.businessDescriptionTags.includes(tag)
-                    ? "pill active"
-                    : "pill"
-                }
-                onClick={() =>
-                  setField(
-                    "businessDescriptionTags",
-                    toggleTag(
-                      data.businessDescriptionTags,
-                      tag
-                    )
-                  )
-                }
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-        </>
-      ) : null}
+{solutionSeed?.descriptionTags?.length ? (
+  <>
+    <h4>Descrizione attività</h4>
+    <div className="tag-pills">
+      {solutionSeed.descriptionTags
+        .filter((t): t is string => Boolean(t))
+        .map((tag) => (
+          <button
+            key={`desc-${tag}`}
+            type="button"
+            className={
+              data.businessDescriptionTags.includes(tag)
+                ? "pill active"
+                : "pill"
+            }
+            onClick={() =>
+              setField(
+                "businessDescriptionTags",
+                toggleTag(
+                  data.businessDescriptionTags,
+                  tag
+                )
+              )
+            }
+          >
+            {tag}
+          </button>
+        ))}
+    </div>
+  </>
+) : null}
 
-      {solutionSeed?.serviceTags?.length ? (
-        <>
-          <h4>Servizi offerti</h4>
-          <div className="tag-pills">
-            {solutionSeed.serviceTags.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                className={
-                  data.businessServiceTags.includes(tag)
-                    ? "pill active"
-                    : "pill"
-                }
-                onClick={() =>
-                  setField(
-                    "businessServiceTags",
-                    toggleTag(
-                      data.businessServiceTags,
-                      tag
-                    )
-                  )
-                }
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-        </>
-      ) : null}
+{solutionSeed?.serviceTags?.length ? (
+  <>
+    <h4>Servizi offerti</h4>
+    <div className="tag-pills">
+      {solutionSeed.serviceTags
+        .filter((t): t is string => Boolean(t))
+        .map((tag) => (
+          <button
+            key={`service-${tag}`}
+            type="button"
+            className={
+              data.businessServiceTags.includes(tag)
+                ? "pill active"
+                : "pill"
+            }
+            onClick={() =>
+              setField(
+                "businessServiceTags",
+                toggleTag(
+                  data.businessServiceTags,
+                  tag
+                )
+              )
+            }
+          >
+            {tag}
+          </button>
+        ))}
+    </div>
+  </>
+) : null}
+
 
       {/* ================= ORARI ================= */}
 

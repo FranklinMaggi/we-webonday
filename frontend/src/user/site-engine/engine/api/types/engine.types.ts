@@ -26,7 +26,7 @@ export type EngineInput = {
     // 🔹 semantica
     sector: string;
     address: string;
-
+    descriptionText?: string; // ⬅️ GENERATED
     // 🔹 dati strutturati (usati dai renderer)
     openingHours?: OpeningHoursFE;
   };

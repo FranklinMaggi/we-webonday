@@ -118,7 +118,7 @@ export type BusinessReadDTO = {
   /* =====================
      STATE
   ====================== */
-
+  businessDescriptionText:string, 
   businessDescriptionTags: string[];
   businessServiceTags: string[];
   verification: "DRAFT"|"PENDING" | "ACCEPTED" | "REJECTED";      

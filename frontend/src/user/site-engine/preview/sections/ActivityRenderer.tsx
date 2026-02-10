@@ -6,7 +6,7 @@ type Props = {
   
   export function ActivityRenderer({ label }: Props) {
     return (
-      <section className="activity">
+      <section  id="chi-siamo"  className="activity">
         <h2>{label}</h2>
       </section>
     );

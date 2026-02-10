@@ -6,7 +6,7 @@ type Props = {
   
   export function DescriptionRenderer({ text }: Props) {
     return (
-      <section className="description">
+      <section  id="description"  className="description">
         <p>{text}</p>
       </section>
     );

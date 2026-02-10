@@ -38,7 +38,7 @@ export type BusinessDraftBaseReadDTO = {
      zip?: string;
      country?: string;
    };
- 
+   businessDescriptionText?: string;
    businessDescriptionTags: string[];
    businessServiceTags: string[];
    verification: "DRAFT"|"PENDING" | "ACCEPTED" | "REJECTED";      

@@ -40,7 +40,7 @@ export const BusinessSchema = z.object({
  
    businessDescriptionTags: z.array(z.string()).default([]),
    businessServiceTags: z.array(z.string()).default([]),
- 
+   businessDescriptionText: z.string().optional(),
    /* =====================
       MEDIA
    ====================== */

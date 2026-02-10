@@ -25,5 +25,7 @@ export interface Env {
   PAYPAL_SECRET: string;
   PAYPAL_API_BASE: string;
   OPENAI_API_KEY:string; 
+  GEMINI_API_KEY: string;
+
   }
   

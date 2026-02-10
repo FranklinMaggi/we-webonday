@@ -14,13 +14,9 @@
 // - Nessun businessDraftId separato
 // - KV key: BUSINESS_DRAFT:{configurationId}
 // - Backend = source of truth
-//
-// PERCHÉ:
-// - Riduce lookup incrociati
-// - Semplifica preview e workspace
-// - Elimina ambiguità tra Draft e Configuration
 // ======================================================
-import { BUSINESS_KEY} from "../keys";
+
+import { BUSINESS_KEY } from "../keys";
 import { z } from "zod";
 import { json } from "@domains/auth/route/helper/https";
 import { requireAuthUser } from "@domains/auth";
@@ -28,7 +24,13 @@ import type { Env } from "../../../types/env";
 import type { ConfigurationDTO } from "@domains/configuration/schema/configuration.schema";
 import { BusinessSchema } from "../schema/business.schema";
 import { BusinessUpsertInputSchema } from "../DataTransferObject/input/business.draft.input.dto";
-import { OpeningHoursDTO ,isOpeningHoursEmpty,EMPTY_OPENING_HOURS, } from "@domains/GeneralSchema/hours.opening.schema";
+import {
+  OpeningHoursDTO,
+  isOpeningHoursEmpty,
+  EMPTY_OPENING_HOURS,
+} from "@domains/GeneralSchema/hours.opening.schema";
+import { generateBusinessDescription } from "@domains/business/lib/geminiAI/gemini.business";
+
 /* ======================================================
    COMPLETENESS CHECK — DOMAIN ONLY
 ====================================================== */
@@ -41,16 +43,16 @@ function isBusinessDataComplete(draft: {
     number?: string;
     city?: string;
   };
-
 }) {
   return Boolean(
     draft.businessName &&
-    draft.openingHours && 
-    !isOpeningHoursEmpty(draft.openingHours)&&
-    draft.contact?.mail &&
-    draft.address?.street &&
-    draft.address?.number &&
-    draft.address?.city );
+      draft.openingHours &&
+      !isOpeningHoursEmpty(draft.openingHours) &&
+      draft.contact?.mail &&
+      draft.address?.street &&
+      draft.address?.number &&
+      draft.address?.city
+  );
 }
 
 /* ======================================================
@@ -65,12 +67,7 @@ export async function upsertBusiness(
   ====================== */
   const session = await requireAuthUser(request, env);
   if (!session) {
-    return json(
-      { ok: false, error: "UNAUTHORIZED" },
-      request,
-      env,
-      401
-    );
+    return json({ ok: false, error: "UNAUTHORIZED" }, request, env, 401);
   }
 
   /* =====================
@@ -78,9 +75,7 @@ export async function upsertBusiness(
   ====================== */
   let input: z.infer<typeof BusinessUpsertInputSchema>;
   try {
-    input = BusinessUpsertInputSchema.parse(
-      await request.json()
-    );
+    input = BusinessUpsertInputSchema.parse(await request.json());
   } catch (err) {
     return json(
       { ok: false, error: "INVALID_INPUT", details: String(err) },
@@ -92,12 +87,11 @@ export async function upsertBusiness(
 
   /* =====================
      3️⃣ LOAD CONFIGURATION
-     (SOURCE OF TRUTH)
   ====================== */
-  const configuration = await env.CONFIGURATION_KV.get(
+  const configuration = (await env.CONFIGURATION_KV.get(
     `CONFIGURATION:${input.configurationId}`,
     "json"
-  ) as ConfigurationDTO | null;
+  )) as ConfigurationDTO | null;
 
   if (!configuration) {
     return json(
@@ -109,17 +103,11 @@ export async function upsertBusiness(
   }
 
   if (configuration.userId !== session.user.id) {
-    return json(
-      { ok: false, error: "FORBIDDEN" },
-      request,
-      env,
-      403
-    );
+    return json({ ok: false, error: "FORBIDDEN" }, request, env, 403);
   }
 
   /* =====================
      4️⃣ CANONICAL ID
-     BusinessDraft === Configuration
   ====================== */
   const configurationId = configuration.id;
   const now = new Date().toISOString();
@@ -140,42 +128,56 @@ export async function upsertBusiness(
       openingHours: input.openingHours,
       contact: input.contact,
       address: input.address,
-     
     });
+    let businessDescriptionText: string | undefined;
 
+    if (
+      input.businessDescriptionTags?.length ||
+      input.businessServiceTags?.length
+    ) {
+      try {
+        businessDescriptionText = await generateBusinessDescription(env, {
+          name: input.businessName ?? "Attività",
+          sector: configuration.solutionId.replace(/-/g, " "),
+          businessDescriptionTags: input.businessDescriptionTags ?? [],
+          businessServiceTags: input.businessServiceTags ?? [],
+        });
+      } catch {}
+    }
     const candidate = {
       id: configurationId,
       configurationId,
-    
+
       ownerUserId: session.user.id,
       createdByUserId: session.user.id,
       editorUserIds: [],
-    
+
       publicId: configurationId,
-    
+
       solutionId: configuration.solutionId,
       productId: configuration.productId,
-    
-      businessName: input.businessName ??  "Attività",
+
+      businessName: input.businessName ?? "Attività",
       openingHours: input.openingHours ?? EMPTY_OPENING_HOURS,
       contact: input.contact ?? {},
-      address: input.address ??{},
-    
+      address: input.address ?? {},
+
       businessDescriptionTags: input.businessDescriptionTags ?? [],
       businessServiceTags: input.businessServiceTags ?? [],
-    
+      businessDescriptionText: businessDescriptionText,
+
       logo: null,
       coverImage: null,
       gallery: [],
       documents: [],
-    
+
       verification: "DRAFT",
       businessDataComplete,
-    
+
       createdAt: now,
       updatedAt: now,
     };
-    
+
     const draft = BusinessSchema.parse(candidate);
 
     await env.BUSINESS_KV.put(
@@ -187,7 +189,7 @@ export async function upsertBusiness(
       {
         ok: true,
         configurationId,
-        businessDraftId: configurationId, // alias legacy FE
+        businessDraftId: configurationId,
         reused: false,
       },
       request,
@@ -196,16 +198,79 @@ export async function upsertBusiness(
   }
 
   /* =====================================================
-     UPDATE — MERGE + VALIDATE
+     UPDATE — MERGE + AI + VALIDATE
   ===================================================== */
-  const existing = BusinessSchema.parse(
-    JSON.parse(existingRaw)
-  );
+  const existing = BusinessSchema.parse(JSON.parse(existingRaw));
+
+  const descriptionTagsChanged =
+    JSON.stringify(existing.businessDescriptionTags) !==
+    JSON.stringify(
+      input.businessDescriptionTags ?? existing.businessDescriptionTags
+    );
+
+  const serviceTagsChanged =
+    JSON.stringify(existing.businessServiceTags) !==
+    JSON.stringify(
+      input.businessServiceTags ?? existing.businessServiceTags
+    );
+
+  const shouldRegenerateDescription =
+    descriptionTagsChanged || serviceTagsChanged;
+    console.log(
+      "[BOOT ENV]",
+      "GEMINI_API_KEY" in env,
+      env.GEMINI_API_KEY?.slice(0, 6)
+    );
+  let businessDescriptionText = existing.businessDescriptionText;
+  console.log("[GEMINI KEY PRESENT]", Boolean(env.GEMINI_API_KEY));
+  console.log("[OPENAI CHECK]", {
+    descriptionTagsChanged,
+    serviceTagsChanged,
+    shouldRegenerateDescription,
+    existing: {
+      desc: existing.businessDescriptionTags,
+      serv: existing.businessServiceTags,
+    },
+    input: {
+      desc: input.businessDescriptionTags,
+      serv: input.businessServiceTags,
+    },
+  });
+  if (shouldRegenerateDescription) {
+    try {
+      businessDescriptionText = await generateBusinessDescription(env, {
+        name: input.businessName ?? existing.businessName,
+        sector: existing.solutionId.replace(/-/g, " "),
+        businessDescriptionTags:
+          input.businessDescriptionTags ??
+          existing.businessDescriptionTags,
+        businessServiceTags:
+          input.businessServiceTags ??
+          existing.businessServiceTags,
+      });if (
+        businessDescriptionText &&
+        businessDescriptionText.length < 40
+      ) {
+        console.warn(
+          "[AI] Generated description too short, discarded",
+          businessDescriptionText
+        );
+        businessDescriptionText = undefined;
+      }
+      
+    } catch (err) {
+      console.error(
+        "[OPENAI] Failed to generate business description",
+        err
+      );
+      // fallback: mantieni il testo precedente
+    }
+  }
 
   const merged = {
     ...existing,
+
     businessName: input.businessName ?? existing.businessName,
-    
     openingHours: input.openingHours ?? existing.openingHours,
     contact: input.contact ?? existing.contact,
     address: input.address ?? existing.address,
@@ -217,7 +282,10 @@ export async function upsertBusiness(
     businessServiceTags:
       input.businessServiceTags ??
       existing.businessServiceTags,
-// invarianti
+
+    businessDescriptionText,
+
+    // invarianti
     solutionId: existing.solutionId,
     productId: existing.productId,
     createdAt: existing.createdAt,
@@ -237,7 +305,7 @@ export async function upsertBusiness(
     {
       ok: true,
       configurationId,
-      businessDraftId: configurationId, // alias legacy FE
+      businessDraftId: configurationId,
       reused: true,
     },
     request,

@@ -134,7 +134,7 @@ export default function ConfigurationSetupPage() {
 
             return (
               <button
-                key={step.key}
+              key={`wizard-step-${step.key ?? index}`}
                 type="button"
                 className={`wizard-step
                   ${isActive ? "active" : ""}

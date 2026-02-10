@@ -157,7 +157,7 @@ export default function StepBusinessInfo({
         // TAGS
         setField(
           "businessDescriptionTags",
-          d.businessServiceTags ?? []
+            d.businessDescriptionTags ?? []
         );
 
         setField(

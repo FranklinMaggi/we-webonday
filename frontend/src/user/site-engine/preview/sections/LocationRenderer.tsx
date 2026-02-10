@@ -7,7 +7,7 @@ type Props = {
   
   export function LocationRenderer({ address, mapsUrl }: Props) {
     return (
-      <section className="location">
+      <section id="contatti"  className="location">
         <p>{address}</p>
         <a href={mapsUrl} target="_blank" rel="noopener noreferrer">
           Apri su Google Maps

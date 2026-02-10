@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { OpeningHoursSchema } from "@domains/GeneralSchema/hours.opening.schema";
 
-export const BusinessPreviewSchema = z.object({
+export const BusinessEditorStateDTO = z.object({
   id: z.string(),
   publicId: z.string(),
 
@@ -24,4 +24,4 @@ export const BusinessPreviewSchema = z.object({
 });
 
 export type BusinessPreviewDTO =
-  z.infer<typeof BusinessPreviewSchema>;
+  z.infer<typeof BusinessEditorStateDTO>;

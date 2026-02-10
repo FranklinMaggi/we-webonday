@@ -28,63 +28,72 @@ import { t } from "@shared/aiTranslateGenerator";
     }
 
 
-export function SidebarView({ sections } : 
-  { sections: SidebarSectionVM[];}) { 
-  
-  return (
+    export function SidebarView({
+      sections,
+    }: {
+      sections: SidebarSectionVM[];
+    }) {
+      return (
         <aside className={sidebarClasses.root}>
-          {sections.map((section) => (
-          <div 
-          key={section.titleKey} 
-          className={sidebarClasses.section} >
-            
-            <h4 className={sidebarClasses.title}>
-          {section.titleTo ? (
-            <NavLink
-              to={section.titleTo}
-              className={sidebarClasses.titleLink}
+          {sections.map((section, sectionIndex) => (
+            <div
+              key={`sidebar-section-${sectionIndex}`}
+              className={sidebarClasses.section}
             >
-              {t(section.titleKey)}
-            </NavLink>
-          ) : (
-            t(section.titleKey)
-          )}
-            </h4>
-            <ul className={sidebarClasses.list}>
-              {section.items.map((item) => (
-              <li key={item.to + item.labelKey}
-                className={sidebarClasses.item}>
-                {item.disabled ? (
-                        <span
-                          className={`${sidebarClasses.link} 
-                          ${sidebarClasses.linkDisabled}`}>
-                          {item.label ?? t(item.labelKey!)}
-                        </span>        
-                  )   :   (
-                    <NavLink
-                    to={item.to}
-                    onClick={(e) => {
-                      if (item.onClick) {
-                        e.preventDefault();
-                        item.onClick();
-                      }
-                    }}
-                    className={({ isActive }) =>
-                      [
-                        sidebarClasses.link,
-                        isActive && sidebarClasses.linkActive,
-                        getStatusClass(item.status),
-                        item.className,
-                      ]
-                        .filter(Boolean)
-                        .join(" ")
-                    }
+              <h4 className={sidebarClasses.title}>
+                {section.titleTo ? (
+                  <NavLink
+                    to={section.titleTo}
+                    className={sidebarClasses.titleLink}
                   >
-                    {item.label ?? t(item.labelKey!)}
+                    {t(section.titleKey)}
                   </NavLink>
-                  )}
-              </li>))}
-            </ul>
-          </div>))}
+                ) : (
+                  t(section.titleKey)
+                )}
+              </h4>
+    
+              <ul className={sidebarClasses.list}>
+                {section.items.map((item, itemIndex) => (
+                  <li
+                    key={`sidebar-item-${sectionIndex}-${itemIndex}`}
+                    className={sidebarClasses.item}
+                  >
+                    {item.disabled ? (
+                      <span
+                        className={`${sidebarClasses.link} ${sidebarClasses.linkDisabled}`}
+                      >
+                        {item.label ?? t(item.labelKey!)}
+                      </span>
+                    ) : (
+                      <NavLink
+                        to={item.to}
+                        onClick={(e) => {
+                          if (item.onClick) {
+                            e.preventDefault();
+                            item.onClick();
+                          }
+                        }}
+                        className={({ isActive }) =>
+                          [
+                            sidebarClasses.link,
+                            isActive && sidebarClasses.linkActive,
+                            getStatusClass(item.status),
+                            item.className,
+                          ]
+                            .filter(Boolean)
+                            .join(" ")
+                        }
+                      >
+                        {item.label ?? t(item.labelKey!)}
+                      </NavLink>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </aside>
-);}
+      );
+    }
+    

@@ -33,7 +33,7 @@ export type BusinessPreviewReadDTO = {
   };
 
   openingHours?: OpeningHoursDTO;
-
+  businessDescriptionText?: string;
   businessDescriptionTags?: string[];
   businessServiceTags?: string[];
 };

@@ -62,7 +62,7 @@ export function OpeningHoursRenderer({
   if (!openingHours) return null;
 
   return (
-    <section className="opening-hours">
+    <section id="orari"   className="opening-hours">
       <h3>Orari di apertura</h3>
 
       <ul className="opening-hours-list">

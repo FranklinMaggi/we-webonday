@@ -15,6 +15,8 @@
     // - Descrive struttura, contenuto, intenzione
     // ======================================================
     import type { OpeningHoursFE } from "@shared/domain/business/openingHours.types";
+   
+   
     export type EngineCanvas = {
       meta: {
         product: "iscrizione-gratuita";
@@ -73,6 +75,8 @@
       title: string;
       backgroundImage?: string; 
       subtitle?: string;
+      logoImage?:string ; 
+      logoPlaceholder?:boolean ; 
     };
 
     /* =========================

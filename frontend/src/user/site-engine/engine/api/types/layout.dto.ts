@@ -75,10 +75,6 @@ export type LayoutKVDTO = {
     footer: boolean;
   };
 
-  /**
-   * Placeholder dinamici
-   * Verranno popolati da Business KV
-   */
   bindings: {
     businessName: boolean;
     logo: boolean;
@@ -87,18 +83,11 @@ export type LayoutKVDTO = {
     services: boolean;
   };
 
-  /**
-   * Regole di rendering
-   */
+
   render: {
-    /**
-     * Usa CSS inline?
-     */
+
     inlineCss: boolean;
 
-    /**
-     * Supporta preview blur (pre-pagamento)
-     */
     previewBlur: boolean;
   };
 };

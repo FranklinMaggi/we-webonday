@@ -1,18 +1,18 @@
 // ======================================================
-// FE || WORKSPACE PREVIEW — CONTAINER (IDEMPOTENTE)
+// FE || WORKSPACE PREVIEW — ENTRY POINT (BUSINESS-DRIVEN)
 // ======================================================
 
 import { useMemo } from "react";
 import { useWorkspaceState } from "../workspace/workspace.state";
-import { useConfigurationPreview } from "./useConfigurationPreview";
+
+import { useBusinessByConfiguration } from "../business/api/useBusinessByConfiguration";
 
 import { buildCanvas } from
   "@src/user/site-engine/engine/builder/buildCanvas";
-import SiteView from "./view/SiteView";
 
-import { AVAILABLE_LAYOUTS } from "../engine/api/types/layouts.mock";
-import { adaptFrontendPreviewInput } from
-  "../engine/api/adapFrontendPreviewInput";
+import SiteView from "./view/SiteView";
+import { AVAILABLE_LAYOUTS } from
+  "../engine/api/types/layouts.mock";
 import {
   normalizeLayoutStyle,
   normalizePalette,
@@ -21,85 +21,53 @@ import {
 export default function EntryPointSitePreview() {
   const { activeConfigurationId } = useWorkspaceState();
 
-  // =====================
-  // BE PREVIEW (SE ESISTE)
-  // =====================
-  const { data, loading, error } =
-    useConfigurationPreview(activeConfigurationId);
+  const {
+    business,
+    loading,
+    error,
+  } = useBusinessByConfiguration(activeConfigurationId);
 
-  // =====================
-  // CANVAS RESOLUTION
-  // =====================
   const canvas = useMemo(() => {
-    if (!activeConfigurationId) return null;
+    if (!activeConfigurationId || !business) return null;
 
-    /**
-     * 1️⃣ PRIORITÀ ASSOLUTA: BE
-     * (quando l’endpoint esisterà)
-     */
-    if (data) {
-      return buildCanvas(data);
-    }
-
-    /**
-     * 2️⃣ FALLBACK FE (PRIMITIVO)
-     * - Nessuna dipendenza BE
-     * - Deterministico
-     * - Non bloccante
-     */
-    const engineInput = adaptFrontendPreviewInput({
+    return buildCanvas({
       configurationId: activeConfigurationId,
+
       business: {
-        name: "Anteprima attività",
-        sector: "generic",
-        address: "—",
+        name: business.businessName,
+        slug: business.businessName
+          .toLowerCase()
+          .replace(/\s+/g, "-"),
+        sector: business.solutionId ?? "generic",
+        address: business.address
+          ? `${business.address.street ?? ""} ${business.address.city ?? ""}`
+          : "",
+        openingHours: business.openingHours,
+        descriptionText: business.businessDescriptionText, 
       },
-      layout: AVAILABLE_LAYOUTS[0],
+
+      layout: AVAILABLE_LAYOUTS[0], // preset
       style: normalizeLayoutStyle(),
       palette: normalizePalette(),
     });
-
-    return buildCanvas(engineInput);
-  }, [activeConfigurationId, data]);
-
-  // =====================
-  // UI GUARDS
-  // =====================
+  }, [activeConfigurationId, business]);
+  const phoneNumber =
+  business?.contact?.phoneNumber ?? null;
+  /* =====================
+     UI STATES
+  ====================== */
   if (!activeConfigurationId) {
-    return (
-      <div className="workspace-preview-empty">
-        <h3>Nessuna configurazione selezionata</h3>
-      </div>
-    );
+    return <div>Nessuna configurazione selezionata</div>;
   }
 
-  /**
-   * Loading SOLO se:
-   * - stiamo aspettando il BE
-   * - e non abbiamo ancora dati
-   */
-  if (loading && !data) {
-    return (
-      <div className="workspace-preview-loading">
-        Caricamento…
-      </div>
-    );
+  if (loading) {
+    return <div>Caricamento anteprima…</div>;
   }
 
-  /**
-   * Error BE:
-   * - NON blocca la preview
-   * - viene ignorato se FE fallback attivo
-   */
-  if (error && !canvas) {
-    return (
-      <div className="workspace-preview-error">
-        {error}
-      </div>
-    );
+  if (error || !canvas) {
+    return <div>Anteprima non disponibile</div>;
   }
 
-  if (!canvas) return null;
-
-  return <SiteView canvas={canvas} />;
+  return <SiteView canvas={canvas} 
+                    phoneNumber={phoneNumber}/>;
 }

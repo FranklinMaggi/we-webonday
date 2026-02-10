@@ -150,7 +150,7 @@ export async function getBusiness(
     
         contact: business.contact,
         address: business.address,
-    
+        businessDescriptionText: business.businessDescriptionText,
         businessDescriptionTags: business.businessDescriptionTags,
         businessServiceTags: business.businessServiceTags,
       },

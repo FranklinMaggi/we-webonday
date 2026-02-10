@@ -5,8 +5,8 @@
 import type { EngineCanvas } from "../api/types/engine.canvas";
 
 import { NavbarRenderer } from "../sections/NavbarRenderer";
-import { HeroRenderer } from "../sections/HeroRenderer";
-import { GalleryRenderer } from "../sections/GalleryRenderer";
+import { HeroRenderer } from "../../prompt-img/HeroRender";
+import { GalleryRenderer } from "../../prompt-img/GalleryRender";
 import { ActivityRenderer } from "../sections/ActivityRenderer";
 import { DescriptionRenderer } from "../sections/DescriptionRenderer";
 import { LocationRenderer } from "../sections/LocationRenderer";

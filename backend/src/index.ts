@@ -17,7 +17,7 @@
 // ============================================================
 
 import type { Env } from "./types/env";
-
+import { testGemini } from "./domains/business/lib/geminiAI/test.gemini";
 
 
 /* ============================================================
@@ -245,9 +245,13 @@ POLICY DA ESTENDERE A PRIVACY POLICY E T&C POLICY
       if (pathname === "/api/payment/paypal/capture-order" && method === "POST")
         return withCors(await capturePaypalOrder(request, env), request, env);
 
-
+      if (pathname === "/api/test/gemini" && method === "GET") {
+        return testGemini(request, env);
+      }
+      
       /* ===================== FALLBACK ===================== */
       return json({ ok: false, error: "NOT_FOUND" }, request, env, 404);
+
 
     } catch (err) {
       console.error("UNHANDLED ERROR:", err);
