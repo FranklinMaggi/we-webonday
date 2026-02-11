@@ -25,7 +25,7 @@ import { type PolicyType } from "./api/policy.types";
 import ReactMarkdown from "react-markdown";
 
 
-export function PolicyView({
+export function PolicyViewer({
   type,
   scope,
 }: {

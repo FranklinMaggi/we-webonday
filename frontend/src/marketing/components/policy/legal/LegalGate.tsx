@@ -23,7 +23,7 @@
 
 import { useState } from "react";
 import { t } from "@shared/aiTranslateGenerator";
-import { PolicyView } from "../policyViewer";  
+import { PolicyViewer } from "../policyViewer";  
 
 type LegalAcceptanceState = {
   cookie: boolean;
@@ -75,7 +75,7 @@ export function LegalGate({
 
       {/* ================= COOKIE POLICY ================= */}
       <section style={{ marginBottom: 40 }}>
-        <PolicyView type="cookie" scope="general" />
+        <PolicyViewer type="cookie" scope="general" />
 
         <label style={{ display: "block", marginTop: 16 }}>
           <input
@@ -89,7 +89,7 @@ export function LegalGate({
 
       {/* ================= PRIVACY POLICY ================= */}
       <section style={{ marginBottom: 40 }}>
-        <PolicyView type="privacy" scope="general" />
+        <PolicyViewer type="privacy" scope="general" />
 
         <label style={{ display: "block", marginTop: 16 }}>
           <input
@@ -103,7 +103,7 @@ export function LegalGate({
 
       {/* ================= TERMS ================= */}
       <section style={{ marginBottom: 40 }}>
-        <PolicyView type="terms" scope="general" />
+        <PolicyViewer type="terms" scope="general" />
 
         <label style={{ display: "block", marginTop: 16 }}>
           <input

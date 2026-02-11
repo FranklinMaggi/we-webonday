@@ -20,7 +20,7 @@ import {
   saveLocalConsent,
 } from "@shared/utils/cookieConsent";
 import { useEffect, useState } from "react";
-import { PolicyView } from "../policy/policyViewer";
+import { PolicyViewer } from "../policy/policyViewer";
 import { cookiesClasses as cls } from "./cookies.classes";
 
 
@@ -162,7 +162,7 @@ export function CookieBanner() {
   {/* POLICY PREVIEW */}
   {showPolicy && (
   <div className={cls.policyPreview}>
-    <PolicyView type="cookie" scope="general" />
+    <PolicyViewer type="cookie" scope="general" />
   </div>
 
   )}

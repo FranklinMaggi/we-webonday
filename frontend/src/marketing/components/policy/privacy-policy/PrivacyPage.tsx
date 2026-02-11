@@ -1,7 +1,7 @@
 // FE || marketing/pages/policy/PrivacyPage.tsx
 
-import { PolicyView } from "@src/marketing/components/policy/policyViewer";
+import { PolicyViewer } from "@src/marketing/components/policy/policyViewer";
 
 export default function PrivacyPage() {
-return  <PolicyView type="privacy" scope="general" />;
+return  <PolicyViewer type="privacy" scope="general" />;
 }
