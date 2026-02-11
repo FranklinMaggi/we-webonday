@@ -56,8 +56,8 @@ import Vision from "../../marketing/pages/vision";
 import FounderPage from "../../marketing/pages/founder";
 import Price from "../../marketing/pages/pricing";
 
-import Solutions from "../../marketing/pages/solution/solution-page";
-import HomeSolutionPage from "../../marketing/pages/solution/solution-page/[id]";
+import Solutions from "../../marketing/pages/solution/page";
+import HomeSolutionPage from "../../marketing/pages/solution/page/detail/DetailedArchetype";
 
 import UserLogin from "../../user/auth";
 

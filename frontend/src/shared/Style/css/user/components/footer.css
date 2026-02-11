@@ -165,6 +165,9 @@ export const footerClasses = {
 .footer-link:hover::after {
   width: 100%;
 }
+.site-footer {
+  margin-top: auto;
+}
 
 /* =========================
    META / BOTTOM

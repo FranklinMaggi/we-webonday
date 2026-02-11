@@ -37,23 +37,31 @@ export type SolutionDetailResult =
         name: string;
         description?: string;
         longDescription?: string;
+      
         descriptionTags?: string[];
-        userGeneratedDescriptionTags?: string[];
-        serviceTags?: string [];
-        userGeneratedServiceTags?: string [];
-
-        /** URL pubblico hero / card */
+        serviceTags?: string[];
+      
         image?: {
           hero: string;
           card: string;
-         };
-        openingHours?: OpeningHoursDTO;
-        
-        /** @deprecated */
-        icon?: string;
+        };
       
+        openingHours?: OpeningHoursDTO;
+      
+        icon?: string;
         industries?: string[];
+      
+        /** ⬇️ NUOVO */
+        templatePresets?: {
+          id: string;
+          label: string;
+          previewImage: string;
+          gallery: string[];
+          style: "modern" | "elegant" | "minimal" | "bold";
+          palette: "warm" | "dark" | "light" | "pastel" | "corporate";
+        }[];
       };
+      
       
       products: unknown[]; // DTO pubblico prodotto
     }
@@ -140,16 +148,21 @@ export async function getSolutionDetail(
       name: solution.name,
       description: solution.description,
       longDescription: solution.longDescription,
-      openingHours : solution.openingHours ,
+  
+      openingHours: solution.openingHours,
       image: getSolutionImages(solution.imageKey),
-    
-      icon: solution.icon, // legacy
+  
+      icon: solution.icon,
       industries: solution.industries,
-      descriptionTags : solution.descriptionTags ?? [],
+  
+      descriptionTags: solution.descriptionTags ?? [],
       serviceTags: solution.serviceTags ?? [],
-     
+  
+      /** ⬇️ PASS-THROUGH PURO */
+      templatePresets: solution.templatePresets ?? [],
     },
-    
+  
     products,
   };
+  
 }

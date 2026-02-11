@@ -1,0 +1,219 @@
+.carousel-wrapper {
+    width: 100%;
+  }
+  
+  /* =====================================================
+     CAROUSEL — 3D STACK (foto 3)
+  ===================================================== */
+  .carousel.infinite-test {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  
+    perspective: 1600px;
+    perspective-origin: 50% 40%;
+  }
+  
+  /* background blur dinamico (JS setta --carousel-bg) */
+  .carousel.infinite-test::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  
+    background-image: var(--carousel-bg);
+    background-size: cover;
+    background-position: center;
+  
+    filter: blur(10px) brightness(0.65) saturate(0.3);
+    opacity: 0.55;
+  
+    transition: background-image 0.6s ease;
+  }
+  
+  
+  /* vignette soft */
+  .carousel.infinite-test::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: radial-gradient(
+      circle at 50% 45%,
+      rgba(0,0,0,0.0),
+      rgba(0,0,0,0.35) 65%,
+      rgba(0,0,0,0.55) 100%
+    );
+    pointer-events: none;
+  }
+  
+  .carousel.infinite-test .carousel__track {
+    position: relative;
+    z-index: 1;
+  
+    display: flex;
+    align-items: center;
+  
+    gap: 2.2rem;
+    padding: 4.2rem 0;
+  
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+  
+    transform-style: preserve-3d;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* card base */
+  .carousel.infinite-test .carousel__track > * {
+    flex: 0 0 340px;
+    scroll-snap-align: center;
+    position:relative;
+    transform-style: preserve-3d;
+  
+    transition:
+      transform 420ms cubic-bezier(.2,.8,.2,1),
+      opacity 420ms cubic-bezier(.2,.8,.2,1),
+      filter 420ms cubic-bezier(.2,.8,.2,1);
+  
+    /* layering */
+    z-index: var(--stack-z, 1);
+  }
+  
+  /* center (hero) */
+  .carousel.infinite-test .carousel__track > *[data-pos="center"] {
+    opacity: 1;
+    filter: none;
+    transform:
+      translateZ(140px)
+      scale(1.12);
+  }
+  
+  /* near left / right */
+  .carousel.infinite-test .carousel.infinite-test.carousel.infinite-test .carousel__track > *[data-pos="left"] {
+    opacity: 0.92;
+    filter: saturate(0.96) contrast(0.98);
+    transform:
+      translateX(-28px)
+      translateZ(40px)
+      rotateY(16deg)
+      scale(0.95);
+  }
+  
+  .carousel.infinite-test  .carousel__track > *[data-pos="right"] {
+    opacity: 0.92;
+    filter: saturate(0.96) contrast(0.98);
+    transform:
+      translateX(28px)
+      translateZ(40px)
+      rotateY(-16deg)
+      scale(0.95);
+  }
+  
+  /* far left / right (più “dietro”) */
+  .carousel.infinite-test .carousel__track > *[data-pos="far-left"] {
+    opacity: 0.65;
+    filter: blur(0.2px) saturate(0.92);
+    transform:
+      translateX(-54px)
+      translateZ(-60px)
+      rotateY(26deg)
+      scale(0.86);
+  }
+  
+  .carousel.infinite-test.carousel__track > *[data-pos="far-right"] {
+    opacity: 0.65;
+    filter: blur(0.2px) saturate(0.92);
+    transform:
+      translateX(54px)
+      translateZ(-60px)
+      rotateY(-26deg)
+      scale(0.86);
+  }
+  
+  /* deep (fuori focus) */
+  .carousel.infinite-test.carousel__track > *[data-pos="deep-left"],
+  .carousel.infinite-test .carousel__track > *[data-pos="deep-right"],
+  .carousel.infinite-test .carousel__track > *[data-pos="idle"] {
+    opacity: 0.45;
+    filter: blur(0.6px) saturate(0.85);
+    transform:
+      translateZ(-140px)
+      scale(0.8);
+  }
+  
+  /* mobile: niente 3D aggressivo */
+  @media (max-width: 640px) {
+    .carousel.infinite-test  {
+      perspective: none;
+    }
+  
+    .carousel.infinite-test ::before {
+      filter: blur(40px) brightness(0.7);
+      opacity: 0.35;
+    }
+  
+    .carousel.infinite-test  .carousel__track {
+      gap: 1.2rem;
+      padding: 2.2rem 0;
+    }
+  
+    .carousel.infinite-test  .carousel__track > * {
+      flex: 0 0 85vw;
+      transform: none !important;
+      opacity: 1 !important;
+      filter: none !important;
+    }
+  }
+
+
+  /* LEFT */
+.carousel.infinite-test .carousel__track > *[data-pos="left"] {
+  opacity: 0.92;
+  transform:
+    translateX(-28px)
+    translateZ(40px)
+    rotateY(16deg)
+    scale(0.95);
+}
+
+/* RIGHT */
+.carousel.infinite-test .carousel__track > *[data-pos="right"] {
+  opacity: 0.92;
+  transform:
+    translateX(28px)
+    translateZ(40px)
+    rotateY(-16deg)
+    scale(0.95);
+}
+
+/* FAR LEFT */
+.carousel.infinite-test .carousel__track > *[data-pos="far-left"] {
+  opacity: 0.65;
+  transform:
+    translateX(-54px)
+    translateZ(-60px)
+    rotateY(26deg)
+    scale(0.86);
+}
+
+/* FAR RIGHT */
+.carousel.infinite-test .carousel__track > *[data-pos="far-right"] {
+  opacity: 0.65;
+  transform:
+    translateX(54px)
+    translateZ(-60px)
+    rotateY(-26deg)
+    scale(0.86);
+}
+
+/* DEEP */
+.carousel.infinite-test .carousel__track > *[data-pos="deep-left"],
+.carousel.infinite-test .carousel__track > *[data-pos="deep-right"],
+.carousel.infinite-test .carousel__track > *[data-pos="idle"] {
+  opacity: 0.45;
+  transform:
+    translateZ(-140px)
+    scale(0.8);
+}

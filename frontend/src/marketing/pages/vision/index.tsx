@@ -10,7 +10,7 @@
 // ======================================================
 
 import { useEffect } from "react";
-import { initWhatsAppScrollWatcher } from "@shared/lib/ui/scrollWatcher";
+import { initWhatsAppScrollWatcher } from "@src/shared/ui/scrollWatcher";
 import { t } from "@shared/aiTranslateGenerator";
 import { visionClasses as cls } from "./vision.classes";
 

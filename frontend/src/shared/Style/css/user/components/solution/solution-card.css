@@ -1,0 +1,96 @@
+/* ======================================================
+   SOLUTION CARD — HERO STYLE (carousel)
+====================================================== */
+
+.solution-card {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  cursor: pointer;
+
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease;
+}
+
+/* MEDIA FULL */
+.solution-card__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+}
+
+.solution-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+
+  transition: transform 0.5s ease;
+}
+
+.solution-card[data-selected="true"] .solution-card__img {
+  transform: scale(1.05);
+}
+
+/* OVERLAY */
+.solution-card__overlay {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  padding: 24px;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.75),
+    rgba(0,0,0,0.25),
+    transparent
+  );
+
+  color: white;
+}
+
+/* TITLE */
+.solution-card__title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* DESCRIPTION */
+.solution-card__description {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  margin-bottom: 16px;
+}
+
+/* BUTTON */
+.solution-card__button {
+  align-self: flex-start;
+
+  padding: 10px 18px;
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    #f59e0b,
+    #f97316
+  );
+
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+
+  border: none;
+  cursor: pointer;
+
+  transition: transform 0.2s ease;
+}
+
+.solution-card__button:hover {
+  transform: scale(1.05);
+}

@@ -10,7 +10,7 @@
 
 import { useEffect, useState } from "react";
 import iconUrl from "./WhatsApp.png";
-import { uiBus } from "@shared/lib/ui/uiBus";
+import { uiBus } from "@src/shared/ui/uiBus";
 import { whatsappClasses as cls } from "./whatsapp.classes";
 
 export default function WhatsAppButton() {

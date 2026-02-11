@@ -1,0 +1,214 @@
+/* =====================================================
+   CAROUSEL TRIM — CICLICO PURO
+===================================================== */
+
+.carousel.trim-test {
+    position: relative;
+    width: 100%;
+    min-height: 00px;
+    max-height: 520px;
+  
+    perspective: 2000px; /* più profondo */
+    perspective-origin: 50% 40%;
+  
+    overflow: visible; /* 🔥 fondamentale */
+    z-index: 1; /* sopra la linea bianca */
+  }
+  
+  
+  /* Background dinamico */
+  .carousel.trim-test::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  
+    background-image: var(--carousel-bg);
+    background-size: cover;
+    background-position: center;
+  
+    filter: blur(1px) brightness(0.65) saturate(0.3);
+    opacity: 0.55;
+  
+    transition: background-image 0.6s ease;
+  }
+  
+  /* Vignette */
+  .carousel.trim-test::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  
+    background: radial-gradient(
+      circle at 50% 45%,
+      rgba(0,0,0,0.0),
+      rgba(0,0,0,0.35) 65%,
+      rgba(0,0,0,0.55) 100%
+    );
+  
+    pointer-events: none;
+  }
+  
+  /* =============================
+     TRACK STATICO (NO SCROLL)
+  ============================= */
+  .carousel.trim-test .carousel__track {
+    position: relative;
+    width: 100%;
+    min-height: 500px;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+  
+  
+  .carousel.trim-test .carousel__track > * {
+    position: absolute;
+  
+    top: 50%;
+    left: 50%;
+  
+    width: 340px;
+  
+    transform-style: preserve-3d;
+  
+    transition:
+      transform 450ms cubic-bezier(.2,.8,.2,1),
+      opacity 450ms cubic-bezier(.2,.8,.2,1),
+      filter 450ms cubic-bezier(.2,.8,.2,1);
+  
+    cursor: pointer;
+  
+    z-index: var(--stack-z, 1);
+  }
+  .carousel.trim-test .carousel__track > *[data-pos="center"] {
+    opacity: 1;
+    filter: none;
+  
+    transform:
+      translate(-50%, -50%)
+      translateZ(140px)
+      scale(1.12);
+  }
+  .carousel.trim-test .carousel__track > *[data-pos="left"] {
+    opacity: 0.92;
+  
+    transform:
+      translate(-50%, -50%)
+      translateX(-380px)
+      translateZ(40px)
+      rotateY(16deg)
+      scale(0.95);
+  }
+  
+  .carousel.trim-test .carousel__track > *[data-pos="right"] {
+    opacity: 0.92;
+  
+    transform:
+      translate(-50%, -50%)
+      translateX(380px)
+      translateZ(40px)
+      rotateY(-16deg)
+      scale(0.95);
+  }
+  .carousel.trim-test .carousel__track > *[data-pos="far-left"] {
+    opacity: 1;
+    filter: brightness(0.9) saturate(0.9);
+
+  
+    transform:
+      translate(-50%, -50%)
+      translateX(-640px)
+      translateZ(-60px)
+      rotateY(26deg)
+      scale(0.86);
+  }
+  
+  .carousel.trim-test .carousel__track > *[data-pos="far-right"] {
+    opacity: 1;
+    filter: brightness(0.9) saturate(0.9);
+  
+    transform:
+      translate(-50%, -50%)
+      translateX(640px)
+      translateZ(-60px)
+      rotateY(-26deg)
+      scale(0.86);
+  }
+  .carousel.trim-test .carousel__track > *[data-pos="deep-left"],
+.carousel.trim-test .carousel__track > *[data-pos="deep-right"],
+.carousel.trim-test .carousel__track > *[data-pos="idle"] {
+    opacity: 1;
+    filter: blur(0.6px) brightness(0.85);
+
+  transform:
+    translate(-50%, -50%)
+    translateZ(-140px)
+    scale(0.8);
+}
+@media (max-width: 640px) {
+    .carousel.trim-test {
+      perspective: none;
+    }
+  
+    .carousel.trim-test .carousel__track > * {
+      transform: translate(-50%, -50%) !important;
+      opacity: 1 !important;
+      filter: none !important;
+    }
+  }
+  
+  .carousel.trim-test .carousel__track > *::after {
+    content: "";
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    height: 60px;
+  
+    background: radial-gradient(
+      ellipse at center,
+      rgba(0,0,0,0.35),
+      transparent 70%
+    );
+  
+    opacity: 0;
+    transition: opacity 400ms ease;
+    pointer-events: none;
+  }
+  
+  .carousel.trim-test .carousel__track > *[data-pos="center"] {
+    opacity: 1;
+    filter: none;
+    
+    transform:
+      translate(-50%, -60%) /* più alto */
+      translateZ(220px)     /* più fuori */
+      scale(1.12)
+      rotateX(4deg);
+  
+  }.carousel.trim-test .carousel__track > *[data-pos="center"]::after {
+    opacity: 1;
+  }
+  .solutions-section__login::before {
+    content: "";
+    position: absolute;
+    top: -40px;
+    left: 0;
+    right: 0;
+    height: 40px;
+    
+    pointer-events: none;
+  }
+  
+  .solutions-section__login {
+    position: relative;
+    z-index: 5;
+    background: #ffffff;
+  }
+  
+  .carousel.trim-test .carousel__track > *[data-pos="center"] {
+    box-shadow:
+      0 25px 60px rgba(0,0,0,0.35);
+  }

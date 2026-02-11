@@ -12,7 +12,7 @@
  * - emette solo intenti (cart:toggle)
  */
 
-import { uiBus } from "@shared/lib/ui/uiBus";
+import { uiBus } from "@src/shared/ui/uiBus";
 import { cartStore } from "@shared/lib/cart/cart.store";
 import { useEffect, useState } from "react";
 

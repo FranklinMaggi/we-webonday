@@ -22,12 +22,9 @@ export type EngineInput = {
   business: {
     name: string;
     slug: string;
-
-    // 🔹 semantica
     sector: string;
     address: string;
-    descriptionText?: string; // ⬅️ GENERATED
-    // 🔹 dati strutturati (usati dai renderer)
+    descriptionText?: string;
     openingHours?: OpeningHoursFE;
   };
 
@@ -35,5 +32,6 @@ export type EngineInput = {
   style: LayoutStyle;
   palette: ColorPaletteId;
 };
+
 
 export type EngineVariantId = string;

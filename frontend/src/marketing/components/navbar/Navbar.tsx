@@ -1,17 +1,6 @@
 // ======================================================
 // FE || components/navbar/Navbar.tsx
 // ======================================================
-// NAVBAR — MARKETING MINIMAL
-//
-// RUOLO:
-// - Ridurre attrito cognitivo
-// - Supportare SOLO il flusso di ingresso
-//
-// MOSTRA:
-// - Brand
-// - Login / Logout
-// - Language selector
-// ======================================================
 
 import { Link, useNavigate } from "react-router-dom";
 import { useRef } from "react";
@@ -67,8 +56,20 @@ export default function Navbar() {
 
         {/* ================= ACTIONS ================= */}
         <div className={cls.navZoneRight}>
+
+          {/* NEW — SOLUTIONS LINK */}
+          <Link
+            to="/solution"
+            className={cls.navLink}
+          >
+            {t("navbar.solutions")}
+          </Link>
+
           {ready && !user && (
-            <Link to="/user/login" className={cls.navLink}>
+            <Link
+              to="/user/login"
+              className={cls.navLink}
+            >
               {t("navbar.login")}
             </Link>
           )}

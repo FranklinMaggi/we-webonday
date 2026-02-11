@@ -1,34 +1,29 @@
 // ======================================================
-// FE || WORKSPACE PREVIEW — ENTRY POINT (BUSINESS-DRIVEN)
+// FE || WORKSPACE PREVIEW — ENTRY POINT (TEMPLATE-DRIVEN)
 // ======================================================
 
 import { useMemo } from "react";
 import { useWorkspaceState } from "../workspace/workspace.state";
-
-import { useBusinessByConfiguration } from "../business/api/useBusinessByConfiguration";
+import { useBusinessByConfiguration } from
+  "../business/api/useBusinessByConfiguration";
 
 import { buildCanvas } from
   "@src/user/site-engine/engine/builder/buildCanvas";
 
 import SiteView from "./view/SiteView";
-import { AVAILABLE_LAYOUTS } from
-  "../engine/api/types/layouts.mock";
-import {
-  normalizeLayoutStyle,
-  normalizePalette,
-} from "./site.normalizer";
+import { resolveTemplateFallback } from
+  "../template/resolveTemplate";
 
 export default function EntryPointSitePreview() {
   const { activeConfigurationId } = useWorkspaceState();
 
-  const {
-    business,
-    loading,
-    error,
-  } = useBusinessByConfiguration(activeConfigurationId);
+  const { business, loading, error } =
+    useBusinessByConfiguration(activeConfigurationId);
 
   const canvas = useMemo(() => {
     if (!activeConfigurationId || !business) return null;
+
+    const template = resolveTemplateFallback();
 
     return buildCanvas({
       configurationId: activeConfigurationId,
@@ -43,16 +38,18 @@ export default function EntryPointSitePreview() {
           ? `${business.address.street ?? ""} ${business.address.city ?? ""}`
           : "",
         openingHours: business.openingHours,
-        descriptionText: business.businessDescriptionText, 
+        descriptionText: business.businessDescriptionText,
       },
 
-      layout: AVAILABLE_LAYOUTS[0], // preset
-      style: normalizeLayoutStyle(),
-      palette: normalizePalette(),
+      layout: template.layout,
+      style: template.style,
+      palette: template.palette,
     });
   }, [activeConfigurationId, business]);
+
   const phoneNumber =
-  business?.contact?.phoneNumber ?? null;
+    business?.contact?.phoneNumber ?? null;
+
   /* =====================
      UI STATES
   ====================== */
@@ -68,6 +65,10 @@ export default function EntryPointSitePreview() {
     return <div>Anteprima non disponibile</div>;
   }
 
-  return <SiteView canvas={canvas} 
-                    phoneNumber={phoneNumber}/>;
+  return (
+    <SiteView
+      canvas={canvas}
+      phoneNumber={phoneNumber}
+    />
+  );
 }

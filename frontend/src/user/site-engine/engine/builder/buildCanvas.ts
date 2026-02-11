@@ -15,7 +15,8 @@ import type { EngineInput } from "../api/types/engine.types";
 import type { EngineCanvas, CanvasSection } from "../../preview/api/types/engine.canvas";
 
 export function buildCanvas(
-  input: EngineInput
+  input: EngineInput ,
+
 ): EngineCanvas {
   const { business, layout, style, palette } = input;
 

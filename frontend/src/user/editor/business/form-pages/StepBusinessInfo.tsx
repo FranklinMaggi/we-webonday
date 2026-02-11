@@ -19,7 +19,7 @@
 import { useEffect, useState } from "react";
 import { isOpeningHoursEmpty } from "@shared/domain/business/openingHours.utils";
 import { apiFetch } from "@shared/lib/api";
-import { getSolutionById } from "@src/marketing/pages/buyflow/api/publiApi/solutions/solutions.public.api";
+import { getSolutionById } from "@src/marketing/pages/solution/api/functions/solution.getSolution.api";
 import { useConfigurationSetupStore } from "@src/user/editor/api/type/configurator/configurationSetup.store";
 import BusinessForm from "./BusinessForm";
 

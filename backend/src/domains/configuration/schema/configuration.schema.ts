@@ -31,10 +31,18 @@ export const ConfigurationPrefillSchema = z.object({
 ====================================================== */
 
 export const ConfigurationWorkspaceSchema = z.object({
+  /** 🔑 scelta utente (marketing / preview) */
+  presetId: z.string().optional(),   // es: "cozy"
+
+  /** 🔧 override manuali (post-preset) */
   layoutId: z.string().optional(),
-  themeId: z.string().optional(),
+  styleId: z.string().optional(),
+  paletteId: z.string().optional(),
+
+  /** 🕒 UX */
   lastPreviewAt: z.string().optional(),
 });
+
 
 /* ======================================================
    MAIN SCHEMA

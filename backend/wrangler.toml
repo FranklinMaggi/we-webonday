@@ -64,6 +64,10 @@ id = "9c574ad4e44b49ad9944dc424fb56346"
 binding = "SOLUTIONS_KV"
 id = "2293ad3453324221a789470c3cf0a4b1"
 
+[[kv_namespaces]]
+binding = "TEMPLATE_KV"
+id = "048a93e05b074cf09b78ce4c5d6c387a"
+
 # Log attività utenti
 [[kv_namespaces]]
 binding = "ON_ACTIVITY_USER_KV"
