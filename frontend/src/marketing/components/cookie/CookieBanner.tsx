@@ -13,15 +13,15 @@
 // - SINCRONIZZA con backend
 // ======================================================
 
-import { useEffect, useState } from "react";
-import { cookiesClasses as cls } from "./cookies.classes";
 import { t } from "@shared/aiTranslateGenerator";
+import { acceptCookies } from "@shared/lib/api";
 import {
   getLocalConsent,
   saveLocalConsent,
 } from "@shared/utils/cookieConsent";
-import { acceptCookies } from "@shared/lib/api";
+import { useEffect, useState } from "react";
 import { PolicyView } from "../policy/PolicyViewer";
+import { cookiesClasses as cls } from "./cookies.classes";
 
 
 
