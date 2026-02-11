@@ -18,7 +18,7 @@
 // ======================================================
 
 // Viewer unico policy (general / checkout)
-import { t } from "@src/shared/aiTranslateGenerator";
+import { t } from "@shared/aiTranslateGenerator";
 import { useEffect, useState } from "react";
 import { fetchLatestPolicy, type PolicyDTO, type PolicyScope } from "@src/marketing/components/policy/api/policy.user.api";
 import { type PolicyType } from "./api/policy.types";
