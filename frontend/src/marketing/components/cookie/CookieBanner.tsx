@@ -21,7 +21,7 @@ import {
   saveLocalConsent,
 } from "@shared/utils/cookieConsent";
 import { acceptCookies } from "@shared/lib/api";
-import { PolicyViewer } from "@src/marketing/components/policy/PolicyViewer";
+import { PolicyViewer } from "../policy/PolicyViewer";
 
 type CookieCategory = "preferences" | "analytics" | "marketing";
 
