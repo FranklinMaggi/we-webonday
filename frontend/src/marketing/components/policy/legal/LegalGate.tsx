@@ -23,7 +23,7 @@
 
 import { useState } from "react";
 import { t } from "@shared/aiTranslateGenerator";
-import { PolicyView } from "../PolicyViewer";  
+import { PolicyView } from "../policyViewer";  
 
 type LegalAcceptanceState = {
   cookie: boolean;

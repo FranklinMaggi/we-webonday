@@ -20,7 +20,7 @@ import {
   saveLocalConsent,
 } from "@shared/utils/cookieConsent";
 import { useEffect, useState } from "react";
-import { PolicyView } from "../policy/PolicyViewer";
+import { PolicyView } from "../policy/policyViewer";
 import { cookiesClasses as cls } from "./cookies.classes";
 
 

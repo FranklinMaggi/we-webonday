@@ -12,7 +12,8 @@ export default defineConfig({
       "@user": path.resolve(__dirname, "src/user"),
       "@admin": path.resolve(__dirname, "src/admin"),
       "@components": path.resolve(__dirname, "src/components"),
-      "@lib": path.resolve(__dirname, "src/shared/lib")
+      "@lib": path.resolve(__dirname, "src/shared/lib"),
+      "@style": path.resolve(__dirname, "src/shared/Style")
     }
   }
 });
