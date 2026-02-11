@@ -24,7 +24,7 @@
 import { useState } from "react";
 import { t } from "@shared/aiTranslateGenerator";
 
-import { PolicyViewer } from "@src/marketing/components/policy/PolicyViewer";
+import { PolicyViewer } from "@src/marketing/components/policy/PolicyViewer"; 
 
 type LegalAcceptanceState = {
   cookie: boolean;

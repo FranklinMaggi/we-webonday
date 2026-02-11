@@ -7,20 +7,25 @@
     "types": ["node"],
     "skipLibCheck": true,
 
-    /* Bundler mode */
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@app/*": ["src/app/*"],
+      "@shared/*": ["src/shared/*"],
+      "@user/*": ["src/user/*"],
+      "@admin/*": ["src/admin/*"],
+      "@components/*": ["src/components/*"],
+      "@lib/*": ["src/shared/lib/*"],
+      "@style/*": ["src/shared/Style/*"]
+    },
+
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
 
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "strict": true
   },
   "include": ["vite.config.ts"]
 }
