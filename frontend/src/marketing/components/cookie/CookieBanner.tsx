@@ -21,7 +21,11 @@ import {
   saveLocalConsent,
 } from "@shared/utils/cookieConsent";
 import { acceptCookies } from "@shared/lib/api";
-import { PolicyViewer } from "../policy/PolicyViewer";  
+import { PolicyView } from "../policy/PolicyViewer";
+
+
+
+
 type CookieCategory = "preferences" | "analytics" | "marketing";
 
 export function CookieBanner() {
@@ -158,7 +162,7 @@ export function CookieBanner() {
   {/* POLICY PREVIEW */}
   {showPolicy && (
   <div className={cls.policyPreview}>
-    <PolicyViewer type="cookie" scope="general" />
+    <PolicyView type="cookie" scope="general" />
   </div>
 
   )}
