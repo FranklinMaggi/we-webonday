@@ -19,10 +19,9 @@ import { t } from "@shared/aiTranslateGenerator";
 import {
   getLocalConsent,
   saveLocalConsent,
-} from "../../../shared/utils/cookieConsent";
-import { acceptCookies } from "../../../shared/lib/api";
-import { PolicyViewer} from "../policy/PolicyViewer";
-
+} from "@shared/utils/cookieConsent";
+import { acceptCookies } from "@shared/lib/api";
+import { PolicyViewer } from "@src/marketing/components/policy/PolicyViewer";
 
 type CookieCategory = "preferences" | "analytics" | "marketing";
 
