@@ -78,16 +78,6 @@
    RESPONSIVE
 ====================================================== */
 
-@media (max-width: 768px) {
-  .solution-hero {
-    min-height: 320px;
-  }
-
-  .solution-hero__overlay {
-    padding: 32px 20px;
-  }
-}
-
 
 .solutions-section__login {
   margin-top: 4rem;
@@ -117,3 +107,18 @@
 /* =====================================================
    TRIM — RESPONSIVE SYSTEM
 ===================================================== */
+.solutions-section__login::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  
+  pointer-events: none;
+}
+.solutions-section__login {
+  position: relative;
+  z-index: 5;
+  background: #ffffff;
+}
