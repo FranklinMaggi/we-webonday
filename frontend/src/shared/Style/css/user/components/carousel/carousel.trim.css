@@ -354,8 +354,8 @@
   @media (max-width: 640px) {
   
     .carousel.trim-test {
-      perspective: 1100px;
-      max-height: 420px;
+      perspective : 800px;
+      max-height: 220px;
     }
   
     .carousel.trim-test .carousel__track {
