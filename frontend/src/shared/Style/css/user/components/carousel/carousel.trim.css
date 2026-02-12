@@ -212,3 +212,121 @@
     box-shadow:
       0 25px 60px rgba(0,0,0,0.35);
   }
+
+
+  /* =====================================================
+   RESPONSIVE — TABLET
+===================================================== */
+@media (max-width: 1024px) {
+
+    .carousel.trim-test {
+      max-height: 480px;
+    }
+  
+    .carousel.trim-test .carousel-card {
+      width: 300px;
+    }
+  
+    .carousel.trim-test .carousel__track > *[data-pos="left"] {
+      transform:
+        translate(-50%, -50%)
+        translateX(-280px)
+        translateZ(40px)
+        rotateY(14deg)
+        scale(0.95);
+    }
+  
+    .carousel.trim-test .carousel__track > *[data-pos="right"] {
+      transform:
+        translate(-50%, -50%)
+        translateX(280px)
+        translateZ(40px)
+        rotateY(-14deg)
+        scale(0.95);
+    }
+  
+    .carousel.trim-test .carousel__track > *[data-pos="far-left"] {
+      transform:
+        translate(-50%, -50%)
+        translateX(-480px)
+        translateZ(-60px)
+        rotateY(20deg)
+        scale(0.85);
+    }
+  
+    .carousel.trim-test .carousel__track > *[data-pos="far-right"] {
+      transform:
+        translate(-50%, -50%)
+        translateX(480px)
+        translateZ(-60px)
+        rotateY(-20deg)
+        scale(0.85);
+    }
+  }
+  
+  
+  /* =====================================================
+     RESPONSIVE — MOBILE
+  ===================================================== */
+  @media (max-width: 640px) {
+  
+    .carousel.trim-test {
+      perspective: 1200px;
+      max-height: 420px;
+    }
+  
+    .carousel.trim-test .carousel-card {
+      width: 240px;
+    }
+  
+    .carousel.trim-test .carousel__track {
+      min-height: 420px;
+    }
+  
+    /* CENTER */
+    .carousel.trim-test .carousel__track > *[data-pos="center"] {
+      transform:
+        translate(-50%, -55%)
+        translateZ(140px)
+        scale(1.05);
+    }
+  
+    /* LEFT */
+    .carousel.trim-test .carousel__track > *[data-pos="left"] {
+      transform:
+        translate(-50%, -50%)
+        translateX(-200px)
+        translateZ(20px)
+        rotateY(12deg)
+        scale(0.9);
+    }
+  
+    /* RIGHT */
+    .carousel.trim-test .carousel__track > *[data-pos="right"] {
+      transform:
+        translate(-50%, -50%)
+        translateX(200px)
+        translateZ(20px)
+        rotateY(-12deg)
+        scale(0.9);
+    }
+  
+    /* FAR */
+    .carousel.trim-test .carousel__track > *[data-pos="far-left"],
+    .carousel.trim-test .carousel__track > *[data-pos="far-right"] {
+      transform:
+        translate(-50%, -50%)
+        translateZ(-60px)
+        scale(0.75);
+      opacity: 0.7;
+    }
+  
+    /* DEEP */
+    .carousel.trim-test .carousel__track > *[data-pos="deep-left"],
+    .carousel.trim-test .carousel__track > *[data-pos="deep-right"],
+    .carousel.trim-test .carousel__track > *[data-pos="idle"] {
+      display: none; /* 🔥 miglioriamo performance mobile */
+    }
+  
+  }
+  
