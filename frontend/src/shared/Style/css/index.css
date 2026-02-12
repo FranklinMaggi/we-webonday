@@ -45,7 +45,7 @@
 @import "./user/components/footer.css";
 @import "./user/components/dashboard/dashboard.css";
 @import "./user/components/solutions.css";
-@import "./user/components/solution/solution-card.css";
+@import "./user/components/solution-start-hero/solution.start-hero.css";
 @import "./user/components/cookie-banner.css";
 @import "./user/components/hero.css";
 
@@ -60,11 +60,10 @@
 @import "./user/pages/profile/account.css";
 @import "./user/login.css";
 @import "./user/components/carousel/carousel.css";
-@import "./user/components/carousel/carousel.orbit.css";
-@import "./user/components/carousel/carousel.infinite-scroll.css";
+
 @import "./user/components/carousel/carousel.card.css";
 @import "./user/components/carousel/carousel.trim.css";
-@import "./user/components/solution-start-hero/solution.start-hero.css";
+
 /* ======================================================
    5️⃣ COMPONENTS (PUBBLICO)
 ======================================================

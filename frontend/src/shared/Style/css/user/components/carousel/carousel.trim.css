@@ -84,11 +84,13 @@
   .carousel.trim-test .carousel__track > *[data-pos="center"] {
     opacity: 1;
     filter: none;
-  
+    
     transform:
-      translate(-50%, -50%)
-      translateZ(140px)
-      scale(1.12);
+      translate(-50%, -60%) /* più alto */
+      translateZ(220px)     /* più fuori */
+      scale(1.12)
+      rotateX(4deg);
+  
   }
   .carousel.trim-test .carousel__track > *[data-pos="left"] {
     opacity: 0.92;
@@ -146,17 +148,7 @@
     translateZ(-140px)
     scale(0.8);
 }
-@media (max-width: 640px) {
-    .carousel.trim-test {
-      perspective: none;
-    }
-  
-    .carousel.trim-test .carousel__track > * {
-      transform: translate(-50%, -50%) !important;
-      opacity: 1 !important;
-      filter: none !important;
-    }
-  }
+
   
   .carousel.trim-test .carousel__track > *::after {
     content: "";
@@ -178,17 +170,9 @@
     pointer-events: none;
   }
   
-  .carousel.trim-test .carousel__track > *[data-pos="center"] {
-    opacity: 1;
-    filter: none;
-    
-    transform:
-      translate(-50%, -60%) /* più alto */
-      translateZ(220px)     /* più fuori */
-      scale(1.12)
-      rotateX(4deg);
+ 
   
-  }.carousel.trim-test .carousel__track > *[data-pos="center"]::after {
+  .carousel.trim-test .carousel__track > *[data-pos="center"]::after {
     opacity: 1;
   }
   .solutions-section__login::before {
@@ -264,30 +248,31 @@
     }
   }
   
-  
+
   /* =====================================================
-     RESPONSIVE — MOBILE
-  ===================================================== */
-  @media (max-width: 640px) {
-  
+   MOBILE 3D SAFE
+===================================================== */
+@media (max-width: 640px) {
+
     .carousel.trim-test {
-      perspective: 1200px;
+      perspective: 1000px;
+      perspective-origin: 50% 50%;
       max-height: 420px;
-    }
-  
-    .carousel.trim-test .carousel-card {
-      width: 240px;
     }
   
     .carousel.trim-test .carousel__track {
       min-height: 420px;
     }
   
+    .carousel.trim-test .carousel-card {
+      width: 240px;
+    }
+  
     /* CENTER */
     .carousel.trim-test .carousel__track > *[data-pos="center"] {
       transform:
         translate(-50%, -55%)
-        translateZ(140px)
+        translateZ(120px)
         scale(1.05);
     }
   
@@ -295,7 +280,105 @@
     .carousel.trim-test .carousel__track > *[data-pos="left"] {
       transform:
         translate(-50%, -50%)
-        translateX(-200px)
+        translateX(-180px)
+        translateZ(30px)
+        rotateY(10deg)
+        scale(0.92);
+    }
+  
+    /* RIGHT */
+    .carousel.trim-test .carousel__track > *[data-pos="right"] {
+      transform:
+        translate(-50%, -50%)
+        translateX(180px)
+        translateZ(30px)
+        rotateY(-10deg)
+        scale(0.92);
+    }
+  
+    /* FAR */
+    .carousel.trim-test .carousel__track > *[data-pos="far-left"],
+    .carousel.trim-test .carousel__track > *[data-pos="far-right"] {
+      transform:
+        translate(-50%, -50%)
+        translateZ(-40px)
+        scale(0.75);
+      opacity: 0.7;
+    }
+  
+    /* DEEP */
+    .carousel.trim-test .carousel__track > *[data-pos="deep-left"],
+    .carousel.trim-test .carousel__track > *[data-pos="deep-right"],
+    .carousel.trim-test .carousel__track > *[data-pos="idle"] {
+      display: none;
+    }
+  }
+  
+/* -------------------------
+   TABLET
+-------------------------- */
+@media (max-width: 1024px) {
+
+    .carousel.trim-test {
+      max-height: 480px;
+      perspective: 1600px;
+    }
+  
+    .carousel.trim-test .carousel-card {
+      width: 300px;
+    }
+  
+    .carousel.trim-test .carousel__track > *[data-pos="left"] {
+      transform:
+        translate(-50%, -50%)
+        translateX(-260px)
+        translateZ(40px)
+        rotateY(14deg)
+        scale(0.95);
+    }
+  
+    .carousel.trim-test .carousel__track > *[data-pos="right"] {
+      transform:
+        translate(-50%, -50%)
+        translateX(260px)
+        translateZ(40px)
+        rotateY(-14deg)
+        scale(0.95);
+    }
+  
+  }
+  
+  /* -------------------------
+     MOBILE
+  -------------------------- */
+  @media (max-width: 640px) {
+  
+    .carousel.trim-test {
+      perspective: 1100px;
+      max-height: 420px;
+    }
+  
+    .carousel.trim-test .carousel__track {
+      min-height: 420px;
+    }
+  
+    .carousel.trim-test .carousel-card {
+      width: 240px;
+    }
+  
+    /* CENTER */
+    .carousel.trim-test .carousel__track > *[data-pos="center"] {
+      transform:
+        translate(-50%, -55%)
+        translateZ(120px)
+        scale(1.05);
+    }
+  
+    /* LEFT */
+    .carousel.trim-test .carousel__track > *[data-pos="left"] {
+      transform:
+        translate(-50%, -50%)
+        translateX(-180px)
         translateZ(20px)
         rotateY(12deg)
         scale(0.9);
@@ -305,7 +388,7 @@
     .carousel.trim-test .carousel__track > *[data-pos="right"] {
       transform:
         translate(-50%, -50%)
-        translateX(200px)
+        translateX(180px)
         translateZ(20px)
         rotateY(-12deg)
         scale(0.9);
@@ -321,12 +404,11 @@
       opacity: 0.7;
     }
   
-    /* DEEP */
+    /* DEEP (hidden per performance) */
     .carousel.trim-test .carousel__track > *[data-pos="deep-left"],
     .carousel.trim-test .carousel__track > *[data-pos="deep-right"],
     .carousel.trim-test .carousel__track > *[data-pos="idle"] {
-      display: none; /* 🔥 miglioriamo performance mobile */
+      display: none;
     }
-  
   }
   

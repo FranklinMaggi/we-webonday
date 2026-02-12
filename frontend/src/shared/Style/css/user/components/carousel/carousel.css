@@ -7,8 +7,8 @@
   ===================================================== */
   .carousel {
     position: relative;
-    width: 1%;
-    overflow: hidden;
+    width: 100%;
+    overflow: visible;
   
     perspective: 1600px;
     perspective-origin: 50% 40%;
@@ -143,27 +143,110 @@
       scale(0.8);
   }
   
-  /* mobile: niente 3D aggressivo */
-  @media (max-width: 640px) {
-    .carousel {
-      perspective: none;
-    }
-  
-    .carousel::before {
-      filter: blur(40px) brightness(0.7);
-      opacity: 0.35;
-    }
-  
-    .carousel__track {
-      gap: 1.2rem;
-      padding: 2.2rem 0;
-    }
-  
-    .carousel__track > * {
-      flex: 0 0 85vw;
-      transform: none !important;
-      opacity: 1 !important;
-      filter: none !important;
-    }
+/* =====================================================
+   TRIM — RESPONSIVE SYSTEM
+===================================================== */
+
+/* -------------------------
+   TABLET
+-------------------------- */
+@media (max-width: 1024px) {
+
+  .carousel.trim-test {
+    max-height: 480px;
+    perspective: 1600px;
   }
-  
+
+  .carousel.trim-test .carousel-card {
+    width: 300px;
+  }
+
+  .carousel.trim-test .carousel__track > *[data-pos="left"] {
+    transform:
+      translate(-50%, -50%)
+      translateX(-260px)
+      translateZ(40px)
+      rotateY(14deg)
+      scale(0.95);
+  }
+
+  .carousel.trim-test .carousel__track > *[data-pos="right"] {
+    transform:
+      translate(-50%, -50%)
+      translateX(260px)
+      translateZ(40px)
+      rotateY(-14deg)
+      scale(0.95);
+  }
+
+}
+
+/* -------------------------
+   MOBILE
+-------------------------- */
+/* =====================================================
+   MOBILE 3D STACK REAL (VISIBLE SIDE CARDS)
+===================================================== */
+@media (max-width: 640px) {
+
+  .carousel.trim-test {
+    perspective: 900px;
+    perspective-origin: 50% 50%;
+    max-height: 380px;
+  }
+
+  .carousel.trim-test .carousel__track {
+    min-height: 380px;
+  }
+
+  .carousel.trim-test .carousel-card {
+    width: 210px; /* più strette */
+  }
+
+  /* CENTER */
+  .carousel.trim-test .carousel__track > *[data-pos="center"] {
+    transform:
+      translate(-50%, -55%)
+      translateZ(100px)
+      scale(1.03);
+  }
+
+  /* LEFT */
+  .carousel.trim-test .carousel__track > *[data-pos="left"] {
+    transform:
+      translate(-50%, -50%)
+      translateX(-140px)
+      translateZ(30px)
+      rotateY(8deg)
+      scale(0.92);
+    opacity: 0.85;
+  }
+
+  /* RIGHT */
+  .carousel.trim-test .carousel__track > *[data-pos="right"] {
+    transform:
+      translate(-50%, -50%)
+      translateX(140px)
+      translateZ(30px)
+      rotateY(-8deg)
+      scale(0.92);
+    opacity: 0.85;
+  }
+
+  /* FAR */
+  .carousel.trim-test .carousel__track > *[data-pos="far-left"],
+  .carousel.trim-test .carousel__track > *[data-pos="far-right"] {
+    transform:
+      translate(-50%, -50%)
+      translateZ(-20px)
+      scale(0.75);
+    opacity: 0.55;
+  }
+
+  /* NON NASCONDIAMO DEEP */
+  .carousel.trim-test .carousel__track > *[data-pos="deep-left"],
+  .carousel.trim-test .carousel__track > *[data-pos="deep-right"],
+  .carousel.trim-test .carousel__track > *[data-pos="idle"] {
+    opacity: 0;
+  }
+}

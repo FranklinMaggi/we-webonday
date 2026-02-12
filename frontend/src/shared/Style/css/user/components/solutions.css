@@ -114,15 +114,6 @@
   grid-template-columns: repeat(4, 1fr);
 }
 
-/* responsive */
-@media (max-width: 1024px) {
-  .solution-workspace .preset-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 640px) {
-  .solution-workspace .preset-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* =====================================================
+   TRIM — RESPONSIVE SYSTEM
+===================================================== */
